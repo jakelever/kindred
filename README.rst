@@ -1,7 +1,7 @@
 Kindred
 --------
 
-|build-status| |docs|
+|build-status| |docs| |license|
 
 .. |build-status| image:: https://travis-ci.org/jakelever/kindred.svg?branch=master
    :target: https://travis-ci.org/jakelever/kindred
@@ -10,6 +10,10 @@ Kindred
 .. |docs| image:: https://readthedocs.org/projects/kindred/badge/
    :target: https://readthedocs.org/projects/kindred
    :alt: Documentation status
+   
+.. |license| image:: https://img.shields.io/badge/License-MIT-blue.svg
+   :target: https://opensource.org/licenses/MIT
+   :alt: MIT license
 
 Insert description of package here please
 
