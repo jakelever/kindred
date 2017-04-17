@@ -1,3 +1,4 @@
+sudo: required
 language: python
 python:
   - "2.7"
@@ -8,6 +9,9 @@ python:
 # versions of java to test (for parsers)
 jdk:
   - oraclejdk8
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install default-jre
 # command to install dependencies
 install:
   - pip install --upgrade pip setuptools wheel
