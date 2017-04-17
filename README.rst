@@ -31,14 +31,25 @@ Installing
 Usage
 -----
 
+BioNLP Example
+~~~~~~~~~~~~~~
+
 >>> import kindred
->>> tuples,sentenceData = kindred.capitals
->>> trainData = data[asdasd]
->>> testData = data[asdasddas]
->>> model = kindred.Model()
->>> model.train(trainSentences,trainTuples)
->>> predictions = model.predict(testData)
->>> print kindred.evaluate(trainData,testData)
+>>> train_data = kindred.bionlpst.get_data('2016-BB3-event-training')
+>>> dev_data = kindred.bionlpst.get_data('2016-BB3-event-development')
+>>> model = kindred.train(train_data)
+>>> predicted_relations = model.predict(dev_data.get_text_and_entities())
+>>> f1score = kindred.evaluate(dev_data.get_relations(), prediction_relations, metric='f1score')
+
+PubAnnotation Example
+~~~~~~~~~~~~~~~~~~~~~
+
+>>> import kindred
+>>> train_data = kindred.pubannotation.get_data('2016-SeeDev-binary-training')
+>>> model = kindred.train(train_data)
+>>> text = 'A SeeDev related text goes here'
+>>> predicted_relations = model.predict(text)
+>>> print(predicted_relations)
 
 
 An example of using kindred from the command line with a set of ST files (e.g. BioNLP task)
