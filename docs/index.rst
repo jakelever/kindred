@@ -9,6 +9,6 @@ Welcome to kindred documentation!
 RelationClassifier
 ========================================
 
-.. automodule:: kindred
+.. automodule:: kindred.RelationClassifier
    :members:
 
