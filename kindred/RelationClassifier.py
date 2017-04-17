@@ -1,9 +1,18 @@
 
 class RelationClassifier:
+	"""
+	This is a class. Fantastic!
+	"""
 	def __init__(self):
+		"""
+		Constructor-time
+		"""
 		pass
 
 	def train(self,data):
+		"""
+		Does stuff
+		"""
 		assert isinstance(data,TextAndEntityData)
 
 	def predict(self,data):
