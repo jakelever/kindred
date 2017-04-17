@@ -1,8 +1,15 @@
 Kindred
 --------
 
-.. image:: https://travis-ci.org/jakelever/kindred.svg?branch=master   
-.. image:: https://readthedocs.org/projects/kindred/badge/?version=latest
+|build-status| |docs|
+
+.. |build-status| image:: https://travis-ci.org/jakelever/kindred.svg?branch=master
+   :target: https://travis-ci.org/jakelever/kindred
+   :alt: Travis CI status
+
+.. |docs| image:: https://readthedocs.org/projects/kindred/badge/
+   :target: https://readthedocs.org/projects/kindred
+   :alt: Documentation status
 
 Insert description of package here please
 
