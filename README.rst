@@ -1,12 +1,16 @@
 Kindred
 --------
 
-|build-status| |docs| |license|
+|build-status| |coverage| |docs| |license|
 
 .. |build-status| image:: https://travis-ci.org/jakelever/kindred.svg?branch=master
    :target: https://travis-ci.org/jakelever/kindred
    :alt: Travis CI status
 
+.. |coverage| image:: https://coveralls.io/repos/github/jakelever/kindred/badge.svg?branch=master
+   :target: https://coveralls.io/github/jakelever/kindred?branch=master
+   :alt: Coverage status
+   
 .. |docs| image:: https://readthedocs.org/projects/kindred/badge/
    :target: https://readthedocs.org/projects/kindred
    :alt: Documentation status
