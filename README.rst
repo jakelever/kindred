@@ -4,6 +4,8 @@ Kindred
 .. image:: https://travis-ci.org/jakelever/kindred.svg?branch=master   
 .. image:: https://readthedocs.org/projects/kindred/badge/?version=latest
 
+Insert description of package here please
+
 Installing
 ----------
 
