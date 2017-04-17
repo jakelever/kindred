@@ -59,3 +59,5 @@ def test_unicodeCheck():
 
 def test_simpleRelationCheck():
 	text = "<drug id=1>Erlotinib"
+	assert False
+	
