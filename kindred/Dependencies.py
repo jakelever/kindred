@@ -39,7 +39,7 @@ def initializeStanfordParser():
 					assert downloadedSHA256 == expectedSHA256
 					
 					if shortName.endswith('.zip'):
-						print "Unzipping %s" % shortName
+						print("Unzipping %s" % shortName)
 						zip_ref = zipfile.ZipFile(downloadedPath, 'r')
 						zip_ref.extractall(downloadDirectory)
 						zip_ref.close()
