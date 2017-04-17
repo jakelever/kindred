@@ -10,8 +10,11 @@ install:
   - pip install --upgrade pip setuptools wheel
   - pip install --only-binary=numpy,scipy numpy scipy
   - pip install pytest
+  - pip install python-coveralls
   - pip install .
 # command to run tests
 script:
   - py.test
+after_success:
+  - coveralls
 
