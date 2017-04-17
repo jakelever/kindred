@@ -1,14 +1,10 @@
 language: python
 python:
-  - "2.6"
   - "2.7"
-  - "3.2"
   - "3.3"
   - "3.4"
-  # PyPy versions
-  - "pypy"  # PyPy2 2.5.0
-  - "pypy3" # Pypy3 2.4.0
-  - "pypy-5.3.1"
+  - "3.5"
+  - "3.6"
 # command to install dependencies
 install:
   - pip install --upgrade pip setuptools wheel
