@@ -1,20 +1,14 @@
-.. kindred documentation master file, created by
-   sphinx-quickstart on Mon Apr 17 10:26:34 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to kindred's documentation!
-===================================
+Welcome to kindred documentation!
+=================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
 
+RelationClassifier
+========================================
 
-Indices and tables
-==================
+.. automodule:: kindred
+   :members:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
