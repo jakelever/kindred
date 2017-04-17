@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # kindred documentation build configuration file, created by
-# sphinx-quickstart on Sun Apr 16 22:11:10 2017.
+# sphinx-quickstart on Mon Apr 17 10:26:34 2017.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -34,7 +34,7 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
+    'sphinx.ext.imgmath',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages']
 
