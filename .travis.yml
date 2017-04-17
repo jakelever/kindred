@@ -9,7 +9,7 @@ python:
 # versions of java to test (for parsers)
 before_install:
   - sudo apt-get update
-  - sudo apt-get install oracle-java8-installer
+  - sudo apt-get install oracle-java8-installer oracle-java8-set-default
 # command to install dependencies
 install:
   - pip install --upgrade pip setuptools wheel
