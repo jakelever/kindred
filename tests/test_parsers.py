@@ -31,9 +31,16 @@ def test_maltParser():
 	kindred.Dependencies.initializeMaltParser()
 	maltParser = kindred.Dependencies.getMaltParser()
 	
-	parsed = parser.parse('I shot an elephant in my pajamas .'.split())
+	text = "Colourless green ideas sleep furiously"
+	
+	depParses = maltParser.parse(text.split())
+	depParses = list(depParses)
+	assert len(depParses) == 1
+	
+	depParse = depParses[0]
+	assert depParse.tree().__str__() == "(sleep Colourless green ideas furiously)"
 
 if __name__ == '__main__':
-	test_stanfordDependencyParser()
-	#test_maltParser()
+	#test_stanfordDependencyParser()
+	test_maltParser()
 	
