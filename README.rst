@@ -12,7 +12,7 @@ Kindred
    :alt: Coverage status
    
 .. |docs| image:: https://readthedocs.org/projects/kindred/badge/
-   :target: https://readthedocs.org/projects/kindred
+   :target: http://kindred.readthedocs.io/
    :alt: Documentation status
    
 .. |license| image:: https://img.shields.io/badge/License-MIT-blue.svg
