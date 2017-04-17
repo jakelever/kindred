@@ -53,7 +53,11 @@ def initializeStanfordParser():
 		parserJar = findFile('stanford-parser.jar',downloadDirectory)
 		modelsJar = findFile('stanford-parser-3.7.0-models.jar',downloadDirectory)
 				
-		os.environ["CLASSPATH"] += ":%s:%s" % (parserJar,modelsJar)
+		if "CLASSPATH" in os.environ:
+			os.environ["CLASSPATH"] = "%s:%s:%s" % (parserJar,modelsJar,os.environ["CLASSPATH"])
+		else:
+			os.environ["CLASSPATH"] = "%s:%s" % (parserJar,modelsJar)
+			
 		
 		stanfordParserInitialised = True
 		
