@@ -5,6 +5,9 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+# versions of java to test (for parsers)
+jdk:
+  - oraclejdk8
 # command to install dependencies
 install:
   - pip install --upgrade pip setuptools wheel
