@@ -23,4 +23,6 @@ script:
   - py.test -v
 after_success:
   - coveralls
-
+env:
+  global:
+    - JAVA_HOME=/usr/lib/jvm/java-8-oracle
