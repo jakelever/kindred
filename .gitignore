@@ -10,3 +10,6 @@
 # Sphinx documentation
 docs/_build/
 
+downloaded/
+
+.cache/
