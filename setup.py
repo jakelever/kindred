@@ -34,5 +34,7 @@ setup(name='kindred',
 	packages=['kindred'],
 	install_requires=['nltk','scikit-learn','numpy','scipy'],
 	include_package_data=True,
-	zip_safe=False)
+	zip_safe=False,
+	test_suite='nose.collector',
+	tests_require=['nose'])
 
