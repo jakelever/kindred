@@ -174,4 +174,12 @@ texinfo_documents = [
 ]
 
 
+# Make sure that all public methods are documented (including the constructor)
+def skip(app, what, name, obj, skip, options):
+	if name == "__init__" or name[0] != '_':
+		return False
+	return skip
+
+def setup(app):
+	app.connect("autodoc-skip-member", skip)
 
