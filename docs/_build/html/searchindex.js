@@ -1,1 +1,0 @@
-Search.setIndex({docnames:["index"],envversion:50,filenames:["index.rst"],objects:{"":{kindred:[0,0,0,"-"]}},objnames:{"0":["py","module","Python module"]},objtypes:{"0":"py:module"},terms:{index:[],modul:[],page:[],search:[]},titles:["Welcome to kindred documentation!"],titleterms:{document:0,indic:[],kindr:0,relationclassifi:0,tabl:[],welcom:0}})
