@@ -42,7 +42,6 @@ class RelationClassifier:
 		allClasses = [ c for c in allClasses if c != 0 ]
 		
 		self.allClasses = allClasses
-		print allClasses
 		
 		# TODO: Should we take into account the argument count when grouping classifiers?
 		self.clfs = {}

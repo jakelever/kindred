@@ -5,6 +5,7 @@ from kindred.CandidateBuilder import CandidateBuilder
 from kindred.Vectorizer import Vectorizer
 from kindred.Parser import Parser
 from kindred.RelationClassifier import RelationClassifier
+from kindred.Evaluator import Evaluator
 
 def test_bionlpst():
 	trainData = kindred.BioNLPSTData('2016-BB3-event-training')
@@ -290,12 +291,10 @@ def test_simpleRelationCheck():
 	classifier.train(trainData)
 	
 	predictedRelations = classifier.predict(testData_TextAndEntities)
-	print testData_Relations
-	print predictedRelations
 	
 	evaluator = Evaluator()
 	f1score = evaluator.evaluate(testData_Relations, predictedRelations, metric='f1score')
-	#assert f1score > 0.5
+	assert f1score == 1.0
 	
 	
 if __name__ == '__main__':
