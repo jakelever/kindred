@@ -1,6 +1,5 @@
 import kindred
 import random
-import kindred.utils
 #from kindred import TextAndEntityData
 
 def test_bionlpst():
@@ -66,14 +65,14 @@ def test_exportToST():
 def test_simpleRelationCheck():
 	random.seed(1)
 
-	positivePatterns = ["<drug id=1>DRUG</drug> treats <disease id=2>DISEASE</disease>",
-						"<drug id=1>DRUG</drug> is a common treatment for <disease id=2>DISEASE</disease>",
-						"<drug id=1>DRUG</drug> is often used for <disease id=2>DISEASE</disease>",
-						"<disease id=2>DISEASE</disease> can be treated with <drug id=1>DRUG</drug>"]
-	negativePatterns = ["<drug id=1>DRUG</drug> and <disease id=2>DISEASE</disease> were discovered by the same researcher",
-						"<drug id=1>DRUG</drug> is the main cause of <disease id=2>DISEASE</disease>",
-						"<drug id=1>DRUG</drug> failed clinical trials for <disease id=2>DISEASE</disease>",
-						"<disease id=2>DISEASE</disease> is a known side effect of <drug id=1>DRUG</drug>"]
+	positivePatterns = ["<drug id=1>DRUG</drug> treats <disease id=2>DISEASE</disease>.",
+						"<drug id=1>DRUG</drug> is a common treatment for <disease id=2>DISEASE</disease>.",
+						"<drug id=1>DRUG</drug> is often used for <disease id=2>DISEASE</disease>.",
+						"<disease id=2>DISEASE</disease> can be treated with <drug id=1>DRUG</drug>."]
+	negativePatterns = ["<drug id=1>DRUG</drug> and <disease id=2>DISEASE</disease> were discovered by the same researcher.",
+						"<drug id=1>DRUG</drug> is the main cause of <disease id=2>DISEASE</disease>.",
+						"<drug id=1>DRUG</drug> failed clinical trials for <disease id=2>DISEASE</disease>.",
+						"<disease id=2>DISEASE</disease> is a known side effect of <drug id=1>DRUG</drug>."]
 						
 	fakeDrugNames = ['bmzvpvwbpw','pehhjnlvve''wbjccovflf','usckfljzxu','ruswdgzajr','vgypkemhjr','oxzbaapqct','elvptnpvyc']
 	fakeDiseaseNames = ['gnorcyvmer','hfymprbifs','ootopaoxbg','knetvjnjun','kfjqxlpvew','zgwivlcmly','kneqlzjegs','kyekjnkrfo']
@@ -83,24 +82,27 @@ def test_simpleRelationCheck():
 	totalCount = positiveCount + negativeCount
 	
 	data = []
-	for _ in range(100):
+	for _ in range(positiveCount):
 		text = random.choice(positivePatterns)
 		text = text.replace('DRUG',random.choice(fakeDrugNames))
 		text = text.replace('DISEASE',random.choice(fakeDiseaseNames))
 		
 		relations = [ (1,2,'treats') ]
 		
-		converted = kindred.utils.convertTaggedTextAndRelations(text,relations)
+		converted = kindred.RelationData(text,relations)
 		data.append(converted)
 		
-	for _ in range(100):
-		text = random.choice(negativePatterns)
-		text = text.replace('DRUG',random.choice(fakeDrugNames))
-		text = text.replace('DISEASE',random.choice(fakeDiseaseNames))
+	for _ in range(negativeCount/2):
+		combinedText = ""
+		for _ in range(2):
+			text = random.choice(negativePatterns)
+			text = text.replace('DRUG',random.choice(fakeDrugNames))
+			text = text.replace('DISEASE',random.choice(fakeDiseaseNames))
+			combinedText = "%s %s" % (combinedText,text)
 		
 		relations = [ ]
 		
-		converted = kindred.utils.convertTaggedTextAndRelations(text,relations)
+		converted = kindred.RelationData(combinedText,relations)
 		data.append(converted)
 		
 	trainIndices = random.sample(range(totalCount),totalCount/2)
@@ -120,4 +122,4 @@ def test_simpleRelationCheck():
 	assert f1score > 0.5
 	
 if __name__ == '__main__':
-	test_convertedTaggedTextWithRelations()
+	test_simpleRelationCheck()
