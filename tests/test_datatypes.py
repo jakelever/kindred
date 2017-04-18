@@ -18,8 +18,8 @@ def test_convertTaggedText():
 	for e in entities:
 		assert isinstance(e,kindred.Entity)
 
-	assert entities[0] == kindred.Entity(entityType='drug',entityID=1,text='Erlotinib',pos=[(0,9)])
-	assert entities[1] == kindred.Entity(entityType='cancer',entityID=2,text='NSCLC',pos=[(36,41)])
+	assert entities[0] == kindred.Entity(entityType='drug',entityID=1,text='Erlotinib',pos=[(0,9)]), "(%s) not as expected" % (entities[0].__str__())
+	assert entities[1] == kindred.Entity(entityType='cancer',entityID=2,text='NSCLC',pos=[(36,41)]), "(%s) not as expected" % (entities[1].__str__())
 
 	text = converted.getText()
 	#assert isinstance(text,unicode) # Python3 issue here
