@@ -13,3 +13,6 @@ docs/_build/
 downloaded/
 
 .cache/
+
+# Unit test / coverage reports
+.coverage

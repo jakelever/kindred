@@ -13,12 +13,13 @@ before_install:
 install:
   - pip install --upgrade pip setuptools wheel
   - pip install --only-binary=numpy,scipy numpy scipy
-  - pip install pytest
+  - pip install pytest coverage
   - pip install python-coveralls
   - pip install .
 # command to run tests
 script:
   - java -version
+  - coverage run --branch -m pytest && coverage report -m
   - py.test -v
 after_success:
   - coveralls
