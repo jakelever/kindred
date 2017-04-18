@@ -35,7 +35,8 @@ def generateData(positiveCount=100,negativeCount=100):
 		converted = kindred.RelationData(text,relations)
 		data.append(converted)
 		
-	for _ in range(negativeCount/2):
+	halfNegativeCount = int(negativeCount/2.0)
+	for _ in range(halfNegativeCount):
 		combinedText = ""
 		for _ in range(2):
 			text = random.choice(negativePatterns)
@@ -58,7 +59,8 @@ def generateData(positiveCount=100,negativeCount=100):
 def generateTestData(positiveCount = 100,negativeCount = 100):
 	data = generateData(positiveCount, negativeCount)
 		
-	trainIndices = random.sample(range(len(data)),len(data)/2)
+	halfDataCount = int(len(data)/2.0)
+	trainIndices = random.sample(range(len(data)),halfDataCount)
 	testIndices = [ i for i in range(len(data)) if not i in trainIndices ]
 	
 	trainData = [ data[i] for i in trainIndices ]
