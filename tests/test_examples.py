@@ -2,6 +2,7 @@ import kindred
 import random
 #from kindred import TextAndEntityData
 from kindred.CandidateBuilder import CandidateBuilder
+from kindred.Parser import Parser
 
 def test_bionlpst():
 	trainData = kindred.BioNLPSTData('2016-BB3-event-training')
@@ -82,7 +83,7 @@ def test_unicodeCheck():
 def test_exportToST():
 	assert False
 
-def generateTestData(positiveCount = 100,negativeCount = 100):
+def generateData(positiveCount=100,negativeCount=100):
 	random.seed(1)
 
 	positivePatterns = ["<drug id=1>DRUG</drug> treats <disease id=2>DISEASE</disease>.",
@@ -123,6 +124,11 @@ def generateTestData(positiveCount = 100,negativeCount = 100):
 		converted = kindred.RelationData(combinedText,relations)
 		data.append(converted)
 		
+	return data
+	
+def generateTestData(positiveCount = 100,negativeCount = 100):
+	data = generateData(positiveCount, negativeCount)
+		
 	trainIndices = random.sample(range(len(data)),len(data)/2)
 	testIndices = [ i for i in range(len(data)) if not i in trainIndices ]
 	
@@ -131,11 +137,42 @@ def generateTestData(positiveCount = 100,negativeCount = 100):
 	
 	return trainData, testData
 	
+	
+def test_simpleSentenceParses():
+	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>lung</cancer> and unknown <cancer id=2>cancers</cancer>"
+	data = [kindred.TextAndEntityData(text)]
+	
+	parser = Parser()
+	parsedSentencesWithEntities = parser.parse(data)
+	
+	assert isinstance(parsedSentencesWithEntities,list)
+	assert len(parsedSentencesWithEntities) == 1
+	
+	parsedSentenceWithEntities = parsedSentencesWithEntities[0]
+	assert isinstance(parsedSentenceWithEntities,kindred.ParsedSentenceWithEntities)
+	
+	expectedWords = "Erlotinib is a common treatment for lung and unknown cancers".split()
+	assert isinstance(parsedSentenceWithEntities.tokens,list)
+	assert len(expectedWords) == len(parsedSentenceWithEntities.tokens)
+	for w,t in zip(expectedWords,parsedSentenceWithEntities.tokens):
+		assert isinstance(t,kindred.Token)
+		assert len(t.lemma) > 0
+		assert w == t.word
+		
+	assert isinstance(parsedSentenceWithEntities.entityLocs,dict)
+	assert isinstance(parsedSentenceWithEntities.entityTypes,dict)
+	
+	assert parsedSentenceWithEntities.entityLocs == {1: [0], 2: [6, 9]}
+	assert parsedSentenceWithEntities.entityTypes == {1: 'drug', 2: 'cancer'}
+	
+	assert isinstance(parsedSentenceWithEntities.dependencies,list)
+	assert len(parsedSentenceWithEntities.dependencies) > 0
+	
 def test_simpleRelationCandidates():
 	trainData, testData = generateTestData()
 	
 	candidateGenerator = CandidateBuilder()
-	candidates = CandidateBuilder.build(trainData)
+	candidates = candidateGenerator.build(trainData)
 	
 	
 	
@@ -153,4 +190,4 @@ def test_simpleRelationCheck():
 	assert f1score > 0.5
 	
 if __name__ == '__main__':
-	test_convertTaggedTextWithSplitEntities()
+	test_simpleSentenceParses()
