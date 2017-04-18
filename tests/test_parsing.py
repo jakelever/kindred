@@ -3,11 +3,7 @@ from nltk.parse.stanford import StanfordDependencyParser
 
 import kindred
 import kindred.Dependencies
-from kindred.CandidateBuilder import CandidateBuilder
-from kindred.Vectorizer import Vectorizer
 from kindred.Parser import Parser
-from kindred.RelationClassifier import RelationClassifier
-from kindred.Evaluator import Evaluator
 
 from datageneration import *
 
