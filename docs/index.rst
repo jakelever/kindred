@@ -7,8 +7,13 @@ Welcome to kindred documentation!
 
 
 RelationClassifier
-========================================
+------------------
 
 .. automodule:: kindred.RelationClassifier
+   :members:
+
+Entity
+------
+.. automodule:: kindred.Entity
    :members:
 
