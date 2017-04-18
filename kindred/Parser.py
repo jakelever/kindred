@@ -24,9 +24,9 @@ class Parser:
 				for a,b in e.pos:
 					denotationTree[a:b] = e.entityID
 					
-			parses = nltkutils.parseSentences(d.getText())
+			sentences = nltkutils.parseSentences(d.getText())
 			
-			for tokens,dependencies in parses:
+			for tokens,dependencies in sentences:
 				entityLocations = defaultdict(list)
 				for i,t in enumerate(tokens):
 					entities = denotationTree[t.startPos:t.endPos]
@@ -41,7 +41,19 @@ class Parser:
 					entityLocs[entityID] = locs
 					entityTypes[entityID] = entityType
 					
-				sentenceData = kindred.ParsedSentenceWithEntities(tokens, dependencies, entityLocs, entityTypes)
+				relations = []
+				# Let's also put in the relation information if we can get it
+				if isinstance(d,kindred.RelationData):
+					tmpRelations = d.getRelations()
+					entitiesInSentence = entityLocs.keys()
+					for tmpRelation in tmpRelations:
+						relationType = tmpRelation[0]
+						relationEntityIDs = tmpRelation[1:]
+						matched = [ (relationEntityID in entitiesInSentence) for relationEntityID in relationEntityIDs ]
+						if all(matched):
+							relations.append(tmpRelation)
+					
+				sentenceData = kindred.ProcessedSentence(tokens, dependencies, entityLocs, entityTypes, relations)
 				allSentenceData.append(sentenceData)
 		return allSentenceData
 	

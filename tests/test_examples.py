@@ -19,6 +19,9 @@ def test_pubannotation():
 	predictedRelations = model.predict(text)
 	assert len(predicted_relations) == 1
 
+def test_pubmed():
+	assert False
+	
 def test_convertTaggedText():
 	#text = 'The <drug><disease>Erlotinib</disease></drug> is a common treatment for <cancer>NSCLC</cancer> patients'
 	text = "<drug>Erlotinib</drug> is a common treatment for <cancer>NSCLC</cancer>"
@@ -138,43 +141,107 @@ def generateTestData(positiveCount = 100,negativeCount = 100):
 	return trainData, testData
 	
 	
-def test_simpleSentenceParses():
+def test_simpleSentenceParse():
 	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>lung</cancer> and unknown <cancer id=2>cancers</cancer>"
 	data = [kindred.TextAndEntityData(text)]
 	
 	parser = Parser()
-	parsedSentencesWithEntities = parser.parse(data)
+	processedSentences = parser.parse(data)
 	
-	assert isinstance(parsedSentencesWithEntities,list)
-	assert len(parsedSentencesWithEntities) == 1
+	assert isinstance(processedSentences,list)
+	assert len(processedSentences) == 1
 	
-	parsedSentenceWithEntities = parsedSentencesWithEntities[0]
-	assert isinstance(parsedSentenceWithEntities,kindred.ParsedSentenceWithEntities)
+	processedSentence = processedSentences[0]
+	assert isinstance(processedSentence,kindred.ProcessedSentence)
 	
 	expectedWords = "Erlotinib is a common treatment for lung and unknown cancers".split()
-	assert isinstance(parsedSentenceWithEntities.tokens,list)
-	assert len(expectedWords) == len(parsedSentenceWithEntities.tokens)
-	for w,t in zip(expectedWords,parsedSentenceWithEntities.tokens):
+	assert isinstance(processedSentence.tokens,list)
+	assert len(expectedWords) == len(processedSentence.tokens)
+	for w,t in zip(expectedWords,processedSentence.tokens):
 		assert isinstance(t,kindred.Token)
 		assert len(t.lemma) > 0
 		assert w == t.word
 		
-	assert isinstance(parsedSentenceWithEntities.entityLocs,dict)
-	assert isinstance(parsedSentenceWithEntities.entityTypes,dict)
+	assert isinstance(processedSentence.entityLocs,dict)
+	assert isinstance(processedSentence.entityTypes,dict)
 	
-	assert parsedSentenceWithEntities.entityLocs == {1: [0], 2: [6, 9]}
-	assert parsedSentenceWithEntities.entityTypes == {1: 'drug', 2: 'cancer'}
+	assert processedSentence.entityLocs == {1: [0], 2: [6, 9]}
+	assert processedSentence.entityTypes == {1: 'drug', 2: 'cancer'}
 	
-	assert isinstance(parsedSentenceWithEntities.dependencies,list)
-	assert len(parsedSentenceWithEntities.dependencies) > 0
+	assert isinstance(processedSentence.dependencies,list)
+	assert len(processedSentence.dependencies) > 0
+	
+	
+def test_twoSentenceParse():
+	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>NSCLC</cancer>. <drug id=3>Aspirin</drug> is the main cause of <disease id=4>boneitis</disease>."
+	data = [kindred.TextAndEntityData(text)]
+	
+	parser = Parser()
+	processedSentences = parser.parse(data)
+	
+	assert isinstance(processedSentences,list)
+	assert len(processedSentences) == 2
+	
+	# Check types
+	for processedSentence in processedSentences:
+		assert isinstance(processedSentence,kindred.ProcessedSentence)
+		assert isinstance(processedSentence.tokens,list)
+		for t in processedSentence.tokens:
+			assert isinstance(t,kindred.Token)
+			assert len(t.lemma) > 0
+		assert isinstance(processedSentence.entityLocs,dict)
+		assert isinstance(processedSentence.entityTypes,dict)
+		assert isinstance(processedSentence.dependencies,list)
+		assert len(processedSentence.dependencies) > 0
+		
+		
+	# First sentence
+	expectedWords = "Erlotinib is a common treatment for NSCLC .".split()
+	processedSentence0 = processedSentences[0]
+	assert len(expectedWords) == len(processedSentence0.tokens)
+	for w,t in zip(expectedWords,processedSentence0.tokens):
+		assert w == t.word
+		
+	assert processedSentence0.entityLocs == {1: [0], 2: [6]}
+	assert processedSentence0.entityTypes == {1: 'drug', 2: 'cancer'}
+	
+	
+	# Second sentence	
+	expectedWords = "Aspirin is the main cause of boneitis .".split()
+	processedSentence1 = processedSentences[1]
+	
+	assert len(expectedWords) == len(processedSentence1.tokens)
+	for w,t in zip(expectedWords,processedSentence1.tokens):
+		assert w == t.word
+		
+	assert processedSentence1.entityLocs == {3: [0], 4: [6]}
+	assert processedSentence1.entityTypes == {3: 'drug', 4: 'disease'}
 	
 def test_simpleRelationCandidates():
-	trainData, testData = generateTestData()
+	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>NSCLC</cancer>. <drug id=3>Aspirin</drug> is the main cause of <disease id=4>boneitis</disease> ."
+	relations = [ ('treats',1,2) ]
+
+	data = [kindred.RelationData(text,relations)]	
 	
 	candidateGenerator = CandidateBuilder()
-	candidates = candidateGenerator.build(trainData)
+	relTypes,candidateRelations,candidateClasses = candidateGenerator.build(data)
 	
+	assert relTypes == [('treats', 2)]
+	assert candidateClasses == [[1], 0, 0, 0]
+	assert len(candidateRelations) == 4
 	
+	assert str(candidateRelations[0].processedSentence) == 'Erlotinib is a common treatment for NSCLC .'
+	assert str(candidateRelations[1].processedSentence) == 'Erlotinib is a common treatment for NSCLC .'
+	assert str(candidateRelations[2].processedSentence) == 'Aspirin is the main cause of boneitis .'
+	assert str(candidateRelations[3].processedSentence) == 'Aspirin is the main cause of boneitis .'
+	
+	assert candidateRelations[0].entitiesInRelation == (1, 2)
+	assert candidateRelations[1].entitiesInRelation == (2, 1)
+	assert candidateRelations[2].entitiesInRelation == (3, 4)
+	assert candidateRelations[3].entitiesInRelation == (4, 3)
+	
+def test_naryRelations():
+	assert False
 	
 def test_simpleRelationCheck():
 	trainData, testData = generateTestData()
@@ -189,5 +256,6 @@ def test_simpleRelationCheck():
 	f1score = kindred.evaluate(dev_data.getRelations(), predictionRelations, metric='f1score')
 	assert f1score > 0.5
 	
+	
 if __name__ == '__main__':
-	test_simpleSentenceParses()
+	test_simpleRelationCandidates()

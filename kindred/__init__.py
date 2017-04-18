@@ -154,11 +154,25 @@ class RelationData:
 	def getRelations(self):
 		return self.relations
 	
-class Candidate(TextAndEntityData):
-	def __init__(textAndEntityData):
-		assert isinstance(textAndEntityData,TextAndEntityData)
-		self.text = textAndEntityData.getText()
-		self.entities = textAndEntityData.getEntities()
+class CandidateRelation:
+	def __init__(self,processedSentence,entitiesInRelation):
+		assert isinstance(processedSentence,ProcessedSentence)
+		assert isinstance(entitiesInRelation,tuple)
+		assert len(entitiesInRelation) > 1
+		
+		entitiesInSentence = processedSentence.getEntityIDs()
+		
+		for entityID in entitiesInRelation:
+			assert entityID in entitiesInSentence, "All entities in candidate relation should actually be in the associated sentence"
+			
+		self.processedSentence = processedSentence
+		self.entitiesInRelation = entitiesInRelation
+		
+	def __str__(self):
+		return str((self.processedSentence.__str__(),self.entitiesInRelation))
+		
+	def __repr__(self):
+		return self.__str__()
 		
 	
 class Token:
@@ -175,7 +189,7 @@ class Token:
 	def __repr__(self):
 		return self.__str__()
 
-class ParsedSentenceWithEntities:
+class ProcessedSentence:
 	# TODO: Camelcase consistency in this class
 
 	def printDependencyGraph(self):
@@ -283,7 +297,10 @@ class ParsedSentenceWithEntities:
 			self.locsToTriggerIDs[tuple(locs)] = triggerid
 			self.locsToTriggerTypes[tuple(locs)] = type
 
-	def __init__(self, tokens, dependencies, entityLocs, entityTypes):
+	def getEntityIDs(self):
+		return self.entityLocs.keys()
+			
+	def __init__(self, tokens, dependencies, entityLocs, entityTypes, relations=[]):
 		assert isinstance(tokens, list) 
 		assert isinstance(dependencies, list) 
 		assert isinstance(entityLocs, dict) 
@@ -295,6 +312,14 @@ class ParsedSentenceWithEntities:
 		self.entityLocs = entityLocs
 		self.entityTypes = entityTypes
 		self.dependencies = dependencies
+		
+		entitiesInSentence = self.getEntityIDs()
+		for r in relations:
+			relationEntityIDs = r[1:]
+			for relationEntityID in relationEntityIDs:
+				assert relationEntityID in entitiesInSentence, "Relation cannot contain entity not in this sentence"
+		
+		self.relations = relations
 	
 		self.invertTriggers()
 
