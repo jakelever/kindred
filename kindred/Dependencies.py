@@ -1,9 +1,14 @@
-import urllib
+
 import zipfile
 import hashlib
 import os
 import sys
 from nltk.parse import malt
+
+if sys.version_info >= (3, 0):
+	import urllib.request
+else:
+	import urllib
 
 def _calcSHA256(filename):
 	return hashlib.sha256(open(filename, 'rb').read()).hexdigest()
@@ -32,10 +37,13 @@ def _downloadFiles(files):
 		if not os.path.isfile(downloadedPath):
 		
 			try:
-				downloadedFile = urllib.URLopener()
 				print("Downloading %s" % shortName)
-				downloadedFile.retrieve(url,downloadedPath)
-			
+				if sys.version_info >= (3, 0):
+					urllib.request.urlretrieve(url,downloadedPath)
+				else:
+					downloadedFile = urllib.URLopener()
+					downloadedFile.retrieve(url,downloadedPath)
+				
 				downloadedSHA256 = _calcSHA256(downloadedPath)
 				assert downloadedSHA256 == expectedSHA256
 				
