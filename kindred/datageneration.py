@@ -1,4 +1,5 @@
 import random
+
 import kindred
 
 def generateData(positiveCount=100,negativeCount=100):

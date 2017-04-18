@@ -5,7 +5,7 @@ from kindred.Parser import Parser
 from kindred.RelationClassifier import RelationClassifier
 from kindred.Evaluator import Evaluator
 
-from datageneration import *
+from kindred.datageneration import generateData,generateTestData
 
 #def test_bionlpst():
 #	trainData = kindred.BioNLPSTData('2016-BB3-event-training')

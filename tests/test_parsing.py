@@ -5,7 +5,7 @@ import kindred
 import kindred.Dependencies
 from kindred.Parser import Parser
 
-from datageneration import *
+from kindred.datageneration import generateData,generateTestData
 
 def test_stanfordDependencyParser():
 	kindred.Dependencies.initializeStanfordParser()

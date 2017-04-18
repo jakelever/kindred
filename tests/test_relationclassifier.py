@@ -2,7 +2,7 @@ import kindred
 from kindred.RelationClassifier import RelationClassifier
 from kindred.Evaluator import Evaluator
 
-from datageneration import *
+from kindred.datageneration import generateData,generateTestData
 
 def test_simpleRelationClassifier():
 	trainData, testData = generateTestData(positiveCount=5,negativeCount=5)
