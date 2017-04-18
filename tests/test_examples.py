@@ -62,7 +62,7 @@ def test_unicodeCheck():
 def test_exportToST():
 	assert False
 
-def test_simpleRelationCheck():
+def generateTestData(positiveCount = 100,negativeCount = 100):
 	random.seed(1)
 
 	positivePatterns = ["<drug id=1>DRUG</drug> treats <disease id=2>DISEASE</disease>.",
@@ -77,8 +77,6 @@ def test_simpleRelationCheck():
 	fakeDrugNames = ['bmzvpvwbpw','pehhjnlvve''wbjccovflf','usckfljzxu','ruswdgzajr','vgypkemhjr','oxzbaapqct','elvptnpvyc']
 	fakeDiseaseNames = ['gnorcyvmer','hfymprbifs','ootopaoxbg','knetvjnjun','kfjqxlpvew','zgwivlcmly','kneqlzjegs','kyekjnkrfo']
 	
-	positiveCount = 100
-	negativeCount = 100
 	totalCount = positiveCount + negativeCount
 	
 	data = []
@@ -92,7 +90,7 @@ def test_simpleRelationCheck():
 		converted = kindred.RelationData(text,relations)
 		data.append(converted)
 		
-	for _ in range(negativeCount*2):
+	for _ in range(negativeCount/2):
 		combinedText = ""
 		for _ in range(2):
 			text = random.choice(negativePatterns)
@@ -110,6 +108,11 @@ def test_simpleRelationCheck():
 	
 	trainData = [ data[i] for i in trainIndices ]
 	testData = [ data[i] for i in testIndices ]
+	
+	return trainData, testData
+	
+def test_simpleRelationCheck():
+	trainData, testData = generateTestData()
 	
 	testData_TextAndEntities = [ d.getTextAndEntities() for d in testData ]
 	testData_Relations = [ d.getRelations() for d in testData ]
