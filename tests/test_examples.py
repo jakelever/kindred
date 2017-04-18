@@ -1,6 +1,7 @@
 import kindred
 import random
 #from kindred import TextAndEntityData
+from kindred.CandidateGenerator import CandidateGenerator
 
 def test_bionlpst():
 	trainData = kindred.BioNLPSTData('2016-BB3-event-training')
@@ -111,6 +112,14 @@ def generateTestData(positiveCount = 100,negativeCount = 100):
 	
 	return trainData, testData
 	
+def test_simpleRelationCandidates():
+	trainData, testData = generateTestData()
+	
+	candidateGenerator = CandidateGenerator()
+	candidates = candidateGenerator.generate(trainData)
+	
+	
+	
 def test_simpleRelationCheck():
 	trainData, testData = generateTestData()
 	
@@ -125,4 +134,4 @@ def test_simpleRelationCheck():
 	assert f1score > 0.5
 	
 if __name__ == '__main__':
-	test_simpleRelationCheck()
+	test_simpleRelationCandidates()

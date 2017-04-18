@@ -3,6 +3,9 @@ from kindred import *
 import xml.etree.ElementTree
 import sys
 
+from kindred import CandidateGenerator
+
+
 class Entity:
 	def __init__(self,entityType,entityID,text,start,end):
 		self.entityType = entityType
@@ -124,5 +127,11 @@ class RelationData:
 	def getRelations(self):
 		return self.relations
 	
+class Candidate(TextAndEntityData):
+	def __init__(textAndEntityData):
+		assert isinstance(textAndEntityData,TextAndEntityData)
+		self.text = textAndEntityData.getText()
+		self.entities = textAndEntityData.getEntities()
+		
 	
 		
