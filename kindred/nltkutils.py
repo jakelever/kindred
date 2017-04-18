@@ -65,7 +65,8 @@ def parseSentences(text):
 		Dependencies.initializeStanfordParser()
 		depparser = StanfordDependencyParser(model_path="edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
 
-	text = text.encode('ascii','ignore')
+	#TODO: Deal with Unicode issues gracefully in Python2/3
+	#text = text.encode('ascii','ignore')
 		
 	sentences = nltk.tokenize.sent_tokenize(text)
 	tokenSets = [ nltk.word_tokenize(s) for s in sentences ]
