@@ -69,7 +69,7 @@ class TextAndEntityData:
 						entityText = currentText[entityStart:]
 						#entity = Entity(entityType,entityID,entityText,pos=[(entityStart,entityEnd)])
 						#entities.append(entity)
-						key = (entityType,entityID)
+						key = (entityID,entityType)
 						if key in preEntities:
 							preEntities[key]['text'] += ' ' + entityText
 							preEntities[key]['pos'].append((entityStart,entityEnd))
@@ -107,7 +107,9 @@ class TextAndEntityData:
 		assert len(openTags) == 0, "All tags were not closed in %s" % text
 		
 		entities = []
-		for (entityType,entityID),entityInfo in preEntities.items():
+		preEntitiesKeys = sorted(list(preEntities.keys()))
+		for (entityID,entityType) in preEntitiesKeys:
+			entityInfo = preEntities[(entityID,entityType)]
 			entity = Entity(entityType,entityID,entityInfo['text'],entityInfo['pos'])
 			entities.append(entity)
 		
