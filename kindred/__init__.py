@@ -3,19 +3,30 @@ from kindred import *
 import xml.etree.ElementTree
 import sys
 
-from kindred import CandidateGenerator
+from kindred import CandidateBuilder
 
 
 class Entity:
-	def __init__(self,entityType,entityID,text,start,end):
+	def __init__(self,entityType,entityID,text,pos):
+		posErrorMsg = "Entity position must be list of tuples (startPos,endPos)"
+	
+		assert isinstance(entityType,str)
+		assert isinstance(entityID,int)
+		assert isinstance(text,str)
+		assert isinstance(pos,list), posErrorMsg
+		for p in pos:
+			assert isinstance(p,tuple), posErrorMsg
+			assert len(p) == 2, posErrorMsg
+			assert isinstance(p[0],int), posErrorMsg
+			assert isinstance(p[1],int), posErrorMsg
+	
 		self.entityType = entityType
 		self.entityID = entityID
 		self.text = text
-		self.start = start
-		self.end = end
+		self.pos = pos
 		
 	def __str__(self):
-		out = "%s:'%s' id=%d (%d:%d)" % (self.entityType,self.text,self.entityID,self.start,self.end)
+		out = "%s:'%s' id=%d %s" % (self.entityType,self.text,self.entityID,str(self.pos))
 		return out
 		
 	def __repr__(self):
@@ -50,7 +61,8 @@ class TextAndEntityData:
 		currentText = ""
 		openTags = {}
 		minID = 1
-		entities = []
+		
+		preEntities = {}
 		for section in split:
 			if isTag:
 				tagSplit = section.split(' ')
@@ -63,8 +75,18 @@ class TextAndEntityData:
 						entityStart,entityID = openTags[entityType]
 						entityEnd = len(currentText)
 						entityText = currentText[entityStart:]
-						entity = Entity(entityType,entityID,entityText,entityStart,entityEnd)
-						entities.append(entity)
+						#entity = Entity(entityType,entityID,entityText,pos=[(entityStart,entityEnd)])
+						#entities.append(entity)
+						key = (entityType,entityID)
+						if key in preEntities:
+							preEntities[key]['text'] += ' ' + entityText
+							preEntities[key]['pos'].append((entityStart,entityEnd))
+						else:
+							preEntities[key] = {}
+							preEntities[key]['text'] = entityText
+							preEntities[key]['pos'] = [(entityStart,entityEnd)]
+						
+						
 						del openTags[entityType]
 					else: # open a tag
 						assert tagStyle != 2, "Cannot mix entity tags with and without IDs"
@@ -91,6 +113,11 @@ class TextAndEntityData:
 			isTag = not isTag
 			
 		assert len(openTags) == 0, "All tags were not closed in %s" % text
+		
+		entities = []
+		for (entityType,entityID),entityInfo in preEntities.iteritems():
+			entity = Entity(entityType,entityID,entityInfo['text'],entityInfo['pos'])
+			entities.append(entity)
 		
 		self.text = currentText
 		self.entities = entities

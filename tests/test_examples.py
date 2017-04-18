@@ -1,7 +1,7 @@
 import kindred
 import random
 #from kindred import TextAndEntityData
-from kindred.CandidateGenerator import CandidateGenerator
+from kindred.CandidateBuilder import CandidateBuilder
 
 def test_bionlpst():
 	trainData = kindred.BioNLPSTData('2016-BB3-event-training')
@@ -29,12 +29,31 @@ def test_convertTaggedText():
 	for e in entities:
 		assert isinstance(e,kindred.Entity)
 
-	assert entities[0] == kindred.Entity(entityType='drug',entityID=1,text='Erlotinib',start=0,end=9)
-	assert entities[1] == kindred.Entity(entityType='cancer',entityID=2,text='NSCLC',start=36,end=41)
+	assert entities[0] == kindred.Entity(entityType='drug',entityID=1,text='Erlotinib',pos=[(0,9)])
+	assert entities[1] == kindred.Entity(entityType='cancer',entityID=2,text='NSCLC',pos=[(36,41)])
 
 	text = converted.getText()
 	#assert isinstance(text,unicode) # Python3 issue here
 	assert text == "Erlotinib is a common treatment for NSCLC"
+	
+	
+def test_convertTaggedTextWithSplitEntities():
+	#text = 'The <drug><disease>Erlotinib</disease></drug> is a common treatment for <cancer>NSCLC</cancer> patients'
+	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>lung</cancer> and unknown <cancer id=2>cancers</cancer>"
+	converted = kindred.TextAndEntityData(text)
+	
+	assert isinstance(converted,kindred.TextAndEntityData)
+	entities = converted.getEntities()
+	assert isinstance(entities,list)
+	for e in entities:
+		assert isinstance(e,kindred.Entity)
+
+	assert entities[0] == kindred.Entity(entityType='drug',entityID=1,text='Erlotinib',pos=[(0,9)])
+	assert entities[1] == kindred.Entity(entityType='cancer',entityID=2,text='lung cancers',pos=[(36,40), (53,60)])
+
+	text = converted.getText()
+	#assert isinstance(text,unicode) # Python3 issue here
+	assert text == "Erlotinib is a common treatment for lung and unknown cancers"
 
 def test_convertedTaggedTextWithRelations():
 	text = "<drug id=5>Erlotinib</drug> is a common treatment for <cancer id=6>NSCLC</cancer>"
@@ -48,8 +67,8 @@ def test_convertedTaggedTextWithRelations():
 	for e in entities:
 		assert isinstance(e,kindred.Entity)
 
-	assert entities[0] == kindred.Entity(entityType='drug',entityID=5,text='Erlotinib',start=0,end=9)
-	assert entities[1] == kindred.Entity(entityType='cancer',entityID=6,text='NSCLC',start=36,end=41)
+	assert entities[0] == kindred.Entity(entityType='drug',entityID=5,text='Erlotinib',pos=[(0,9)])
+	assert entities[1] == kindred.Entity(entityType='cancer',entityID=6,text='NSCLC',pos=[(36,41)])
 
 	text = converted.getText()
 	#assert isinstance(text,unicode) # Python3 issue here
@@ -115,8 +134,8 @@ def generateTestData(positiveCount = 100,negativeCount = 100):
 def test_simpleRelationCandidates():
 	trainData, testData = generateTestData()
 	
-	candidateGenerator = CandidateGenerator()
-	candidates = candidateGenerator.generate(trainData)
+	candidateGenerator = CandidateBuilder()
+	candidates = CandidateBuilder.build(trainData)
 	
 	
 	
@@ -134,4 +153,4 @@ def test_simpleRelationCheck():
 	assert f1score > 0.5
 	
 if __name__ == '__main__':
-	test_simpleRelationCandidates()
+	test_convertTaggedTextWithSplitEntities()
