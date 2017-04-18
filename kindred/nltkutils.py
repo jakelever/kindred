@@ -8,6 +8,15 @@ from nltk.parse.stanford import StanfordDependencyParser
 
 from kindred import Dependencies
 
+nltkPackagesOkay = False
+def checkNLTKPackages():
+	global nltkPackagesOkay
+	if not nltkPackagesOkay:
+		requiredPackages = ['wordnet','punkt']
+		for package in requiredPackages:
+			nltk.download(package,quiet=True)
+		nltkPackagesOkay = True
+
 def is_noun(tag):
     return tag in ['NN', 'NNS', 'NNP', 'NNPS']
 
@@ -40,6 +49,8 @@ depparser = None
 def parseSentence(sentence):
 	global wordnet_lemmatizer
 	global depparser
+	
+	checkNLTKPackages()
 	
 	if wordnet_lemmatizer is None:
 		wordnet_lemmatizer = nltk.stem.WordNetLemmatizer()
@@ -97,6 +108,8 @@ def parseSentences(text):
 
 	global wordnet_lemmatizer
 	global depparser
+	
+	checkNLTKPackages()
 	
 	if wordnet_lemmatizer is None:
 		wordnet_lemmatizer = nltk.stem.WordNetLemmatizer()
