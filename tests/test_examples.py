@@ -37,23 +37,22 @@ def test_convertTaggedText():
 	assert text == "Erlotinib is a common treatment for NSCLC"
 
 def test_convertedTaggedTextWithRelations():
-	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>NSCLC</cancer>"
-	relations = [ ('treats',1,2) ]
+	text = "<drug id=5>Erlotinib</drug> is a common treatment for <cancer id=6>NSCLC</cancer>"
+	relations = [ ('treats',5,6) ]
 
-	converted = kindred.utils.convertTaggedTextAndRelations(text,relations)
+	converted = kindred.RelationData(text,relations)
 	assert isinstance(converted,kindred.RelationData)
 
-	assert isinstance(converted,kindred.TextAndEntityData)
 	entities = converted.getEntities()
 	assert isinstance(entities,list)
 	for e in entities:
 		assert isinstance(e,kindred.Entity)
 
-	assert entities[0] == kindred.Entity(name='drug',text='Erlotinib',start=0,end=10)
-	assert entities[1] == kindred.Entity(name='cancer',text='NSCLC',start=0,end=10)
+	assert entities[0] == kindred.Entity(entityType='drug',entityID=5,text='Erlotinib',start=0,end=9)
+	assert entities[1] == kindred.Entity(entityType='cancer',entityID=6,text='NSCLC',start=36,end=41)
 
 	text = converted.getText()
-	assert isinstance(text,unicode) # Python3 issue here
+	#assert isinstance(text,unicode) # Python3 issue here
 	assert text == u"Erlotinib is a common treatment for NSCLC"
 
 	assert converted.getRelations() == relations
@@ -121,4 +120,4 @@ def test_simpleRelationCheck():
 	assert f1score > 0.5
 	
 if __name__ == '__main__':
-	test_convertTaggedText()
+	test_convertedTaggedTextWithRelations()

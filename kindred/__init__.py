@@ -42,7 +42,7 @@ class TextAndEntityData:
 		text = text.replace('>','<')
 		split = text.split('<')
 		
-		#usingPredefinedIDs = False
+		tagStyle = None
 		isTag = False
 		currentText = ""
 		openTags = {}
@@ -55,24 +55,32 @@ class TextAndEntityData:
 				if len(tagSplit) == 1:
 					if section.startswith('/'): # close a tag
 						entityType = section[1:]
-						if entityType in openTags:
-							entityStart,entityID = openTags[entityType]
-							entityEnd = len(currentText)
-							entityText = currentText[entityStart:]
-							entity = Entity(entityType,entityID,entityText,entityStart,entityEnd)
-							entities.append(entity)
-							del openTags[entityType]
+						assert entityType in openTags, "Trying to close a non-existent %s element" % entityType
+						
+						entityStart,entityID = openTags[entityType]
+						entityEnd = len(currentText)
+						entityText = currentText[entityStart:]
+						entity = Entity(entityType,entityID,entityText,entityStart,entityEnd)
+						entities.append(entity)
+						del openTags[entityType]
 					else: # open a tag
+						assert tagStyle != 2, "Cannot mix entity tags with and without IDs"
+						tagStyle = 1
+					
 						entityType = section
 						openTags[entityType] = (len(currentText),minID)
 						minID += 1
 				elif len(tagSplit) == 2:
+					assert tagStyle != 1, "Cannot mix entity tags with and without IDs"
+					tagStyle = 2
+						
 					entityType,idinfo = tagSplit
 					assert idinfo.startswith('id=')
 					idinfoSplit = idinfo.split('=')
 					assert len(idinfoSplit) == 2
-					entityid = int(idinfoSplit[1])
-					assert False
+					entityID = int(idinfoSplit[1])
+					
+					openTags[entityType] = (len(currentText),entityID)
 			else:
 				currentText += section
 				
@@ -90,4 +98,28 @@ class TextAndEntityData:
 	def getText(self):
 		return self.text
 		
+class RelationData:
+	def __init__(self,text,relations):
+		relationErrorMsg = "Relation must be a list of triples of ('relationType',entityID1,entityID2)"
+		assert isinstance(relations,list), relationErrorMsg
+		for r in relations:
+			assert isinstance(r,tuple), relationErrorMsg
+			assert len(r) == 3, relationErrorMsg
+			assert isinstance(r[0],basestring), relationErrorMsg
+			assert isinstance(r[1],int), relationErrorMsg
+			assert isinstance(r[2],int), relationErrorMsg
+		
+		self.textAndEntityData = TextAndEntityData(text)
+		self.relations = relations
+		
+	def getEntities(self):
+		return self.textAndEntityData.getEntities()
+		
+	def getText(self):
+		return self.textAndEntityData.getText()
+		
+	def getRelations(self):
+		return self.relations
+	
+	
 		
