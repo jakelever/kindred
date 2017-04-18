@@ -67,7 +67,6 @@ class RelationClassifier:
 		
 		for c in self.allClasses:
 			predictedClasses = self.clfs[c].predict(testVectors)
-			#print predictedClasses
 			for predictedClass,candidateRelation in zip(predictedClasses,candidateRelations):
 				if predictedClass != 0:
 					relType,nary = self.classToRelType[predictedClass]

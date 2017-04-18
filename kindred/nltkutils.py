@@ -43,63 +43,6 @@ def penn_to_wn(tag):
 	elif is_verb(tag):
 		return wn.VERB
 	return None
-
-wordnet_lemmatizer = None
-depparser = None
-def parseSentence(sentence):
-	global wordnet_lemmatizer
-	global depparser
-	
-	checkNLTKPackages()
-	
-	if wordnet_lemmatizer is None:
-		wordnet_lemmatizer = nltk.stem.WordNetLemmatizer()
-		
-	if depparser is None:
-		depparser = Dependencies.getMaltParser()
-
-	tokensAndPOS = nltk.pos_tag(nltk.word_tokenize(sentence))
-	wordnetTypes = [ penn_to_wn(pos) for token,pos in tokensAndPOS ]
-	lemmas = [ token if wnpos is None else wordnet_lemmatizer.lemmatize(token,pos=wnpos) for (token,pos),wnpos in zip(tokensAndPOS,wordnetTypes) ]
-
-	substitutions = { '``': '"', "''": '"' }
-	
-	currentPosition = 0
-	locs = []
-	for t,_ in tokensAndPOS:
-	
-		# Deal with special characters output by parser
-		if t in substitutions:
-			t = substitutions[t]
-			
-		start = sentence.find(t,currentPosition)
-		assert start != -1, "Error finding token: %s in sentence: %s" % (t,sentence)
-		end = start + len(t)
-		currentPosition = end
-		locs.append((start,end))
-		
-	tokenInfo = [ kindred.Token(token,pos,lemma,start,end) for (token,pos),lemma,(start,end) in zip(tokensAndPOS,lemmas,locs) ]
-	
-	tokens = [ t for t,_ in tokensAndPOS ]
-	
-	depgraph = []
-	if True:
-		depparses = list(depparser.parse(tokens))
-		assert len(depparses) == 1, "Expected parser to return a single parse"
-		depparse = depparses[0]
-		
-		# Get the dependency graph from the parse
-		depgraph = [ (i,details['head'],details['rel']) for i,details in depparse.nodes.items() ]
-			
-		# And we'll filter out any non-existent relations
-		depgraph = [ (i,j,rel) for i,j,rel in depgraph if not rel is None and i>0 and j>0 ]
-		
-		# Remember that parser gives word indices starting from 1, so subtract to keep with starting from 0
-		depgraph = [ (i-1,j-1,rel) for i,j,rel in depgraph ]
-	
-	print tokenInfo
-	
-	return tokenInfo,depgraph
 	
 wordnet_lemmatizer = None
 depparser = None
@@ -133,8 +76,6 @@ def parseSentences(text):
 		depparses.append(d[0])
 		
 	output = []
-	
-	#print sentences
 		
 	currentSentencePos = 0
 	for sentence,tokens,depparse in zip(sentences,tokenSets,depparses):
@@ -169,15 +110,7 @@ def parseSentences(text):
 		
 		# Get the dependency graph from the parse
 		depgraph = [ (i,details['head'],details['rel']) for i,details in depparse.nodes.items() ]
-		
-		#print len(tokens), len(depgraph)
-		#print "-"*30
-		#print sentence, tokens, depparse
-		#assert len(tokens) == (len(depgraph)-1), "Dependency parse has failed (%d!=%d)" % (len(tokens), (len(depgraph)-1))
-		#print "-"*30
-		#for x in depgraph:
-		#	print x
-			
+					
 		# And we'll filter out any non-existent relations
 		depgraph = [ (i,j,rel) for i,j,rel in depgraph if not rel is None and i>0 and j>0 ]
 		
@@ -194,23 +127,16 @@ def parseSentences(text):
 	
 if __name__ == '__main__':
 	text = 'I shot an elephant in my pajamas. The quick brown fox jumped over the lazy dog.'
-	#text = ['I shot an elephant in my pajamas.','The quick brown fox jumped over the lazy dog.']
-	#text = 'I shot an elephant in my pajamas.'
 	
 	sentences = nltk.tokenize.sent_tokenize(text)
 	sentences = [ nltk.word_tokenize(s) for s in sentences ]
 	
 	taggedsentences = [ nltk.pos_tag(tokens) for tokens in sentences ]
 	
-	#for conll in list(taggedsents_to_conll(taggedsentences)):
-	#	print conll
-
-	#print parseSentences(sentences)
 	depparser = nltk.parse.malt.MaltParser('maltparser-1.9.0','engmalt.linear-1.7.mco')
 	depparses = depparser.parse_sents(sentences,verbose=False)
-	print type(depparses), depparses
+	print(type(depparses), depparses)
 	for d1 in list(depparses):
-	#	print list(d1)
 		for d2 in d1:
-			print [ (i,details['word']) for i,details in d2.nodes.items() ]
+			print([ (i,details['word']) for i,details in d2.nodes.items() ])
 		
