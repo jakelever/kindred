@@ -2,6 +2,7 @@ import urllib
 import zipfile
 import hashlib
 import os
+import sys
 from nltk.parse import malt
 
 def _calcSHA256(filename):
@@ -47,7 +48,11 @@ def _downloadFiles(files):
 				exc_info = sys.exc_info()
 				if os.path.isfile(downloadedPath):
 					os.remove(downloadedPath)
-				raise exc_info[0], exc_info[1], exc_info[2]
+				#raise exc_info[0], exc_info[1], exc_info[2]
+				# TODO: Make this work in Python2/3 nicely
+				print("ERROR: ",exc_info)
+				sys.exit(255)
+				
 			
 stanfordParserInitialised = False
 def initializeStanfordParser():
