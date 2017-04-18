@@ -87,12 +87,12 @@ def test_simpleRelationCheck():
 		text = text.replace('DRUG',random.choice(fakeDrugNames))
 		text = text.replace('DISEASE',random.choice(fakeDiseaseNames))
 		
-		relations = [ (1,2,'treats') ]
+		relations = [ ('treats',1,2) ]
 		
 		converted = kindred.RelationData(text,relations)
 		data.append(converted)
 		
-	for _ in range(negativeCount/2):
+	for _ in range(negativeCount*2):
 		combinedText = ""
 		for _ in range(2):
 			text = random.choice(negativePatterns)
@@ -105,8 +105,8 @@ def test_simpleRelationCheck():
 		converted = kindred.RelationData(combinedText,relations)
 		data.append(converted)
 		
-	trainIndices = random.sample(range(totalCount),totalCount/2)
-	testIndices = [ i for i in range(totalCount) if not i in trainIndices ]
+	trainIndices = random.sample(range(len(data)),len(data)/2)
+	testIndices = [ i for i in range(len(data)) if not i in trainIndices ]
 	
 	trainData = [ data[i] for i in trainIndices ]
 	testData = [ data[i] for i in testIndices ]

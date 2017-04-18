@@ -118,6 +118,9 @@ class RelationData:
 	def getText(self):
 		return self.textAndEntityData.getText()
 		
+	def getTextAndEntities(self):
+		return self.textAndEntityData
+		
 	def getRelations(self):
 		return self.relations
 	
