@@ -1,5 +1,5 @@
 
-class RelationsEvaluator():
+class Evaluator():
 	""" A test doc string for the RelationsEvaluator"""
 
 	def __init__(self):

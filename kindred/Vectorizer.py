@@ -43,13 +43,15 @@ class Vectorizer:
 		
 	def transform(self,candidateRelations):
 		assert isinstance(candidateRelations,list)
+		assert len(candidateRelations) > 0
 		for candidateRelation in candidateRelations:
 			assert isinstance(candidateRelation,kindred.CandidateRelation)
 			
-		maxArgCount = max( [ len(candidateRelation.entitiesInRelation) for candidate in candidateRelations ] )
+		if not 'maxArgCount' in self.__dict__:
+			self.maxArgCount = max( [ len(candidateRelation.entitiesInRelation) for candidate in candidateRelations ] )
 			
 		allVecs = []
-		for argID in range(maxArgCount):
+		for argID in range(self.maxArgCount):
 			vecs = self.doSelectedTokenTypes(candidateRelations,argID)
 			allVecs.append(vecs)
 			

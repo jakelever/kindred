@@ -128,6 +128,12 @@ class TextAndEntityData:
 	def getText(self):
 		return self.text
 		
+	def __str__(self):
+		return str((self.text,self.entities.__str__()))
+		
+	def __repr__(self):
+		return self.__str__()
+		
 class RelationData:
 	def __init__(self,text,relations):
 		relationErrorMsg = "Relation must be a list of triples of ('relationType',entityID1,entityID2)"
@@ -153,6 +159,12 @@ class RelationData:
 		
 	def getRelations(self):
 		return self.relations
+		
+	def __str__(self):
+		return str((self.textAndEntityData.__str__(),self.relations))
+		
+	def __repr__(self):
+		return self.__str__()
 	
 class CandidateRelation:
 	def __init__(self,processedSentence,entitiesInRelation):
