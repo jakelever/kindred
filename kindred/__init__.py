@@ -107,7 +107,7 @@ class TextAndEntityData:
 		assert len(openTags) == 0, "All tags were not closed in %s" % text
 		
 		entities = []
-		for (entityType,entityID),entityInfo in preEntities.iteritems():
+		for (entityType,entityID),entityInfo in preEntities.items():
 			entity = Entity(entityType,entityID,entityInfo['text'],entityInfo['pos'])
 			entities.append(entity)
 		
@@ -298,7 +298,7 @@ class ProcessedSentence:
 	def invertTriggers(self):
 		self.locsToTriggerIDs = {}
 		self.locsToTriggerTypes = {}
-		for triggerid,locs in self.entityLocs.iteritems():
+		for triggerid,locs in self.entityLocs.items():
 			type = self.entityTypes[triggerid]
 			self.locsToTriggerIDs[tuple(locs)] = triggerid
 			self.locsToTriggerTypes[tuple(locs)] = type

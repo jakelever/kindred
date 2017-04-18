@@ -36,7 +36,7 @@ class Parser:
 					
 				# Let's gather up the information about the "known" entities in the sentence
 				entityLocs, entityTypes = {},{}
-				for entityID,locs in entityLocations.iteritems():
+				for entityID,locs in entityLocations.items():
 					entityType = entityTypeLookup[entityID]
 					entityLocs[entityID] = locs
 					entityTypes[entityID] = entityType
