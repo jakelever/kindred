@@ -128,14 +128,16 @@ class TextAndEntityData:
 		
 class RelationData:
 	def __init__(self,text,relations):
-		relationErrorMsg = "Relation must be a list of triples of ('relationType',entityID1,entityID2)"
+		relationErrorMsg = "Relation must be a list of tuples of ('relationType',entityID1,entityID2,...)"
 		assert isinstance(relations,list), relationErrorMsg
 		for r in relations:
 			assert isinstance(r,tuple), relationErrorMsg
-			assert len(r) == 3, relationErrorMsg
-			assert isinstance(r[0],basestring), relationErrorMsg
-			assert isinstance(r[1],int), relationErrorMsg
-			assert isinstance(r[2],int), relationErrorMsg
+			assert len(r) > 2, relationErrorMsg
+			if sys.version_info >= (3, 0):
+				assert isinstance(r[0],str), relationErrorMsg
+			else:
+				assert isinstance(r[0],basestring), relationErrorMsg
+				
 		
 		self.textAndEntityData = TextAndEntityData(text)
 		self.relations = relations

@@ -47,7 +47,10 @@ def penn_to_wn(tag):
 wordnet_lemmatizer = None
 depparser = None
 def parseSentences(text):
-	assert isinstance(text,basestring)
+	if sys.version_info >= (3, 0):
+		assert isinstance(text,str), relationErrorMsg
+	else:
+		assert isinstance(text,basestring), relationErrorMsg
 
 	global wordnet_lemmatizer
 	global depparser
