@@ -36,7 +36,7 @@ class Vectorizer:
 			if argID < len(candidate.entitiesInRelation):
 				entityID = candidate.entitiesInRelation[argID]
 				assert entityID in candidate.processedSentence.getEntityIDs()
-				entityType = candidate.processedSentence.entityTypes[entityID]
+				entityType = candidate.processedSentence.getEntityType(entityID)
 				corpus.append(Counter([entityType]))
 			
 		return self.corpusToVectors(corpus,'SelectedTokenTypes_'+str(argID),False)

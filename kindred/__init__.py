@@ -373,7 +373,10 @@ class ProcessedSentence:
 
 	def getEntityIDs(self):
 		return [ e.entityID for e in self.processedEntities ]
-			
+		
+	def getEntityType(self,entityID):
+		return self.entityIDToType[entityID]
+
 	def __init__(self, tokens, dependencies, processedEntities, relations=[], sourceFilename=None):
 		assert isinstance(tokens, list) 
 		assert isinstance(dependencies, list) 
@@ -392,6 +395,8 @@ class ProcessedSentence:
 			relationEntityIDs = r[1:]
 			for relationEntityID in relationEntityIDs:
 				assert relationEntityID in entitiesInSentence, "Relation cannot contain entity not in this sentence"
+
+		self.entityIDToType = { e.entityID:e.entityType for e in self.processedEntities }
 		
 		self.relations = relations
 	
