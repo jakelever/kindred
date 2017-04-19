@@ -50,7 +50,7 @@ class Parser:
 				# Let's also put in the relation information if we can get it
 				if isinstance(d,kindred.RelationData):
 					tmpRelations = d.getRelations()
-					entitiesInSentence = entityLocs.keys()
+					entitiesInSentence = entityIDsToTokenLocs.keys()
 					for tmpRelation in tmpRelations:
 						relationType = tmpRelation[0]
 						relationEntityIDs = tmpRelation[1:]

@@ -130,6 +130,12 @@ class TextAndEntityData:
 	
 	def getEntityIDsToSourceEntityIDs(self):
 		return {e.entityID:e.sourceEntityID for e in self.entities}
+	
+	def getEntityIDs(self):
+		return [e.entityID for e in self.entities]
+
+	def getSourceFilename(self):
+		return self.sourceFilename
 		
 	def getText(self):
 		return self.text
@@ -187,6 +193,12 @@ class RelationData:
 	def getEntityIDsToSourceEntityIDs(self):
 		return self.textAndEntityData.getEntityIDsToSourceEntityIDs()
 		
+	def getEntityIDs(self):
+		return self.textAndEntityData.getEntityIDs()
+
+	def getSourceFilename(self):
+		return self.textAndEntityData.getSourceFilename()
+
 	def __str__(self):
 		return str((self.textAndEntityData.__str__(),self.relations))
 		
@@ -234,6 +246,22 @@ class ProcessedEntity:
 		self.entityLocs = entityLocs
 		self.entityID = entityID
 		self.sourceEntityID = sourceEntityID
+
+	def __str__(self):
+		return "[ProcessedEntity %s %s %s %s]" % (self.entityType,str(self.entityLocs),str(self.entityID),str(self.sourceEntityID))
+
+	def __repr__(self):
+		return self.__str__()
+	
+	def __eq__(self, other):
+		"""Override the default Equals behavior"""
+		if isinstance(other, self.__class__):
+			return self.__dict__ == other.__dict__
+		return False
+	
+	def __ne__(self, other):
+		"""Define a non-equality test"""
+		return not self.__eq__(other)
 
 class ProcessedSentence:
 	# TODO: Camelcase consistency in this class
@@ -352,8 +380,6 @@ class ProcessedSentence:
 		assert isinstance(processedEntities, list)
 		for e in processedEntities:
 			assert isinstance(e,ProcessedEntity)
-		
-		assert len(entityLocs) == len(entityTypes)
 		
 		self.tokens = tokens
 		self.processedEntities = processedEntities

@@ -25,3 +25,7 @@ def test_simpleRelationCandidates():
 	assert candidateRelations[1].entitiesInRelation == (2, 1)
 	assert candidateRelations[2].entitiesInRelation == (3, 4)
 	assert candidateRelations[3].entitiesInRelation == (4, 3)
+
+if __name__ == '__main__':
+	test_simpleRelationCandidates()
+
