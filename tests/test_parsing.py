@@ -7,11 +7,10 @@ from kindred.Parser import Parser
 
 from kindred.datageneration import generateData,generateTestData
 
-def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEntityID):
-	assert isinstance(entity,kindred.Entity)
+def assertProcessedEntity(entity,expectedType,expectedLocs,expectedSourceEntityID):
+	assert isinstance(entity,kindred.ProcessedEntity)
 	assert entity.entityType == expectedType, "(%s) not as expected" % (entity.__str__())
-	assert entity.text == expectedText, "(%s) not as expected" % (entity.__str__())
-	assert entity.pos == expectedPos, "(%s) not as expected" % (entity.__str__())
+	assert entity.entityLocs == expectedLocs, "(%s) not as expected" % (entity.__str__())
 	assert entity.sourceEntityID == expectedSourceEntityID, "(%s) not as expected" % (entity.__str__())
 
 def test_stanfordDependencyParser():
@@ -63,7 +62,10 @@ def test_simpleSentenceParse():
 		assert len(t.lemma) > 0
 		assert w == t.word
 	
-	assert processedSentence.processedEntities == [ kindred.ProcessedEntity('drug',[0],1,1) , kindred.ProcessedEntity('cancer',[6,9],2,2) ]
+	assert isinstance(processedSentence.processedEntities,list)
+	assert len(processedSentence.processedEntities) == 2
+	assertProcessedEntity(processedSentence.processedEntities[0],'drug',[0],1)
+	assertProcessedEntity(processedSentence.processedEntities[1],'cancer',[6,9],2)
 	
 	assert isinstance(processedSentence.dependencies,list)
 	assert len(processedSentence.dependencies) > 0
@@ -98,7 +100,10 @@ def test_twoSentenceParse():
 	for w,t in zip(expectedWords,processedSentence0.tokens):
 		assert w == t.word
 		
-	assert processedSentence0.processedEntities == [ kindred.ProcessedEntity('drug',[0],1,1) , kindred.ProcessedEntity('cancer',[6],2,2) ]
+	assert isinstance(processedSentence0.processedEntities,list)
+	assert len(processedSentence0.processedEntities) == 2
+	assertProcessedEntity(processedSentence0.processedEntities[0],'drug',[0],1)
+	assertProcessedEntity(processedSentence0.processedEntities[1],'cancer',[6],2)
 	
 	# Second sentence	
 	expectedWords = "Aspirin is the main cause of boneitis .".split()
@@ -108,7 +113,10 @@ def test_twoSentenceParse():
 	for w,t in zip(expectedWords,processedSentence1.tokens):
 		assert w == t.word
 		
-	assert processedSentence1.processedEntities == [ kindred.ProcessedEntity('drug',[0],3,3) , kindred.ProcessedEntity('disease',[6],4,4) ]
+	assert isinstance(processedSentence1.processedEntities,list)
+	assert len(processedSentence1.processedEntities) == 2
+	assertProcessedEntity(processedSentence1.processedEntities[0],'drug',[0],3)
+	assertProcessedEntity(processedSentence1.processedEntities[1],'disease',[6],4)
 
 #TODO: Test parser with relations
 #if test_sentenceParseWithRelations():

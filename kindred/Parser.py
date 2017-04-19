@@ -38,7 +38,7 @@ class Parser:
 				# Let's gather up the information about the "known" entities in the sentence
 				#entityLocs, entityTypes = {},{}
 				processedEntities = []
-				for entityID,entityLocs in entityIDsToTokenLocs.items():
+				for entityID,entityLocs in sorted(entityIDsToTokenLocs.items()):
 					entityType = entityTypeLookup[entityID]
 					sourceEntityID = entityIDsToSourceEntityIDs[entityID]
 					processedEntity = kindred.ProcessedEntity(entityType,entityLocs,entityID,sourceEntityID)
