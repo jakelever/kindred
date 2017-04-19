@@ -7,11 +7,12 @@ from kindred import CandidateBuilder
 
 
 class Entity:
-	def __init__(self,entityType,entityID,text,pos):
+	nextInternalID = 1
+
+	def __init__(self,entityType,text,pos,sourceEntityID=None):
 		posErrorMsg = "Entity position must be list of tuples (startPos,endPos)"
 	
 		assert isinstance(entityType,str)
-		assert isinstance(entityID,int)
 		assert isinstance(text,str)
 		assert isinstance(pos,list), posErrorMsg
 		for p in pos:
@@ -21,9 +22,12 @@ class Entity:
 			assert isinstance(p[1],int), posErrorMsg
 	
 		self.entityType = entityType
-		self.entityID = entityID
+		self.sourceEntityID = sourceEntityID
 		self.text = text
 		self.pos = pos
+		
+		self.entityID = Entity.nextInternalID
+		Entity.nextInternalID += 1
 		
 	def __str__(self):
 		out = "%s:'%s' id=%d %s" % (self.entityType,self.text,self.entityID,str(self.pos))
@@ -64,12 +68,12 @@ class TextAndEntityData:
 						entityType = section[1:]
 						assert entityType in openTags, "Trying to close a non-existent %s element" % entityType
 						
-						entityStart,entityID = openTags[entityType]
+						entityStart,sourceEntityID = openTags[entityType]
 						entityEnd = len(currentText)
 						entityText = currentText[entityStart:]
-						#entity = Entity(entityType,entityID,entityText,pos=[(entityStart,entityEnd)])
+						#entity = Entity(entityType,sourceEntityID,entityText,pos=[(entityStart,entityEnd)])
 						#entities.append(entity)
-						key = (entityID,entityType)
+						key = (sourceEntityID,entityType)
 						if key in preEntities:
 							preEntities[key]['text'] += ' ' + entityText
 							preEntities[key]['pos'].append((entityStart,entityEnd))
@@ -95,9 +99,9 @@ class TextAndEntityData:
 					assert idinfo.startswith('id=')
 					idinfoSplit = idinfo.split('=')
 					assert len(idinfoSplit) == 2
-					entityID = int(idinfoSplit[1])
+					sourceEntityID = int(idinfoSplit[1])
 					
-					openTags[entityType] = (len(currentText),entityID)
+					openTags[entityType] = (len(currentText),sourceEntityID)
 			else:
 				currentText += section
 				
@@ -108,9 +112,9 @@ class TextAndEntityData:
 		
 		entities = []
 		preEntitiesKeys = sorted(list(preEntities.keys()))
-		for (entityID,entityType) in preEntitiesKeys:
-			entityInfo = preEntities[(entityID,entityType)]
-			entity = Entity(entityType,entityID,entityInfo['text'],entityInfo['pos'])
+		for (sourceEntityID,entityType) in preEntitiesKeys:
+			entityInfo = preEntities[(sourceEntityID,entityType)]
+			entity = Entity(entityType,entityInfo['text'],entityInfo['pos'],sourceEntityID)
 			entities.append(entity)
 		
 		self.text = currentText
@@ -118,6 +122,9 @@ class TextAndEntityData:
 		
 	def getEntities(self):
 		return self.entities
+		
+	def getSourceEntityIDsToEntityIDs(self):
+		return {e.sourceEntityID:e.entityID for e in self.entities}
 		
 	def getText(self):
 		return self.text
@@ -140,9 +147,22 @@ class RelationData:
 			else:
 				assert isinstance(r[0],basestring), relationErrorMsg
 				
-		
 		self.textAndEntityData = TextAndEntityData(text)
-		self.relations = relations
+		
+		sourceEntityIDsToEntityIDs = self.textAndEntityData.getSourceEntityIDsToEntityIDs()
+		sourceEntityIDs = sourceEntityIDsToEntityIDs.keys()
+		
+		processedRelations = []
+		for r in relations:
+			relationType = r[0]
+			relationSourceEntityIDs = r[1:]
+			for e in relationSourceEntityIDs:
+				assert e in sourceEntityIDs, "Entities in relation must occur in the associated text"
+			relationEntityIDs = [ sourceEntityIDsToEntityIDs[e] for e in relationSourceEntityIDs ]
+			processedRelation = tuple([relationType] + relationEntityIDs )
+			processedRelations.append(processedRelation)
+			
+		self.relations = processedRelations
 		
 	def getEntities(self):
 		return self.textAndEntityData.getEntities()

@@ -7,6 +7,13 @@ from kindred.Parser import Parser
 
 from kindred.datageneration import generateData,generateTestData
 
+def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEntityID):
+	assert isinstance(entity,kindred.Entity)
+	assert entity.entityType == expectedType, "(%s) not as expected" % (entity.__str__())
+	assert entity.text == expectedText, "(%s) not as expected" % (entity.__str__())
+	assert entity.pos == expectedPos, "(%s) not as expected" % (entity.__str__())
+	assert entity.sourceEntityID == expectedSourceEntityID, "(%s) not as expected" % (entity.__str__())
+
 def test_stanfordDependencyParser():
 	kindred.Dependencies.initializeStanfordParser()
 		
@@ -55,12 +62,8 @@ def test_simpleSentenceParse():
 		assert isinstance(t,kindred.Token)
 		assert len(t.lemma) > 0
 		assert w == t.word
-		
-	assert isinstance(processedSentence.entityLocs,dict)
-	assert isinstance(processedSentence.entityTypes,dict)
 	
-	assert processedSentence.entityLocs == {1: [0], 2: [6, 9]}
-	assert processedSentence.entityTypes == {1: 'drug', 2: 'cancer'}
+	assert processedSentence.entityInfo == set( ('drug',[0]) , ('cancer',[6,9]) )
 	
 	assert isinstance(processedSentence.dependencies,list)
 	assert len(processedSentence.dependencies) > 0
@@ -96,9 +99,10 @@ def test_twoSentenceParse():
 	for w,t in zip(expectedWords,processedSentence0.tokens):
 		assert w == t.word
 		
-	assert processedSentence0.entityLocs == {1: [0], 2: [6]}
-	assert processedSentence0.entityTypes == {1: 'drug', 2: 'cancer'}
+	assert processedSentence0.entityLocs.values() == [[0], [6]]
+	assert processedSentence0.entityTypes.values() == ['drug', 'cancer']
 	
+	assert processedSentence0.entityInfo == set( ('drug',[0]) , ('cancer',[6]) )
 	
 	# Second sentence	
 	expectedWords = "Aspirin is the main cause of boneitis .".split()
@@ -108,8 +112,7 @@ def test_twoSentenceParse():
 	for w,t in zip(expectedWords,processedSentence1.tokens):
 		assert w == t.word
 		
-	assert processedSentence1.entityLocs == {3: [0], 4: [6]}
-	assert processedSentence1.entityTypes == {3: 'drug', 4: 'disease'}
+	assert processedSentence0.entityInfo == set( ('drug',[0]) , ('disease',[6]) )
 	
 if __name__ == '__main__':
 	#test_stanfordDependencyParser()
