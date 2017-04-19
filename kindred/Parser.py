@@ -15,6 +15,7 @@ class Parser:
 			
 		allSentenceData = []
 		for d in data:
+			entityIDsToSourceEntityIDs = d.getEntityIDsToSourceEntityIDs()
 		
 			denotationTree = IntervalTree()
 			entityTypeLookup = {}
@@ -27,19 +28,23 @@ class Parser:
 			sentences = nltkutils.parseSentences(d.getText())
 			
 			for tokens,dependencies in sentences:
-				entityLocations = defaultdict(list)
+				entityIDsToTokenLocs = defaultdict(list)
 				for i,t in enumerate(tokens):
-					entities = denotationTree[t.startPos:t.endPos]
-					for interval in entities:
+					entitiesOverlappingWithToken = denotationTree[t.startPos:t.endPos]
+					for interval in entitiesOverlappingWithToken:
 						entityID = interval.data
-						entityLocations[entityID].append(i)
+						entityIDsToTokenLocs[entityID].append(i)
 					
 				# Let's gather up the information about the "known" entities in the sentence
-				entityLocs, entityTypes = {},{}
-				for entityID,locs in entityLocations.items():
+				#entityLocs, entityTypes = {},{}
+				processedEntities = []
+				for entityID,entityLocs in entityIDsToTokenLocs.items():
 					entityType = entityTypeLookup[entityID]
-					entityLocs[entityID] = locs
-					entityTypes[entityID] = entityType
+					sourceEntityID = entityIDsToSourceEntityIDs[entityID]
+					processedEntity = kindred.ProcessedEntity(entityType,entityLocs,entityID,sourceEntityID)
+					#entityLocs[entityID] = locs
+					#entityTypes[entityID] = entityType
+					processedEntities.append(processedEntity)
 					
 				relations = []
 				# Let's also put in the relation information if we can get it
@@ -53,7 +58,7 @@ class Parser:
 						if all(matched):
 							relations.append(tmpRelation)
 					
-				sentenceData = kindred.ProcessedSentence(tokens, dependencies, entityLocs, entityTypes, relations)
+				sentenceData = kindred.ProcessedSentence(tokens, dependencies, processedEntities, relations, d.getSourceFilename())
 				allSentenceData.append(sentenceData)
 		return allSentenceData
 	

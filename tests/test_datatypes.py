@@ -70,4 +70,4 @@ def test_convertedTaggedTextWithRelations():
 	#assert isinstance(text,unicode) # Python3 issue here
 	assert text == u"Erlotinib is a common treatment for NSCLC"
 
-	assert converted.getRelations() == relations
+	assert converted.getRelations() == [('treats',1,2)]

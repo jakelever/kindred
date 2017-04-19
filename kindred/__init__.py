@@ -48,7 +48,9 @@ class Entity:
 
 
 class TextAndEntityData:
-	def __init__(self,text):
+	def __init__(self,text,sourceFilename=None):
+		self.sourceFilename = sourceFilename
+
 		text = text.replace('>','<')
 		split = text.split('<')
 		
@@ -125,6 +127,9 @@ class TextAndEntityData:
 		
 	def getSourceEntityIDsToEntityIDs(self):
 		return {e.sourceEntityID:e.entityID for e in self.entities}
+	
+	def getEntityIDsToSourceEntityIDs(self):
+		return {e.entityID:e.sourceEntityID for e in self.entities}
 		
 	def getText(self):
 		return self.text
@@ -175,6 +180,12 @@ class RelationData:
 		
 	def getRelations(self):
 		return self.relations
+	
+	def getSourceEntityIDsToEntityIDs(self):
+		return self.textAndEntityData.getSourceEntityIDsToEntityIDs()
+	
+	def getEntityIDsToSourceEntityIDs(self):
+		return self.textAndEntityData.getEntityIDsToSourceEntityIDs()
 		
 	def __str__(self):
 		return str((self.textAndEntityData.__str__(),self.relations))
@@ -216,6 +227,13 @@ class Token:
 		
 	def __repr__(self):
 		return self.__str__()
+
+class ProcessedEntity:
+	def __init__(self,entityType,entityLocs,entityID,sourceEntityID):
+		self.entityType = entityType
+		self.entityLocs = entityLocs
+		self.entityID = entityID
+		self.sourceEntityID = sourceEntityID
 
 class ProcessedSentence:
 	# TODO: Camelcase consistency in this class
@@ -326,19 +344,21 @@ class ProcessedSentence:
 			self.locsToTriggerTypes[tuple(locs)] = type
 
 	def getEntityIDs(self):
-		return self.entityLocs.keys()
+		return [ e.entityID for e in self.processedEntities ]
 			
-	def __init__(self, tokens, dependencies, entityLocs, entityTypes, relations=[]):
+	def __init__(self, tokens, dependencies, processedEntities, relations=[], sourceFilename=None):
 		assert isinstance(tokens, list) 
 		assert isinstance(dependencies, list) 
-		assert isinstance(entityLocs, dict) 
-		assert isinstance(entityTypes, dict)
+		assert isinstance(processedEntities, list)
+		for e in processedEntities:
+			assert isinstance(e,ProcessedEntity)
 		
 		assert len(entityLocs) == len(entityTypes)
 		
 		self.tokens = tokens
-		self.entityLocs = entityLocs
-		self.entityTypes = entityTypes
+		self.processedEntities = processedEntities
+		self.sourceFilename = sourceFilename
+		
 		self.dependencies = dependencies
 		
 		entitiesInSentence = self.getEntityIDs()
@@ -349,5 +369,5 @@ class ProcessedSentence:
 		
 		self.relations = relations
 	
-		self.invertTriggers()
+		#self.invertTriggers()
 
