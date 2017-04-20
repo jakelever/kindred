@@ -11,9 +11,14 @@ class Entity:
 
 	def __init__(self,entityType,text,pos,sourceEntityID=None):
 		posErrorMsg = "Entity position must be list of tuples (startPos,endPos)"
-	
-		assert isinstance(entityType,str)
-		assert isinstance(text,str)
+
+		if sys.version_info >= (3, 0):
+			assert isinstance(entityType,str)
+			assert isinstance(text,str)
+		else:
+			assert isinstance(entityType,basestring) or isinstance(entityType,unicode)
+			assert isinstance(text,basestring) or isinstance(text,unicode)
+
 		assert isinstance(pos,list), posErrorMsg
 		for p in pos:
 			assert isinstance(p,tuple), posErrorMsg
@@ -77,8 +82,17 @@ class Relation:
 			return hash((self.relationType,tuple(self.entityIDs),tuple(self.argNames)))
 
 class TextAndEntityData:
-	def __init__(self,text,sourceFilename=None):
+	def __init__(self,text,sourceFilename=None,entities=None):
 		self.sourceFilename = sourceFilename
+
+		if entities is None:
+			self.text,self.entities = processTaggedText(text)
+		else:
+			self.text = text
+			self.entities = entities
+		
+
+	def processTaggedText(text):
 
 		text = text.replace('>','<')
 		split = text.split('<')
@@ -148,8 +162,7 @@ class TextAndEntityData:
 			entity = Entity(entityType,entityInfo['text'],entityInfo['pos'],sourceEntityID)
 			entities.append(entity)
 		
-		self.text = currentText
-		self.entities = entities
+		return currentText,entities
 		
 	def getEntities(self):
 		return self.entities
@@ -176,16 +189,16 @@ class TextAndEntityData:
 		return self.__str__()
 		
 class RelationData:
-	def __init__(self,text,relationsWithSourceEntityIDs):
+	def __init__(self,text,relationsWithSourceEntityIDs,sourceFilename=None,entities=None):
 		assert isinstance(relationsWithSourceEntityIDs,list)
 		for r in relationsWithSourceEntityIDs:
 			assert isinstance(r,Relation)
-				
-		self.textAndEntityData = TextAndEntityData(text)
-		
+
+		self.textAndEntityData = TextAndEntityData(text,sourceFilename=sourceFilename,entities=entities)
+			
 		sourceEntityIDsToEntityIDs = self.textAndEntityData.getSourceEntityIDsToEntityIDs()
 		sourceEntityIDs = sourceEntityIDsToEntityIDs.keys()
-		
+			
 		relations = []
 		for r in relationsWithSourceEntityIDs:
 			for e in r.entityIDs:
