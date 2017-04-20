@@ -8,7 +8,7 @@ import re
 import kindred
 
 def loadEntity(line,text):
-	assert line[0] == 'T', "Trigger input should start with a T"
+	assert line[0] == 'T', "Entity input should start with a T"
 	split = line.strip().split('\t')
 	assert len(split) == 3
 	entityID = split[0]
@@ -42,7 +42,7 @@ def loadEntity(line,text):
 	return entity
 	
 def loadRelation(line):
-	assert line[0] == 'E' or line[1] == 'R', "Relation input should start with a E or R"
+	assert line[0] == 'E' or line[0] == 'R', "Relation input should start with a E or R"
 	split = line.strip().split('\t')
 	relationID = split[0]
 	eventInfo = split[1]
