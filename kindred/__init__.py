@@ -86,13 +86,13 @@ class TextAndEntityData:
 		self.sourceFilename = sourceFilename
 
 		if entities is None:
-			self.text,self.entities = processTaggedText(text)
+			self.text,self.entities = self.processTaggedText(text)
 		else:
 			self.text = text
 			self.entities = entities
 		
 
-	def processTaggedText(text):
+	def processTaggedText(self,text):
 
 		text = text.replace('>','<')
 		split = text.split('<')
