@@ -26,8 +26,8 @@ class CandidateBuilder:
 		
 			for processedSentence in processedSentences:
 				knownRelations = processedSentence.relations
-				tmpRelTypes = [ (r[0],len(r)-1) for r in knownRelations ]
-				self.relTypes.update(tmpRelTypes)
+				tmpRelTypesAndArgCount = [ (r.relationType,len(r.entityIDs)) for r in knownRelations ]
+				self.relTypes.update(tmpRelTypesAndArgCount)
 				
 			self.relTypes = sorted(list(self.relTypes))
 			self.relClasses = { relType:(i+1) for i,relType in enumerate(self.relTypes) }
@@ -45,10 +45,10 @@ class CandidateBuilder:
 			
 			existingRelations = defaultdict(list)
 			for r in processedSentence.relations:
-				relationName = r[0]
-				entityIDs = tuple(r[1:])
+				relationType = r.relationType
+				entityIDs = tuple(r.entityIDs)
 				
-				relKey = (relationName,len(entityIDs))
+				relKey = (relationType,len(entityIDs))
 				if relKey in self.relClasses:
 					relationClass = self.relClasses[relKey]
 					existingRelations[entityIDs].append(relationClass)

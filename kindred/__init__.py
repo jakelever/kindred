@@ -46,6 +46,35 @@ class Entity:
 		"""Define a non-equality test"""
 		return not self.__eq__(other)
 
+class Relation:
+	def __init__(self,relationType,entityIDs,argNames=None):
+		assert isinstance(entityIDs,list)
+
+		self.relationType = relationType
+		self.entityIDs = entityIDs
+		self.argNames = argNames
+	
+	def __eq__(self, other):
+		"""Override the default Equals behavior"""
+		if isinstance(other, self.__class__):
+			return self.__dict__ == other.__dict__
+		return False
+	
+	def __ne__(self, other):
+		"""Define a non-equality test"""
+		return not self.__eq__(other)
+
+	def __str__(self):
+		return "[Relation %s %s %s]" % (self.relationType,str(self.entityIDs),str(self.argNames))
+
+	def __repr__(self):
+		return self.__str__()
+
+	def __hash__(self):
+		if self.argNames is None:
+			return hash((self.relationType,tuple(self.entityIDs)))
+		else:
+			return hash((self.relationType,tuple(self.entityIDs),tuple(self.argNames)))
 
 class TextAndEntityData:
 	def __init__(self,text,sourceFilename=None):
@@ -147,33 +176,25 @@ class TextAndEntityData:
 		return self.__str__()
 		
 class RelationData:
-	def __init__(self,text,relations):
-		relationErrorMsg = "Relation must be a list of tuples of ('relationType',entityID1,entityID2,...)"
-		assert isinstance(relations,list), relationErrorMsg
-		for r in relations:
-			assert isinstance(r,tuple), relationErrorMsg
-			assert len(r) > 2, relationErrorMsg
-			if sys.version_info >= (3, 0):
-				assert isinstance(r[0],str), relationErrorMsg
-			else:
-				assert isinstance(r[0],basestring), relationErrorMsg
+	def __init__(self,text,relationsWithSourceEntityIDs):
+		assert isinstance(relationsWithSourceEntityIDs,list)
+		for r in relationsWithSourceEntityIDs:
+			assert isinstance(r,Relation)
 				
 		self.textAndEntityData = TextAndEntityData(text)
 		
 		sourceEntityIDsToEntityIDs = self.textAndEntityData.getSourceEntityIDsToEntityIDs()
 		sourceEntityIDs = sourceEntityIDsToEntityIDs.keys()
 		
-		processedRelations = []
-		for r in relations:
-			relationType = r[0]
-			relationSourceEntityIDs = r[1:]
-			for e in relationSourceEntityIDs:
+		relations = []
+		for r in relationsWithSourceEntityIDs:
+			for e in r.entityIDs:
 				assert e in sourceEntityIDs, "Entities in relation must occur in the associated text"
-			relationEntityIDs = [ sourceEntityIDsToEntityIDs[e] for e in relationSourceEntityIDs ]
-			processedRelation = tuple([relationType] + relationEntityIDs )
-			processedRelations.append(processedRelation)
+			relationEntityIDs = [ sourceEntityIDsToEntityIDs[e] for e in r.entityIDs ]
+			newR = Relation(r.relationType,relationEntityIDs,r.argNames)
+			relations.append(newR)
 			
-		self.relations = processedRelations
+		self.relations = relations
 		
 	def getEntities(self):
 		return self.textAndEntityData.getEntities()
@@ -392,8 +413,8 @@ class ProcessedSentence:
 		
 		entitiesInSentence = self.getEntityIDs()
 		for r in relations:
-			relationEntityIDs = r[1:]
-			for relationEntityID in relationEntityIDs:
+			assert isinstance(r,Relation)
+			for relationEntityID in r.entityIDs:
 				assert relationEntityID in entitiesInSentence, "Relation cannot contain entity not in this sentence"
 
 		self.entityIDToType = { e.entityID:e.entityType for e in self.processedEntities }

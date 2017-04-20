@@ -6,7 +6,7 @@ from kindred.datageneration import generateData,generateTestData
 	
 def test_simpleVectorizer():
 	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>NSCLC</cancer>. <drug id=3>Aspirin</drug> is the main cause of <disease id=4>boneitis</disease> ."
-	relations = [ ('treats',1,2) ]
+	relations = [ kindred.Relation('treats',[1,2]) ]
 
 	data = [kindred.RelationData(text,relations)]
 	

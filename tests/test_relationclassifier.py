@@ -13,8 +13,14 @@ def test_simpleRelationClassifier():
 	classifier = RelationClassifier()
 	classifier.train(trainData)
 	
+	print testData_Relations
 	predictedRelations = classifier.predict(testData_TextAndEntities)
+	print predictedRelations
 	
 	evaluator = Evaluator()
 	f1score = evaluator.evaluate(testData_Relations, predictedRelations, metric='f1score')
 	assert f1score == 1.0
+
+if __name__ == '__main__':
+	test_simpleRelationClassifier()
+

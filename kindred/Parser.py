@@ -52,9 +52,7 @@ class Parser:
 					tmpRelations = d.getRelations()
 					entitiesInSentence = entityIDsToTokenLocs.keys()
 					for tmpRelation in tmpRelations:
-						relationType = tmpRelation[0]
-						relationEntityIDs = tmpRelation[1:]
-						matched = [ (relationEntityID in entitiesInSentence) for relationEntityID in relationEntityIDs ]
+						matched = [ (relationEntityID in entitiesInSentence) for relationEntityID in tmpRelation.entityIDs ]
 						if all(matched):
 							relations.append(tmpRelation)
 					

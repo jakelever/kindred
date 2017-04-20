@@ -53,7 +53,7 @@ def test_convertTaggedTextWithSplitEntities():
 
 def test_convertedTaggedTextWithRelations():
 	text = "<drug id=5>Erlotinib</drug> is a common treatment for <cancer id=6>NSCLC</cancer>"
-	relations = [ ('treats',5,6) ]
+	relations = [kindred.Relation('treats',[5,6])]
 
 	converted = kindred.RelationData(text,relations)
 	assert isinstance(converted,kindred.RelationData)
@@ -72,4 +72,4 @@ def test_convertedTaggedTextWithRelations():
 
 	sourceEntityIDsToEntityIDs = converted.getSourceEntityIDsToEntityIDs()	
 
-	assert converted.getRelations() == [('treats',sourceEntityIDsToEntityIDs[5],sourceEntityIDsToEntityIDs[6])]
+	assert converted.getRelations() == [kindred.Relation('treats',[sourceEntityIDsToEntityIDs[5],sourceEntityIDsToEntityIDs[6]])]

@@ -28,7 +28,7 @@ def generateData(positiveCount=100,negativeCount=100):
 		
 		text = text.replace('ID1',str(entityID))
 		text = text.replace('ID2',str(entityID+1))
-		relations = [ ('treats',entityID,entityID+1) ]
+		relations = [ kindred.Relation('treats',[entityID,entityID+1]) ]
 		
 		entityID += 2
 		

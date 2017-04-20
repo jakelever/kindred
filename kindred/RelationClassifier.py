@@ -70,7 +70,7 @@ class RelationClassifier:
 			for predictedClass,candidateRelation in zip(predictedClasses,candidateRelations):
 				if predictedClass != 0:
 					relType,nary = self.classToRelType[predictedClass]
-					predictedRelation = tuple([relType] + list(candidateRelation.entitiesInRelation))
+					predictedRelation = kindred.Relation(relType,list(candidateRelation.entitiesInRelation))
 					predictedRelations.append(predictedRelation)
 					
 		return predictedRelations
