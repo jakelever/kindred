@@ -86,19 +86,6 @@ class Vectorizer:
 		if "bigrams_betweenEntities" in self.chosenFeatures:
 			data["bigrams_betweenEntities"] = self.doBigramsBetweenEntities(examples,featureNamesOnly)
 		
-		if "cooccurrences" in self.chosenFeatures:
-			data["cooccurrences"] = self.doCooccurrences(examples,featureNamesOnly)
-
-
-		if "summedWordvecs" in self.chosenFeatures:
-			data["summedWordVecs"] = self.doSummedWordVecs(examples,featureNamesOnly)
-		if "sparseWordvecs" in self.chosenFeatures:
-			data["sparseWordVecs"] = self.doSparseWordVecs(examples,featureNamesOnly)
-		if "summedWordvecsOfDependencyPath" in self.chosenFeatures:
-			data["summedWordvecsOfDependencyPath"] = self.doSummedWordVecsOfDependencyPath(examples,featureNamesOnly)
-		if "sparseWordvecsOfDependencyPath" in self.chosenFeatures:
-			data["sparseWordvecsOfDependencyPath"] = self.doSparseWordVecsOfDependencyPath(examples,featureNamesOnly)
-			
 		if "selectedngrams" in self.chosenFeatures:
 			#print "    doing selected ngrams..."
 			for i in range(self.argCount):
@@ -652,10 +639,12 @@ class Vectorizer:
 	def getTrainingVectors(self):
 		return self.trainingVectors
 		
-	def __init__(self, classes, examples, featureChoice=None, tfidf=False):
-		assert len(classes) == len(examples)
+	def __init__(self, candidates, featureChoice=None, tfidf=False):
+		assert isinstance(candidates)
+		for c in candidates:
+			assert isinstance(c,kindred.CandidateRelation)
 		
-		options = ["ngrams","selectedngrams","bigrams","ngramsPOS","selectedngramsPOS","ngramsOfDependencyPath","bigramsOfDependencyPath","selectedTokenTypes","lemmas","selectedlemmas","dependencyPathElements","dependencyPathNearSelected","summedWordvecs","sparseWordvecs","summedWordvecsOfDependencyPath","sparseWordvecsOfDependencyPath","splitAcrossSentences","skipgrams_2","skipgrams_3","skipgrams_4","skipgrams_5","skipgrams_6","skipgrams_7","skipgrams_8","skipgrams_9","skipgrams_10","cooccurrences","ngrams_betweenEntities","bigrams_betweenEntities"]
+		options = ["ngrams","selectedngrams","bigrams","ngramsPOS","selectedngramsPOS","ngramsOfDependencyPath","bigramsOfDependencyPath","selectedTokenTypes","lemmas","selectedlemmas","dependencyPathElements","dependencyPathNearSelected","splitAcrossSentences","skipgrams_2","skipgrams_3","skipgrams_4","skipgrams_5","skipgrams_6","skipgrams_7","skipgrams_8","skipgrams_9","skipgrams_10","ngrams_betweenEntities","bigrams_betweenEntities"]
 		
 		for i in range(1,10):
 			options.append("ngrams_entityWindowLeft_%d" % i)
@@ -668,9 +657,7 @@ class Vectorizer:
 			options.append("bigrams_entityWindowRight_%d" % i)
 		
 		if featureChoice is None:
-			self.chosenFeatures = ["ngrams","selectedngrams","bigrams","ngramsPOS","selectedngramsPOS","bigramsOfDependencyPath","selectedTokenTypes","lemmas","selectedlemmas","dependencyPathElements","dependencyPathNearSelected","splitAcrossSentences","skipgrams_2"]
-			#self.chosenFeatures = options
-			#self.chosenFeatures = ["selectedngrams"]
+			self.chosenFeatures ["selectedTokenTypes","dependencyPathElements"]
 		else:
 			assert isinstance(featureChoice, str)
 			self.chosenFeatures = sorted(list(set(featureChoice.split(','))))
@@ -681,7 +668,6 @@ class Vectorizer:
 		self.tfidf = tfidf
 		self.argCount = len(examples[0].arguments)
 		self.tools = {}
-		self.wordVecsLoaded = False
 		self.trainingVectors = self.vectorize(examples)
 
 
