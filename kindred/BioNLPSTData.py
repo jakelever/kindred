@@ -46,7 +46,7 @@ def _downloadFiles(files,downloadDirectory):
 		if not os.path.isfile(downloadedPath):
 		
 			try:
-				print("Downloading %s" % shortName)
+				#print("Downloading %s" % shortName)
 				#if sys.version_info >= (3, 0):
 				#	urllib.request.urlretrieve(url,downloadedPath)
 				#else:
@@ -58,7 +58,7 @@ def _downloadFiles(files,downloadDirectory):
 				assert downloadedSHA256 == expectedSHA256, "SHA256 mismatch with downloaded file: %s" % shortName
 				
 				if shortName.endswith('.zip'):
-					print("Unzipping %s" % shortName)
+					#print("Unzipping %s" % shortName)
 					#unzippedDir = downloadDirectory + shortName[0:-4]
 					#os.mkdir(unzippedDir)
 					zip_ref = zipfile.ZipFile(downloadedPath, 'r')

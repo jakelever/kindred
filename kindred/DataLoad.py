@@ -70,7 +70,7 @@ def loadRelation(line):
 	relation = kindred.Relation(relationType, entityIDs, argNames)
 	return relation
 	
-def loadDataFromSTFormat(txtFile,a1File,a2File):
+def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False):
 	with codecs.open(txtFile, "r", "utf-8") as f:
 		text = f.read()
 			
@@ -88,10 +88,8 @@ def loadDataFromSTFormat(txtFile,a1File,a2File):
 				if line[0] == 'E' or line[0] == 'R':
 					relation = loadRelation(line.strip())
 					relations.append(relation)
-				elif line[0] == '*':
-					print "Skipping '*' equivalences"
-				else:
-					raise RuntimeError('Unknown data type to be loaded in file: ' + a2File)
+				elif verbose:
+					print "Unable to process line: %s" % line.strip()
 	else:
 		print "Note: No A2 file found. ", a2File
 
@@ -100,7 +98,7 @@ def loadDataFromSTFormat(txtFile,a1File,a2File):
 			
 	return combinedData
 
-def loadDataFromSTFormat_Directory(directory):
+def loadDataFromSTFormat_Directory(directory,verbose=False):
 	assert os.path.isdir(directory), "%s must be a directory"
 	
 	if directory[-1] != '/':
@@ -116,9 +114,8 @@ def loadDataFromSTFormat_Directory(directory):
 
 			assert os.path.isfile(txtFilename), "%s must exist" % txtFilename
 			assert os.path.isfile(a1Filename), "%s must exist" % a1Filename
-			assert os.path.isfile(a2Filename), "%s must exist" % a2Filename
 
-			data = loadDataFromSTFormat(txtFilename,a1Filename,a2Filename)
+			data = loadDataFromSTFormat(txtFilename,a1Filename,a2Filename,verbose)
 			allData.append(data)
 	return allData
 	
