@@ -16,17 +16,20 @@ class Evaluator():
 		:type name: str
 		:returns: float -- the score given the metric
 		"""
-		
+
 		TP,FP,FN = 0,0,0
 		
-		goldSetMerged = [ ]
+		goldTuples = [ ]
 		for relations in goldSet:
-			goldSetMerged += relations
+			relTuples = [ (r.relationType,tuple(r.entityIDs)) for r in relations ]
+			goldTuples += relTuples
 			
-		totalSet = set(goldSetMerged + testSet)
+		testTuples = [ (r.relationType,tuple(r.entityIDs)) for r in testSet ]
+
+		totalSet = set(goldTuples + testTuples)
 		for relation in totalSet:
-			inGold = relation in goldSetMerged
-			inTest = relation in testSet
+			inGold = relation in goldTuples
+			inTest = relation in testTuples
 			
 			if inGold and inTest:
 				TP += 1
@@ -34,10 +37,12 @@ class Evaluator():
 				FN += 1
 			elif inTest:
 				FP += 1
-				
+
+		print "TP:%d FP:%d FN:%d" % (TP,FP,FN)		
 		precision = TP / float(TP+FP)
 		recall = TP / float(TP+FN)
 		f1score = 2 * (precision*recall) / (precision+recall)
+
 		
 		if metric == 'f1score':
 			return f1score
