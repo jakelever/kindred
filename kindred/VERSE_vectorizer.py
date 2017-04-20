@@ -1,6 +1,5 @@
 import sys
 import random
-from SentenceModel import *
 from collections import defaultdict, Counter, OrderedDict
 from sklearn import svm
 from sklearn.feature_extraction.text import CountVectorizer
@@ -11,8 +10,191 @@ from sklearn.linear_model import LogisticRegression
 from sklearn import neighbors
 import numpy as np
 import os
+import itertools
 
-class Vectorizer:
+import kindred
+
+class SentenceModel:
+	def __str__(self):
+		tokenWords = [ t.word for t in self.tokens ]
+		return " ".join(tokenWords)
+
+	def getEdgeTypes(self,edges):
+		types = [ t for a,b,t in self.dependencies if (a,b) in edges or (b,a) in edges ]
+		return types
+
+	def extractSubgraphToRoot(self,minSet):
+		neighbours = defaultdict(list)
+		for a,b,_ in self.dependencies:
+			neighbours[b].append(a)
+			
+		toProcess = list(minSet)
+		alreadyProcessed = []
+		edges = []
+		while len(toProcess) > 0:
+			thisOne = toProcess[0]
+			toProcess = toProcess[1:]
+			alreadyProcessed.append(thisOne)
+			for a in neighbours[thisOne]:
+				if not a in alreadyProcessed:
+					toProcess.append(a)
+					edges.append((a,thisOne))
+		return alreadyProcessed,edges
+		
+	def extractMinSubgraphContainingNodes(self, minSet):
+		import networkx as nx
+		
+		assert isinstance(minSet, list)
+		for i in minSet:
+			assert isinstance(i, int)
+			assert i >= 0
+			assert i < len(self.tokens)
+		G1 = nx.Graph()
+		for a,b,_ in self.dependencies:
+			G1.add_edge(a,b)
+
+		G2 = nx.Graph()
+		paths = {}
+
+		#print "-"*30
+		#print [ (i,t) for i,t in enumerate(self.tokens) ]
+		#print
+		#print self.dependencies
+		#print
+		#print self.predictedEntityLocs
+		#print self.knownEntityLocs
+		#print
+		#print minSet
+		#self.printDependencyGraph()
+		#print "-"*30
+
+		minSet = sorted(list(set(minSet)))
+		setCount1 = len(minSet)
+		minSet = [ a for a in minSet if G1.has_node(a) ]
+		setCount2 = len(minSet)
+		if setCount1 != setCount2:
+			print "WARNING. %d node(s) not found in dependency graph!" % (setCount1-setCount2)
+		for a,b in itertools.combinations(minSet,2):
+			try:
+				path = nx.shortest_path(G1,a,b)
+				paths[(a,b)] = path
+				G2.add_edge(a,b,weight=len(path))
+			except nx.exception.NetworkXNoPath:
+				print "WARNING. No path found between nodes %d and %d!" % (a,b)
+			
+		# TODO: This may through an error if G2 ends up having multiple components. Catch it gracefully.
+		minTree = nx.minimum_spanning_tree(G2)
+		nodes = set()
+		allEdges = set()
+		for a,b in minTree.edges():
+			path = paths[(min(a,b),max(a,b))]
+			for i in range(len(path)-1):
+				a,b = path[i],path[i+1]
+				edge = (min(a,b),max(a,b))
+				allEdges.add(edge)
+			nodes.update(path)
+
+		return nodes,allEdges
+	
+
+	def buildDependencyInfo(self):
+		self.dep_neighbours = defaultdict(set)
+		for (a,b,type) in self.dependencies:
+			self.dep_neighbours[a].add(b)
+			self.dep_neighbours[b].add(a)
+		self.dep_neighbours2 = defaultdict(set)
+		for i in self.dep_neighbours:
+			for j in self.dep_neighbours[i]:
+				self.dep_neighbours2[i].update(self.dep_neighbours[j])
+			self.dep_neighbours2[i].discard(i)
+			for j in self.dep_neighbours[i]:
+				self.dep_neighbours2[i].discard(j)
+
+	def invertTriggers(self):
+		self.locsToTriggerIDs = {}
+		self.locsToTriggerTypes = {}
+		for triggerid,locs in self.predictedEntityLocs.iteritems():
+			type = self.predictedEntityTypes[triggerid]
+			self.locsToTriggerIDs[tuple(locs)] = triggerid
+			self.locsToTriggerTypes[tuple(locs)] = type
+		for triggerid,locs in self.knownEntityLocs.iteritems():
+			type = self.knownEntityTypes[triggerid]
+			self.locsToTriggerIDs[tuple(locs)] = triggerid
+			self.locsToTriggerTypes[tuple(locs)] = type
+		#print "MOO"
+	
+	def __init__(self, tokens, dependencies, eventTriggerLocs, eventTriggerTypes, argumentTriggerLocs, argumentTriggerTypes):
+		assert isinstance(tokens, list) 
+		assert isinstance(dependencies, list) 
+		assert isinstance(eventTriggerLocs, dict) 
+		assert isinstance(eventTriggerTypes, dict)
+		assert isinstance(argumentTriggerLocs, dict) 
+		assert isinstance(argumentTriggerTypes, dict)
+		
+		assert len(eventTriggerLocs) == len(eventTriggerTypes)
+		assert len(argumentTriggerLocs) == len(argumentTriggerTypes)
+		
+		self.tokens = tokens
+		self.predictedEntityLocs = eventTriggerLocs
+		self.predictedEntityTypes = eventTriggerTypes
+		self.knownEntityLocs = argumentTriggerLocs
+		self.knownEntityTypes = argumentTriggerTypes
+		self.dependencies = dependencies
+	
+		self.invertTriggers()
+
+class Example:
+	def __str__(self):
+		allSentenceIDs = sorted(list(set([ sentenceid for sentenceid,_ in self.arguments ])))
+		tmpTokens = {}
+		for sentenceid in allSentenceIDs:
+			tmpTokens[sentenceid] = [ t.word for t in self.sentences[sentenceid].tokens ]
+		for i,(sentenceid,locs) in enumerate(self.arguments):
+			argname = "arg%d" % (i+1)
+			for loc in locs:
+				tmpTokens[sentenceid][loc] = "<%s>%s</%s>" % (argname,tmpTokens[sentenceid][loc],argname)
+		sentenceTxts = [ " ".join(tmpTokens[sentenceid]) for sentenceid in allSentenceIDs ]
+		txt = " . ".join(sentenceTxts)
+		if isinstance(txt, unicode):
+			return txt.encode('utf8')
+		else:
+			return txt
+		
+	def __init__(self, filename, sentences, arg_locs):
+		#assert arg2 is None
+		assert isinstance(filename, str) or isinstance(filename, unicode)
+		assert isinstance(sentences, list)
+		for sentence in sentences:
+			assert isinstance(sentence, SentenceModel)
+		
+		self.filename = filename
+		self.sentences = sentences
+		#self.arg1_sentenceid = arg1_sentenceid
+		#self.arg1_locs = arg1_locs
+		#self.arguments = [(arg1_sentenceid, arg1_locs),(arg2_sentenceid, arg2_locs)]
+		self.arguments = [ (0,loc) for loc in arg_locs ]
+
+def ProcessedSentenceToVerseSentence(s):
+	assert isinstance(s,kindred.ProcessedSentence)
+	argTypes = { e.entityID:e.entityType for e in s.processedEntities }
+	argLocs = { e.entityID:e.entityLocs for e in s.processedEntities }
+	#def __init__(self, tokens, dependencies, eventTriggerLocs, eventTriggerTypes, argumentTriggerLocs, argumentTriggerTypes):
+
+	verseS = SentenceModel(s.tokens,s.dependencies,{},{},argLocs,argTypes)
+
+	return verseS
+
+def CandidateRelationToExample(r):
+	assert isinstance(r,kindred.CandidateRelation)
+
+	eID_to_locs = { e.entityID:e.entityLocs for e in r.processedSentence.processedEntities }
+	s = ProcessedSentenceToVerseSentence(r.processedSentence)
+	locs = [ eID_to_locs[eID] for eID in r.entitiesInRelation ]
+	example = Example("None",[s],locs)
+
+	return example
+			
+class VERSEVectorizer:
 	# Feature list
 	# - ngrams for selected tokens
 	# - ngrams for all tokens
@@ -24,7 +206,9 @@ class Vectorizer:
 	def getFeatureNames(self):
 		return self.vectorize(examples=[],featureNamesOnly=True)
 	
-	def vectorize(self,examples,featureNamesOnly=False):
+	def vectorize(self,candidates,featureNamesOnly=False):
+		examples = [ CandidateRelationToExample(c) for c in candidates ]
+
 		assert len(examples) > 0, "Expected more than zero examples to vectorize"
 		for e in examples:
 			assert self.argCount == len(e.arguments), 'All examples must have the same number of arguments (%d)' % self.argCount
@@ -640,9 +824,9 @@ class Vectorizer:
 		return self.trainingVectors
 		
 	def __init__(self, candidates, featureChoice=None, tfidf=False):
-		assert isinstance(candidates)
-		for c in candidates:
-			assert isinstance(c,kindred.CandidateRelation)
+		#assert isinstance(candidates)
+		#for c in candidates:
+		#	assert isinstance(c,kindred.CandidateRelation)
 		
 		options = ["ngrams","selectedngrams","bigrams","ngramsPOS","selectedngramsPOS","ngramsOfDependencyPath","bigramsOfDependencyPath","selectedTokenTypes","lemmas","selectedlemmas","dependencyPathElements","dependencyPathNearSelected","splitAcrossSentences","skipgrams_2","skipgrams_3","skipgrams_4","skipgrams_5","skipgrams_6","skipgrams_7","skipgrams_8","skipgrams_9","skipgrams_10","ngrams_betweenEntities","bigrams_betweenEntities"]
 		
@@ -657,7 +841,7 @@ class Vectorizer:
 			options.append("bigrams_entityWindowRight_%d" % i)
 		
 		if featureChoice is None:
-			self.chosenFeatures ["selectedTokenTypes","dependencyPathElements"]
+			self.chosenFeatures = ["selectedTokenTypes","dependencyPathElements"]
 		else:
 			assert isinstance(featureChoice, str)
 			self.chosenFeatures = sorted(list(set(featureChoice.split(','))))
@@ -666,8 +850,9 @@ class Vectorizer:
 			assert feature in options, "Feature (%s) is not a valid feature" % feature
 			
 		self.tfidf = tfidf
-		self.argCount = len(examples[0].arguments)
+		#self.argCount = len(examples[0].arguments)
+		self.argCount = len(candidates[0].entitiesInRelation)
 		self.tools = {}
-		self.trainingVectors = self.vectorize(examples)
+		self.trainingVectors = self.vectorize(candidates)
 
 

@@ -5,10 +5,12 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from scipy.sparse import coo_matrix, csr_matrix, lil_matrix, hstack, vstack
 
 import kindred
+from kindred.VERSE_vectorizer import VERSEVectorizer
 
 class Vectorizer:
 	def __init__(self):
 		self.dictVectorizers = {}
+		self.verseVectorizer = None
 		pass
 		
 	def corpusToVectors(self,corpus,name,doTFIDF=True):
@@ -42,6 +44,15 @@ class Vectorizer:
 		return self.corpusToVectors(corpus,'SelectedTokenTypes_'+str(argID),False)
 		
 	def transform(self,candidateRelations):
+		
+		if self.verseVectorizer is None:
+			self.verseVectorizer = VERSEVectorizer(candidateRelations)
+			return self.verseVectorizer.getTrainingVectors()
+		else:
+			return self.verseVectorizer.vectorize(candidateRelations)
+
+
+	def transform2(self,candidateRelations):
 		assert isinstance(candidateRelations,list)
 		assert len(candidateRelations) > 0
 		for candidateRelation in candidateRelations:
