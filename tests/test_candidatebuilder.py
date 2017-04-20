@@ -21,10 +21,12 @@ def test_simpleRelationCandidates():
 	assert str(candidateRelations[2].processedSentence) == 'Aspirin is the main cause of boneitis .'
 	assert str(candidateRelations[3].processedSentence) == 'Aspirin is the main cause of boneitis .'
 	
-	assert candidateRelations[0].entitiesInRelation == (1, 2)
-	assert candidateRelations[1].entitiesInRelation == (2, 1)
-	assert candidateRelations[2].entitiesInRelation == (3, 4)
-	assert candidateRelations[3].entitiesInRelation == (4, 3)
+	sourceEntityIDsToEntityIDs = data[0].getSourceEntityIDsToEntityIDs()
+
+	assert candidateRelations[0].entitiesInRelation == (sourceEntityIDsToEntityIDs[1], sourceEntityIDsToEntityIDs[2])
+	assert candidateRelations[1].entitiesInRelation == (sourceEntityIDsToEntityIDs[2], sourceEntityIDsToEntityIDs[1])
+	assert candidateRelations[2].entitiesInRelation == (sourceEntityIDsToEntityIDs[3], sourceEntityIDsToEntityIDs[4])
+	assert candidateRelations[3].entitiesInRelation == (sourceEntityIDsToEntityIDs[4], sourceEntityIDsToEntityIDs[3])
 
 if __name__ == '__main__':
 	test_simpleRelationCandidates()
