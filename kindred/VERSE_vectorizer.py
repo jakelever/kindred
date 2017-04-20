@@ -474,20 +474,6 @@ class Vectorizer:
 			corpus.append(Counter(allSkipgrams))
 		return self.corpusToVectors(corpus,featureNamesOnly, 'SkipGrams_%d' % gap, self.tfidf)
 	
-	def doCooccurrences(self,examples,featureNamesOnly):
-		corpus = []
-		for example in examples:
-			allCooccurrences = []
-			for sentenceid,_ in example.arguments:
-				sentence = example.sentences[sentenceid]
-				srange = range(len(sentence.tokens))
-				cooccurrences = [ (sentence.tokens[i].word.lower(),sentence.tokens[j].word.lower()) for i,j in itertools.combinations(srange,2) ]
-				cooccurrences = [ (i,j) if i<j else (j,i) for i,j in cooccurrences ]
-				allCooccurrences = allCooccurrences + cooccurrences
-			
-			corpus.append(Counter(allCooccurrences))
-		return self.corpusToVectors(corpus,featureNamesOnly, 'Cooccurrences', self.tfidf)
-
 	def doSplitAcrossSentences(self,examples,featureNamesOnly):
 		if featureNamesOnly:
 			return ["splitAcrossSentences"]
