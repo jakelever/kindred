@@ -7,12 +7,30 @@ from kindred.Evaluator import Evaluator
 
 from kindred.datageneration import generateData,generateTestData
 
+from kindred.BioNLPSTData import loadBioNLPData
+
 def test_bionlpst():
-	trainData = kindred.BioNLPSTData('2016-BB3-event-training')
-	devData = kindred.BioNLPSTData('2016-BB3-event-development')
-	model = kindred.train(trainData)
-	predictedRelations = model.predict(dev_data.getTextAndEntities())
-	f1score = kindred.evaluate(dev_data.getRelations(), predictionRelations, metric='f1score')
+	trainData = loadBioNLPData('2016-BB3-event-train')
+	devData = loadBioNLPData('2016-BB3-event-dev')
+	
+	devData_TextAndEntities = [ d.getTextAndEntities() for d in devData ]
+	devData_Relations = [ d.getRelations() for d in devData ]
+
+	print "Loaded"
+
+	classifier = RelationClassifier()
+	print "Training..."
+	classifier.train(trainData)
+	print "Trained"
+
+	print "Predicting..."
+	predictedRelations = classifier.predict(devData_TextAndEntities)
+	print "Predicted"
+
+	print "Evaluating..."
+	evaluator = Evaluator()
+	f1score = evaluator.evaluate(devData_Relations, predictedRelations, metric='f1score')
+	print "f1score:",f1score
 	assert f1score > 0.5
 
 def test_pubannotation():
@@ -35,4 +53,4 @@ def test_naryRelations():
 	assert False
 	
 if __name__ == '__main__':
-	test_simpleRelationCheck()
+	test_bionlpst()

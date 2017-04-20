@@ -1,9 +1,9 @@
 import os
-from nltk.parse.stanford import StanfordDependencyParser
+#from nltk.parse.stanford import StanfordDependencyParser
 
 import kindred
 import kindred.Dependencies
-from kindred.Parser import Parser
+from kindred.Parser_corenlp import Parser
 
 from kindred.datageneration import generateData,generateTestData
 
@@ -13,7 +13,7 @@ def assertProcessedEntity(entity,expectedType,expectedLocs,expectedSourceEntityI
 	assert entity.entityLocs == expectedLocs, "(%s) not as expected" % (entity.__str__())
 	assert entity.sourceEntityID == expectedSourceEntityID, "(%s) not as expected" % (entity.__str__())
 
-def test_stanfordDependencyParser():
+def _stanfordDependencyParser():
 	kindred.Dependencies.initializeStanfordParser()
 		
 	depParser = StanfordDependencyParser(model_path="edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
@@ -27,7 +27,7 @@ def test_stanfordDependencyParser():
 	depParse = depParses[0]
 	assert depParse.tree().__str__() == "(sleep (ideas Colourless green) furiously)"
 
-def test_maltParser():
+def _maltParser():
 	kindred.Dependencies.initializeMaltParser()
 	maltParser = kindred.Dependencies.getMaltParser()
 	
@@ -122,7 +122,23 @@ def test_twoSentenceParse():
 #if test_sentenceParseWithRelations():
 #	assert False
 
+#@profile
+def runPerfTest():
+	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>lung</cancer> and unknown <cancer id=2>cancers</cancer>."
+	text = " ".join([ text for _ in xrange(100)] )
+	data = [ kindred.TextAndEntityData(text) for _ in range(2) ]
+	
+	parser = Parser()
+	processedSentences = parser.parse(data)
+
 if __name__ == '__main__':
 	#test_stanfordDependencyParser()
-	test_maltParser()
+	#test_maltParser()
+	#text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>lung</cancer> and unknown <cancer id=2>cancers</cancer>"
+	#data = [ kindred.TextAndEntityData(text) for _ in range(2) ]
+	
+	#parser = Parser()
+	#processedSentences = parser.parse(data)
+	runPerfTest()
+	test_stanfordDependencyParser()
 	

@@ -7,7 +7,7 @@ from kindred import nltkutils
 class Parser:
 	def __init__(self):
 		pass
-		
+
 	def parse(self,data):
 		assert isinstance(data,list)
 		for d in data:

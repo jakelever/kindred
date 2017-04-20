@@ -1,10 +1,16 @@
-import nltk
+#import nltk
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import sent_tokenize
+from nltk import word_tokenize, pos_tag,download
+
 import sys
 
 from nltk.corpus import wordnet as wn
 import kindred
 from nltk.parse.util import taggedsents_to_conll
 from nltk.parse.stanford import StanfordDependencyParser
+#from nltk.parse.malt import MaltParser
+from kindred.Dependencies import getMaltParser
 
 from kindred import Dependencies
 
@@ -12,10 +18,12 @@ nltkPackagesOkay = False
 def checkNLTKPackages():
 	global nltkPackagesOkay
 	if not nltkPackagesOkay:
+		print "Starting download check"
 		requiredPackages = ['wordnet','punkt','averaged_perceptron_tagger']
 		for package in requiredPackages:
-			nltk.download(package,quiet=True)
+			download(package,quiet=True)
 		nltkPackagesOkay = True
+		print "Finishing download check"
 
 def is_noun(tag):
     return tag in ['NN', 'NNS', 'NNP', 'NNPS']
@@ -46,6 +54,7 @@ def penn_to_wn(tag):
 	
 wordnet_lemmatizer = None
 depparser = None
+#@profile
 def parseSentences(text):
 	if sys.version_info >= (3, 0):
 		assert isinstance(text,str), relationErrorMsg
@@ -58,18 +67,20 @@ def parseSentences(text):
 	checkNLTKPackages()
 	
 	if wordnet_lemmatizer is None:
-		wordnet_lemmatizer = nltk.stem.WordNetLemmatizer()
+		wordnet_lemmatizer = WordNetLemmatizer()
 		
 	if depparser is None:
-		#depparser = nltk.parse.malt.MaltParser('maltparser-1.9.0','engmalt.linear-1.7.mco')
-		Dependencies.initializeStanfordParser()
-		depparser = StanfordDependencyParser(model_path="edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
+		#depparser = MaltParser('maltparser-1.9.0','engmalt.linear-1.7.mco')
+		depparser = getMaltParser()
+		#Dependencies.initializeStanfordParser()
+		#depparser = StanfordDependencyParser(model_path="edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
 
 	#TODO: Deal with Unicode issues gracefully in Python2/3
 	#text = text.encode('ascii','ignore')
 		
-	sentences = nltk.tokenize.sent_tokenize(text)
-	tokenSets = [ nltk.word_tokenize(s) for s in sentences ]
+
+	sentences = sent_tokenize(text)
+	tokenSets = [ word_tokenize(s) for s in sentences ]
 		
 	depparser_result = depparser.parse_sents(tokenSets)
 	
@@ -87,7 +98,7 @@ def parseSentences(text):
 		assert sentenceStartPos != '-1', "Couldn't find location of sentence in text"
 		currentSentencePos = sentenceStartPos + len(sentence)
 			
-		tokensAndPOS = nltk.pos_tag(tokens)
+		tokensAndPOS = pos_tag(tokens)
 		wordnetTypes = [ penn_to_wn(pos) for token,pos in tokensAndPOS ]
 		lemmas = [ token if wnpos is None else wordnet_lemmatizer.lemmatize(token,pos=wnpos) for (token,pos),wnpos in zip(tokensAndPOS,wordnetTypes) ]
 		#lemmas = [ t for t,_ in tokensAndPOS ]
@@ -132,15 +143,15 @@ def parseSentences(text):
 if __name__ == '__main__':
 	text = 'I shot an elephant in my pajamas. The quick brown fox jumped over the lazy dog.'
 	
-	sentences = nltk.tokenize.sent_tokenize(text)
-	sentences = [ nltk.word_tokenize(s) for s in sentences ]
+	sentences = sent_tokenize(text)
+	sentences = [ word_tokenize(s) for s in sentences ]
 	
-	taggedsentences = [ nltk.pos_tag(tokens) for tokens in sentences ]
+	taggedsentences = [ pos_tag(tokens) for tokens in sentences ]
 	
-	depparser = nltk.parse.malt.MaltParser('maltparser-1.9.0','engmalt.linear-1.7.mco')
-	depparses = depparser.parse_sents(sentences,verbose=False)
-	print(type(depparses), depparses)
-	for d1 in list(depparses):
-		for d2 in d1:
-			print([ (i,details['word']) for i,details in d2.nodes.items() ])
+	#depparser = nltk.parse.malt.MaltParser('maltparser-1.9.0','engmalt.linear-1.7.mco')
+	#depparses = depparser.parse_sents(sentences,verbose=False)
+	#print(type(depparses), depparses)
+	#for d1 in list(depparses):
+	#	for d2 in d1:
+	#		print([ (i,details['word']) for i,details in d2.nodes.items() ])
 		
