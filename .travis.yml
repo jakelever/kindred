@@ -19,8 +19,7 @@ install:
 # command to run tests
 script:
   - java -version
-  - coverage run --branch -m pytest && coverage report -m
-  - py.test -v
+  - coverage run --branch -m pytest -v && coverage report -m
 after_success:
   - coveralls
 env:
