@@ -41,7 +41,7 @@ def loadEntity(line,text):
 	entity = kindred.Entity(typeName, tokensTest, positions, entityID)
 	return entity
 	
-def loadRelation(line):
+def loadRelation(line,ignoreComplexRelations=False):
 	assert line[0] == 'E' or line[0] == 'R', "Relation input should start with a E or R"
 	split = line.strip().split('\t')
 	relationID = split[0]
@@ -53,6 +53,7 @@ def loadRelation(line):
 	assert len(eventNameSplit) == 1, "Cannot load trigger events"
 	relationType = eventNameSplit[0]
 		
+	isComplexRelation = False
 	argumentText = eventInfo[typeSpacePos:]
 	arguments = []
 	for argument in argumentText.strip().split(' '):
@@ -60,8 +61,20 @@ def loadRelation(line):
 		assert len(split2) == 2
 		argName = split2[0]
 		entityID = split2[1]
+
+		isComplexRelation = (entityID[0] == 'R' or entityID[0] == 'E')
+
+		# We'll skip this relation as
+		if ignoreComplexRelations and isComplexRelation:
+			break
+
+		assert not isComplexRelation, "kindred does not support complex relations (where one relation has another relation as an argument), use ignoreComplexRelations=True to ignore these"
+
 		assert not argName in arguments
 		arguments.append((argName,entityID))
+
+	if ignoreComplexRelations and isComplexRelation:
+		return None
 
 	arguments = sorted(arguments)
 	entityIDs = [ entityID for argName,entityID in arguments ]
@@ -70,7 +83,7 @@ def loadRelation(line):
 	relation = kindred.Relation(relationType, entityIDs, argNames)
 	return relation
 	
-def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False):
+def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreComplexRelations=False):
 	with codecs.open(txtFile, "r", "utf-8") as f:
 		text = f.read()
 			
@@ -86,8 +99,9 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False):
 		with codecs.open(a2File, "r", "utf-8") as f:
 			for line in f:
 				if line[0] == 'E' or line[0] == 'R':
-					relation = loadRelation(line.strip())
-					relations.append(relation)
+					relation = loadRelation(line.strip(),ignoreComplexRelations)
+					if not relation is None:
+						relations.append(relation)
 				elif verbose:
 					print "Unable to process line: %s" % line.strip()
 	else:
@@ -98,7 +112,7 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False):
 			
 	return combinedData
 
-def loadDataFromSTFormat_Directory(directory,verbose=False):
+def loadDataFromSTFormat_Directory(directory,verbose=False,ignoreComplexRelations=False):
 	assert os.path.isdir(directory), "%s must be a directory"
 	
 	if directory[-1] != '/':
@@ -115,7 +129,7 @@ def loadDataFromSTFormat_Directory(directory,verbose=False):
 			assert os.path.isfile(txtFilename), "%s must exist" % txtFilename
 			assert os.path.isfile(a1Filename), "%s must exist" % a1Filename
 
-			data = loadDataFromSTFormat(txtFilename,a1Filename,a2Filename,verbose)
+			data = loadDataFromSTFormat(txtFilename,a1Filename,a2Filename,verbose,ignoreComplexRelations)
 			allData.append(data)
 	return allData
 	

@@ -202,7 +202,7 @@ class RelationData:
 		relations = []
 		for r in relationsWithSourceEntityIDs:
 			for e in r.entityIDs:
-				assert e in sourceEntityIDs, "Entities in relation must occur in the associated text"
+				assert e in sourceEntityIDs, "Entities in relation must occur in the associated text. %s does not" % e
 			relationEntityIDs = [ sourceEntityIDsToEntityIDs[e] for e in r.entityIDs ]
 			newR = Relation(r.relationType,relationEntityIDs,r.argNames)
 			relations.append(newR)

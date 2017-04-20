@@ -105,7 +105,7 @@ def test_loadBioNLP_SeeDev_full_train():
 	relationCount = sum([ len(d.getRelations()) for d in data ])
 
 	assert fileCount == 39
-	assert relationCount == 1169
+	assert relationCount == 1158
 	assert entityCount == 3259
 
 def test_loadBioNLP_SeeDev_full_dev():
@@ -120,7 +120,7 @@ def test_loadBioNLP_SeeDev_full_dev():
 	relationCount = sum([ len(d.getRelations()) for d in data ])
 
 	assert fileCount == 19
-	assert relationCount == 594
+	assert relationCount == 588
 	assert entityCount == 1607
 
 def test_loadBioNLP_SeeDev_full_test():
@@ -139,4 +139,5 @@ def test_loadBioNLP_SeeDev_full_test():
 	assert entityCount == 2216
 
 if __name__ == '__main__':
-	test_loadBioNLP_BB3_event_train()
+	#test_loadBioNLP_BB3_event_train()
+	test_loadBioNLP_SeeDev_full_train()
