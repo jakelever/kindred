@@ -95,7 +95,8 @@ def loadDataFromSTFormat(txtFile,a1File,a2File):
 	else:
 		print "Note: No A2 file found. ", a2File
 
-	combinedData = kindred.RelationData(text,relations,entities=entities,sourceFilename=txtFile)
+	baseTxtFile = os.path.basename(txtFile)
+	combinedData = kindred.RelationData(text,relations,entities=entities,sourceFilename=baseTxtFile)
 			
 	return combinedData
 

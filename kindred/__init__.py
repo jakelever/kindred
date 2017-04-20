@@ -90,7 +90,7 @@ class TextAndEntityData:
 		else:
 			self.text = text
 			self.entities = entities
-		
+	
 
 	def processTaggedText(self,text):
 
