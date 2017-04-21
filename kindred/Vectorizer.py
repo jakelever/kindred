@@ -43,10 +43,10 @@ class Vectorizer:
 			
 		return self.corpusToVectors(corpus,'SelectedTokenTypes_'+str(argID),False)
 		
-	def transform(self,candidateRelations):
+	def transform(self,candidateRelations,featureChoice=None,tfidf=None):
 		
 		if self.verseVectorizer is None:
-			self.verseVectorizer = VERSEVectorizer(candidateRelations)
+			self.verseVectorizer = VERSEVectorizer(candidateRelations,featureChoice,tfidf)
 			return self.verseVectorizer.getTrainingVectors()
 		else:
 			return self.verseVectorizer.vectorize(candidateRelations)
