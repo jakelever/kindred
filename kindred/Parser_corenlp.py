@@ -1,9 +1,18 @@
 
+import json
+
 from pycorenlp import StanfordCoreNLP
 
 import kindred
 from intervaltree import Interval, IntervalTree
 from collections import defaultdict
+
+def shortenDepName(depName):
+	acceptedSubNames = set(['acl:relcl','cc:preconj','compound:prt','det:predet','nmod:npmod','nmod:poss','nmod:tmod'])
+	if depName in acceptedSubNames:
+		return depName
+	else:
+	 	return depName.split(":")[0]
 
 class Parser:
 	def __init__(self):
@@ -32,8 +41,13 @@ class Parser:
 					denotationTree[a:b] = e.entityID
 					
 			parsed = Parser.nlp.annotate(d.getText(), properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
-		
+	
+			#print type(parsed)
+			
+
 			for sentence in parsed["sentences"]:
+				#print sentence.keys()
+				#assert False
 				tokens = []
 				for t in sentence["tokens"]:
 					#kindred.Token(token,pos,lemma,start,end)
@@ -41,8 +55,17 @@ class Parser:
 					tokens.append(token)
 
 				dependencies = []
-				for de in sentence["enhancedPlusPlusDependencies"]:
-					dep = (de["governor"]-1,de["dependent"]-1,de["dep"])
+				#for de in sentence["enhancedPlusPlusDependencies"]:
+				for de in sentence["collapsed-ccprocessed-dependencies"]:
+					#depName = de["dep"].split(":")[0]
+					depName = shortenDepName(de["dep"])
+					#if depName == 'nmod:in_addition_to':
+						#print de
+					#	print json.dumps(sentence,indent=2,sort_keys=True)
+					#	print d.getText()
+					#	assert False
+					#print "DEPNAME", depName
+					dep = (de["governor"]-1,de["dependent"]-1,depName)
 					dependencies.append(dep)
 				# TODO: Should I filter this more or just leave it for simplicity
 					
