@@ -39,6 +39,10 @@ def loadEntity(line,text):
 	assert chunkTest == tokensTest , u"For id=" + id + ", tokens '" + tokens.encode('ascii', 'ignore') + "' don't match up with positions: " + str(positions)
 	
 	entity = kindred.Entity(typeName, tokensTest, positions, entityID)
+
+	if typeName == 'Title' or typeName == 'Paragraph':
+		return None
+
 	return entity
 	
 def loadRelation(line,ignoreComplexRelations=False):
@@ -92,7 +96,8 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreComplexRelati
 		for line in f:			
 			assert line[0] == 'T', "Only triggers are expected in a1 file: " + a1File
 			entity = loadEntity(line.strip(), text)
-			entities.append(entity)
+			if not entity is None:
+				entities.append(entity)
 			
 	relations = []
 	if os.path.exists(a2File):
