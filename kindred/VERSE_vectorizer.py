@@ -730,6 +730,10 @@ class VERSEVectorizer:
 				
 				_,edges = sentence.extractMinSubgraphContainingNodes(locs)
 				edgeTypes = sentence.getEdgeTypes(edges)
+				#print "EX:", example, sorted(edgeTypes)
+				#print "EX:", "-"*30
+				#for edgeType in edgeTypes:
+				#	print "EDGE", edgeType
 			else:
 				edgeTypes = []
 				for sentenceid,locs in example.arguments:
@@ -745,6 +749,7 @@ class VERSEVectorizer:
 			#sys.exit(0)
 	
 		#print corpus
+		#sys.exit(255)
 		return self.corpusToVectors(corpus,featureNamesOnly, 'DependencyPathElements', False)
 
 	def doNGramsOfDependencyPath(self,examples,featureNamesOnly):
@@ -841,10 +846,12 @@ class VERSEVectorizer:
 			options.append("bigrams_entityWindowRight_%d" % i)
 		
 		if featureChoice is None:
-			self.chosenFeatures = ["selectedTokenTypes","dependencyPathElements"]
+			#self.chosenFeatures = ["selectedTokenTypes","dependencyPathElements"]
+			self.chosenFeatures = ["selectedTokenTypes"]
 		else:
-			assert isinstance(featureChoice, str)
-			self.chosenFeatures = sorted(list(set(featureChoice.split(','))))
+			#assert isinstance(featureChoice, str)
+			#self.chosenFeatures = sorted(list(set(featureChoice.split(','))))
+			self.chosenFeatures = featureChoice
 			
 		for feature in self.chosenFeatures:
 			assert feature in options, "Feature (%s) is not a valid feature" % feature
