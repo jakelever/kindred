@@ -36,7 +36,7 @@ def loadEntity(line,text):
 	tokensTest = tokensTest.strip()
 
 	#print chunkTest, '|', tokensTest
-	assert chunkTest == tokensTest , u"For id=" + id + ", tokens '" + tokens.encode('ascii', 'ignore') + "' don't match up with positions: " + str(positions)
+	assert chunkTest == tokensTest , u"For id=" + entityID + ", tokens '" + tokens.encode('ascii', 'ignore') + "' don't match up with positions: " + str(positions)
 	
 	entity = kindred.Entity(typeName, tokensTest, positions, entityID)
 
