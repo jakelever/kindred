@@ -42,7 +42,7 @@ def _maltParser():
 
 
 def test_simpleSentenceParse():
-	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>lung</cancer> and unknown <cancer id=2>cancers</cancer>"
+	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">lung</cancer> and unknown <cancer id="2">cancers</cancer>'
 	data = [kindred.TextAndEntityData(text)]
 	
 	parser = Parser()
@@ -64,15 +64,15 @@ def test_simpleSentenceParse():
 	
 	assert isinstance(processedSentence.processedEntities,list)
 	assert len(processedSentence.processedEntities) == 2
-	assertProcessedEntity(processedSentence.processedEntities[0],'drug',[0],1)
-	assertProcessedEntity(processedSentence.processedEntities[1],'cancer',[6,9],2)
+	assertProcessedEntity(processedSentence.processedEntities[0],'drug',[0],'1')
+	assertProcessedEntity(processedSentence.processedEntities[1],'cancer',[6,9],'2')
 	
 	assert isinstance(processedSentence.dependencies,list)
 	assert len(processedSentence.dependencies) > 0
 	
 	
 def test_twoSentenceParse():
-	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>NSCLC</cancer>. <drug id=3>Aspirin</drug> is the main cause of <disease id=4>boneitis</disease>."
+	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer>. <drug id="3">Aspirin</drug> is the main cause of <disease id="4">boneitis</disease>.'
 	data = [kindred.TextAndEntityData(text)]
 	
 	parser = Parser()
@@ -102,8 +102,8 @@ def test_twoSentenceParse():
 		
 	assert isinstance(processedSentence0.processedEntities,list)
 	assert len(processedSentence0.processedEntities) == 2
-	assertProcessedEntity(processedSentence0.processedEntities[0],'drug',[0],1)
-	assertProcessedEntity(processedSentence0.processedEntities[1],'cancer',[6],2)
+	assertProcessedEntity(processedSentence0.processedEntities[0],'drug',[0],'1')
+	assertProcessedEntity(processedSentence0.processedEntities[1],'cancer',[6],'2')
 	
 	# Second sentence	
 	expectedWords = "Aspirin is the main cause of boneitis .".split()
@@ -115,8 +115,8 @@ def test_twoSentenceParse():
 		
 	assert isinstance(processedSentence1.processedEntities,list)
 	assert len(processedSentence1.processedEntities) == 2
-	assertProcessedEntity(processedSentence1.processedEntities[0],'drug',[0],3)
-	assertProcessedEntity(processedSentence1.processedEntities[1],'disease',[6],4)
+	assertProcessedEntity(processedSentence1.processedEntities[0],'drug',[0],'3')
+	assertProcessedEntity(processedSentence1.processedEntities[1],'disease',[6],'4')
 
 #TODO: Test parser with relations
 #if test_sentenceParseWithRelations():
@@ -124,7 +124,7 @@ def test_twoSentenceParse():
 
 #@profile
 def runPerfTest():
-	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>lung</cancer> and unknown <cancer id=2>cancers</cancer>."
+	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">lung</cancer> and unknown <cancer id=2>cancers</cancer>.'
 	text = " ".join([ text for _ in xrange(100)] )
 	data = [ kindred.TextAndEntityData(text) for _ in range(2) ]
 	
@@ -139,6 +139,6 @@ if __name__ == '__main__':
 	
 	#parser = Parser()
 	#processedSentences = parser.parse(data)
-	runPerfTest()
-	test_stanfordDependencyParser()
+	#runPerfTest()
+	test_simpleSentenceParse()
 	
