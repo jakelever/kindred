@@ -4,7 +4,7 @@ from kindred.CandidateBuilder import CandidateBuilder
 from kindred.datageneration import generateData,generateTestData
 	
 def test_simpleRelationCandidates():
-	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>NSCLC</cancer>. <drug id=3>Aspirin</drug> is the main cause of <disease id=4>boneitis</disease> ."
+	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer>. <drug id="3">Aspirin</drug> is the main cause of <disease id="4">boneitis</disease> .'
 	relations = [ kindred.Relation('treats',[1,2]) ]
 
 	data = [kindred.RelationData(text,relations)]	
@@ -23,10 +23,10 @@ def test_simpleRelationCandidates():
 	
 	sourceEntityIDsToEntityIDs = data[0].getSourceEntityIDsToEntityIDs()
 
-	assert candidateRelations[0].entitiesInRelation == (sourceEntityIDsToEntityIDs[1], sourceEntityIDsToEntityIDs[2])
-	assert candidateRelations[1].entitiesInRelation == (sourceEntityIDsToEntityIDs[2], sourceEntityIDsToEntityIDs[1])
-	assert candidateRelations[2].entitiesInRelation == (sourceEntityIDsToEntityIDs[3], sourceEntityIDsToEntityIDs[4])
-	assert candidateRelations[3].entitiesInRelation == (sourceEntityIDsToEntityIDs[4], sourceEntityIDsToEntityIDs[3])
+	assert candidateRelations[0].entitiesInRelation == (sourceEntityIDsToEntityIDs['1'], sourceEntityIDsToEntityIDs['2'])
+	assert candidateRelations[1].entitiesInRelation == (sourceEntityIDsToEntityIDs['2'], sourceEntityIDsToEntityIDs['1'])
+	assert candidateRelations[2].entitiesInRelation == (sourceEntityIDsToEntityIDs['3'], sourceEntityIDsToEntityIDs['4'])
+	assert candidateRelations[3].entitiesInRelation == (sourceEntityIDsToEntityIDs['4'], sourceEntityIDsToEntityIDs['3'])
 
 if __name__ == '__main__':
 	test_simpleRelationCandidates()
