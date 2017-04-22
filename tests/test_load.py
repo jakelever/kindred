@@ -8,8 +8,8 @@ def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEnti
 	assert entity.text == expectedText, "(%s) not as expected" % (entity.__str__())
 	assert entity.pos == expectedPos, "(%s) not as expected" % (entity.__str__())
 	assert entity.sourceEntityID == expectedSourceEntityID, "(%s) not as expected" % (entity.__str__())
-
-def test_loadST():
+	
+def test_loadStandoffFile():
 	scriptDir = os.path.dirname(__file__)
 	txtPath = os.path.join(scriptDir,'data','example.txt')
 	a1Path = os.path.join(scriptDir,'data','example.a1')
@@ -17,16 +17,34 @@ def test_loadST():
 
 	data = kindred.load(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
 	
-	assert len(data) == 1
-	entities = data[0].getEntities()
-	relations = data[0].getRelations()
+	assert isinstance(data,kindred.RelationData)
+	entities = data.getEntities()
+	relations = data.getRelations()
 
-	sourceEntityIDsToEntityIDs = data[0].getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
 
-	assertEntity(entities[0],expectedType='drug',expectedText='Erlotinib',expectedPos=[(0,9)],expectedSourceEntityID="T1")
-	assertEntity(entities[1],expectedType='cancer',expectedText='NSCLC',expectedPos=[(36,41)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('treats',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['arg1','arg2'])]
+	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	
 
+def test_loadSimpleTagFile():
+	scriptDir = os.path.dirname(__file__)
+	path = os.path.join(scriptDir,'data','example.simple')
+
+	data = kindred.load(dataFormat='simpletag',path=path)
+	
+	assert isinstance(data,kindred.RelationData)
+	entities = data.getEntities()
+	relations = data.getRelations()
+
+	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+
+	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+
+	
 if __name__ == '__main__':
-	test_loadST()
+	test_loadSimpleTagFile()
 
