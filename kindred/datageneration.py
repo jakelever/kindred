@@ -5,14 +5,14 @@ import kindred
 def generateData(positiveCount=100,negativeCount=100):
 	random.seed(1)
 
-	positivePatterns = ["<drug id=ID1>DRUG</drug> treats <disease id=ID2>DISEASE</disease>.",
-						"<drug id=ID1>DRUG</drug> is a common treatment for <disease id=ID2>DISEASE</disease>.",
-						"<drug id=ID1>DRUG</drug> is often used for <disease id=ID2>DISEASE</disease>.",
-						"<disease id=ID2>DISEASE</disease> can be treated with <drug id=ID1>DRUG</drug>."]
-	negativePatterns = ["<drug id=ID1>DRUG</drug> and <disease2 id=ID2>DISEASE</disease2> were discovered by the same researcher.",
-						"<drug id=ID1>DRUG</drug> is the main cause of <disease2 id=ID2>DISEASE</disease2>.",
-						"<drug id=ID1>DRUG</drug> failed clinical trials for <disease2 id=ID2>DISEASE</disease2>.",
-						"<disease2 id=ID2>DISEASE</disease2> is a known side effect of <drug id=ID1>DRUG</drug>."]
+	positivePatterns = ['<drug id="ID1">DRUG</drug> treats <disease id="ID2">DISEASE</disease>.',
+						'<drug id="ID1">DRUG</drug> is a common treatment for <disease id="ID2">DISEASE</disease>.',
+						'<drug id="ID1">DRUG</drug> is often used for <disease id="ID2">DISEASE</disease>.',
+						'<disease id="ID2">DISEASE</disease> can be treated with <drug id="ID1">DRUG</drug>.']
+	negativePatterns = ['<drug id="ID1">DRUG</drug> and <disease2 id="ID2">DISEASE</disease2> were discovered by the same researcher.',
+						'<drug id="ID1">DRUG</drug> is the main cause of <disease2 id="ID2">DISEASE</disease2>.',
+						'<drug id="ID1">DRUG</drug> failed clinical trials for <disease2 id="ID2">DISEASE</disease2>.',
+						'<disease2 id="ID2">DISEASE</disease2> is a known side effect of <drug id="ID1">DRUG</drug>.']
 						
 	fakeDrugNames = ['bmzvpvwbpw','pehhjnlvve''wbjccovflf','usckfljzxu','ruswdgzajr','vgypkemhjr','oxzbaapqct','elvptnpvyc']
 	fakeDiseaseNames = ['gnorcyvmer','hfymprbifs','ootopaoxbg','knetvjnjun','kfjqxlpvew','zgwivlcmly','kneqlzjegs','kyekjnkrfo']
