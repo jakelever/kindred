@@ -126,6 +126,54 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreComplexRelati
 			
 	return combinedData
 
+def loadDataFromJSON(filename):
+	entities = []
+	relations = []
+	
+	with open(filename) as f:
+		data = json.load(f)
+		text = data['text']
+		if 'denotations' in data:
+			for d in data['denotations']:
+				sourceEntityID = d['id']
+				entityType = d['obj']
+				span = d['span']
+				startPos,endPos = span['begin'],span['end']
+				position = [(startPos,endPos)]
+				entityText = text[startPos:endPos]
+				
+				entity = kindred.Entity(entityType,entityText,position,sourceEntityID=sourceEntityID)
+				entities.append(entity)
+		if 'relations' in data:
+			for r in data['relations']:
+				relationID = r['id']
+				obj = r['obj']
+				relationType = r['pred']
+				subj = r['subj']
+				
+				entityIDs = [obj,subj]
+				argNames = ['obj','subj']
+				
+				relation = kindred.Relation(relationType=relationType,entityIDs=entityIDs,argNames=argNames)
+				relations.append(relation)
+		#if 'modifications' in data:
+		#	for m in data['modifications']:
+		#		id = m['id']
+		#		obj = m['obj']
+		#		pred = m['pred']
+		#		modification = (pred,obj)
+		#		modifications[id] = modification
+
+		expected = ['denotations','divid','modifications','namespaces','project','relations','sourcedb','sourceid','target','text']
+		extraFields = [ k for k in data.keys() if not k in expected]
+		assert len(extraFields) == 0, "Found additional unexpected fields (%s) in JSON FILE : %s" % (",".join(extraFields), filename)
+		
+	baseTxtFile = os.path.basename(filename)
+	combinedData = kindred.RelationData(text,relations,entities=entities,sourceFilename=baseTxtFile)
+
+	return combinedData
+
+	
 def parseSimpleTag_helper(node,currentPosition=0):
 	text,entities,relations = '',[],[]
 	for s in node.childNodes:
@@ -182,7 +230,7 @@ def parseSimpleTag(text):
 	return combinedData
 
 def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None):
-	assert dataFormat == 'standoff' or dataFormat == 'simpletag'
+	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
 	
 	if dataFormat == 'standoff':
 		assert not txtPath is None
@@ -190,6 +238,7 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None):
 		assert not a2Path is None
 
 		relationData = loadDataFromSTFormat(txtPath,a1Path,a2Path)
+		relationData = [relationData]
 	elif dataFormat == 'simpletag':
 		assert not path is None
 
@@ -197,6 +246,14 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None):
 			filecontents = f.read().strip()
 		relationData = parseSimpleTag(filecontents)
 		relationData.sourceFilename = os.path.basename(path)
+		relationData = [relationData]
+	elif dataFormat == 'json':
+		assert not path is None
+		relationData = loadDataFromJSON(path)
+		relationData = [relationData]
 		
-	assert isinstance(relationData,kindred.RelationData)
+	assert isinstance(relationData,list)
+	for r in relationData:
+		assert isinstance(r,kindred.RelationData)
+		
 	return relationData
