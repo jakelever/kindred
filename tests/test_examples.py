@@ -1,3 +1,5 @@
+import sys
+
 import kindred
 from kindred.CandidateBuilder import CandidateBuilder
 from kindred.Vectorizer import Vectorizer
@@ -12,7 +14,6 @@ from kindred.DataLoad import loadDataFromSTFormat_Directory
 
 def test_bionlpst_bb3():
 	trainData = loadBioNLPData('2016-BB3-event-train')
-	#trainData = loadDataFromSTFormat_Directory('mini/')
 	devData = loadBioNLPData('2016-BB3-event-dev')
 	
 	devData_TextAndEntities = [ d.getTextAndEntities() for d in devData ]
@@ -37,19 +38,10 @@ def test_bionlpst_bb3():
 
 def test_bionlpst_seedev():
 	trainData = loadBioNLPData('2016-SeeDev-binary-train')
-	#trainData = loadDataFromSTFormat_Directory('mini/')
 	devData = loadBioNLPData('2016-SeeDev-binary-dev')
 	
-	for d in trainData:
-		d.relations = [ r for r in d.relations if r.relationType == 'Binds_To' ]
-		#print d.relations
-	for d in devData:
-		d.relations = [ r for r in d.relations if r.relationType == 'Binds_To' ]
-			
 	devData_TextAndEntities = [ d.getTextAndEntities() for d in devData ]
 	devData_Relations = [ d.getRelations() for d in devData ]
-
-	#sys.exit(0)
 
 	print "Loaded"
 
