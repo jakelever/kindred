@@ -1,11 +1,4 @@
 import kindred
-from kindred.CandidateBuilder import CandidateBuilder
-from kindred.Vectorizer import Vectorizer
-from kindred.Parser import Parser
-from kindred.RelationClassifier import RelationClassifier
-from kindred.Evaluator import Evaluator
-
-from kindred.datageneration import generateData,generateTestData
 
 def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEntityID):
 	assert isinstance(entity,kindred.Entity)
@@ -35,7 +28,7 @@ def test_convertTaggedText():
 	
 def test_convertTaggedTextWithSplitEntities():
 	#text = 'The <drug><disease>Erlotinib</disease></drug> is a common treatment for <cancer>NSCLC</cancer> patients'
-	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>lung</cancer> and unknown <cancer id=2>cancers</cancer>"
+	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">lung</cancer> and unknown <cancer id="2">cancers</cancer>'
 	converted = kindred.TextAndEntityData(text)
 	
 	assert isinstance(converted,kindred.TextAndEntityData)
@@ -44,18 +37,17 @@ def test_convertTaggedTextWithSplitEntities():
 	for e in entities:
 		assert isinstance(e,kindred.Entity)
 
-	assertEntity(entities[0],expectedType='drug',expectedText='Erlotinib',expectedPos=[(0,9)],expectedSourceEntityID=1)
-	assertEntity(entities[1],expectedType='cancer',expectedText='lung cancers',expectedPos=[(36,40), (53,60)],expectedSourceEntityID=2)
+	assertEntity(entities[0],expectedType='drug',expectedText='Erlotinib',expectedPos=[(0,9)],expectedSourceEntityID='1')
+	assertEntity(entities[1],expectedType='cancer',expectedText='lung cancers',expectedPos=[(36,40), (53,60)],expectedSourceEntityID='2')
 
 	text = converted.getText()
 	#assert isinstance(text,unicode) # Python3 issue here
 	assert text == "Erlotinib is a common treatment for lung and unknown cancers"
 
 def test_convertedTaggedTextWithRelations():
-	text = "<drug id=5>Erlotinib</drug> is a common treatment for <cancer id=6>NSCLC</cancer>"
-	relations = [kindred.Relation('treats',[5,6])]
+	text = '<drug id="5">Erlotinib</drug> is a common treatment for <cancer id="6">NSCLC</cancer><relation type="treats" subj="5" obj="6" />'
 
-	converted = kindred.RelationData(text,relations)
+	converted = kindred.RelationData(text)
 	assert isinstance(converted,kindred.RelationData)
 
 	entities = converted.getEntities()
@@ -63,8 +55,8 @@ def test_convertedTaggedTextWithRelations():
 	for e in entities:
 		assert isinstance(e,kindred.Entity)
 
-	assertEntity(entities[0],expectedType='drug',expectedText='Erlotinib',expectedPos=[(0,9)],expectedSourceEntityID=5)
-	assertEntity(entities[1],expectedType='cancer',expectedText='NSCLC',expectedPos=[(36,41)],expectedSourceEntityID=6)
+	assertEntity(entities[0],expectedType='drug',expectedText='Erlotinib',expectedPos=[(0,9)],expectedSourceEntityID='5')
+	assertEntity(entities[1],expectedType='cancer',expectedText='NSCLC',expectedPos=[(36,41)],expectedSourceEntityID='6')
 
 	text = converted.getText()
 	#assert isinstance(text,unicode) # Python3 issue here
@@ -72,4 +64,8 @@ def test_convertedTaggedTextWithRelations():
 
 	sourceEntityIDsToEntityIDs = converted.getSourceEntityIDsToEntityIDs()	
 
-	assert converted.getRelations() == [kindred.Relation('treats',[sourceEntityIDsToEntityIDs[5],sourceEntityIDsToEntityIDs[6]])]
+	assert converted.getRelations() == [kindred.Relation('treats',[sourceEntityIDsToEntityIDs['6'],sourceEntityIDsToEntityIDs['5']],['obj','subj'])]
+
+if __name__ == '__main__':
+	test_convertedTaggedTextWithRelations()
+	

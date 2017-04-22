@@ -1,11 +1,11 @@
 
-from kindred import *
 import xml.etree.ElementTree
 import sys
 
+import kindred
 from kindred import CandidateBuilder
 
-from kindred.load import load,loadDir
+from kindred.loadFunctions import load,loadDir
 from kindred import bionlpst
 
 class Entity:
@@ -88,83 +88,15 @@ class TextAndEntityData:
 		self.sourceFilename = sourceFilename
 
 		if entities is None:
-			self.text,self.entities = self.processTaggedText(text)
+			#self.text,self.entities = self.processTaggedText(text)
+			relationDataWithoutRelations = kindred.loadFunctions.parseSimpleTag(text)
+			assert len(relationDataWithoutRelations.getRelations()) == 0, "Cannot load simple tagged text into TextAndEntityData with relations"
+			
+			self.text = relationDataWithoutRelations.getText()
+			self.entities = relationDataWithoutRelations.getEntities()
 		else:
 			self.text = text
 			self.entities = entities
-	
-
-	def processTaggedText(self,text):
-
-		text = text.replace('>','<')
-		split = text.split('<')
-		
-		tagStyle = None
-		isTag = False
-		currentText = ""
-		openTags = {}
-		minID = 1
-		
-		preEntities = {}
-		for section in split:
-			if isTag:
-				tagSplit = section.split(' ')
-				assert len(tagSplit) == 1 or len(tagSplit) == 2
-				if len(tagSplit) == 1:
-					if section.startswith('/'): # close a tag
-						entityType = section[1:]
-						assert entityType in openTags, "Trying to close a non-existent %s element" % entityType
-						
-						entityStart,sourceEntityID = openTags[entityType]
-						entityEnd = len(currentText)
-						entityText = currentText[entityStart:]
-						#entity = Entity(entityType,sourceEntityID,entityText,pos=[(entityStart,entityEnd)])
-						#entities.append(entity)
-						key = (sourceEntityID,entityType)
-						if key in preEntities:
-							preEntities[key]['text'] += ' ' + entityText
-							preEntities[key]['pos'].append((entityStart,entityEnd))
-						else:
-							preEntities[key] = {}
-							preEntities[key]['text'] = entityText
-							preEntities[key]['pos'] = [(entityStart,entityEnd)]
-						
-						
-						del openTags[entityType]
-					else: # open a tag
-						assert tagStyle != 2, "Cannot mix entity tags with and without IDs"
-						tagStyle = 1
-					
-						entityType = section
-						openTags[entityType] = (len(currentText),minID)
-						minID += 1
-				elif len(tagSplit) == 2:
-					assert tagStyle != 1, "Cannot mix entity tags with and without IDs"
-					tagStyle = 2
-						
-					entityType,idinfo = tagSplit
-					assert idinfo.startswith('id=')
-					idinfoSplit = idinfo.split('=')
-					assert len(idinfoSplit) == 2
-					sourceEntityID = int(idinfoSplit[1])
-					
-					openTags[entityType] = (len(currentText),sourceEntityID)
-			else:
-				currentText += section
-				
-			# Flip each iteration
-			isTag = not isTag
-			
-		assert len(openTags) == 0, "All tags were not closed in %s" % text
-		
-		entities = []
-		preEntitiesKeys = sorted(list(preEntities.keys()))
-		for (sourceEntityID,entityType) in preEntitiesKeys:
-			entityInfo = preEntities[(sourceEntityID,entityType)]
-			entity = Entity(entityType,entityInfo['text'],entityInfo['pos'],sourceEntityID)
-			entities.append(entity)
-		
-		return currentText,entities
 		
 	def getEntities(self):
 		return self.entities
@@ -191,25 +123,34 @@ class TextAndEntityData:
 		return self.__str__()
 		
 class RelationData:
-	def __init__(self,text,relationsWithSourceEntityIDs,sourceFilename=None,entities=None):
-		assert isinstance(relationsWithSourceEntityIDs,list)
-		for r in relationsWithSourceEntityIDs:
-			assert isinstance(r,Relation)
+	def __init__(self,text,relationsWithSourceEntityIDs=None,sourceFilename=None,entities=None):
 
-		self.textAndEntityData = TextAndEntityData(text,sourceFilename=sourceFilename,entities=entities)
+		
+		if entities is None and relationsWithSourceEntityIDs is None:
+			relationDataToCopy = kindred.loadFunctions.parseSimpleTag(text)
 			
-		sourceEntityIDsToEntityIDs = self.textAndEntityData.getSourceEntityIDsToEntityIDs()
-		sourceEntityIDs = sourceEntityIDsToEntityIDs.keys()
+			self.textAndEntityData = relationDataToCopy.getTextAndEntities()
+			self.relations = relationDataToCopy.getRelations()
+		else:
+			assert isinstance(relationsWithSourceEntityIDs,list)
+			for r in relationsWithSourceEntityIDs:
+				assert isinstance(r,Relation)
 			
-		relations = []
-		for r in relationsWithSourceEntityIDs:
-			for e in r.entityIDs:
-				assert e in sourceEntityIDs, "Entities in relation must occur in the associated text. %s does not" % e
-			relationEntityIDs = [ sourceEntityIDsToEntityIDs[e] for e in r.entityIDs ]
-			newR = Relation(r.relationType,relationEntityIDs,r.argNames)
-			relations.append(newR)
+			self.textAndEntityData = TextAndEntityData(text,sourceFilename=sourceFilename,entities=entities)
 			
-		self.relations = relations
+			
+			sourceEntityIDsToEntityIDs = self.textAndEntityData.getSourceEntityIDsToEntityIDs()
+			sourceEntityIDs = sourceEntityIDsToEntityIDs.keys()
+				
+			relations = []
+			for r in relationsWithSourceEntityIDs:
+				for e in r.entityIDs:
+					assert e in sourceEntityIDs, "Entities in relation must occur in the associated text. %s does not" % e
+				relationEntityIDs = [ sourceEntityIDsToEntityIDs[e] for e in r.entityIDs ]
+				newR = Relation(r.relationType,relationEntityIDs,r.argNames)
+				relations.append(newR)
+				
+			self.relations = relations
 		
 	def getEntities(self):
 		return self.textAndEntityData.getEntities()

@@ -224,6 +224,15 @@ def parseSimpleTag(text,ignoreEntities=[]):
 	xmldoc = minidom.parseString("<doc>%s</doc>" % text)
 	docNode = xmldoc.childNodes[0]
 	text,unmergedEntities,relations = parseSimpleTag_helper(docNode,ignoreEntities=ignoreEntities)
+	
+	missingSourceEntityID = [ e.sourceEntityID == '' for e in unmergedEntities ]
+	assert all(missingSourceEntityID) or (not any(missingSourceEntityID)), 'All entities or none (not some) should be given IDs'
+	assert (not any(missingSourceEntityID)) or len(relations) == 0, "Cannot include relations with no-ID entities"
+	
+	if all(missingSourceEntityID):
+		for i,e in enumerate(unmergedEntities):
+			e.sourceEntityID = i+1
+					
 	entities = mergeEntitiesWithMatchingIDs(unmergedEntities)
 			
 	combinedData = kindred.RelationData(text,relations,entities=entities)
