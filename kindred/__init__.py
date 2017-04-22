@@ -5,6 +5,7 @@ import sys
 
 from kindred import CandidateBuilder
 
+from kindred.load import load
 
 class Entity:
 	nextInternalID = 1
