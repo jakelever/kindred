@@ -321,11 +321,11 @@ class VERSEVectorizer:
 				print t
 				assert isinstance(t,str)
 		else:
-			for id,thing in data.iteritems():
-				if thing is None:
-					print id, thing
-				else:
-					print id, thing.shape
+			#for id,thing in data.iteritems():
+			#	if thing is None:
+			#		print id, thing
+			#	else:
+			#		print id, thing.shape
 			
 			# And combine the rest
 			combined = hstack( [ d for d in data.values() if not d is None ] )
