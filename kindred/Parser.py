@@ -5,8 +5,9 @@ from collections import defaultdict
 from kindred import nltkutils
 
 class Parser:
-	def __init__(self):
-		pass
+	def __init__(self,depparser='stanford'):
+		assert depparser == 'stanford' or depparser == 'malt'
+		self.depparser = depparser
 
 	def parse(self,data):
 		assert isinstance(data,list)
@@ -25,7 +26,7 @@ class Parser:
 				for a,b in e.pos:
 					denotationTree[a:b] = e.entityID
 					
-			sentences = nltkutils.parseSentences(d.getText())
+			sentences = nltkutils.parseSentences(d.getText(),self.depparser)
 			
 			for tokens,dependencies in sentences:
 				entityIDsToTokenLocs = defaultdict(list)

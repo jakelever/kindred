@@ -53,30 +53,36 @@ def penn_to_wn(tag):
 	return None
 	
 wordnet_lemmatizer = None
-depparser = None
+maltparser = None
+stanfordparser = None
 #@profile
-def parseSentences(text):
+def parseSentences(text,depparserOption='stanford'):
 	if sys.version_info >= (3, 0):
 		assert isinstance(text,str), relationErrorMsg
 	else:
 		assert isinstance(text,basestring), relationErrorMsg
+	assert depparserOption == 'stanford' or depparserOption == 'malt'
 
 	global wordnet_lemmatizer
-	global depparser
+	global maltparser,stanfordparser
 	
 	checkNLTKPackages()
 	
 	if wordnet_lemmatizer is None:
 		wordnet_lemmatizer = WordNetLemmatizer()
 		
-	if depparser is None:
-		#depparser = MaltParser('maltparser-1.9.0','engmalt.linear-1.7.mco')
-		depparser = getMaltParser()
-		#Dependencies.initializeStanfordParser()
-		#depparser = StanfordDependencyParser(model_path="edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
+	if depparserOption == 'stanford':
+		if stanfordparser is None:
+			Dependencies.initializeStanfordParser()
+			stanfordparser = StanfordDependencyParser(model_path="edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
+		depparser = stanfordparser
+	elif depparserOption == 'malt':
+		if maltparser is None:
+			maltparser = getMaltParser()
+		depparser = maltparser
 
 	#TODO: Deal with Unicode issues gracefully in Python2/3
-	#text = text.encode('ascii','ignore')
+	text = text.encode('ascii','ignore')
 		
 
 	sentences = sent_tokenize(text)
