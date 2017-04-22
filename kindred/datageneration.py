@@ -28,11 +28,13 @@ def generateData(positiveCount=100,negativeCount=100):
 		
 		text = text.replace('ID1',str(entityID))
 		text = text.replace('ID2',str(entityID+1))
-		relations = [ kindred.Relation('treats',[entityID,entityID+1]) ]
+		#relations = [ kindred.Relation('treats',[entityID,entityID+1]) ]
+
+		text += '<relation type="%s" subj="%d" obj="%d" />' % ('treats',entityID,entityID+1)
 		
 		entityID += 2
 		
-		converted = kindred.RelationData(text,relations)
+		converted = kindred.RelationData(text)
 		data.append(converted)
 		
 	halfNegativeCount = int(negativeCount/2.0)
