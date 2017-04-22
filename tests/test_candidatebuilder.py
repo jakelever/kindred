@@ -12,7 +12,7 @@ def test_simpleRelationCandidates():
 	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(data)
 	
 	assert relTypes == [('treats', 2)]
-	assert candidateClasses == [[1], [0], [0], [0]]
+	assert candidateClasses == [[0], [1], [0], [0]]
 	assert len(candidateRelations) == 4
 	
 	assert str(candidateRelations[0].processedSentence) == 'Erlotinib is a common treatment for NSCLC .'
