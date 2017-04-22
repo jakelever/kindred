@@ -3,6 +3,10 @@ import zipfile
 import hashlib
 import os
 import sys
+import wget
+import subprocess
+import shlex
+import time
 from nltk.parse import malt
 
 if sys.version_info >= (3, 0):
@@ -38,11 +42,7 @@ def _downloadFiles(files):
 		
 			try:
 				print("Downloading %s" % shortName)
-				if sys.version_info >= (3, 0):
-					urllib.request.urlretrieve(url,downloadedPath)
-				else:
-					downloadedFile = urllib.URLopener()
-					downloadedFile.retrieve(url,downloadedPath)
+				wget.download(url,out=downloadedPath,bar=None)
 				
 				downloadedSHA256 = _calcSHA256(downloadedPath)
 				assert downloadedSHA256 == expectedSHA256
@@ -60,9 +60,37 @@ def _downloadFiles(files):
 				# TODO: Make this work in Python2/3 nicely
 				print("ERROR: ",exc_info)
 				sys.exit(255)
-				
+			
+
+def initializeCoreNLP():
+	files = []
+	files.append(('http://nlp.stanford.edu/software/stanford-corenlp-full-2016-10-31.zip','stanford-corenlp-full-2016-10-31.zip','753dd5aae1ea4ba14ed8eca46646aef06f6808a9ce569e52a09840f6928d00d8'))
+	
+	print "Downloading..."
+	_downloadFiles(files)
+	
+	directory = _findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
+	assert not directory is None
+
+	command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 15000'
+
+	os.chdir(directory)
+	process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=directory)#, shell=True)
+	while True:
+		break
+		line = process.stderr.readline()
+		if line == '':
+			continue
+		
+		print "X", line
+		if 'listening at' in line:
+			break
+
+	time.sleep(15)
+		
 			
 stanfordParserInitialised = False
+maltParserDir = None
 def initializeStanfordParser():
 	global downloadDirectory, stanfordParserInitialised
 	if not stanfordParserInitialised:
