@@ -1,9 +1,8 @@
 
 import kindred
-from kindred.BioNLPSTData import loadBioNLPData
 
 def test_loadBioNLP_BB3_event_train():
-	data = loadBioNLPData('2016-BB3-event-train')
+	data = kindred.bionlpst.load('2016-BB3-event-train')
 
 	assert isinstance(data,list)
 	for d in data:
@@ -19,7 +18,7 @@ def test_loadBioNLP_BB3_event_train():
 		
 
 def test_loadBioNLP_BB3_event_dev():
-	data = loadBioNLPData('2016-BB3-event-dev')
+	data = kindred.bionlpst.load('2016-BB3-event-dev')
 
 	assert isinstance(data,list)
 	for d in data:
@@ -34,7 +33,7 @@ def test_loadBioNLP_BB3_event_dev():
 	assert entityCount == 816
 
 def test_loadBioNLP_BB3_event_test():
-	data = loadBioNLPData('2016-BB3-event-test')
+	data = kindred.bionlpst.load('2016-BB3-event-test')
 
 	assert isinstance(data,list)
 	for d in data:
@@ -49,7 +48,7 @@ def test_loadBioNLP_BB3_event_test():
 	assert entityCount == 1246
 
 def test_loadBioNLP_SeeDev_binary_train():
-	data = loadBioNLPData('2016-SeeDev-binary-train')
+	data = kindred.bionlpst.load('2016-SeeDev-binary-train')
 
 	assert isinstance(data,list)
 	for d in data:
@@ -64,7 +63,7 @@ def test_loadBioNLP_SeeDev_binary_train():
 	assert entityCount == 3259
 
 def test_loadBioNLP_SeeDev_binary_dev():
-	data = loadBioNLPData('2016-SeeDev-binary-dev')
+	data = kindred.bionlpst.load('2016-SeeDev-binary-dev')
 
 	assert isinstance(data,list)
 	for d in data:
@@ -79,7 +78,7 @@ def test_loadBioNLP_SeeDev_binary_dev():
 	assert entityCount == 1607
 
 def test_loadBioNLP_SeeDev_binary_test():
-	data = loadBioNLPData('2016-SeeDev-binary-test')
+	data = kindred.bionlpst.load('2016-SeeDev-binary-test')
 
 	assert isinstance(data,list)
 	for d in data:
@@ -94,7 +93,7 @@ def test_loadBioNLP_SeeDev_binary_test():
 	assert entityCount == 2216
 
 def test_loadBioNLP_SeeDev_full_train():
-	data = loadBioNLPData('2016-SeeDev-full-train')
+	data = kindred.bionlpst.load('2016-SeeDev-full-train')
 
 	assert isinstance(data,list)
 	for d in data:
@@ -109,7 +108,7 @@ def test_loadBioNLP_SeeDev_full_train():
 	assert entityCount == 3259
 
 def test_loadBioNLP_SeeDev_full_dev():
-	data = loadBioNLPData('2016-SeeDev-full-dev')
+	data = kindred.bionlpst.load('2016-SeeDev-full-dev')
 
 	assert isinstance(data,list)
 	for d in data:
@@ -124,7 +123,7 @@ def test_loadBioNLP_SeeDev_full_dev():
 	assert entityCount == 1607
 
 def test_loadBioNLP_SeeDev_full_test():
-	data = loadBioNLPData('2016-SeeDev-full-test')
+	data = kindred.bionlpst.load('2016-SeeDev-full-test')
 
 	assert isinstance(data,list)
 	for d in data:
@@ -140,4 +139,4 @@ def test_loadBioNLP_SeeDev_full_test():
 
 if __name__ == '__main__':
 	#test_loadBioNLP_BB3_event_train()
-	test_loadBioNLP_SeeDev_full_train()
+	test_loadBioNLP_SeeDev_binary_train()

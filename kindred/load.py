@@ -43,6 +43,7 @@ def loadEntity(line,text):
 	
 	entity = kindred.Entity(typeName, tokensTest, positions, entityID)
 
+	# Document that Title and Paragraph are skipped
 	if typeName == 'Title' or typeName == 'Paragraph':
 		return None
 
@@ -90,7 +91,8 @@ def loadRelation(line,ignoreComplexRelations=False):
 	relation = kindred.Relation(relationType, entityIDs, argNames)
 	return relation
 	
-def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreComplexRelations=False):
+# TODO: Deal with complex relations more clearly
+def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreComplexRelations=True):
 	with codecs.open(txtFile, "r", "utf-8") as f:
 		text = f.read()
 			
@@ -118,7 +120,7 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreComplexRelati
 						relations.append(relation)
 				elif verbose:
 					print "Unable to process line: %s" % line.strip()
-	else:
+	elif verbose:
 		print "Note: No A2 file found. ", a2File
 
 	baseTxtFile = os.path.basename(txtFile)
@@ -235,7 +237,7 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None):
 	if dataFormat == 'standoff':
 		assert not txtPath is None
 		assert not a1Path is None
-		assert not a2Path is None
+		#assert not a2Path is None
 
 		relationData = loadDataFromSTFormat(txtPath,a1Path,a2Path)
 		relationData = [relationData]
@@ -257,3 +259,34 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None):
 		assert isinstance(r,kindred.RelationData)
 		
 	return relationData
+	
+def loadDir(dataFormat,directory):
+	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
+	assert os.path.isdir(directory), "%s must be a directory"
+	
+	if directory[-1] != '/':
+		directory += '/'
+
+	allData = []
+	for filename in os.listdir(directory):
+		if dataFormat == 'standoff' and filename.endswith('.txt'):
+			base = filename[0:-4]
+			txtPath = directory + base + '.txt'
+			a1Path = directory + base + '.a1'
+			a2Path = directory + base + '.a2'
+
+			assert os.path.isfile(txtPath), "%s must exist" % txtPath
+			assert os.path.isfile(a1Path), "%s must exist" % a1Path
+
+			data = load(dataFormat,txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
+			allData += data
+		elif dataFormat == 'simpletag' and filename.endswith('.simple'):
+			data = load(dataFormat,path=filename)
+			allData += data
+		elif dataFormat == 'json' and filename.endswith('.json'):
+			data = load(dataFormat,path=filename)
+			allData += data
+			
+	return allData
+			
+			

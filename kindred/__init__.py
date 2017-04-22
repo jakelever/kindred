@@ -5,7 +5,8 @@ import sys
 
 from kindred import CandidateBuilder
 
-from kindred.load import load
+from kindred.load import load,loadDir
+from kindred import bionlpst
 
 class Entity:
 	nextInternalID = 1
