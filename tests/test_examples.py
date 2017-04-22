@@ -9,12 +9,9 @@ from kindred.Evaluator import Evaluator
 
 from kindred.datageneration import generateData,generateTestData
 
-from kindred.BioNLPSTData import loadBioNLPData
-from kindred.DataLoad import loadDataFromSTFormat_Directory
-
 def test_bionlpst_bb3():
-	trainData = loadBioNLPData('2016-BB3-event-train')
-	devData = loadBioNLPData('2016-BB3-event-dev')
+	trainData = kindred.bionlpst.load('2016-BB3-event-train')
+	devData = kindred.bionlpst.load('2016-BB3-event-dev')
 	
 	devData_TextAndEntities = [ d.getTextAndEntities() for d in devData ]
 	devData_Relations = [ d.getRelations() for d in devData ]
@@ -37,8 +34,8 @@ def test_bionlpst_bb3():
 	assert f1score > 0.5
 
 def test_bionlpst_seedev():
-	trainData = loadBioNLPData('2016-SeeDev-binary-train')
-	devData = loadBioNLPData('2016-SeeDev-binary-dev')
+	trainData = kindred.bionlpst.load('2016-SeeDev-binary-train')
+	devData = kindred.bionlpst.load('2016-SeeDev-binary-dev')
 	
 	devData_TextAndEntities = [ d.getTextAndEntities() for d in devData ]
 	devData_Relations = [ d.getRelations() for d in devData ]
