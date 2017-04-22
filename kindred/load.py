@@ -43,10 +43,6 @@ def loadEntity(line,text):
 	
 	entity = kindred.Entity(typeName, tokensTest, positions, entityID)
 
-	# Document that Title and Paragraph are skipped
-	if typeName == 'Title' or typeName == 'Paragraph':
-		return None
-
 	return entity
 	
 def loadRelation(line,ignoreComplexRelations=False):
@@ -92,7 +88,7 @@ def loadRelation(line,ignoreComplexRelations=False):
 	return relation
 	
 # TODO: Deal with complex relations more clearly
-def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreComplexRelations=True):
+def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
 	with codecs.open(txtFile, "r", "utf-8") as f:
 		text = f.read()
 			
@@ -104,7 +100,7 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreComplexRelati
 				
 			assert line[0] == 'T', "Only triggers are expected in a1 file: " + a1File
 			entity = loadEntity(line.strip(), text)
-			if not entity is None:
+			if (not entity is None) and (not entity.entityType in ignoreEntities):
 				entities.append(entity)
 			
 	relations = []
@@ -128,7 +124,7 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreComplexRelati
 			
 	return combinedData
 
-def loadDataFromJSON(filename):
+def loadDataFromJSON(filename,ignoreEntities=[]):
 	entities = []
 	relations = []
 	
@@ -144,8 +140,9 @@ def loadDataFromJSON(filename):
 				position = [(startPos,endPos)]
 				entityText = text[startPos:endPos]
 				
-				entity = kindred.Entity(entityType,entityText,position,sourceEntityID=sourceEntityID)
-				entities.append(entity)
+				if not entityType in ignoreEntities:
+					entity = kindred.Entity(entityType,entityText,position,sourceEntityID=sourceEntityID)
+					entities.append(entity)
 		if 'relations' in data:
 			for r in data['relations']:
 				relationID = r['id']
@@ -176,7 +173,7 @@ def loadDataFromJSON(filename):
 	return combinedData
 
 	
-def parseSimpleTag_helper(node,currentPosition=0):
+def parseSimpleTag_helper(node,currentPosition=0,ignoreEntities=[]):
 	text,entities,relations = '',[],[]
 	for s in node.childNodes:
 		if s.nodeType == s.ELEMENT_NODE:
@@ -196,8 +193,9 @@ def parseSimpleTag_helper(node,currentPosition=0):
 				entityType = s.tagName
 				sourceEntityID = s.getAttribute('id')
 				position = [(currentPosition+len(text),currentPosition+len(text)+len(insideText))]
-				e = kindred.Entity(entityType,insideText,position,sourceEntityID=sourceEntityID)
-				entities.append(e)
+				if not entityType in ignoreEntities:
+					e = kindred.Entity(entityType,insideText,position,sourceEntityID=sourceEntityID)
+					entities.append(e)
 				
 			text += insideText
 			entities += insideEntities
@@ -222,16 +220,16 @@ def mergeEntitiesWithMatchingIDs(unmergedEntities):
 			
 	return entityDict.values()
 	
-def parseSimpleTag(text):
+def parseSimpleTag(text,ignoreEntities=[]):
 	xmldoc = minidom.parseString("<doc>%s</doc>" % text)
 	docNode = xmldoc.childNodes[0]
-	text,unmergedEntities,relations = parseSimpleTag_helper(docNode)
+	text,unmergedEntities,relations = parseSimpleTag_helper(docNode,ignoreEntities=ignoreEntities)
 	entities = mergeEntitiesWithMatchingIDs(unmergedEntities)
 			
 	combinedData = kindred.RelationData(text,relations,entities=entities)
 	return combinedData
 
-def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None):
+def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
 	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
 	
 	if dataFormat == 'standoff':
@@ -239,19 +237,19 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None):
 		assert not a1Path is None
 		#assert not a2Path is None
 
-		relationData = loadDataFromSTFormat(txtPath,a1Path,a2Path)
+		relationData = loadDataFromSTFormat(txtPath,a1Path,a2Path,verbose=verbose,ignoreEntities=ignoreEntities)
 		relationData = [relationData]
 	elif dataFormat == 'simpletag':
 		assert not path is None
 
 		with open(path,'r') as f:
 			filecontents = f.read().strip()
-		relationData = parseSimpleTag(filecontents)
+		relationData = parseSimpleTag(filecontents,ignoreEntities=ignoreEntities)
 		relationData.sourceFilename = os.path.basename(path)
 		relationData = [relationData]
 	elif dataFormat == 'json':
 		assert not path is None
-		relationData = loadDataFromJSON(path)
+		relationData = loadDataFromJSON(path,ignoreEntities=ignoreEntities)
 		relationData = [relationData]
 		
 	assert isinstance(relationData,list)
@@ -260,7 +258,7 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None):
 		
 	return relationData
 	
-def loadDir(dataFormat,directory):
+def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
 	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
 	assert os.path.isdir(directory), "%s must be a directory"
 	
@@ -278,13 +276,13 @@ def loadDir(dataFormat,directory):
 			assert os.path.isfile(txtPath), "%s must exist" % txtPath
 			assert os.path.isfile(a1Path), "%s must exist" % a1Path
 
-			data = load(dataFormat,txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
+			data = load(dataFormat,txtPath=txtPath,a1Path=a1Path,a2Path=a2Path,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
 			allData += data
 		elif dataFormat == 'simpletag' and filename.endswith('.simple'):
-			data = load(dataFormat,path=filename)
+			data = load(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
 			allData += data
 		elif dataFormat == 'json' and filename.endswith('.json'):
-			data = load(dataFormat,path=filename)
+			data = load(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
 			allData += data
 			
 	return allData

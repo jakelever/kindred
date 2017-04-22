@@ -2,7 +2,7 @@
 import kindred
 
 def test_loadBioNLP_BB3_event_train():
-	data = kindred.bionlpst.load('2016-BB3-event-train')
+	data = kindred.bionlpst.load('2016-BB3-event-train')#,ignoreEntities=['Title','Paragraph'])
 
 	assert isinstance(data,list)
 	for d in data:
@@ -18,7 +18,7 @@ def test_loadBioNLP_BB3_event_train():
 		
 
 def test_loadBioNLP_BB3_event_dev():
-	data = kindred.bionlpst.load('2016-BB3-event-dev')
+	data = kindred.bionlpst.load('2016-BB3-event-dev')#,,ignoreEntities=['Title','Paragraph'])
 
 	assert isinstance(data,list)
 	for d in data:
@@ -33,7 +33,7 @@ def test_loadBioNLP_BB3_event_dev():
 	assert entityCount == 816
 
 def test_loadBioNLP_BB3_event_test():
-	data = kindred.bionlpst.load('2016-BB3-event-test')
+	data = kindred.bionlpst.load('2016-BB3-event-test')#,,ignoreEntities=['Title','Paragraph'])
 
 	assert isinstance(data,list)
 	for d in data:
@@ -138,5 +138,4 @@ def test_loadBioNLP_SeeDev_full_test():
 	assert entityCount == 2216
 
 if __name__ == '__main__':
-	#test_loadBioNLP_BB3_event_train()
-	test_loadBioNLP_SeeDev_binary_train()
+	test_loadBioNLP_BB3_event_train()
