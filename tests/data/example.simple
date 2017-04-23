@@ -1,0 +1,2 @@
+The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene>
+<relation type="causes" subj="T2" obj="T1" />
