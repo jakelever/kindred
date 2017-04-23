@@ -5,10 +5,9 @@ from kindred.Vectorizer import Vectorizer
 from kindred.datageneration import generateData,generateTestData
 	
 def test_simpleVectorizer():
-	text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>NSCLC</cancer>. <drug id=3>Aspirin</drug> is the main cause of <disease id=4>boneitis</disease> ."
-	relations = [ kindred.Relation('treats',[1,2]) ]
+	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer>. <drug id="3">Aspirin</drug> is the main cause of <disease id="4">boneitis</disease> . <relation type="treats" subj="1" obj="2" />'
 
-	data = [kindred.RelationData(text,relations)]
+	data = [kindred.RelationData(text)]
 	
 	candidateBuilder = CandidateBuilder()
 	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(data)
