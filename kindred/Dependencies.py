@@ -77,16 +77,16 @@ def initializeCoreNLP():
 	os.chdir(directory)
 	process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=directory)#, shell=True)
 	while True:
-		break
+		#break
 		line = process.stderr.readline()
 		if line == '':
 			continue
 		
-		print "X", line
+		print "X", line.strip()
 		if 'listening at' in line:
 			break
 
-	time.sleep(15)
+	#time.sleep(15)
 		
 			
 stanfordParserInitialised = False
