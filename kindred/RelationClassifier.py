@@ -45,18 +45,20 @@ class RelationClassifier:
 		"""
 		self.isTrained = False
 		self.useSingleClassifier = True
-		self.useBuilder = False
+		self.useBuilder = True
+		self.tfidf = True
 
 		self.defaultFeatures = ["selectedTokenTypes","ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
+		#self.defaultFeatures = ["selectedTokenTypes","dependencyPathElements"]
 
-	def buildFeatureSet(self,candidateRelations,classes):
+	def buildFeatureSet(self,candidateRelations,classes,tfidf):
 		vectorizers = {}
 		trainVectors = {}
 
 		featureChoice = ["selectedTokenTypes","dependencyPathElements","ngrams_betweenEntities","bigrams_betweenEntities","bigramsOfDependencyPath"]
 		for feature in featureChoice:
 			vectorizers[feature] = Vectorizer()
-			trainVectors[feature] = vectorizers[feature].transform(candidateRelations,[feature])
+			trainVectors[feature] = vectorizers[feature].transform(candidateRelations,[feature],tfidf=tfidf)
 
 		groupVector = None
 		chosenFeatures = []
@@ -120,7 +122,6 @@ class RelationClassifier:
 		#tmpClassData = [ (1 in candidateClassGroup) for candidateClassGroup in candidateClasses ]
 
 		#useSingleClassifier = False
-		tfidf = True
 		if self.useSingleClassifier:
 			#chosenFeatures = ["selectedTokenTypes","dependencyPathElements","ngrams_betweenEntities","bigrams_betweenEntities","bigramsOfDependencyPath"]
 
@@ -135,12 +136,12 @@ class RelationClassifier:
 			#assert False
 	
 			if self.useBuilder:
-				chosenFeatures = self.buildFeatureSet(candidateRelations,simplifiedClasses)
+				chosenFeatures = self.buildFeatureSet(candidateRelations,simplifiedClasses,self.tfidf)
 			else:
 				chosenFeatures = self.defaultFeatures
 
 			self.vectorizer = Vectorizer()
-			trainVectors = self.vectorizer.transform(candidateRelations,featureChoice=chosenFeatures,tfidf=tfidf)
+			trainVectors = self.vectorizer.transform(candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
 		
 			print trainVectors.shape
 			assert trainVectors.shape[0] == len(candidateClasses)
@@ -154,17 +155,17 @@ class RelationClassifier:
 				chosenFeatures = self.defaultFeatures
 
 				self.vectorizer = Vectorizer()
-				tmpMatrix = self.vectorizer.transform(candidateRelations,featureChoice=chosenFeatures,tfidf=tfidf)
+				tmpMatrix = self.vectorizer.transform(candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
 			self.clfs = {}
 			self.vectorizers = {}
 			for c in self.allClasses:
 				tmpClassData = [ (c in candidateClassGroup) for candidateClassGroup in candidateClasses ]
 
 				if self.useBuilder:
-					chosenFeatures = self.buildFeatureSet(candidateRelations,tmpClassData)
+					chosenFeatures = self.buildFeatureSet(candidateRelations,tmpClassData,self.tfidf)
 					print c, chosenFeatures
 					self.vectorizers[c] = Vectorizer()
-					tmpMatrix = self.vectorizers[c].transform(candidateRelations,featureChoice=chosenFeatures,tfidf=tfidf)
+					tmpMatrix = self.vectorizers[c].transform(candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
 
 				#save_sparse_csr('train.matrix',trainVectors.tocsr())
 				#saveClasses('train.classes',tmpClassData)
