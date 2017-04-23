@@ -7,6 +7,7 @@ import wget
 import subprocess
 import shlex
 import time
+import atexit
 from nltk.parse import malt
 
 if sys.version_info >= (3, 0):
@@ -62,7 +63,14 @@ def _downloadFiles(files):
 				sys.exit(255)
 			
 
+corenlpProcess = None
+def killCoreNLP():
+	if not corenlpProcess is None:
+		corenlpProcess.kill()
+
 def initializeCoreNLP():
+	global corenlpProcess
+
 	files = []
 	files.append(('http://nlp.stanford.edu/software/stanford-corenlp-full-2016-10-31.zip','stanford-corenlp-full-2016-10-31.zip','753dd5aae1ea4ba14ed8eca46646aef06f6808a9ce569e52a09840f6928d00d8'))
 	
@@ -75,10 +83,13 @@ def initializeCoreNLP():
 	command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 15000'
 
 	os.chdir(directory)
-	process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=directory)#, shell=True)
+	corenlpProcess = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=directory)#, shell=True)
+
+	atexit.register(killCoreNLP)
+
 	while True:
 		#break
-		line = process.stderr.readline()
+		line = corenlpProcess.stderr.readline()
 		if line == '':
 			continue
 		
@@ -86,7 +97,7 @@ def initializeCoreNLP():
 		if 'listening at' in line:
 			break
 
-	#time.sleep(15)
+	time.sleep(1)
 		
 			
 stanfordParserInitialised = False
