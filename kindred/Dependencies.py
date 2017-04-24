@@ -89,6 +89,7 @@ def initializeCoreNLP():
 
 	while True:
 		line = corenlpProcess.stderr.readline()
+		line = str(line)
 		if line == '':
 			continue
 		
