@@ -50,11 +50,11 @@ class Evaluator():
 		for relType in sortedRelTypes:
 			TP,FP,FN = TPs[relType],FPs[relType],FNs[relType]
 			precision = 0.0 if (TP+FP) == 0 else TP / float(TP+FP)
-	                recall = 0.0 if (TP+FN) == 0 else TP / float(TP+FN)
-	                f1score = 0.0 if precision==0 or recall == 0 else 2 * (precision*recall) / (precision+recall)
+			recall = 0.0 if (TP+FN) == 0 else TP / float(TP+FN)
+			f1score = 0.0 if precision==0 or recall == 0 else 2 * (precision*recall) / (precision+recall)
 		
 			if display:
-				print formatString % (relType,TP,FP,FN,precision,recall,f1score)
+				print(formatString % (relType,TP,FP,FN,precision,recall,f1score))
 
 		TP,FP,FN = sum(TPs.values()),sum(FPs.values()),sum(FNs.values())
 		precision = 0.0 if (TP+FP) == 0 else TP / float(TP+FP)
@@ -62,8 +62,8 @@ class Evaluator():
 		f1score = 0.0 if precision==0 or recall == 0 else 2 * (precision*recall) / (precision+recall)
 
 		if display:
-			print "-"*50
-			print formatString % ("All",TP,FP,FN,precision,recall,f1score)
+			print("-"*50)
+			print(formatString % ("All",TP,FP,FN,precision,recall,f1score))
 
 
 		
