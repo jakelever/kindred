@@ -95,6 +95,10 @@ class TextAndEntityData:
 			self.text = relationDataWithoutRelations.getText()
 			self.entities = relationDataWithoutRelations.getEntities()
 		else:
+			assert isinstance(entities,list)
+			for e in entities:
+				assert isinstance(e,Entity)
+
 			self.text = text
 			self.entities = entities
 		
@@ -132,9 +136,14 @@ class RelationData:
 			self.textAndEntityData = relationDataToCopy.getTextAndEntities()
 			self.relations = relationDataToCopy.getRelations()
 		else:
+			assert not (relationsWithSourceEntityIDs is None or entities is None)
+
 			assert isinstance(relationsWithSourceEntityIDs,list)
 			for r in relationsWithSourceEntityIDs:
 				assert isinstance(r,Relation)
+			assert isinstance(entities,list)
+			for e in entities:
+				assert isinstance(e,Entity)
 			
 			self.textAndEntityData = TextAndEntityData(text,sourceFilename=sourceFilename,entities=entities)
 			

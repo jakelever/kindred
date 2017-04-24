@@ -51,9 +51,7 @@ def generateData(positiveCount=100,negativeCount=100):
 		
 			combinedText = "%s %s" % (combinedText,text)
 		
-		relations = [ ]
-		
-		converted = kindred.RelationData(combinedText,relations)
+		converted = kindred.RelationData(combinedText)
 		data.append(converted)
 		
 	return data

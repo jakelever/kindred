@@ -218,7 +218,7 @@ def mergeEntitiesWithMatchingIDs(unmergedEntities):
 		else:
 			entityDict[e.sourceEntityID] = e
 			
-	return entityDict.values()
+	return list(entityDict.values())
 	
 def parseSimpleTag(text,ignoreEntities=[]):
 	xmldoc = minidom.parseString("<doc>%s</doc>" % text)
