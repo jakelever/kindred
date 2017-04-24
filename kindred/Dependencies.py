@@ -93,7 +93,7 @@ def initializeCoreNLP():
 			continue
 		
 		print("X", line.strip())
-		if line.find('listening') != -1
+		if line.find('listening') != -1:
 			break
 
 	time.sleep(1)
