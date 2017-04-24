@@ -10,6 +10,7 @@ from kindred.Evaluator import Evaluator
 from kindred.datageneration import generateData,generateTestData
 
 def test_bionlpst_bb3():
+	assert False
 	trainData = kindred.bionlpst.load('2016-BB3-event-train')
 	devData = kindred.bionlpst.load('2016-BB3-event-dev')
 	
@@ -27,6 +28,7 @@ def test_bionlpst_bb3():
 	assert f1score > 0.5
 
 def test_bionlpst_seedev():
+	assert False
 	trainData = kindred.bionlpst.load('2016-SeeDev-binary-train')
 	devData = kindred.bionlpst.load('2016-SeeDev-binary-dev')
 	
