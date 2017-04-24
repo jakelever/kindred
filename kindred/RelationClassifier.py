@@ -143,7 +143,7 @@ class RelationClassifier:
 			self.vectorizer = Vectorizer()
 			trainVectors = self.vectorizer.transform(candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
 		
-			print trainVectors.shape
+			print(trainVectors.shape)
 			assert trainVectors.shape[0] == len(candidateClasses)
 		
 			self.clf = svm.LinearSVC(class_weight='balanced')
@@ -163,7 +163,7 @@ class RelationClassifier:
 
 				if self.useBuilder:
 					chosenFeatures = self.buildFeatureSet(candidateRelations,tmpClassData,self.tfidf)
-					print c, chosenFeatures
+					print(c, chosenFeatures)
 					self.vectorizers[c] = Vectorizer()
 					tmpMatrix = self.vectorizers[c].transform(candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
 

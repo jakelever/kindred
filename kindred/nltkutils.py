@@ -18,12 +18,12 @@ nltkPackagesOkay = False
 def checkNLTKPackages():
 	global nltkPackagesOkay
 	if not nltkPackagesOkay:
-		print "Starting download check"
+		print("Starting download check")
 		requiredPackages = ['wordnet','punkt','averaged_perceptron_tagger']
 		for package in requiredPackages:
 			download(package,quiet=True)
 		nltkPackagesOkay = True
-		print "Finishing download check"
+		print("Finishing download check")
 
 def is_noun(tag):
     return tag in ['NN', 'NNS', 'NNP', 'NNPS']
