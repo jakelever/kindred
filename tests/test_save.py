@@ -10,7 +10,7 @@ def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEnti
 	assert entity.pos == expectedPos, "(%s) not as expected" % (entity.__str__())
 	assert entity.sourceEntityID == expectedSourceEntityID, "(%s) not as expected" % (entity.__str__())
 	
-def test_saveStandoffFile():
+def _saveStandoffFile():
 	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
 	data = kindred.RelationData(text)
 	dataList = [data]

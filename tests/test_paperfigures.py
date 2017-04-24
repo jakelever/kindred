@@ -7,7 +7,7 @@ from kindred.Evaluator import Evaluator
 
 from kindred.datageneration import generateData,generateTestData
 
-def test_bionlpst_bb3():	
+def _bionlpst_bb3():	
 	trainData = kindred.BioNLPSTData('2016-BB3-event-training_and_development')
 	testData = kindred.BioNLPSTData('2016-BB3-event-test')
 	
@@ -19,7 +19,7 @@ def test_bionlpst_bb3():
 	print(classifier.getCrossvalidatedScore())
 	kindred.saveST('BB3-predictions/',testData,predictedRelations)
 	
-def test_bionlpst_seedev():	
+def _bionlpst_seedev():	
 	trainData = kindred.BioNLPSTData('2016-SeeDev-binary-training_and_development')
 	testData = kindred.BioNLPSTData('2016-SeeDev-binary-test')
 	
@@ -31,7 +31,7 @@ def test_bionlpst_seedev():
 	print(classifier.getCrossvalidatedScore())
 	kindred.saveST('BB3-predictions/',testData,predictedRelations)
 	
-def test_nary():	
+def _nary():	
 	trainData = kindred.BioNLPSTData('2016-SeeDev-binary-training_and_development')
 	testData = kindred.BioNLPSTData('2016-SeeDev-binary-test')
 	
@@ -45,7 +45,7 @@ def test_nary():
 	predictedRelations_combined = classifier_combined.predict(testData)
 	kindred.saveST('BB3-predictions-combined/',testData,predictedRelations_combined)
 	
-def test_parser():	
+def _parser():	
 	trainData = kindred.BioNLPSTData('2016-SeeDev-binary-training_and_development')
 	testData = kindred.BioNLPSTData('2016-SeeDev-binary-test')
 	

@@ -9,7 +9,7 @@ from kindred.Evaluator import Evaluator
 
 from kindred.datageneration import generateData,generateTestData
 
-def test_bionlpst_bb3():
+def _bionlpst_bb3():
 	assert False
 	trainData = kindred.bionlpst.load('2016-BB3-event-train')
 	devData = kindred.bionlpst.load('2016-BB3-event-dev')
@@ -27,7 +27,7 @@ def test_bionlpst_bb3():
 	print("f1score:",f1score)
 	assert f1score > 0.5
 
-def test_bionlpst_seedev():
+def _bionlpst_seedev():
 	assert False
 	trainData = kindred.bionlpst.load('2016-SeeDev-binary-train')
 	devData = kindred.bionlpst.load('2016-SeeDev-binary-dev')
@@ -45,23 +45,20 @@ def test_bionlpst_seedev():
 	print("f1score:",f1score)
 	assert f1score > 0.33
 
-def test_pubannotation():
+def _pubannotation():
 	trainData = kindred.PubAnnotationData('2016-SeeDev-binary-training')
 	model = kindred.train(trainData)
 	text = 'A SeeDev related text goes here'
 	predictedRelations = model.predict(text)
 	assert len(predicted_relations) == 1
 
-def test_pubtator():
+def _pubtator():
 	assert False
 	
-def test_unicodeCheck():
+def _unicodeCheck():
 	assert False
 	
-def test_exportToST():
-	assert False
-
-def test_naryRelations():
+def _naryRelations():
 	assert False
 	
 if __name__ == '__main__':
