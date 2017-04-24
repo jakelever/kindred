@@ -74,7 +74,7 @@ def initializeCoreNLP():
 	files = []
 	files.append(('http://nlp.stanford.edu/software/stanford-corenlp-full-2016-10-31.zip','stanford-corenlp-full-2016-10-31.zip','753dd5aae1ea4ba14ed8eca46646aef06f6808a9ce569e52a09840f6928d00d8'))
 	
-	print "Downloading..."
+	print("Downloading...")
 	_downloadFiles(files)
 	
 	directory = _findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
@@ -93,7 +93,7 @@ def initializeCoreNLP():
 		if line == '':
 			continue
 		
-		print "X", line.strip()
+		print("X", line.strip())
 		if 'listening at' in line:
 			break
 

@@ -16,7 +16,7 @@ def test_bionlpst_bb3():
 	
 	predictedRelations = classifier.predict(testData)
 	
-	print classifier.getCrossvalidatedScore()
+	print(classifier.getCrossvalidatedScore())
 	kindred.saveST('BB3-predictions/',testData,predictedRelations)
 	
 def test_bionlpst_seedev():	
@@ -28,7 +28,7 @@ def test_bionlpst_seedev():
 	
 	predictedRelations = classifier.predict(testData)
 	
-	print classifier.getCrossvalidatedScore()
+	print(classifier.getCrossvalidatedScore())
 	kindred.saveST('BB3-predictions/',testData,predictedRelations)
 	
 def test_nary():	

@@ -16,21 +16,14 @@ def test_bionlpst_bb3():
 	devData_TextAndEntities = [ d.getTextAndEntities() for d in devData ]
 	devData_Relations = [ d.getRelations() for d in devData ]
 
-	print "Loaded"
-
 	classifier = RelationClassifier(useBuilder=True)
-	print "Training..."
 	classifier.train(trainData)
-	print "Trained"
 
-	print "Predicting..."
 	predictedRelations = classifier.predict(devData) #devData_TextAndEntities)
-	print "Predicted"
 
-	print "Evaluating..."
 	evaluator = Evaluator()
 	f1score = evaluator.evaluate(devData_Relations, predictedRelations, metric='f1score')
-	print "f1score:",f1score
+	print("f1score:",f1score)
 	assert f1score > 0.5
 
 def test_bionlpst_seedev():
@@ -40,21 +33,14 @@ def test_bionlpst_seedev():
 	devData_TextAndEntities = [ d.getTextAndEntities() for d in devData ]
 	devData_Relations = [ d.getRelations() for d in devData ]
 
-	print "Loaded"
-
 	classifier = RelationClassifier()
-	print "Training..."
 	classifier.train(trainData)
-	print "Trained"
 
-	print "Predicting..."
 	predictedRelations = classifier.predict(devData) #devData_TextAndEntities)
-	print "Predicted"
 
-	print "Evaluating..."
 	evaluator = Evaluator()
 	f1score = evaluator.evaluate(devData_Relations, predictedRelations, metric='f1score')
-	print "f1score:",f1score
+	print("f1score:",f1score)
 	assert f1score > 0.33
 
 def test_pubannotation():
