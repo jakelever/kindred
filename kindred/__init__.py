@@ -257,10 +257,6 @@ class ProcessedSentence:
 		tokenWords = [ t.word for t in self.tokens ]
 		return " ".join(tokenWords)
 
-	def getEdgeTypes(self,edges):
-		types = [ t for a,b,t in self.dependencies if (a,b) in edges or (b,a) in edges ]
-		return types
-
 	def getEntityIDs(self):
 		return [ e.entityID for e in self.processedEntities ]
 		
