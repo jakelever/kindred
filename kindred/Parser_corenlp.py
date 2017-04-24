@@ -46,7 +46,7 @@ class Parser:
 			for e in d.getEntities():
 				entityTypeLookup[e.entityID] = e.entityType
 			
-				for a,b in e.pos:
+				for a,b in e.position:
 					denotationTree[a:b] = e.entityID
 					
 			parsed = Parser.nlp.annotate(d.getText(), properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})

@@ -12,7 +12,7 @@ from kindred import bionlpst
 class Entity:
 	nextInternalID = 1
 
-	def __init__(self,entityType,text,pos,sourceEntityID=None):
+	def __init__(self,entityType,text,position,sourceEntityID=None):
 		posErrorMsg = "Entity position must be list of tuples (startPos,endPos)"
 
 		if sys.version_info >= (3, 0):
@@ -22,8 +22,8 @@ class Entity:
 			assert isinstance(entityType,basestring) or isinstance(entityType,unicode)
 			assert isinstance(text,basestring) or isinstance(text,unicode)
 
-		assert isinstance(pos,list), posErrorMsg
-		for p in pos:
+		assert isinstance(position,list), posErrorMsg
+		for p in position:
 			assert isinstance(p,tuple), posErrorMsg
 			assert len(p) == 2, posErrorMsg
 			assert isinstance(p[0],int), posErrorMsg
@@ -32,13 +32,13 @@ class Entity:
 		self.entityType = entityType
 		self.sourceEntityID = sourceEntityID
 		self.text = text
-		self.pos = pos
+		self.position = position
 		
 		self.entityID = Entity.nextInternalID
 		Entity.nextInternalID += 1
 		
 	def __str__(self):
-		out = "%s:'%s' id=%d %s" % (self.entityType,self.text,self.entityID,str(self.pos))
+		out = "%s:'%s' id=%d %s" % (self.entityType,self.text,self.entityID,str(self.position))
 		return out
 		
 	def __repr__(self):

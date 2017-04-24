@@ -212,9 +212,9 @@ def mergeEntitiesWithMatchingIDs(unmergedEntities):
 	for e in unmergedEntities:
 		assert isinstance(e, kindred.Entity)
 		if e.sourceEntityID in entityDict:
-			position = e.pos
+			position = e.position
 			entityDict[e.sourceEntityID].text += " " + e.text
-			entityDict[e.sourceEntityID].pos += e.pos
+			entityDict[e.sourceEntityID].position += e.position
 		else:
 			entityDict[e.sourceEntityID] = e
 			

@@ -4,7 +4,7 @@ def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEnti
 	assert isinstance(entity,kindred.Entity)
 	assert entity.entityType == expectedType, "(%s) not as expected" % (entity.__str__())
 	assert entity.text == expectedText, "(%s) not as expected" % (entity.__str__())
-	assert entity.pos == expectedPos, "(%s) not as expected" % (entity.__str__())
+	assert entity.position == expectedPos, "(%s) not as expected" % (entity.__str__())
 	assert entity.sourceEntityID == expectedSourceEntityID, "(%s) not as expected" % (entity.__str__())
 
 def test_convertTaggedText():

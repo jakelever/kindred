@@ -23,7 +23,7 @@ class Parser:
 			for e in d.getEntities():
 				entityTypeLookup[e.entityID] = e.entityType
 			
-				for a,b in e.pos:
+				for a,b in e.position:
 					denotationTree[a:b] = e.entityID
 					
 			sentences = nltkutils.parseSentences(d.getText(),self.depparser)
