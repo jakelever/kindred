@@ -6,6 +6,7 @@ import kindred
 from kindred import CandidateBuilder
 
 from kindred.loadFunctions import load,loadDir
+from kindred.saveFunctions import save
 from kindred import bionlpst
 
 class Entity:
