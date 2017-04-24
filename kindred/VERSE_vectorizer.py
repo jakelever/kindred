@@ -113,11 +113,11 @@ class SentenceModel:
 	def invertTriggers(self):
 		self.locsToTriggerIDs = {}
 		self.locsToTriggerTypes = {}
-		for triggerid,locs in self.predictedEntityLocs.iteritems():
+		for triggerid,locs in self.predictedEntityLocs.items():
 			type = self.predictedEntityTypes[triggerid]
 			self.locsToTriggerIDs[tuple(locs)] = triggerid
 			self.locsToTriggerTypes[tuple(locs)] = type
-		for triggerid,locs in self.knownEntityLocs.iteritems():
+		for triggerid,locs in self.knownEntityLocs.items():
 			type = self.knownEntityTypes[triggerid]
 			self.locsToTriggerIDs[tuple(locs)] = triggerid
 			self.locsToTriggerTypes[tuple(locs)] = type
