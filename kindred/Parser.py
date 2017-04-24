@@ -16,7 +16,7 @@ class Parser:
 			
 		allSentenceData = []
 		for d in data:
-			entityIDsToSourceEntityIDs = d.getEntityIDsToSourceEntityIDs()
+			entityIDsToEntities = d.getEntityIDsToEntities()
 		
 			denotationTree = IntervalTree()
 			entityTypeLookup = {}
@@ -37,14 +37,11 @@ class Parser:
 						entityIDsToTokenLocs[entityID].append(i)
 					
 				# Let's gather up the information about the "known" entities in the sentence
-				#entityLocs, entityTypes = {},{}
 				processedEntities = []
 				for entityID,entityLocs in sorted(entityIDsToTokenLocs.items()):
 					entityType = entityTypeLookup[entityID]
-					sourceEntityID = entityIDsToSourceEntityIDs[entityID]
-					processedEntity = kindred.ProcessedEntity(entityType,entityLocs,entityID,sourceEntityID)
-					#entityLocs[entityID] = locs
-					#entityTypes[entityID] = entityType
+					e = entityIDsToEntities[entityID]
+					processedEntity = kindred.ProcessedEntity(e.entityType,entityLocs,entityID,e.sourceEntityID,e.position,e.text)
 					processedEntities.append(processedEntity)
 					
 				relations = []

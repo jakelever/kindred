@@ -112,6 +112,9 @@ class TextAndEntityData:
 	def getEntityIDsToSourceEntityIDs(self):
 		return {e.entityID:e.sourceEntityID for e in self.entities}
 	
+	def getEntityIDsToEntities(self):
+		return {e.entityID:e for e in self.entities}
+	
 	def getEntityIDs(self):
 		return [e.entityID for e in self.entities]
 
@@ -180,6 +183,9 @@ class RelationData:
 	def getEntityIDsToSourceEntityIDs(self):
 		return self.textAndEntityData.getEntityIDsToSourceEntityIDs()
 		
+	def getEntityIDsToEntities(self):
+		return self.textAndEntityData.getEntityIDsToEntities()
+
 	def getEntityIDs(self):
 		return self.textAndEntityData.getEntityIDs()
 
@@ -228,11 +234,13 @@ class Token:
 		return self.__str__()
 
 class ProcessedEntity:
-	def __init__(self,entityType,entityLocs,entityID,sourceEntityID):
+	def __init__(self,entityType,entityLocs,entityID,sourceEntityID,entityPosition,entityText):
 		self.entityType = entityType
 		self.entityLocs = entityLocs
 		self.entityID = entityID
 		self.sourceEntityID = sourceEntityID
+		self.entityPosition = entityPosition
+		self.entityText = entityText
 
 	def __str__(self):
 		return "[ProcessedEntity %s %s %s %s]" % (self.entityType,str(self.entityLocs),str(self.entityID),str(self.sourceEntityID))
