@@ -88,13 +88,12 @@ def initializeCoreNLP():
 	atexit.register(killCoreNLP)
 
 	while True:
-		#break
 		line = corenlpProcess.stderr.readline()
 		if line == '':
 			continue
 		
 		print("X", line.strip())
-		if 'listening at' in line:
+		if line.find('listening') != -1
 			break
 
 	time.sleep(1)
