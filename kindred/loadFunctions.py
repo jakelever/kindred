@@ -115,9 +115,9 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],i
 					if not relation is None:
 						relations.append(relation)
 				elif verbose:
-					print "Unable to process line: %s" % line.strip()
+					print("Unable to process line: %s" % line.strip())
 	elif verbose:
-		print "Note: No A2 file found. ", a2File
+		print("Note: No A2 file found. ", a2File)
 
 	baseTxtFile = os.path.basename(txtFile)
 	combinedData = kindred.RelationData(text,relations,entities=entities,sourceFilename=baseTxtFile)
