@@ -627,7 +627,7 @@ class VERSEVectorizer:
 			allBigrams = []
 			for sentenceid,_ in example.arguments:
 				sentence = example.sentences[sentenceid]
-				bigrams = [ (sentence.tokens[i].word.lower(),sentence.tokens[i+1].word.lower()) for i in xrange(len(sentence.tokens)-1) ]
+				bigrams = [ (sentence.tokens[i].word.lower(),sentence.tokens[i+1].word.lower()) for i in range(len(sentence.tokens)-1) ]
 				allBigrams = allBigrams + bigrams
 			
 			corpus.append(Counter(allBigrams))
@@ -639,7 +639,7 @@ class VERSEVectorizer:
 			allSkipgrams = []
 			for sentenceid,_ in example.arguments:
 				sentence = example.sentences[sentenceid]
-				skipgrams = [ (sentence.tokens[i].word.lower(),sentence.tokens[i+gap].word.lower()) for i in xrange(len(sentence.tokens)-gap) ]
+				skipgrams = [ (sentence.tokens[i].word.lower(),sentence.tokens[i+gap].word.lower()) for i in range(len(sentence.tokens)-gap) ]
 				allSkipgrams = allSkipgrams + skipgrams
 			
 			corpus.append(Counter(allSkipgrams))
