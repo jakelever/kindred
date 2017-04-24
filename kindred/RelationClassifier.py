@@ -39,14 +39,14 @@ class RelationClassifier:
 	"""
 	This is a class. Fantastic!
 	"""
-	def __init__(self):
+	def __init__(self,useSingleClassifier=True,useBuilder=False,tfidf=True):
 		"""
 		Constructor-time
 		"""
 		self.isTrained = False
-		self.useSingleClassifier = True
-		self.useBuilder = True
-		self.tfidf = True
+		self.useSingleClassifier = useSingleClassifier
+		self.useBuilder = useBuilder
+		self.tfidf = tfidf
 
 		self.defaultFeatures = ["selectedTokenTypes","ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
 		#self.defaultFeatures = ["selectedTokenTypes","dependencyPathElements"]

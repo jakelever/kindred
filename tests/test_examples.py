@@ -10,7 +10,6 @@ from kindred.Evaluator import Evaluator
 from kindred.datageneration import generateData,generateTestData
 
 def test_bionlpst_bb3():
-	assert False
 	trainData = kindred.bionlpst.load('2016-BB3-event-train')
 	devData = kindred.bionlpst.load('2016-BB3-event-dev')
 	
@@ -19,7 +18,7 @@ def test_bionlpst_bb3():
 
 	print "Loaded"
 
-	classifier = RelationClassifier()
+	classifier = RelationClassifier(useBuilder=True)
 	print "Training..."
 	classifier.train(trainData)
 	print "Trained"
@@ -35,7 +34,6 @@ def test_bionlpst_bb3():
 	assert f1score > 0.5
 
 def test_bionlpst_seedev():
-	assert False
 	trainData = kindred.bionlpst.load('2016-SeeDev-binary-train')
 	devData = kindred.bionlpst.load('2016-SeeDev-binary-dev')
 	
@@ -57,7 +55,7 @@ def test_bionlpst_seedev():
 	evaluator = Evaluator()
 	f1score = evaluator.evaluate(devData_Relations, predictedRelations, metric='f1score')
 	print "f1score:",f1score
-	assert f1score > 0.5
+	assert f1score > 0.33
 
 def test_pubannotation():
 	trainData = kindred.PubAnnotationData('2016-SeeDev-binary-training')
@@ -80,3 +78,4 @@ def test_naryRelations():
 	
 if __name__ == '__main__':
 	test_bionlpst_bb3()
+	#test_bionlpst_seedev()
