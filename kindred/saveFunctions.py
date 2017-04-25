@@ -14,7 +14,7 @@ def saveDataFromSTFormat(data,predictedRelations,txtPath,a1Path,a2Path):
 		for e in data.getEntities():
 			assert isinstance(e,kindred.Entity)
 		
-			positions = " ".join("%d %d" % (start,end) for start,end in e.position)
+			positions = ";".join("%d %d" % (start,end) for start,end in e.position)
 			line = "%s\t%s %s\t%s" % (e.sourceEntityID,e.entityType,positions,e.text)
 			a1File.write(line+"\n")
 			
