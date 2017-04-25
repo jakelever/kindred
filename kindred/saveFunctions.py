@@ -27,7 +27,7 @@ def saveDataFromSTFormat(data,predictedRelations,txtPath,a1Path,a2Path):
 			relationEntityIDs = [ entityIDsToSourceEntityIDs[eID] for eID in r.entityIDs ]
 			
 			if r.argNames is None:
-				argNames = [ "arg%d" for i in range(len(relationEntityIDs)) ]
+				argNames = [ ("arg%d" % i) for i in range(len(relationEntityIDs)) ]
 			else:
 				argNames = r.argNames
 
@@ -47,7 +47,7 @@ def saveDataFromSTFormat(data,predictedRelations,txtPath,a1Path,a2Path):
 			relationEntityIDs = [ entityIDsToSourceEntityIDs[eID] for eID in r.entityIDs ]
 			
 			if r.argNames is None:
-				argNames = [ "arg%d" for i in range(len(relationEntityIDs)) ]
+				argNames = [ ("arg%d" % i) for i in range(len(relationEntityIDs)) ]
 			else:
 				argNames = r.argNames
 
