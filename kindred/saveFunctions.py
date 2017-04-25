@@ -8,7 +8,7 @@ import kindred
 def saveDataFromSTFormat(data,predictedRelations,txtPath,a1Path,a2Path):
 	assert isinstance(data,kindred.RelationData)
 
-	with codecs.open(txtPath,'w','utf8') as txtFile, open(a1Path,'w') as a1File, open(a2Path,'w') as a2File:
+	with codecs.open(txtPath,'w','utf8') as txtFile, codecs.open(a1Path,'w','utf8') as a1File, codecs.open(a2Path,'w','utf8') as a2File:
 		txtFile.write(data.getText())
 		
 		for e in data.getEntities():
