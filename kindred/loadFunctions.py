@@ -124,54 +124,61 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],i
 			
 	return combinedData
 
-def loadDataFromJSON(filename,ignoreEntities=[]):
+def parseJSON(data,ignoreEntities=[]):
 	entities = []
 	relations = []
 	
-	with open(filename) as f:
-		data = json.load(f)
-		text = data['text']
-		if 'denotations' in data:
-			for d in data['denotations']:
-				sourceEntityID = d['id']
-				entityType = d['obj']
-				span = d['span']
-				startPos,endPos = span['begin'],span['end']
-				position = [(startPos,endPos)]
-				entityText = text[startPos:endPos]
-				
-				if not entityType in ignoreEntities:
-					entity = kindred.Entity(entityType,entityText,position,sourceEntityID=sourceEntityID)
-					entities.append(entity)
-		if 'relations' in data:
-			for r in data['relations']:
-				relationID = r['id']
-				obj = r['obj']
-				relationType = r['pred']
-				subj = r['subj']
-				
-				entityIDs = [obj,subj]
-				argNames = ['obj','subj']
-				
-				relation = kindred.Relation(relationType=relationType,entityIDs=entityIDs,argNames=argNames)
-				relations.append(relation)
-		#if 'modifications' in data:
-		#	for m in data['modifications']:
-		#		id = m['id']
-		#		obj = m['obj']
-		#		pred = m['pred']
-		#		modification = (pred,obj)
-		#		modifications[id] = modification
+	text = data['text']
+	if 'denotations' in data:
+		for d in data['denotations']:
+			sourceEntityID = d['id']
+			entityType = d['obj']
+			span = d['span']
+			startPos,endPos = span['begin'],span['end']
+			position = [(startPos,endPos)]
+			entityText = text[startPos:endPos]
+			
+			if not entityType in ignoreEntities:
+				entity = kindred.Entity(entityType,entityText,position,sourceEntityID=sourceEntityID)
+				entities.append(entity)
+	if 'relations' in data:
+		for r in data['relations']:
+			relationID = r['id']
+			obj = r['obj']
+			relationType = r['pred']
+			subj = r['subj']
+			
+			entityIDs = [obj,subj]
+			argNames = ['obj','subj']
+			
+			relation = kindred.Relation(relationType=relationType,entityIDs=entityIDs,argNames=argNames)
+			relations.append(relation)
+	#if 'modifications' in data:
+	#	for m in data['modifications']:
+	#		id = m['id']
+	#		obj = m['obj']
+	#		pred = m['pred']
+	#		modification = (pred,obj)
+	#		modifications[id] = modification
 
-		expected = ['denotations','divid','modifications','namespaces','project','relations','sourcedb','sourceid','target','text']
-		extraFields = [ k for k in data.keys() if not k in expected]
-		assert len(extraFields) == 0, "Found additional unexpected fields (%s) in JSON FILE : %s" % (",".join(extraFields), filename)
+	#print "keys:", list(data.keys())
+	expected = ['denotations','divid','modifications','namespaces','project','relations','sourcedb','sourceid','target','text','tracks']
+	extraFields = [ k for k in data.keys() if not k in expected]
+	assert len(extraFields) == 0, "Found additional unexpected fields (%s) in JSON" % (",".join(extraFields))
 		
-	baseTxtFile = os.path.basename(filename)
-	combinedData = kindred.RelationData(text,relations,entities=entities,sourceFilename=baseTxtFile)
+	combinedData = kindred.RelationData(text,relations,entities=entities)
 
 	return combinedData
 
+def loadDataFromJSON(filename,ignoreEntities=[]):
+	with open(filename) as f:
+		data = json.load(f)
+	parsed = parseJSON(data,ignoreEntities)
+	
+	baseTxtFile = os.path.basename(filename)
+	parsed.sourceFilename = baseTxtFile
+	
+	return parsed
 	
 def parseSimpleTag_helper(node,currentPosition=0,ignoreEntities=[]):
 	text,entities,relations = '',[],[]

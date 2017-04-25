@@ -7,7 +7,7 @@ from kindred import CandidateBuilder
 
 from kindred.loadFunctions import load,loadDir
 from kindred.saveFunctions import save
-from kindred import bionlpst
+from kindred import bionlpst, pubannotation
 
 class Entity:
 	nextInternalID = 1
