@@ -7,29 +7,43 @@ from kindred.Evaluator import Evaluator
 
 from kindred.datageneration import generateData,generateTestData
 
-def _bionlpst_bb3():	
-	trainData = kindred.BioNLPSTData('2016-BB3-event-training_and_development')
-	testData = kindred.BioNLPSTData('2016-BB3-event-test')
+def _bionlpst_bb3_testSet():
+	trainData = kindred.bionlpst.load('2016-BB3-event-train')
+	devData = kindred.bionlpst.load('2016-BB3-event-dev')
+	testData = kindred.bionlpst.load('2016-BB3-event-test')
 	
-	classifier = RelationClassifier()
-	classifier.train(trainData)
+	trainAndDevData = trainData + devData
+
+	print "Starting training..."
+	#classifier = RelationClassifier(useBuilder=True)
+	classifier = RelationClassifier(useBuilder=False)
+	classifier.train(trainAndDevData)
+
+	print "Predicting training..."
+	predictedRelations = classifier.predict(testData) #devData_TextAndEntities)
 	
-	predictedRelations = classifier.predict(testData)
+	print "Saving..."
+	outDir = 'out.BB3'
+	kindred.save(testData,'standoff',outDir,predictedRelations=predictedRelations)
 	
-	print(classifier.getCrossvalidatedScore())
-	kindred.saveST('BB3-predictions/',testData,predictedRelations)
 	
 def _bionlpst_seedev():	
-	trainData = kindred.BioNLPSTData('2016-SeeDev-binary-training_and_development')
-	testData = kindred.BioNLPSTData('2016-SeeDev-binary-test')
+	trainData = kindred.bionlpst.load('2016-SeeDev-binary-train')
+	devData = kindred.bionlpst.load('2016-SeeDev-binary-dev')
+	testData = kindred.bionlpst.load('2016-SeeDev-binary-test')
 	
+	trainAndDevData = trainData + devData
+
+	print "Starting training..."
 	classifier = RelationClassifier()
-	classifier.train(trainData)
+	classifier.train(trainAndDevData)
+
+	print "Predicting training..."
+	predictedRelations = classifier.predict(testData) #devData_TextAndEntities)
 	
-	predictedRelations = classifier.predict(testData)
-	
-	print(classifier.getCrossvalidatedScore())
-	kindred.saveST('BB3-predictions/',testData,predictedRelations)
+	print "Saving..."
+	outDir = 'out.SeeDev'
+	kindred.save(testData,'standoff',outDir,predictedRelations=predictedRelations)
 	
 def _nary():	
 	trainData = kindred.BioNLPSTData('2016-SeeDev-binary-training_and_development')
@@ -59,3 +73,5 @@ def _parser():
 	predictedRelations_malt = classifier_malt.predict(testData)
 	kindred.saveST('BB3-predictions-malt/',testData,predictedRelations_malt)
 	
+if __name__ == '__main__':
+	_bionlpst_bb3_testSet()
