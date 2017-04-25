@@ -39,6 +39,11 @@ def saveDataFromSTFormat(data,predictedRelations,txtPath,a1Path,a2Path):
 			assert isinstance(r,kindred.Relation)
 			
 			relationType = r.relationType
+			inThisText = [ eID in entityIDsToSourceEntityIDs for eID in r.entityIDs ]
+			if not all(inThisText):
+				# Not all the entities in this relation are in this portion of text. So don't include
+				continue
+			
 			relationEntityIDs = [ entityIDsToSourceEntityIDs[eID] for eID in r.entityIDs ]
 			
 			if r.argNames is None:
