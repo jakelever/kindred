@@ -121,7 +121,8 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],i
 		print("Note: No A2 file found. ", a2File)
 
 	baseTxtFile = os.path.basename(txtFile)
-	combinedData = kindred.RelationData(text,relations,entities=entities,sourceFilename=baseTxtFile)
+	baseFilename = baseTxtFile[0:-4]
+	combinedData = kindred.RelationData(text,relations,entities=entities,sourceFilename=baseFilename)
 			
 	return combinedData
 
