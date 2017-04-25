@@ -21,6 +21,35 @@ import kindred
 from kindred.CandidateBuilder import CandidateBuilder
 from kindred.Vectorizer import Vectorizer
 
+class SVM_With_Threshold:
+	def __init__(self,threshold=0.5):
+		self.clf = svm.SVC(kernel='linear', class_weight='balanced', probability=True)
+		self.threshold = threshold
+
+	def fit(self,X,Y):
+		self.clf.fit(X,Y)
+		self.classes_ = self.clf.classes_
+
+	def predictSimple(self,X,Y):
+		return self.clf.predict(X)
+	def predict_proba(self,X):
+		return self.clf.predict_proba(X)
+		
+	def predict(self,X):
+		probs = self.clf.predict_proba(X)
+
+		# Ignore probabilities that fall below our threshold
+		probs[probs<self.threshold] = -1.0
+
+		# But make sure that the negative class (class=0) always has a slightly higher value
+		probs[:,0][probs[:,0]<self.threshold] = -0.5
+
+		# And get the highest probability for each row
+		predictions = np.argmax(probs,axis=1)
+
+		return predictions
+		
+		
 
 
 def save_sparse_csr(filename,array):
@@ -39,7 +68,7 @@ class RelationClassifier:
 	"""
 	This is a class. Fantastic!
 	"""
-	def __init__(self,useSingleClassifier=True,useBuilder=False,tfidf=True,features=None):
+	def __init__(self,useSingleClassifier=True,useBuilder=False,tfidf=True,features=None,threshold=None):
 		"""
 		Constructor-time
 		"""
@@ -52,6 +81,8 @@ class RelationClassifier:
 		if not features is None:
 			assert isinstance(features,list)
 			self.defaultFeatures = features
+			
+		self.threshold = threshold
 		#self.defaultFeatures = ["selectedTokenTypes","dependencyPathElements"]
 
 	def buildFeatureSet(self,candidateRelations,classes,tfidf):
@@ -113,7 +144,9 @@ class RelationClassifier:
 			for r in d.getRelations():
 				#print r.relationType, r.argNames
 				if r.relationType in self.relationToArgNames:
-					assert self.relationToArgNames[r.relationType] == r.argNames, "%s != %s" % (str(self.relationToArgNames[r.relationType]), str(r.argNames))
+					# TODO: Deal with relations with same name but different arguments nicely
+					#assert self.relationToArgNames[r.relationType] == r.argNames, "%s != %s" % (str(self.relationToArgNames[r.relationType]), str(r.argNames))
+					pass
 				else:
 					self.relationToArgNames[r.relationType] = r.argNames
 			
@@ -159,7 +192,10 @@ class RelationClassifier:
 		
 			assert trainVectors.shape[0] == len(candidateClasses)
 		
-			self.clf = svm.LinearSVC(class_weight='balanced')
+			if self.threshold is None:
+				self.clf = svm.LinearSVC(class_weight='balanced')
+			else:
+				self.clf = SVM_With_Threshold(self.threshold)
 			self.clf.fit(trainVectors,simplifiedClasses)
 		else:
 			# TODO: Should we take into account the argument count when grouping classifiers?
@@ -183,7 +219,10 @@ class RelationClassifier:
 				#save_sparse_csr('train.matrix',trainVectors.tocsr())
 				#saveClasses('train.classes',tmpClassData)
 
-				self.clfs[c] = svm.LinearSVC(class_weight='balanced')
+				if self.threshold is None:
+					self.clfs[c] = svm.LinearSVC(class_weight='balanced')
+				else:
+					self.clfs[c] = SVM_With_Threshold(self.threshold)
 				#self.clfs[c] = AdaBoostClassifier(n_estimators=2)
 				#self.clfs[c].fit(trainVectors,tmpClassData)
 				self.clfs[c].fit(tmpMatrix,tmpClassData)
