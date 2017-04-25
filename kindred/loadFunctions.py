@@ -131,7 +131,10 @@ def parseJSON(data,ignoreEntities=[]):
 	text = data['text']
 	if 'denotations' in data:
 		for d in data['denotations']:
-			sourceEntityID = d['id']
+			sourceEntityID = None
+			if 'id' in d:
+				sourceEntityID = d['id']
+			
 			entityType = d['obj']
 			span = d['span']
 			startPos,endPos = span['begin'],span['end']
