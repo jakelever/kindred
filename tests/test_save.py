@@ -1,5 +1,6 @@
 import os
 import tempfile
+import shutil
 
 import kindred
 
@@ -10,7 +11,7 @@ def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEnti
 	assert entity.position == expectedPos, "(%s) not as expected" % (entity.__str__())
 	assert entity.sourceEntityID == expectedSourceEntityID, "(%s) not as expected" % (entity.__str__())
 	
-def _saveStandoffFile():
+def test_saveStandoffFile():
 	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
 	data = kindred.RelationData(text)
 	dataList = [data]
@@ -22,7 +23,7 @@ def _saveStandoffFile():
 
 	kindred.save(dataList,'standoff',tempDir)
 
-	loadedList = kindred.load(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
+	loadedList = kindred.loadDir('standoff',tempDir)
 
 	assert isinstance(loadedList,list)
 	assert len(loadedList) == 1
@@ -37,6 +38,8 @@ def _saveStandoffFile():
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
 	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	
+	shutil.rmtree(tempDir)
 	
 if __name__ == '__main__':
 	test_saveStandoffFile()
