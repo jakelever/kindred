@@ -17,9 +17,6 @@ def test_saveStandoffFile():
 	dataList = [data]
 
 	tempDir = tempfile.mkdtemp()
-	#txtPath = os.path.join(tempDir,'test.txt')
-	#a1Path = os.path.join(tempDir,'test.a1')
-	#a2Path = os.path.join(tempDir,'test.a2')
 
 	kindred.save(dataList,'standoff',tempDir)
 
@@ -47,9 +44,6 @@ def test_saveStandoffFile_SeparateSentences():
 	dataList = [kindred.RelationData(t) for t in texts]
 
 	tempDir = tempfile.mkdtemp()
-	#txtPath = os.path.join(tempDir,'test.txt')
-	#a1Path = os.path.join(tempDir,'test.a1')
-	#a2Path = os.path.join(tempDir,'test.a2')
 
 	kindred.save(dataList,'standoff',tempDir)
 
