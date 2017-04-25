@@ -73,7 +73,27 @@ def test_loadJsonFile():
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
 	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 
+def test_loadBiocFile():
+	scriptDir = os.path.dirname(__file__)
+	jsonPath = os.path.join(scriptDir,'data','example.bioc.xml')
+
+	dataList = kindred.load(dataFormat='bioc',path=jsonPath)
+	
+	assert isinstance(dataList,list)
+	assert len(dataList) == 1
+	data = dataList[0]
+	
+	assert isinstance(data,kindred.RelationData)
+	entities = data.getEntities()
+	relations = data.getRelations()
+
+	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+
+	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+
 	
 if __name__ == '__main__':
-	test_loadJsonFile()
+	test_loadBiocFile()
 

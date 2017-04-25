@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?><!DOCTYPE collection SYSTEM 'BioC.dtd'>
+<collection>
+  <source></source>
+  <date></date>
+  <key></key>
+  <document>
+    <id></id>
+    <passage>
+      <offset>0</offset>
+      <text>The colorectal cancer was caused by mutations in APC</text>
+      <annotation id="T1">
+        <infon key="type">disease</infon>
+        <location offset="4" length="17"/>
+        <text>colorectal cancer</text>
+      </annotation>
+      <annotation id="T2">
+        <infon key="type">gene</infon>
+        <location offset="49" length="3"/>
+        <text>APC</text>
+      </annotation>
+      <relation id="R1">
+        <infon key="type">causes</infon>
+        <node refid="T2" role="subj"/>
+        <node refid="T1" role="obj"/>
+      </relation>
+    </passage>
+  </document>
+</collection>

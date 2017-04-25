@@ -38,7 +38,7 @@ class Entity:
 		Entity.nextInternalID += 1
 		
 	def __str__(self):
-		out = "%s:'%s' id=%d %s" % (self.entityType,self.text,self.entityID,str(self.position))
+		out = "%s:'%s' id=%d sourceid=%s %s" % (self.entityType,self.text,self.entityID,str(self.sourceEntityID),str(self.position))
 		return out
 		
 	def __repr__(self):
@@ -154,7 +154,6 @@ class RelationData:
 			
 			sourceEntityIDsToEntityIDs = self.textAndEntityData.getSourceEntityIDsToEntityIDs()
 			sourceEntityIDs = sourceEntityIDsToEntityIDs.keys()
-				
 			relations = []
 			for r in relationsWithSourceEntityIDs:
 				for e in r.entityIDs:

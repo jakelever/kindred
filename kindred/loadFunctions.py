@@ -9,6 +9,7 @@ from collections import OrderedDict
 from xml.dom import minidom
 
 import kindred
+import kindred.bioc
 
 def loadEntity(line,text):
 	assert line[0] == 'T', "Entity input should start with a T"
@@ -248,8 +249,69 @@ def parseSimpleTag(text,ignoreEntities=[]):
 	combinedData = kindred.RelationData(text,relations,entities=entities)
 	return combinedData
 
+def loadDataFromBioC(filename,ignoreEntities=[]):
+	reader = kindred.bioc.BioCReader(filename)
+	reader.read()
+	
+	parsed = []
+	
+	assert isinstance(reader.collection,kindred.bioc.BioCCollection)
+	
+	for document in reader.collection:
+		assert isinstance(document,kindred.bioc.BioCDocument)
+		for passage in document.passages:
+			assert isinstance(passage,kindred.bioc.BioCPassage)
+			
+			text = passage.text
+			entities = []
+			relations = []
+			
+			for a in passage.annotations:
+				assert isinstance(a,kindred.bioc.BioCAnnotation)
+				
+				entityType = a.infons['type']
+				sourceEntityID = a.id
+				
+				position = []
+				segments = []
+				
+				for l in a.locations:
+					assert isinstance(l,kindred.bioc.BioCLocation)
+					startPos = int(l.offset)
+					endPos = startPos + int(l.length)
+					position.append((startPos,endPos))
+					segments.append(text[startPos:endPos])
+				
+				entityText = " ".join(segments)
+				
+				e = kindred.Entity(entityType,entityText,position,sourceEntityID)
+				entities.append(e)
+				
+			for r in passage.relations:
+				assert isinstance(r,kindred.bioc.BioCRelation)
+				relationID = r.id
+				relationType = r.infons['type']
+				
+				arguments = []
+				for n in r.nodes:
+					assert isinstance(n,kindred.bioc.BioCNode)
+					arguments.append((n.role,n.refid))
+				arguments = sorted(arguments)
+					
+				entityIDs = [ entityID for argName,entityID in arguments]
+				argNames = [ argName for argName,entityID in arguments]
+				
+				r = kindred.Relation(relationType=relationType,entityIDs=entityIDs,argNames=argNames)
+				relations.append(r)
+				
+			relData = kindred.RelationData(text,relations,entities=entities)
+			parsed.append(relData)
+			
+	return parsed
+	
+	
 def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
-	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
+	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json' or dataFormat == 'bioc'
 	
 	if dataFormat == 'standoff':
 		assert not txtPath is None
@@ -270,6 +332,9 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False
 		assert not path is None
 		relationData = loadDataFromJSON(path,ignoreEntities=ignoreEntities)
 		relationData = [relationData]
+	elif dataFormat == 'bioc':
+		assert not path is None
+		relationData = loadDataFromBioC(path,ignoreEntities=ignoreEntities)
 		
 	assert isinstance(relationData,list)
 	for r in relationData:
@@ -278,7 +343,7 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False
 	return relationData
 	
 def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
-	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
+	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json' or dataFormat == 'bioc'
 	assert os.path.isdir(directory), "%s must be a directory"
 	
 	if directory[-1] != '/':
@@ -301,6 +366,9 @@ def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRe
 			data = load(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
 			allData += data
 		elif dataFormat == 'json' and filename.endswith('.json'):
+			data = load(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
+			allData += data
+		elif dataFormat == 'bioc' and filename.endswith('.bioc.xml'):
 			data = load(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
 			allData += data
 			
