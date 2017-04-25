@@ -107,6 +107,17 @@ class RelationClassifier:
 			
 		self.candidateBuilder = CandidateBuilder()
 		relTypes,candidateRelations,candidateClasses = self.candidateBuilder.build(data)
+		
+		self.relationToArgNames = {}
+		for d in data:
+			for r in d.getRelations():
+				#print r.relationType, r.argNames
+				if r.relationType in self.relationToArgNames:
+					assert self.relationToArgNames[r.relationType] == r.argNames, "%s != %s" % (str(self.relationToArgNames[r.relationType]), str(r.argNames))
+				else:
+					self.relationToArgNames[r.relationType] = r.argNames
+			
+		#print self.relationToArgNames
 				
 		self.classToRelType = { (i+1):relType for i,relType in enumerate(relTypes) }
 		
@@ -210,7 +221,11 @@ class RelationClassifier:
 			for predictedClass,candidateRelation in zip(predictedClasses,candidateRelations):
 				if predictedClass != 0:
 					relType,nary = self.classToRelType[predictedClass]
-					predictedRelation = kindred.Relation(relType,list(candidateRelation.entitiesInRelation))
+					assert relType in self.relationToArgNames
+					argNames = self.relationToArgNames[relType]
+					assert not argNames is None
+
+					predictedRelation = kindred.Relation(relType,list(candidateRelation.entitiesInRelation),argNames=argNames)
 					predictedRelations.append(predictedRelation)
 		else:
 			if not self.useBuilder:
@@ -226,7 +241,11 @@ class RelationClassifier:
 				for p,candidateRelation in zip(predicted,candidateRelations):
 					if p != 0:
 						relType,nary = self.classToRelType[c]
-						predictedRelation = kindred.Relation(relType,list(candidateRelation.entitiesInRelation))
+						assert relType in self.relationToArgNames
+						argNames = self.relationToArgNames[relType]
+						assert not argNames is None
+						
+						predictedRelation = kindred.Relation(relType,list(candidateRelation.entitiesInRelation),argNames=argNames)
 						predictedRelations.append(predictedRelation)
 					
 		return predictedRelations
