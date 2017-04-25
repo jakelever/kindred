@@ -39,7 +39,7 @@ class RelationClassifier:
 	"""
 	This is a class. Fantastic!
 	"""
-	def __init__(self,useSingleClassifier=True,useBuilder=False,tfidf=True):
+	def __init__(self,useSingleClassifier=True,useBuilder=False,tfidf=True,features=None):
 		"""
 		Constructor-time
 		"""
@@ -49,6 +49,9 @@ class RelationClassifier:
 		self.tfidf = tfidf
 
 		self.defaultFeatures = ["selectedTokenTypes","ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
+		if not features is None:
+			assert isinstance(features,list)
+			self.defaultFeatures = features
 		#self.defaultFeatures = ["selectedTokenTypes","dependencyPathElements"]
 
 	def buildFeatureSet(self,candidateRelations,classes,tfidf):
@@ -143,7 +146,6 @@ class RelationClassifier:
 			self.vectorizer = Vectorizer()
 			trainVectors = self.vectorizer.transform(candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
 		
-			print(trainVectors.shape)
 			assert trainVectors.shape[0] == len(candidateClasses)
 		
 			self.clf = svm.LinearSVC(class_weight='balanced')
