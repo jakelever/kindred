@@ -35,19 +35,18 @@ def saveDataFromSTFormat(data,predictedRelations,txtPath,a1Path,a2Path):
 			line = "R%d\t%s %s" % (i,relationType,arguments)
 			a2File.write(line+"\n")
 			
-			
 		for i,r in enumerate(predictedRelations):
-			assert isinstance(r,kindred.CandidateRelation)
+			assert isinstance(r,kindred.Relation)
 			
 			relationType = r.relationType
-			relationEntityIDs = r.entitiesInRelation
-
-			if r.argNames in None:
+			relationEntityIDs = [ entityIDsToSourceEntityIDs[eID] for eID in r.entityIDs ]
+			
+			if r.argNames is None:
 				argNames = [ "arg%d" for i in range(len(relationEntityIDs)) ]
 			else:
 				argNames = r.argNames
 
-			arguments = " ".join(["%s:%s" % (a,b) for a,b in zip(relationEntityIDs,argNames) ])
+			arguments = " ".join(["%s:%s" % (a,b) for a,b in zip(argNames,relationEntityIDs) ])
 			line = "R%d\t%s %s" % (i,relationType,arguments)
 			a2File.write(line+"\n")
 			
