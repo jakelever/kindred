@@ -73,6 +73,8 @@ class Evaluator():
 			return precision
 		elif metric == 'recall':
 			return recall
+		elif metric == 'all':
+			return precision,recall,f1score	
 		else:
 			raise RuntimeError('Unknown metric: %s' % metric)
 
