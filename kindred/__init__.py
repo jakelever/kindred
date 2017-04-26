@@ -211,6 +211,10 @@ class CandidateRelation:
 		self.processedSentence = processedSentence
 		self.entitiesInRelation = entitiesInRelation
 		
+	def getEntityTypes(self):
+		return [ self.processedSentence.getEntityType(eID) for eID in self.entitiesInRelation]
+
+		
 	def __str__(self):
 		return str((self.processedSentence.__str__(),self.entitiesInRelation))
 		
