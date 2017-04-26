@@ -3,6 +3,7 @@ import sys
 
 from sklearn import svm
 import numpy as np
+from collections import defaultdict
 
 from sklearn.feature_selection import SelectKBest,chi2,SelectPercentile,RFECV
 from sklearn.metrics import f1_score,confusion_matrix
@@ -16,14 +17,16 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC,SVC
 
 from scipy.sparse import coo_matrix, csr_matrix, lil_matrix, hstack, vstack
+from sklearn.linear_model import LogisticRegression
 
 import kindred
 from kindred.CandidateBuilder import CandidateBuilder
 from kindred.Vectorizer import Vectorizer
 
-class SVM_With_Threshold:
+class Classifier_With_Threshold:
 	def __init__(self,threshold=0.5):
-		self.clf = svm.SVC(kernel='linear', class_weight='balanced', probability=True)
+		#self.clf = svm.SVC(kernel='linear', class_weight='balanced', probability=True)
+		self.clf = LogisticRegression(class_weight='balanced')
 		self.threshold = threshold
 
 	def fit(self,X,Y):
@@ -139,10 +142,18 @@ class RelationClassifier:
 		self.candidateBuilder = CandidateBuilder()
 		relTypes,candidateRelations,candidateClasses = self.candidateBuilder.build(data)
 		
+		self.relTypeToValidEntityTypes = defaultdict(set)
+		
 		self.relationToArgNames = {}
 		for d in data:
 			for r in d.getRelations():
 				#print r.relationType, r.argNames
+				entityIDsToEntities = d.getEntityIDsToEntities()
+				relationEntities = [ entityIDsToEntities[eID] for eID in r.entityIDs ]
+				validEntityTypes = tuple([ e.entityType for e in relationEntities ])
+				
+				self.relTypeToValidEntityTypes[r.relationType].add(validEntityTypes)
+				
 				if r.relationType in self.relationToArgNames:
 					# TODO: Deal with relations with same name but different arguments nicely
 					#assert self.relationToArgNames[r.relationType] == r.argNames, "%s != %s" % (str(self.relationToArgNames[r.relationType]), str(r.argNames))
@@ -195,7 +206,7 @@ class RelationClassifier:
 			if self.threshold is None:
 				self.clf = svm.LinearSVC(class_weight='balanced')
 			else:
-				self.clf = SVM_With_Threshold(self.threshold)
+				self.clf = Classifier_With_Threshold(self.threshold)
 			self.clf.fit(trainVectors,simplifiedClasses)
 		else:
 			# TODO: Should we take into account the argument count when grouping classifiers?
@@ -222,7 +233,7 @@ class RelationClassifier:
 				if self.threshold is None:
 					self.clfs[c] = svm.LinearSVC(class_weight='balanced')
 				else:
-					self.clfs[c] = SVM_With_Threshold(self.threshold)
+					self.clfs[c] = Classifier_With_Threshold(self.threshold)
 				#self.clfs[c] = AdaBoostClassifier(n_estimators=2)
 				#self.clfs[c].fit(trainVectors,tmpClassData)
 				self.clfs[c].fit(tmpMatrix,tmpClassData)
@@ -260,6 +271,11 @@ class RelationClassifier:
 			for predictedClass,candidateRelation in zip(predictedClasses,candidateRelations):
 				if predictedClass != 0:
 					relType,nary = self.classToRelType[predictedClass]
+					
+					candidateRelationEntityTypes = tuple(candidateRelation.getEntityTypes())
+					if not tuple(candidateRelationEntityTypes) in self.relTypeToValidEntityTypes[relType]:
+						continue
+					
 					assert relType in self.relationToArgNames
 					argNames = self.relationToArgNames[relType]
 					assert not argNames is None
@@ -280,6 +296,11 @@ class RelationClassifier:
 				for p,candidateRelation in zip(predicted,candidateRelations):
 					if p != 0:
 						relType,nary = self.classToRelType[c]
+						
+						candidateRelationEntityTypes = tuple(candidateRelation.getEntityTypes())
+						if not tuple(candidateRelationEntityTypes) in self.relTypeToValidEntityTypes[relType]:
+							continue
+						
 						assert relType in self.relationToArgNames
 						argNames = self.relationToArgNames[relType]
 						assert not argNames is None
