@@ -111,6 +111,9 @@ class TextAndEntityData:
 	
 	def getEntityIDsToSourceEntityIDs(self):
 		return {e.entityID:e.sourceEntityID for e in self.entities}
+		
+	def getEntityIDsToEntityTypes(self):
+		return {e.entityID:e.entityType for e in self.entities}
 	
 	def getEntityIDsToEntities(self):
 		return {e.entityID:e for e in self.entities}
@@ -181,6 +184,9 @@ class RelationData:
 	
 	def getEntityIDsToSourceEntityIDs(self):
 		return self.textAndEntityData.getEntityIDsToSourceEntityIDs()
+		
+	def getEntityIDsToEntityTypes(self):
+		return self.textAndEntityData.getEntityIDsToEntityTypes()
 		
 	def getEntityIDsToEntities(self):
 		return self.textAndEntityData.getEntityIDsToEntities()

@@ -144,7 +144,6 @@ class RelationClassifier:
 		
 		self.relTypeToValidEntityTypes = defaultdict(set)
 		
-		self.relationToArgNames = {}
 		for d in data:
 			for r in d.getRelations():
 				#print r.relationType, r.argNames
@@ -152,14 +151,8 @@ class RelationClassifier:
 				relationEntities = [ entityIDsToEntities[eID] for eID in r.entityIDs ]
 				validEntityTypes = tuple([ e.entityType for e in relationEntities ])
 				
-				self.relTypeToValidEntityTypes[r.relationType].add(validEntityTypes)
-				
-				if r.relationType in self.relationToArgNames:
-					# TODO: Deal with relations with same name but different arguments nicely
-					#assert self.relationToArgNames[r.relationType] == r.argNames, "%s != %s" % (str(self.relationToArgNames[r.relationType]), str(r.argNames))
-					pass
-				else:
-					self.relationToArgNames[r.relationType] = r.argNames
+				relKey = tuple([r.relationType] + r.argNames)
+				self.relTypeToValidEntityTypes[relKey].add(validEntityTypes)
 			
 		#print self.relationToArgNames
 				
@@ -270,15 +263,13 @@ class RelationClassifier:
 			predictedClasses = self.clf.predict(tmpMatrix)
 			for predictedClass,candidateRelation in zip(predictedClasses,candidateRelations):
 				if predictedClass != 0:
-					relType,nary = self.classToRelType[predictedClass]
+					relKey = self.classToRelType[predictedClass]
+					relType = relKey[0]
+					argNames = relKey[1:]
 					
 					candidateRelationEntityTypes = tuple(candidateRelation.getEntityTypes())
-					if not tuple(candidateRelationEntityTypes) in self.relTypeToValidEntityTypes[relType]:
+					if not tuple(candidateRelationEntityTypes) in self.relTypeToValidEntityTypes[relKey]:
 						continue
-					
-					assert relType in self.relationToArgNames
-					argNames = self.relationToArgNames[relType]
-					assert not argNames is None
 
 					predictedRelation = kindred.Relation(relType,list(candidateRelation.entitiesInRelation),argNames=argNames)
 					predictedRelations.append(predictedRelation)
@@ -295,15 +286,13 @@ class RelationClassifier:
 				predicted = self.clfs[c].predict(tmpMatrix)
 				for p,candidateRelation in zip(predicted,candidateRelations):
 					if p != 0:
-						relType,nary = self.classToRelType[c]
+						relKey = self.classToRelType[predictedClass]
+						relType = relKey[0]
+						argNames = relKey[1:]
 						
 						candidateRelationEntityTypes = tuple(candidateRelation.getEntityTypes())
-						if not tuple(candidateRelationEntityTypes) in self.relTypeToValidEntityTypes[relType]:
+						if not tuple(candidateRelationEntityTypes) in self.relTypeToValidEntityTypes[relKey]:
 							continue
-						
-						assert relType in self.relationToArgNames
-						argNames = self.relationToArgNames[relType]
-						assert not argNames is None
 						
 						predictedRelation = kindred.Relation(relType,list(candidateRelation.entitiesInRelation),argNames=argNames)
 						predictedRelations.append(predictedRelation)

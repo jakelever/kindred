@@ -11,7 +11,7 @@ def test_simpleRelationCandidates():
 	candidateBuilder = CandidateBuilder()
 	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(data)
 	
-	assert relTypes == [('treats', 2)]
+	assert relTypes == [('treats', 'obj', 'subj')]
 	assert candidateClasses == [[0], [1], [0], [0]]
 	assert len(candidateRelations) == 4
 	
