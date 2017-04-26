@@ -15,8 +15,8 @@ def _bionlpst_bb3_testSet():
 	trainAndDevData = trainData + devData
 
 	print "Starting training..."
-	#classifier = RelationClassifier(useBuilder=True)
-	classifier = RelationClassifier(useBuilder=False)
+	classifier = RelationClassifier(useBuilder=True)
+	#classifier = RelationClassifier(useBuilder=False)
 	classifier.train(trainAndDevData)
 
 	print "Predicting training..."
@@ -27,7 +27,7 @@ def _bionlpst_bb3_testSet():
 	kindred.save(testData,'standoff',outDir,predictedRelations=predictedRelations)
 	
 	
-def _bionlpst_seedev():	
+def _bionlpst_seedev_testSet():	
 	trainData = kindred.bionlpst.load('2016-SeeDev-binary-train')
 	devData = kindred.bionlpst.load('2016-SeeDev-binary-dev')
 	testData = kindred.bionlpst.load('2016-SeeDev-binary-test')
@@ -74,4 +74,6 @@ def _parser():
 	kindred.saveST('BB3-predictions-malt/',testData,predictedRelations_malt)
 	
 if __name__ == '__main__':
+	_bionlpst_seedev_testSet()
 	_bionlpst_bb3_testSet()
+
