@@ -24,8 +24,8 @@ Insert description of package here please
 Usage
 -----
 
-BioNLP Example
-~~~~~~~~~~~~~~
+BioNLP Shared Task Example
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 >>> import kindred
 >>> train_data = kindred.bionlpst.load('2016-BB3-event-training')
