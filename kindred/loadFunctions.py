@@ -350,8 +350,10 @@ def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRe
 	if directory[-1] != '/':
 		directory += '/'
 
+	filenames = sorted(list(os.listdir(directory)))
+
 	allData = []
-	for filename in os.listdir(directory):
+	for filename in filenames:
 		if dataFormat == 'standoff' and filename.endswith('.txt'):
 			base = filename[0:-4]
 			txtPath = directory + base + '.txt'
