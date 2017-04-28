@@ -34,7 +34,6 @@ def _featureBuilding(useBB3):
 		
 			evaluator = Evaluator()
 			f1score = evaluator.evaluate(testData_Relations, predictedRelations, metric='f1score', display=False)
-			#print chosenFeatures, f1score
 			print(stage,feature,f1score)
 
 			if f1score > bestF1:
@@ -45,8 +44,8 @@ def _featureBuilding(useBB3):
 		finalChosenFeatures.append(bestFeature)
 
 if __name__ == '__main__':
-	print "BB3"
+	print("BB3")
 	_featureBuilding(True)
-	print "SeeDev"
+	print("SeeDev")
 	_featureBuilding(False)
 

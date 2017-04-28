@@ -36,9 +36,9 @@ def _featureBuilding(useBB3):
 		print(fthreshold,precision,recall,f1score)
 
 if __name__ == '__main__':
-	print "BB3"
+	print("BB3")
 	_featureBuilding(True)
-	print "SeeDev"
+	print("SeeDev")
 	_featureBuilding(False)
 
 

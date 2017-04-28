@@ -44,5 +44,5 @@ if __name__ == '__main__':
 	writer = BioCWriter('out.bioc', collection)
 	writer.write()
 	
-	print "Done"
+	print("Done")
 	
