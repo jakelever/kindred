@@ -1,7 +1,5 @@
 __all__ = ['BioCReader']
 
-import StringIO
-
 from lxml import etree
 
 import sys
