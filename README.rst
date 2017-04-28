@@ -42,6 +42,8 @@ PubAnnotation Example
 >>> train_data = kindred.pubannotation.load('bionlp-st-gro-2013-development')
 >>> model = kindred.train(train_data)
 
+PubTator Example
+~~~~~~~~~~~~~~~~
 
-An example of using kindred from the command line with a set of ST files (e.g. BioNLP task)
-
+>>> import kindred
+>>> data = kindred.pubtator.load([19894120,19894121])
