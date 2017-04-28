@@ -14,15 +14,15 @@ def _bionlpst_bb3_testSet():
 	
 	trainAndDevData = trainData + devData
 
-	print "Starting training..."
+	print("Starting training...")
 	classifier = RelationClassifier(useBuilder=True)
 	#classifier = RelationClassifier(useBuilder=False)
 	classifier.train(trainAndDevData)
 
-	print "Predicting training..."
+	print("Predicting training...")
 	predictedRelations = classifier.predict(testData) #devData_TextAndEntities)
 	
-	print "Saving..."
+	print("Saving...")
 	outDir = 'out.BB3'
 	kindred.save(testData,'standoff',outDir,predictedRelations=predictedRelations)
 	
@@ -34,14 +34,14 @@ def _bionlpst_seedev_testSet():
 	
 	trainAndDevData = trainData + devData
 
-	print "Starting training..."
+	print("Starting training...")
 	classifier = RelationClassifier()
 	classifier.train(trainAndDevData)
 
-	print "Predicting training..."
+	print("Predicting training...")
 	predictedRelations = classifier.predict(testData) #devData_TextAndEntities)
 	
-	print "Saving..."
+	print("Saving...")
 	outDir = 'out.SeeDev'
 	kindred.save(testData,'standoff',outDir,predictedRelations=predictedRelations)
 	

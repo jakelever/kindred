@@ -33,7 +33,7 @@ def _featureBuilding(useBB3):
 	
 		evaluator = Evaluator()
 		precision,recall,f1score = evaluator.evaluate(testData_Relations, predictedRelations, metric='all', display=False)
-		print fthreshold,precision,recall,f1score
+		print(fthreshold,precision,recall,f1score)
 
 if __name__ == '__main__':
 	print "BB3"
