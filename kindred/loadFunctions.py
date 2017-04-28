@@ -9,7 +9,9 @@ from collections import OrderedDict
 from xml.dom import minidom
 
 import kindred
-import kindred.bioc
+
+import bioc
+from future.utils import native
 
 def loadEntity(line,text):
 	assert line[0] == 'T', "Entity input should start with a T"
@@ -251,24 +253,24 @@ def parseSimpleTag(text,ignoreEntities=[]):
 	return combinedData
 
 def loadDataFromBioC(filename,ignoreEntities=[]):
-	reader = kindred.bioc.BioCReader(filename)
-	reader.read()
+	with open(filename, 'r') as fp:
+		collection = bioc.load(fp)
 	
 	parsed = []
 	
-	assert isinstance(reader.collection,kindred.bioc.BioCCollection)
+	assert isinstance(collection,bioc.BioCCollection)
 	
-	for document in reader.collection:
-		assert isinstance(document,kindred.bioc.BioCDocument)
+	for document in collection.documents:
+		assert isinstance(document,bioc.BioCDocument)
 		for passage in document.passages:
-			assert isinstance(passage,kindred.bioc.BioCPassage)
+			assert isinstance(passage,bioc.BioCPassage)
 			
 			text = passage.text
 			entities = []
 			relations = []
 			
 			for a in passage.annotations:
-				assert isinstance(a,kindred.bioc.BioCAnnotation)
+				assert isinstance(a,bioc.BioCAnnotation)
 				
 				entityType = a.infons['type']
 				sourceEntityID = a.id
@@ -277,25 +279,24 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 				segments = []
 				
 				for l in a.locations:
-					assert isinstance(l,kindred.bioc.BioCLocation)
-					startPos = int(l.offset)
-					endPos = startPos + int(l.length)
+					assert isinstance(l,bioc.BioCLocation)
+					startPos = int(native(l.offset))
+					endPos = startPos + int(native(l.length))
 					position.append((startPos,endPos))
 					segments.append(text[startPos:endPos])
 				
 				entityText = " ".join(segments)
-				
 				e = kindred.Entity(entityType,entityText,position,sourceEntityID)
 				entities.append(e)
 				
 			for r in passage.relations:
-				assert isinstance(r,kindred.bioc.BioCRelation)
+				assert isinstance(r,bioc.BioCRelation)
 				relationID = r.id
 				relationType = r.infons['type']
 				
 				arguments = []
 				for n in r.nodes:
-					assert isinstance(n,kindred.bioc.BioCNode)
+					assert isinstance(n,bioc.BioCNode)
 					arguments.append((n.role,n.refid))
 				arguments = sorted(arguments)
 					
