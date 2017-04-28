@@ -1,6 +1,10 @@
 __all__ = ['BioCAnnotation']
 
-from meta import _MetaId, _MetaInfons, _MetaText
+import sys
+if sys.version_info >= (3, 0):
+	from .meta import _MetaId, _MetaInfons, _MetaText
+else:
+	from meta import _MetaId, _MetaInfons, _MetaText
 
 class BioCAnnotation(_MetaId, _MetaInfons, _MetaText):
 

@@ -1,8 +1,13 @@
 __all__ = ['BioCSentence']
 
 
-from meta import _MetaAnnotations, _MetaInfons, _MetaOffset, \
-                      _MetaRelations, _MetaText
+import sys
+if sys.version_info >= (3, 0):
+	from .meta import _MetaAnnotations, _MetaInfons, _MetaOffset, \
+						  _MetaRelations, _MetaText
+else:
+	from meta import _MetaAnnotations, _MetaInfons, _MetaOffset, \
+						  _MetaRelations, _MetaText
                       
 
 class BioCSentence(_MetaAnnotations, _MetaInfons, _MetaOffset, 

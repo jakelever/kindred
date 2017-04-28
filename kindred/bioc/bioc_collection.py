@@ -1,7 +1,12 @@
 __all__ = ['BioCCollection']
 
-from meta import _MetaInfons, _MetaIter
-from compat import _Py2Next
+import sys
+if sys.version_info >= (3, 0):
+	from .meta import _MetaInfons, _MetaIter
+	from .compat import _Py2Next
+else:
+	from meta import _MetaInfons, _MetaIter
+	from compat import _Py2Next
 
 class BioCCollection(_Py2Next, _MetaInfons, _MetaIter):
 

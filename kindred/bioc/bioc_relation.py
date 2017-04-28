@@ -1,8 +1,14 @@
 __all__ = ['BioCRelation']
 
-from compat import _Py2Next
-from meta import _MetaId, _MetaInfons, _MetaIter
-from bioc_node import BioCNode
+import sys
+if sys.version_info >= (3, 0):
+	from .compat import _Py2Next
+	from .meta import _MetaId, _MetaInfons, _MetaIter
+	from .bioc_node import BioCNode
+else:
+	from compat import _Py2Next
+	from meta import _MetaId, _MetaInfons, _MetaIter
+	from bioc_node import BioCNode
 
 class BioCRelation(_MetaId, _MetaInfons, _Py2Next, _MetaIter):
 

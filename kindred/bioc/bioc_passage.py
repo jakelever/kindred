@@ -1,8 +1,13 @@
 __all__ = ['BioCPassage']
 
-from meta import _MetaAnnotations, _MetaInfons, _MetaOffset, \
-                 _MetaRelations, _MetaText
-
+import sys
+if sys.version_info >= (3, 0):
+	from .meta import _MetaAnnotations, _MetaOffset, _MetaText, _MetaRelations, _MetaInfons
+	from .compat import _Py2Next
+else:
+	from meta import _MetaAnnotations, _MetaOffset, _MetaText, _MetaRelations, _MetaInfons
+	from compat import _Py2Next
+	
 class BioCPassage(_MetaAnnotations, _MetaOffset, _MetaText,
                   _MetaRelations, _MetaInfons):
 

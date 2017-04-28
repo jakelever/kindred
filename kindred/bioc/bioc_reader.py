@@ -4,14 +4,25 @@ import StringIO
 
 from lxml import etree
 
-from bioc_annotation import BioCAnnotation
-from bioc_collection import BioCCollection
-from bioc_document import BioCDocument
-from bioc_location import BioCLocation
-from bioc_passage import BioCPassage
-from bioc_sentence import BioCSentence
-from bioc_node import BioCNode
-from bioc_relation import BioCRelation
+import sys
+if sys.version_info >= (3, 0):
+	from .bioc_annotation import BioCAnnotation
+	from .bioc_collection import BioCCollection
+	from .bioc_document import BioCDocument
+	from .bioc_location import BioCLocation
+	from .bioc_passage import BioCPassage
+	from .bioc_sentence import BioCSentence
+	from .bioc_node import BioCNode
+	from .bioc_relation import BioCRelation
+else:
+	from bioc_annotation import BioCAnnotation
+	from bioc_collection import BioCCollection
+	from bioc_document import BioCDocument
+	from bioc_location import BioCLocation
+	from bioc_passage import BioCPassage
+	from bioc_sentence import BioCSentence
+	from bioc_node import BioCNode
+	from bioc_relation import BioCRelation
 
 class BioCReader:
     """

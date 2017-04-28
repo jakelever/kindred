@@ -1,6 +1,12 @@
 __all__ = ['BioCLocation']
 
-from meta import _MetaOffset
+import sys
+if sys.version_info >= (3, 0):
+	from .meta import _MetaOffset
+	from .compat import _Py2Next
+else:
+	from meta import _MetaOffset
+	from compat import _Py2Next
 
 class BioCLocation(_MetaOffset):
 
