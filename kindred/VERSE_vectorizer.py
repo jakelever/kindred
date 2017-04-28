@@ -56,18 +56,6 @@ class SentenceModel:
 		G2 = nx.Graph()
 		paths = {}
 
-		#print "-"*30
-		#print [ (i,t) for i,t in enumerate(self.tokens) ]
-		#print
-		#print self.dependencies
-		#print
-		#print self.predictedEntityLocs
-		#print self.knownEntityLocs
-		#print
-		#print minSet
-		#self.printDependencyGraph()
-		#print "-"*30
-
 		minSet = sorted(list(set(minSet)))
 		setCount1 = len(minSet)
 		minSet = [ a for a in minSet if G1.has_node(a) ]
@@ -121,7 +109,6 @@ class SentenceModel:
 			type = self.knownEntityTypes[triggerid]
 			self.locsToTriggerIDs[tuple(locs)] = triggerid
 			self.locsToTriggerTypes[tuple(locs)] = type
-		#print "MOO"
 	
 	def __init__(self, tokens, dependencies, eventTriggerLocs, eventTriggerTypes, argumentTriggerLocs, argumentTriggerTypes):
 		assert isinstance(tokens, list) 
@@ -217,7 +204,6 @@ class VERSEVectorizer:
 		if "splitAcrossSentences" in self.chosenFeatures:
 			data["splitAcrossSentences"] = self.doSplitAcrossSentences(examples,featureNamesOnly)
 		if "ngrams" in self.chosenFeatures:
-			#print "    doing ngrams..."
 			data["ngrams"] = self.doNGrams(examples,featureNamesOnly)
 			
 		if "skipgrams_2" in self.chosenFeatures:
@@ -271,7 +257,6 @@ class VERSEVectorizer:
 			data["bigrams_betweenEntities"] = self.doBigramsBetweenEntities(examples,featureNamesOnly)
 		
 		if "selectedngrams" in self.chosenFeatures:
-			#print "    doing selected ngrams..."
 			for i in range(self.argCount):
 				data["selectedngrams_" + str(i)] = self.doNGramsOfArguments(examples,i,featureNamesOnly)
 		#"dependencyPathNearSelected"
@@ -281,20 +266,15 @@ class VERSEVectorizer:
 		if "dependencyPathElements" in self.chosenFeatures:
 		  	data["dependencyPathElements"] = self.doDependencyPathElements(examples,featureNamesOnly)
 		if "lemmas" in self.chosenFeatures:
-			#print "    doing ngrams..."
 			data["lemmas"] = self.doLemmas(examples,featureNamesOnly)
 		if "selectedlemmas" in self.chosenFeatures:
-			#print "    doing selected ngrams..."
 			for i in range(self.argCount):
 				data["selectedlemmas_" + str(i)] = self.doLemmasOfArguments(examples,i,featureNamesOnly)
 		if "bigrams" in self.chosenFeatures:
-			#print "    doing bigrams..."
 			data["bigrams"] = self.doBiGrams(examples,featureNamesOnly)
 		if "ngramsPOS" in self.chosenFeatures:
-			#print "    doing ngrams with POS..."
 			data["ngramsPOS"] = self.doNGramsWithPOS(examples,featureNamesOnly)
 		if "selectedngramsPOS" in self.chosenFeatures:
-			#print "    doing selected ngrams with POS..."
 			for i in range(self.argCount):
 				data["selectedngramsPOS_" + str(i)] = self.doNGramsOfArgumentsWithPOS(examples,i,featureNamesOnly)
 
@@ -307,12 +287,6 @@ class VERSEVectorizer:
 		if "bigramsOfDependencyPath" in self.chosenFeatures:
 			data["bigramsOfDependencyPath"] = self.doBiGramsOfDependencyPath(examples,featureNamesOnly)
 
-		# Let's randomly through out some feature sets
-		#if not hasattr(self, 'randomDeletions'):
-		#	self.randomDeletions = random.sample(data.keys(), random.randint(0,len(data)-1))
-		#for rd in self.randomDeletions:
-		#	del data[rd]
-		#print data.keys()
 		if featureNamesOnly:
 			for id,strlist in data.iteritems():
 				assert isinstance(strlist,list)
@@ -321,12 +295,6 @@ class VERSEVectorizer:
 				print(t)
 				assert isinstance(t,str)
 		else:
-			#for id,thing in data.iteritems():
-			#	if thing is None:
-			#		print id, thing
-			#	else:
-			#		print id, thing.shape
-			
 			# And combine the rest
 			combined = hstack( [ d for d in data.values() if not d is None ] )
 
@@ -345,9 +313,6 @@ class VERSEVectorizer:
 				elif isinstance(fn,tuple):
 					fn = u"_".join(list(fn))
 				featureNames.append(fn)
-			#featureNames = [ fn if not fn is None else u"NONE" for fn in featureNames ]
-			#for fn in featureNames:
-			#	print name, fn
 			return [ "%s_%s" % (name,fname.encode('utf8')) for fname in featureNames ]
 		else:
 			if not vectorizerName in self.tools:
@@ -667,12 +632,6 @@ class VERSEVectorizer:
 		corpus = []
 		for example in examples:
 			sentenceid,_ = example.arguments[argID]
-			#print example.sentences[sentenceid].dependencies
-			#print "-"*30
-			#print example.sentences[sentenceid]
-			#print "-"*30
-			#example.sentences[sentenceid].printDependencyGraph()
-			#print "-"*30
 			
 			sameSentence = True
 			for thisSID,_ in example.arguments:
@@ -705,7 +664,6 @@ class VERSEVectorizer:
 			
 			#sys.exit(0)
 	
-		#print corpus
 		return self.corpusToVectors(corpus,featureNamesOnly, 'DependencyPathNearSelectedToken_' + str(argID), False)
 
 	
@@ -730,10 +688,6 @@ class VERSEVectorizer:
 				
 				_,edges = sentence.extractMinSubgraphContainingNodes(locs)
 				edgeTypes = sentence.getEdgeTypes(edges)
-				#print "EX:", example, sorted(edgeTypes)
-				#print "EX:", "-"*30
-				#for edgeType in edgeTypes:
-				#	print "EDGE", edgeType
 			else:
 				edgeTypes = []
 				for sentenceid,locs in example.arguments:
@@ -741,15 +695,9 @@ class VERSEVectorizer:
 					_,edges = sentence.extractSubgraphToRoot(locs)
 					edgeTypes += sentence.getEdgeTypes(edges)
 					
-			#print [ t.word for t in sentence.tokens ]
-			#print locs,edges,edgeTypes
 
 			corpus.append(Counter(edgeTypes))
-			
-			#sys.exit(0)
 	
-		#print corpus
-		#sys.exit(255)
 		return self.corpusToVectors(corpus,featureNamesOnly, 'DependencyPathElements', False)
 
 	def doNGramsOfDependencyPath(self,examples,featureNamesOnly):
@@ -800,12 +748,6 @@ class VERSEVectorizer:
 
 			if sameSentence:
 				sentence = example.sentences[sentenceid0]
-				#print '-'*30
-				#print sentence
-				#print '-'*30
-				#sentence.printDependencyGraph()
-				#print '-'*30
-				#sys.exit(0)
 				
 				locs = [ l for _,l in example.arguments ]
 				locs = sum(locs, [])

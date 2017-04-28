@@ -113,7 +113,6 @@ class RelationClassifier:
 				scores = cross_val_score(clf, matrix, classes, cv=5, scoring='f1_macro')
 				score = scores.mean()
 
-				#print chosenFeatures, feature, score, scores
 				if score > bestScore:
 					bestScore = score
 					bestFeature = feature
@@ -146,7 +145,6 @@ class RelationClassifier:
 		
 		for d in data:
 			for r in d.getRelations():
-				#print r.relationType, r.argNames
 				entityIDsToEntities = d.getEntityIDsToEntities()
 				relationEntities = [ entityIDsToEntities[eID] for eID in r.entityIDs ]
 				validEntityTypes = tuple([ e.entityType for e in relationEntities ])
@@ -154,7 +152,6 @@ class RelationClassifier:
 				relKey = tuple([r.relationType] + r.argNames)
 				self.relTypeToValidEntityTypes[relKey].add(validEntityTypes)
 			
-		#print self.relationToArgNames
 				
 		self.classToRelType = { (i+1):relType for i,relType in enumerate(relTypes) }
 		
@@ -183,7 +180,6 @@ class RelationClassifier:
 			for candidateRelation,candidateClassGroup in zip(candidateRelations,candidateClasses):
 				#assert len(candidateClassGroup) == 1, "Cannot handle multiple relations with same set of entities " + str(candidateRelation)
 				simplifiedClasses.append(candidateClassGroup[0])
-			#print chosenFeatures
 			#assert False
 	
 			if self.useBuilder:
@@ -216,7 +212,6 @@ class RelationClassifier:
 
 				if self.useBuilder:
 					chosenFeatures = self.buildFeatureSet(candidateRelations,tmpClassData,self.tfidf)
-					print(c, chosenFeatures)
 					self.vectorizers[c] = Vectorizer()
 					tmpMatrix = self.vectorizers[c].transform(candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
 
@@ -245,7 +240,6 @@ class RelationClassifier:
 		#if False:
 		#	testVectors = self.vectorizer.transform(candidateRelations)
 		#	tmpClassData = [ (1 in candidateClassGroup) for candidateClassGroup in testClasses ]
-		#	print testVectors.shape
 		
 		
 		#save_sparse_csr('test.matrix',testVectors.tocsr())

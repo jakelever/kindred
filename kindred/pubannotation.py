@@ -12,9 +12,7 @@ def load(projectName):
 	loaded = []
 	
 	docs = requests.get(projectURL)
-	#print doc.json()
 	for doc in docs.json():
-		#print doc
 		m = re.search("sourcedb/(?P<sourcedb>[A-Za-z0-9\-]*)/sourceid/(?P<sourceid>[0-9]*)",doc['url'])
 		mDict = m.groupdict()
 		
@@ -30,7 +28,6 @@ def load(projectName):
 		
 		if isinstance(annotations,list):
 			for annotation in annotations:
-				print annotation
 				parsed = parseJSON(annotation)
 				assert isinstance(parsed,kindred.RelationData)
 				loaded.append(parsed)

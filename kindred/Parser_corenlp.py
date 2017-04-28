@@ -31,7 +31,6 @@ class Parser:
 				Parser.nlp = StanfordCoreNLP('http://localhost:9000')
 				parsed = Parser.nlp.annotate("This is a test", properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
 			except:
-				#print "FAIL"
 				initializeCoreNLP()
 				Parser.nlp = StanfordCoreNLP('http://localhost:9000')
 				
@@ -51,11 +50,9 @@ class Parser:
 					
 			parsed = Parser.nlp.annotate(d.getText(), properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
 	
-			#print type(parsed)
 			
 
 			for sentence in parsed["sentences"]:
-				#print sentence.keys()
 				#assert False
 				tokens = []
 				for t in sentence["tokens"]:
@@ -69,11 +66,7 @@ class Parser:
 					#depName = de["dep"].split(":")[0]
 					depName = shortenDepName(de["dep"])
 					#if depName == 'nmod:in_addition_to':
-						#print de
-					#	print json.dumps(sentence,indent=2,sort_keys=True)
-					#	print d.getText()
 					#	assert False
-					#print "DEPNAME", depName
 					dep = (de["governor"]-1,de["dependent"]-1,depName)
 					dependencies.append(dep)
 				# TODO: Should I filter this more or just leave it for simplicity
