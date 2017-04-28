@@ -1,0 +1,26 @@
+BB3
+0 selectedTokenTypes 0.533834586466
+0 ngrams_betweenEntities 0.533834586466
+0 bigrams 0.533834586466
+0 dependencyPathElements 0.533834586466
+0 dependencyPathNearSelected 0.533834586466
+1 ngrams_betweenEntities 0.533834586466
+1 bigrams 0.533834586466
+1 dependencyPathElements 0.533834586466
+1 dependencyPathNearSelected 0.533834586466
+2 bigrams 0.533834586466
+2 dependencyPathElements 0.533834586466
+2 dependencyPathNearSelected 0.533834586466
+SeeDev
+0 selectedTokenTypes 0.204812534975
+0 ngrams_betweenEntities 0.167471819646
+0 bigrams 0.0236813778256
+0 dependencyPathElements 0.0516252390057
+0 dependencyPathNearSelected 0.0677361853832
+1 ngrams_betweenEntities 0.325541125541
+1 bigrams 0.255126868266
+1 dependencyPathElements 0.258897637795
+1 dependencyPathNearSelected 0.244226510598
+2 bigrams 0.329976019185
+2 dependencyPathElements 0.339710685954
+2 dependencyPathNearSelected 0.340386384545

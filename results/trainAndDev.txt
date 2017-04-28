@@ -1,0 +1,58 @@
+Lives_In	TP:142 FP:169 FN:79	P:0.456592 R:0.642534 F1:0.533835
+--------------------------------------------------
+All     	TP:142 FP:169 FN:79	P:0.456592 R:0.642534 F1:0.533835
+('bb3 scores:', (0.4565916398713826, 0.6425339366515838, 0.5338345864661654), False)
+Lives_In	TP:136 FP:112 FN:190	P:0.548387 R:0.417178 F1:0.473868
+--------------------------------------------------
+All     	TP:136 FP:112 FN:190	P:0.548387 R:0.417178 F1:0.473868
+('bb3 scores:', (0.5483870967741935, 0.4171779141104294, 0.47386759581881527), True)
+Binds_To                     	TP:10 FP:36 FN:14	P:0.217391 R:0.416667 F1:0.285714
+Composes_Primary_Structure   	TP:3 FP:10 FN:12	P:0.230769 R:0.200000 F1:0.214286
+Composes_Protein_Complex     	TP:0 FP:7 FN:0	P:0.000000 R:0.000000 F1:0.000000
+Exists_At_Stage              	TP:0 FP:3 FN:8	P:0.000000 R:0.000000 F1:0.000000
+Exists_In_Genotype           	TP:42 FP:68 FN:39	P:0.381818 R:0.518519 F1:0.439791
+Has_Sequence_Identical_To    	TP:8 FP:33 FN:12	P:0.195122 R:0.400000 F1:0.262295
+Interacts_With               	TP:18 FP:49 FN:14	P:0.268657 R:0.562500 F1:0.363636
+Is_Functionally_Equivalent_To	TP:10 FP:28 FN:29	P:0.263158 R:0.256410 F1:0.259740
+Is_Involved_In_Process       	TP:0 FP:18 FN:20	P:0.000000 R:0.000000 F1:0.000000
+Is_Linked_To                 	TP:1 FP:15 FN:22	P:0.062500 R:0.043478 F1:0.051282
+Is_Localized_In              	TP:21 FP:29 FN:26	P:0.420000 R:0.446809 F1:0.432990
+Is_Member_Of_Family          	TP:28 FP:38 FN:27	P:0.424242 R:0.509091 F1:0.462810
+Is_Protein_Domain_Of         	TP:9 FP:18 FN:20	P:0.333333 R:0.310345 F1:0.321429
+Occurs_During                	TP:3 FP:5 FN:7	P:0.375000 R:0.300000 F1:0.333333
+Occurs_In_Genotype           	TP:1 FP:4 FN:15	P:0.200000 R:0.062500 F1:0.095238
+Regulates_Accumulation       	TP:17 FP:57 FN:12	P:0.229730 R:0.586207 F1:0.330097
+Regulates_Development_Phase  	TP:14 FP:48 FN:45	P:0.225806 R:0.237288 F1:0.231405
+Regulates_Expression         	TP:45 FP:67 FN:66	P:0.401786 R:0.405405 F1:0.403587
+Regulates_Molecule_Activity  	TP:0 FP:4 FN:0	P:0.000000 R:0.000000 F1:0.000000
+Regulates_Process            	TP:106 FP:130 FN:73	P:0.449153 R:0.592179 F1:0.510843
+Regulates_Tissue_Development 	TP:0 FP:0 FN:9	P:0.000000 R:0.000000 F1:0.000000
+Transcribes_Or_Translates_To 	TP:1 FP:3 FN:12	P:0.250000 R:0.076923 F1:0.117647
+--------------------------------------------------
+All                          	TP:337 FP:670 FN:482	P:0.334657 R:0.411477 F1:0.369113
+('seedev scores:', (0.3346573982125124, 0.41147741147741146, 0.36911281489594744), False)
+Binds_To                     	TP:6 FP:26 FN:54	P:0.187500 R:0.100000 F1:0.130435
+Composes_Primary_Structure   	TP:6 FP:21 FN:14	P:0.222222 R:0.300000 F1:0.255319
+Composes_Protein_Complex     	TP:0 FP:0 FN:16	P:0.000000 R:0.000000 F1:0.000000
+Exists_At_Stage              	TP:1 FP:3 FN:14	P:0.250000 R:0.066667 F1:0.105263
+Exists_In_Genotype           	TP:55 FP:121 FN:114	P:0.312500 R:0.325444 F1:0.318841
+Has_Sequence_Identical_To    	TP:24 FP:75 FN:38	P:0.242424 R:0.387097 F1:0.298137
+Interacts_With               	TP:21 FP:67 FN:41	P:0.238636 R:0.338710 F1:0.280000
+Is_Functionally_Equivalent_To	TP:23 FP:405 FN:37	P:0.053738 R:0.383333 F1:0.094262
+Is_Involved_In_Process       	TP:0 FP:2 FN:23	P:0.000000 R:0.000000 F1:0.000000
+Is_Linked_To                 	TP:3 FP:27 FN:41	P:0.100000 R:0.068182 F1:0.081081
+Is_Localized_In              	TP:29 FP:36 FN:78	P:0.446154 R:0.271028 F1:0.337209
+Is_Member_Of_Family          	TP:36 FP:83 FN:53	P:0.302521 R:0.404494 F1:0.346154
+Is_Protein_Domain_Of         	TP:12 FP:59 FN:34	P:0.169014 R:0.260870 F1:0.205128
+Occurs_During                	TP:1 FP:7 FN:7	P:0.125000 R:0.125000 F1:0.125000
+Occurs_In_Genotype           	TP:4 FP:37 FN:14	P:0.097561 R:0.222222 F1:0.135593
+Regulates_Accumulation       	TP:8 FP:69 FN:28	P:0.103896 R:0.222222 F1:0.141593
+Regulates_Development_Phase  	TP:39 FP:122 FN:67	P:0.242236 R:0.367925 F1:0.292135
+Regulates_Expression         	TP:76 FP:188 FN:125	P:0.287879 R:0.378109 F1:0.326882
+Regulates_Molecule_Activity  	TP:0 FP:0 FN:16	P:0.000000 R:0.000000 F1:0.000000
+Regulates_Process            	TP:287 FP:517 FN:149	P:0.356965 R:0.658257 F1:0.462903
+Regulates_Tissue_Development 	TP:0 FP:2 FN:9	P:0.000000 R:0.000000 F1:0.000000
+Transcribes_Or_Translates_To 	TP:9 FP:6 FN:16	P:0.600000 R:0.360000 F1:0.450000
+--------------------------------------------------
+All                          	TP:640 FP:1873 FN:988	P:0.254676 R:0.393120 F1:0.309104
+('seedev scores:', (0.2546756864305611, 0.3931203931203931, 0.3091040811398213), True)
