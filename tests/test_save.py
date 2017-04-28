@@ -41,14 +41,13 @@ def test_saveStandoffFile():
 def test_saveBB3Data():
 	dataList = kindred.bionlpst.load('2016-BB3-event-train')
 
-	#tempDir = tempfile.mkdtemp()
-	tempDir = 'tmpSave'
+	tempDir = tempfile.mkdtemp()
 
 	kindred.save(dataList,'standoff',tempDir)
 
 	loadedList = kindred.loadDir('standoff',tempDir)
 
-	#shutil.rmtree(tempDir)
+	shutil.rmtree(tempDir)
 	
 def test_saveStandoffFile_SeparateSentences():
 	texts = ['The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />','<disease id="T1">Li-Fraumeni</disease> was caused by mutations in <gene id="T2">P53</gene><relation type="causes" subj="T2" obj="T1" />']
