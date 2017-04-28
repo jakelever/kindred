@@ -14,8 +14,8 @@ install:
   - pip install --upgrade pip setuptools wheel
   - pip install --only-binary=numpy,scipy numpy scipy
   - pip install pytest coverage
-  - pip install --upgrade coverage
   - pip install python-coveralls
+  - pip install --upgrade coverage
   - pip install .
 # command to run tests
 script:
