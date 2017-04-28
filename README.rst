@@ -41,8 +41,6 @@ PubAnnotation Example
 >>> import kindred
 >>> train_data = kindred.pubannotation.load('bionlp-st-gro-2013-development')
 >>> model = kindred.train(train_data)
->>> text = 'A SeeDev related text goes here'
->>> predicted_relations = model.predict(text)
 
 
 An example of using kindred from the command line with a set of ST files (e.g. BioNLP task)
