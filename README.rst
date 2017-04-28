@@ -21,13 +21,6 @@ Kindred
 
 Insert description of package here please
 
-Installing
-----------
-
-.. code:: sh
-
-    pip install kindred
-
 Usage
 -----
 
@@ -35,21 +28,21 @@ BioNLP Example
 ~~~~~~~~~~~~~~
 
 >>> import kindred
->>> train_data = kindred.bionlpst.get_data('2016-BB3-event-training')
->>> dev_data = kindred.bionlpst.get_data('2016-BB3-event-development')
->>> model = kindred.train(train_data)
->>> predicted_relations = model.predict(dev_data.get_text_and_entities())
->>> f1score = kindred.evaluate(dev_data.get_relations(), prediction_relations, metric='f1score')
+>>> train_data = kindred.bionlpst.load('2016-BB3-event-training')
+>>> dev_data = kindred.bionlpst.load('2016-BB3-event-development')
+>>> classifier = kindred.RelationClassifier()
+>>> classifier.train(train_data)
+>>> predicted_relations = classifier.predict(dev_data)
+>>> f1score = kindred.evaluate(dev_data, prediction_relations, metric='f1score')
 
 PubAnnotation Example
 ~~~~~~~~~~~~~~~~~~~~~
 
 >>> import kindred
->>> train_data = kindred.pubannotation.get_data('2016-SeeDev-binary-training')
+>>> train_data = kindred.pubannotation.load('bionlp-st-gro-2013-development')
 >>> model = kindred.train(train_data)
 >>> text = 'A SeeDev related text goes here'
 >>> predicted_relations = model.predict(text)
->>> print(predicted_relations)
 
 
 An example of using kindred from the command line with a set of ST files (e.g. BioNLP task)
