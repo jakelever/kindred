@@ -6,23 +6,23 @@ from lxml import etree
 
 import sys
 if sys.version_info >= (3, 0):
-	from .bioc_annotation import BioCAnnotation
-	from .bioc_collection import BioCCollection
-	from .bioc_document import BioCDocument
-	from .bioc_location import BioCLocation
-	from .bioc_passage import BioCPassage
-	from .bioc_sentence import BioCSentence
-	from .bioc_node import BioCNode
-	from .bioc_relation import BioCRelation
+    from .bioc_annotation import BioCAnnotation
+    from .bioc_collection import BioCCollection
+    from .bioc_document import BioCDocument
+    from .bioc_location import BioCLocation
+    from .bioc_passage import BioCPassage
+    from .bioc_sentence import BioCSentence
+    from .bioc_node import BioCNode
+    from .bioc_relation import BioCRelation
 else:
-	from bioc_annotation import BioCAnnotation
-	from bioc_collection import BioCCollection
-	from bioc_document import BioCDocument
-	from bioc_location import BioCLocation
-	from bioc_passage import BioCPassage
-	from bioc_sentence import BioCSentence
-	from bioc_node import BioCNode
-	from bioc_relation import BioCRelation
+    from bioc_annotation import BioCAnnotation
+    from bioc_collection import BioCCollection
+    from bioc_document import BioCDocument
+    from bioc_location import BioCLocation
+    from bioc_passage import BioCPassage
+    from bioc_sentence import BioCSentence
+    from bioc_node import BioCNode
+    from bioc_relation import BioCRelation
 
 class BioCReader:
     """
@@ -97,7 +97,7 @@ class BioCReader:
                                     passage)
             else:
                 # Is the (optional) text element available?
-		try:
+        try:
                     passage.text = passage_elem.xpath('text')[0].text
                 except:
                     pass

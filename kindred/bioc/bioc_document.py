@@ -2,11 +2,11 @@ __all__ = ['BioCDocument']
 
 import sys
 if sys.version_info >= (3, 0):
-	from .meta import _MetaId, _MetaInfons, _MetaRelations, _MetaIter
-	from .compat import _Py2Next
+    from .meta import _MetaId, _MetaInfons, _MetaRelations, _MetaIter
+    from .compat import _Py2Next
 else:
-	from meta import _MetaId, _MetaInfons, _MetaRelations, _MetaIter
-	from compat import _Py2Next
+    from meta import _MetaId, _MetaInfons, _MetaRelations, _MetaIter
+    from compat import _Py2Next
 
 class BioCDocument(_MetaId, _MetaInfons, _MetaRelations, _MetaIter,
                    _Py2Next):
