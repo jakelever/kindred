@@ -19,7 +19,7 @@ Kindred
    :target: https://opensource.org/licenses/MIT
    :alt: MIT license
 
-Insert description of package here please
+Kindred is a package for relation extraction in biomedical texts. Given some training data, it can build a model to identify relations between entities (e.g. drugs, genes, etc) in a sentence.
 
 Usage
 -----
