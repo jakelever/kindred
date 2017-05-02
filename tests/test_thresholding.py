@@ -1,6 +1,5 @@
 import kindred
 from kindred.RelationClassifier import RelationClassifier
-from kindred.Evaluator import Evaluator
 
 from kindred.datageneration import generateData,generateTestData
 

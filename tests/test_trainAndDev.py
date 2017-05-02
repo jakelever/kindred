@@ -5,7 +5,6 @@ from kindred.CandidateBuilder import CandidateBuilder
 from kindred.Vectorizer import Vectorizer
 from kindred.Parser import Parser
 from kindred.RelationClassifier import RelationClassifier
-from kindred.Evaluator import Evaluator
 
 from kindred.datageneration import generateData,generateTestData
 
@@ -22,8 +21,7 @@ def _bionlpst_bb3(swap):
 	classifier = RelationClassifier(useBuilder=True)
 	classifier.train(trainData)
 	predictedRelations = classifier.predict(devData) #devData_TextAndEntities)
-	evaluator = Evaluator()
-	scores = evaluator.evaluate(devData_Relations, predictedRelations, metric='all')
+	scores = kindred.evaluate(devData_Relations, predictedRelations, metric='all')
 	print("bb3 scores:",scores,swap)
 
 def _bionlpst_seedev(swap):
@@ -41,8 +39,7 @@ def _bionlpst_seedev(swap):
 
 	predictedRelations = classifier.predict(devData) #devData_TextAndEntities)
 
-	evaluator = Evaluator()
-	scores = evaluator.evaluate(devData_Relations, predictedRelations, metric='all')
+	scores = kindred.evaluate(devData_Relations, predictedRelations, metric='all')
 	print("seedev scores:",scores,swap)
 
 if __name__ == '__main__':

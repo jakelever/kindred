@@ -1,6 +1,5 @@
 import kindred
 from kindred.RelationClassifier import RelationClassifier
-from kindred.Evaluator import Evaluator
 
 from kindred.datageneration import generateData,generateTestData
 
@@ -15,8 +14,7 @@ def test_simpleRelationClassifier():
 	
 	predictedRelations = classifier.predict(testData_TextAndEntities)
 	
-	evaluator = Evaluator()
-	f1score = evaluator.evaluate(testData_Relations, predictedRelations, metric='f1score')
+	f1score = kindred.evaluate(testData_Relations, predictedRelations, metric='f1score')
 	assert f1score == 1.0
 
 if __name__ == '__main__':
