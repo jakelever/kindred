@@ -14,7 +14,7 @@ def test_pubtator():
 	
 	assert fileCount == 2
 	assert relationCount == 0
-	assert entityCount == 17
+	assert entityCount == 39
 	
 if __name__ == '__main__':
 	test_pubtator()
