@@ -3,7 +3,7 @@ import os
 
 import kindred
 import kindred.Dependencies
-from kindred.Parser_corenlp import Parser
+from kindred.Parser import Parser
 
 from kindred.datageneration import generateData,generateTestData
 

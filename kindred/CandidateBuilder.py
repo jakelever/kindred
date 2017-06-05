@@ -3,7 +3,7 @@ from collections import defaultdict
 import itertools
 
 import kindred
-from kindred.Parser_corenlp import Parser
+from kindred.Parser import Parser
 
 class CandidateBuilder:
 	def __init__(self):

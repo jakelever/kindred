@@ -1,7 +1,4 @@
 import kindred
-from kindred.CandidateBuilder import CandidateBuilder
-from kindred.Vectorizer import Vectorizer
-from kindred.Parser import Parser
 from kindred.RelationClassifier import RelationClassifier
 
 from kindred.datageneration import generateData,generateTestData
