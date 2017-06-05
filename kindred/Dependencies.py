@@ -30,7 +30,8 @@ def _findDir(name, path):
 			return os.path.abspath(os.path.join(root, name))
 	return None
 
-downloadDirectory = 'downloaded'
+homeDirectory = os.path.expanduser('~')
+downloadDirectory = os.path.join(homeDirectory,'.kindred')
 def _downloadFiles(files):
 	global downloadDirectory
 	
