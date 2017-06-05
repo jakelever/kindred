@@ -9,6 +9,7 @@ from kindred.loadFunctions import load,loadDir
 from kindred.saveFunctions import save
 from kindred.evalFunctions import evaluate
 from kindred import bionlpst, pubannotation, pubtator
+from kindred.Dependencies import downloadCoreNLP
 
 class Entity:
 	nextInternalID = 1

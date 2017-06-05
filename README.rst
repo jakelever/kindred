@@ -21,6 +21,14 @@ Kindred
 
 Kindred is a package for relation extraction in biomedical texts. Given some training data, it can build a model to identify relations between entities (e.g. drugs, genes, etc) in a sentence.
 
+Install
+-------
+
+Kindred relies on the Stanford CoreNLP toolkit for parsing. By default it will attempt to connect to a local server (localhost:9000). If you want Kindred to download the CoreNLP files and run it as a subprocess when a server can't be found, use the following command:
+
+>>> import kindred
+>>> kindred.downloadCoreNLP()
+
 Usage
 -----
 

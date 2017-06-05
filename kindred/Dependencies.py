@@ -69,17 +69,31 @@ def killCoreNLP():
 	if not corenlpProcess is None:
 		corenlpProcess.kill()
 
+def checkCoreNLPDownload():
+	directory = _findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
+	return not directory is None
+
+def downloadCoreNLP():
+	directory = _findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
+	if directory is None:
+		files = []
+		files.append(('http://nlp.stanford.edu/software/stanford-corenlp-full-2016-10-31.zip','stanford-corenlp-full-2016-10-31.zip','753dd5aae1ea4ba14ed8eca46646aef06f6808a9ce569e52a09840f6928d00d8'))
+		
+		print("Downloading CoreNLP to %s" % downloadDirectory)
+		_downloadFiles(files)
+		directory = _findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
+		assert not directory is None, "Error after downloading, could not find corenlp directory"
+		print ("Download complete.")
+	else:
+		print ("CoreNLP is already downloaded. No need to download")
+
+
 def initializeCoreNLP():
 	global corenlpProcess
 
-	files = []
-	files.append(('http://nlp.stanford.edu/software/stanford-corenlp-full-2016-10-31.zip','stanford-corenlp-full-2016-10-31.zip','753dd5aae1ea4ba14ed8eca46646aef06f6808a9ce569e52a09840f6928d00d8'))
-	
-	print("Downloading...")
-	_downloadFiles(files)
-	
 	directory = _findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
-	assert not directory is None
+	if directory is None:
+		raise RuntimeError("Could not find  the Stanford CoreNLP files. Use kindred.downloadCoreNLP() first")
 
 	command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 15000'
 
