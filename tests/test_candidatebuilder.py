@@ -22,7 +22,7 @@ def test_simpleRelationCandidates():
 	assert str(candidateRelations[2].processedSentence) == 'Aspirin is the main cause of boneitis .'
 	assert str(candidateRelations[3].processedSentence) == 'Aspirin is the main cause of boneitis .'
 	
-	sourceEntityIDsToEntityIDs = data[0].getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntityIDs = corpus.documents[0].getSourceEntityIDsToEntityIDs()
 
 	assert candidateRelations[0].entitiesInRelation == (sourceEntityIDsToEntityIDs['1'], sourceEntityIDsToEntityIDs['2'])
 	assert candidateRelations[1].entitiesInRelation == (sourceEntityIDsToEntityIDs['2'], sourceEntityIDsToEntityIDs['1'])

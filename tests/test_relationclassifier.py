@@ -5,7 +5,7 @@ from kindred.datageneration import generateData,generateTestData
 
 def test_simpleRelationClassifier():
 	trainData, testData = generateTestData(positiveCount=100,negativeCount=100)
-	
+
 	testData_TextAndEntities = [ d.getTextAndEntities() for d in testData ]
 	testData_Relations = [ d.getRelations() for d in testData ]
 	

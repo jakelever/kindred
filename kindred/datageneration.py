@@ -20,7 +20,7 @@ def generateData(positiveCount=100,negativeCount=100):
 	totalCount = positiveCount + negativeCount
 	
 	entityID = 1
-	data = []
+	corpus = kindred.Corpus()
 	for _ in range(positiveCount):
 		text = random.choice(positivePatterns)
 		text = text.replace('DRUG',random.choice(fakeDrugNames))
@@ -35,7 +35,7 @@ def generateData(positiveCount=100,negativeCount=100):
 		entityID += 2
 		
 		converted = kindred.Document(text)
-		data.append(converted)
+		corpus.addDocument(converted)
 		
 	halfNegativeCount = int(negativeCount/2.0)
 	for _ in range(halfNegativeCount):
@@ -52,18 +52,23 @@ def generateData(positiveCount=100,negativeCount=100):
 			combinedText = "%s %s" % (combinedText,text)
 		
 		converted = kindred.Document(combinedText)
-		data.append(converted)
+		corpus.addDocument(converted)
 		
-	return data
+	return corpus
 	
 def generateTestData(positiveCount = 100,negativeCount = 100):
-	data = generateData(positiveCount, negativeCount)
-		
-	halfDataCount = int(len(data)/2.0)
-	trainIndices = random.sample(range(len(data)),halfDataCount)
-	testIndices = [ i for i in range(len(data)) if not i in trainIndices ]
-	
-	trainData = [ data[i] for i in trainIndices ]
-	testData = [ data[i] for i in testIndices ]
-	
-	return trainData, testData
+	corpus = generateData(positiveCount, negativeCount)
+	docCount = len(corpus.documents)
+	halfDataCount = int(docCount/2.0)
+	trainIndices = random.sample(range(docCount),halfDataCount)
+	testIndices = [ i for i in range(docCount) if not i in trainIndices ]
+
+	trainCorpus = kindred.Corpus()
+	testCorpus = kindred.Corpus()
+	for i in trainIndices:
+		trainCorpus.addDocument(corpus.documents[i])
+	for i in testIndices:
+		testCorpus.addDocument(corpus.documents[i])
+
+	return trainCorpus,testCorpus
+

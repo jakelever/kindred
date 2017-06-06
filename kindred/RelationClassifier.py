@@ -134,10 +134,10 @@ class RelationClassifier:
 		"""
 		Does stuff
 		"""
-		assert isinstance(data,kindred.Corpus)
+		assert isinstance(corpus,kindred.Corpus)
 			
 		self.candidateBuilder = CandidateBuilder()
-		relTypes,candidateRelations,candidateClasses = self.candidateBuilder.build(data)
+		relTypes,candidateRelations,candidateClasses = self.candidateBuilder.build(corpus)
 		
 		self.relTypeToValidEntityTypes = defaultdict(set)
 		
