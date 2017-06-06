@@ -13,34 +13,6 @@ def assertProcessedEntity(entity,expectedType,expectedLocs,expectedSourceEntityI
 	assert entity.entityLocs == expectedLocs, "(%s) not as expected" % (entity.__str__())
 	assert entity.sourceEntityID == expectedSourceEntityID, "(%s) not as expected" % (entity.__str__())
 
-def _stanfordDependencyParser():
-	kindred.Dependencies.initializeStanfordParser()
-		
-	depParser = StanfordDependencyParser(model_path="edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
-
-	#print [ parse.tree() for parse in dep_parser.raw_parse("The quick brown fox jumps over the lazy dog.") ]
-	text = ["Colourless green ideas sleep furiously"]
-	depParses = depParser.parse(text)
-	depParses = list(depParses)
-	assert len(depParses) == 1
-	
-	depParse = depParses[0]
-	assert depParse.tree().__str__() == "(sleep (ideas Colourless green) furiously)"
-
-def _maltParser():
-	kindred.Dependencies.initializeMaltParser()
-	maltParser = kindred.Dependencies.getMaltParser()
-	
-	text = "Colourless green ideas sleep furiously"
-	
-	depParses = maltParser.parse(text.split())
-	depParses = list(depParses)
-	assert len(depParses) == 1
-	
-	depParse = depParses[0]
-	assert depParse.tree().__str__() == "(sleep Colourless green ideas furiously)"
-
-
 def test_simpleSentenceParse():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">lung</cancer> and unknown <cancer id="2">cancers</cancer>'
 	data = [kindred.TextAndEntityData(text)]
