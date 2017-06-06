@@ -123,7 +123,7 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],i
 
 	baseTxtFile = os.path.basename(txtFile)
 	baseFilename = baseTxtFile[0:-4]
-	combinedData = kindred.RelationData(text,relations,entities=entities,sourceFilename=baseFilename)
+	combinedData = kindred.Document(text,relations,entities=entities,sourceFilename=baseFilename)
 			
 	return combinedData
 
@@ -172,7 +172,7 @@ def parseJSON(data,ignoreEntities=[]):
 	extraFields = [ k for k in data.keys() if not k in expected]
 	assert len(extraFields) == 0, "Found additional unexpected fields (%s) in JSON" % (",".join(extraFields))
 		
-	combinedData = kindred.RelationData(text,relations,entities=entities)
+	combinedData = kindred.Document(text,relations,entities=entities)
 
 	return combinedData
 
@@ -248,7 +248,7 @@ def parseSimpleTag(text,ignoreEntities=[]):
 					
 	entities = mergeEntitiesWithMatchingIDs(unmergedEntities)
 			
-	combinedData = kindred.RelationData(text,relations,entities=entities)
+	combinedData = kindred.Document(text,relations,entities=entities)
 	return combinedData
 
 def loadDataFromBioC(filename,ignoreEntities=[]):
@@ -305,43 +305,46 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 				r = kindred.Relation(relationType=relationType,entityIDs=entityIDs,argNames=argNames)
 				relations.append(r)
 				
-			relData = kindred.RelationData(text,relations,entities=entities)
+			relData = kindred.Document(text,relations,entities=entities)
 			parsed.append(relData)
 			
 	return parsed
 	
 	
-def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
-	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json' or dataFormat == 'bioc'
+def loadDoc(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
+	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
 	
 	if dataFormat == 'standoff':
 		assert not txtPath is None
 		assert not a1Path is None
 		#assert not a2Path is None
 
-		relationData = loadDataFromSTFormat(txtPath,a1Path,a2Path,verbose=verbose,ignoreEntities=ignoreEntities)
-		relationData = [relationData]
+		doc = loadDataFromSTFormat(txtPath,a1Path,a2Path,verbose=verbose,ignoreEntities=ignoreEntities)
 	elif dataFormat == 'simpletag':
 		assert not path is None
 
 		with open(path,'r') as f:
 			filecontents = f.read().strip()
-		relationData = parseSimpleTag(filecontents,ignoreEntities=ignoreEntities)
-		relationData.sourceFilename = os.path.basename(path)
-		relationData = [relationData]
+		doc = parseSimpleTag(filecontents,ignoreEntities=ignoreEntities)
+		doc.sourceFilename = os.path.basename(path)
 	elif dataFormat == 'json':
 		assert not path is None
-		relationData = loadDataFromJSON(path,ignoreEntities=ignoreEntities)
-		relationData = [relationData]
-	elif dataFormat == 'bioc':
+		doc = loadDataFromJSON(path,ignoreEntities=ignoreEntities)
+
+	assert isinstance(doc,kindred.Document)
+	return doc
+
+def loadDocs(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
+	assert dataFormat == 'bioc'
+	if dataFormat == 'bioc':
 		assert not path is None
-		relationData = loadDataFromBioC(path,ignoreEntities=ignoreEntities)
+		docs = loadDataFromBioC(path,ignoreEntities=ignoreEntities)
 		
-	assert isinstance(relationData,list)
-	for r in relationData:
-		assert isinstance(r,kindred.RelationData)
+	assert isinstance(docs,list)
+	for doc in docs:
+		assert isinstance(doc,kindred.Document)
 		
-	return relationData
+	return docs
 	
 def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
 	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json' or dataFormat == 'bioc'
@@ -352,7 +355,7 @@ def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRe
 
 	filenames = sorted(list(os.listdir(directory)))
 
-	allData = []
+	corpus = kindred.Corpus()
 	for filename in filenames:
 		if dataFormat == 'standoff' and filename.endswith('.txt'):
 			base = filename[0:-4]
@@ -363,18 +366,19 @@ def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRe
 			assert os.path.isfile(txtPath), "%s must exist" % txtPath
 			assert os.path.isfile(a1Path), "%s must exist" % a1Path
 
-			data = load(dataFormat,txtPath=txtPath,a1Path=a1Path,a2Path=a2Path,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
-			allData += data
+			doc = loadDoc(dataFormat,txtPath=txtPath,a1Path=a1Path,a2Path=a2Path,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
+			corpus.addDocument(doc)
 		elif dataFormat == 'simpletag' and filename.endswith('.simple'):
-			data = load(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
-			allData += data
+			doc = loadDoc(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
+			corpus.addDocument(doc)
 		elif dataFormat == 'json' and filename.endswith('.json'):
-			data = load(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
-			allData += data
+			doc = loadDoc(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
+			corpus.addDocument(doc)
 		elif dataFormat == 'bioc' and filename.endswith('.bioc.xml'):
-			data = load(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
-			allData += data
+			docs = loadDoc(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
+			for doc in docs:
+				corpus.addDocument(doc)
 			
-	return allData
+	return corpus
 			
 			

@@ -130,20 +130,18 @@ class RelationClassifier:
 
 		return chosenFeatures
 
-	def train(self,data):
+	def train(self,corpus):
 		"""
 		Does stuff
 		"""
-		assert isinstance(data,list)
-		for d in data:
-			assert isinstance(d,kindred.RelationData)
+		assert isinstance(data,kindred.Corpus)
 			
 		self.candidateBuilder = CandidateBuilder()
 		relTypes,candidateRelations,candidateClasses = self.candidateBuilder.build(data)
 		
 		self.relTypeToValidEntityTypes = defaultdict(set)
 		
-		for d in data:
+		for d in corpus.documents:
 			for r in d.getRelations():
 				entityIDsToEntities = d.getEntityIDsToEntities()
 				relationEntities = [ entityIDsToEntities[eID] for eID in r.entityIDs ]
@@ -228,14 +226,12 @@ class RelationClassifier:
 		
 		self.isTrained = True
 
-	def predict(self,data):
+	def predict(self,corpus):
 		assert self.isTrained, "Classifier must be trained using train() before predictions can be made"
 	
-		assert isinstance(data,list)
-		for d in data:
-			assert isinstance(d,kindred.TextAndEntityData) or isinstance(d,kindred.RelationData)
+		assert isinstance(corpus,kindred.Corpus)
 			
-		_,candidateRelations,testClasses = self.candidateBuilder.build(data)
+		_,candidateRelations,testClasses = self.candidateBuilder.build(corpus)
 
 		#if False:
 		#	testVectors = self.vectorizer.transform(candidateRelations)

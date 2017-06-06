@@ -13,24 +13,25 @@ def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEnti
 	
 def test_saveStandoffFile():
 	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
-	data = kindred.RelationData(text)
-	dataList = [data]
+	corpus = kindred.Corpus()
+	doc = kindred.Document(text)
+	corpus.addDocument(doc)
 
 	tempDir = tempfile.mkdtemp()
 
-	kindred.save(dataList,'standoff',tempDir)
+	kindred.save(corpus,'standoff',tempDir)
 
-	loadedList = kindred.loadDir('standoff',tempDir)
+	loadedCorpus = kindred.loadDir('standoff',tempDir)
 
-	assert isinstance(loadedList,list)
-	assert len(loadedList) == 1
-	data = loadedList[0]
+	assert isinstance(loadedCorpus,kindred.Corpus)
+	assert len(loadedCorpus.documents) == 1
+	loadedDoc = loadedCorpus.documents[0]
 	
-	assert isinstance(data,kindred.RelationData)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	assert isinstance(loadedDoc,kindred.Document)
+	entities = loadedDoc.getEntities()
+	relations = loadedDoc.getRelations()
 
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntityIDs = loadedDoc.getSourceEntityIDsToEntityIDs()
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
@@ -39,31 +40,36 @@ def test_saveStandoffFile():
 	shutil.rmtree(tempDir)
 	
 def test_saveBB3Data():
-	dataList = kindred.bionlpst.load('2016-BB3-event-train')
+	corpus = kindred.bionlpst.load('2016-BB3-event-train')
+	assert isinstance(corpus,kindred.Corpus)
 
 	tempDir = tempfile.mkdtemp()
 
-	kindred.save(dataList,'standoff',tempDir)
+	kindred.save(corpus,'standoff',tempDir)
 
-	loadedList = kindred.loadDir('standoff',tempDir)
+	loadedCorpus = kindred.loadDir('standoff',tempDir)
+	assert len(corpus.documents) == len(loadedCorpus.documents)
 
 	shutil.rmtree(tempDir)
 	
 def test_saveStandoffFile_SeparateSentences():
 	texts = ['The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />','<disease id="T1">Li-Fraumeni</disease> was caused by mutations in <gene id="T2">P53</gene><relation type="causes" subj="T2" obj="T1" />']
-	dataList = [kindred.RelationData(t) for t in texts]
+	corpus = kindred.Corpus()
+	for t in texts:
+		doc = kindred.Document(t)
+		corpus.addDocument(doc)
 
 	tempDir = tempfile.mkdtemp()
 
-	kindred.save(dataList,'standoff',tempDir)
+	kindred.save(corpus,'standoff',tempDir)
 
-	loadedList = kindred.loadDir('standoff',tempDir)
+	loadedCorpus = kindred.loadDir('standoff',tempDir)
 
-	assert isinstance(loadedList,list)
-	assert len(loadedList) == 2
+	assert isinstance(loadedCorpus,kindred.Corpus)
+	assert len(loadedCorpus.documents) == 2
 	
-	data = loadedList[0]
-	assert isinstance(data,kindred.RelationData)
+	data = loadedCorpus.documents[0]
+	assert isinstance(data,kindred.Document)
 	entities = data.getEntities()
 	relations = data.getRelations()
 	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
@@ -71,8 +77,8 @@ def test_saveStandoffFile_SeparateSentences():
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
 	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
-	data = loadedList[1]
-	assert isinstance(data,kindred.RelationData)
+	data = loadedCorpus.documents[1]
+	assert isinstance(data,kindred.Document)
 	entities = data.getEntities()
 	relations = data.getRelations()
 	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
@@ -86,25 +92,28 @@ def test_saveStandoffFile_SeparateSentences():
 	
 def test_saveStandoffFile_PredictedRelations():
 	texts = ['The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />','<disease id="T1">Li-Fraumeni</disease> was caused by mutations in <gene id="T2">P53</gene><relation type="causes" subj="T2" obj="T1" />']
-	dataList = [kindred.RelationData(t) for t in texts]
+	corpus = kindred.Corpus()
+	for t in texts:
+		doc = kindred.Document(t)
+		corpus.addDocument(doc)
 	
 	predictedRelations = []
 	# Rip out the relations and save as predicted ones
-	for d in dataList:
+	for d in corpus.documents:
 		predictedRelations += d.relations
 		d.relations = []
 
 	tempDir = tempfile.mkdtemp()
 
-	kindred.save(dataList,'standoff',tempDir,predictedRelations=predictedRelations)
+	kindred.save(corpus,'standoff',tempDir,predictedRelations=predictedRelations)
 
-	loadedList = kindred.loadDir('standoff',tempDir)
+	loadedCorpus = kindred.loadDir('standoff',tempDir)
 
-	assert isinstance(loadedList,list)
-	assert len(loadedList) == 2
+	assert isinstance(loadedCorpus,kindred.Corpus)
+	assert len(loadedCorpus.documents) == 2
 	
-	data = loadedList[0]
-	assert isinstance(data,kindred.RelationData)
+	data = loadedCorpus.documents[0]
+	assert isinstance(data,kindred.Document)
 	entities = data.getEntities()
 	relations = data.getRelations()
 	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
@@ -112,8 +121,8 @@ def test_saveStandoffFile_PredictedRelations():
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
 	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
-	data = loadedList[1]
-	assert isinstance(data,kindred.RelationData)
+	data = loadedCorpus.documents[1]
+	assert isinstance(data,kindred.Document)
 	entities = data.getEntities()
 	relations = data.getRelations()
 	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()

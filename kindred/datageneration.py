@@ -34,7 +34,7 @@ def generateData(positiveCount=100,negativeCount=100):
 		
 		entityID += 2
 		
-		converted = kindred.RelationData(text)
+		converted = kindred.Document(text)
 		data.append(converted)
 		
 	halfNegativeCount = int(negativeCount/2.0)
@@ -51,7 +51,7 @@ def generateData(positiveCount=100,negativeCount=100):
 		
 			combinedText = "%s %s" % (combinedText,text)
 		
-		converted = kindred.RelationData(combinedText)
+		converted = kindred.Document(combinedText)
 		data.append(converted)
 		
 	return data

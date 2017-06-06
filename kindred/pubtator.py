@@ -18,11 +18,18 @@ def loadPMID(pmid):
 
 def load(pmids):
 	assert isinstance(pmids,list) or isinstance(pmids,int)
-	
+
+	corpus = kindred.Corpus()
 	if isinstance(pmids,list):
-		return [ loadPMID(pmid) for pmid in pmids ]
+		for pmid in pmids:
+			doc = loadPMID(pmid)
+			assert isinstance(doc,kindred.Document)
+			corpus.addDocument(doc)
 	elif isinstance(pmids,int):
-		return loadPMID(pmids)
+		doc = loadPMID(pmids)
+		assert isinstance(doc,kindred.Document)
+		corpus.addDocument(doc)
+	return corpus
 	
 	
 	

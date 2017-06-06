@@ -6,10 +6,12 @@ from kindred.datageneration import generateData,generateTestData
 def test_simpleRelationCandidates():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer>. <drug id="3">Aspirin</drug> is the main cause of <disease id="4">boneitis</disease>. <relation type="treats" subj="1" obj="2" />'
 
-	data = [kindred.RelationData(text)]	
+	corpus = kindred.Corpus()
+	doc = kindred.Document(text)
+	corpus.addDocument(doc)
 	
 	candidateBuilder = CandidateBuilder()
-	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(data)
+	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(corpus)
 	
 	assert relTypes == [('treats', 'obj', 'subj')]
 	assert candidateClasses == [[0], [1], [0], [0]]

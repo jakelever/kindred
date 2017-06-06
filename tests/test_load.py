@@ -15,13 +15,9 @@ def test_loadStandoffFile():
 	a1Path = os.path.join(scriptDir,'data','example.a1')
 	a2Path = os.path.join(scriptDir,'data','example.a2')
 
-	dataList = kindred.load(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
+	data = kindred.loadDoc(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
 	
-	assert isinstance(dataList,list)
-	assert len(dataList) == 1
-	data = dataList[0]
-	
-	assert isinstance(data,kindred.RelationData)
+	assert isinstance(data,kindred.Document)
 	entities = data.getEntities()
 	relations = data.getRelations()
 
@@ -36,13 +32,9 @@ def test_loadSimpleTagFile():
 	scriptDir = os.path.dirname(__file__)
 	path = os.path.join(scriptDir,'data','example.simple')
 
-	dataList = kindred.load(dataFormat='simpletag',path=path)
+	data = kindred.loadDoc(dataFormat='simpletag',path=path)
 	
-	assert isinstance(dataList,list)
-	assert len(dataList) == 1
-	data = dataList[0]
-	
-	assert isinstance(data,kindred.RelationData)
+	assert isinstance(data,kindred.Document)
 	entities = data.getEntities()
 	relations = data.getRelations()
 
@@ -57,13 +49,9 @@ def test_loadJsonFile():
 	scriptDir = os.path.dirname(__file__)
 	jsonPath = os.path.join(scriptDir,'data','example.json')
 
-	dataList = kindred.load(dataFormat='json',path=jsonPath)
+	data = kindred.loadDoc(dataFormat='json',path=jsonPath)
 	
-	assert isinstance(dataList,list)
-	assert len(dataList) == 1
-	data = dataList[0]
-	
-	assert isinstance(data,kindred.RelationData)
+	assert isinstance(data,kindred.Document)
 	entities = data.getEntities()
 	relations = data.getRelations()
 
@@ -77,13 +65,13 @@ def test_loadBiocFile():
 	scriptDir = os.path.dirname(__file__)
 	jsonPath = os.path.join(scriptDir,'data','example.bioc.xml')
 
-	dataList = kindred.load(dataFormat='bioc',path=jsonPath)
+	dataList = kindred.loadDocs(dataFormat='bioc',path=jsonPath)
 	
 	assert isinstance(dataList,list)
 	assert len(dataList) == 1
 	data = dataList[0]
 	
-	assert isinstance(data,kindred.RelationData)
+	assert isinstance(data,kindred.Document)
 	entities = data.getEntities()
 	relations = data.getRelations()
 

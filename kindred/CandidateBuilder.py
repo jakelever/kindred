@@ -10,13 +10,10 @@ class CandidateBuilder:
 		self.initialized = False
 	
 	def build(self,data):
-		assert isinstance(data,list)
-		for t in data:
-			assert isinstance(t,kindred.RelationData) or isinstance(t,kindred.TextAndEntityData)
+		assert isinstance(data,kindred.Corpus)
 			
 		parser = Parser()
 		processedSentences = parser.parse(data)
-		
 		
 		assert isinstance(processedSentences,list)
 		for processedSentence in processedSentences:

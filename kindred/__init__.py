@@ -5,7 +5,7 @@ import sys
 import kindred
 from kindred import CandidateBuilder
 
-from kindred.loadFunctions import load,loadDir
+from kindred.loadFunctions import loadDoc,loadDocs,loadDir
 from kindred.saveFunctions import save
 from kindred.evalFunctions import evaluate
 from kindred import bionlpst, pubannotation, pubtator
@@ -135,9 +135,16 @@ class TextAndEntityData:
 	def __repr__(self):
 		return self.__str__()
 		
-class RelationData:
-	def __init__(self,text,relationsWithSourceEntityIDs=None,sourceFilename=None,entities=None):
+class Corpus:
+	def __init__(self):
+		self.documents = []
 
+	def addDocument(self,doc):
+		assert isinstance(doc,kindred.Document)
+		self.documents.append(doc)
+
+class Document:
+	def __init__(self,text,relationsWithSourceEntityIDs=None,sourceFilename=None,entities=None):
 		
 		if entities is None and relationsWithSourceEntityIDs is None:
 			relationDataToCopy = kindred.loadFunctions.parseSimpleTag(text)

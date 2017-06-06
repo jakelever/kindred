@@ -123,9 +123,9 @@ def load(taskName,ignoreEntities=[]):
 
 	mainDir = _findDir(expectedDir,tempDir)
 
-	relationData = kindred.loadDir(dataFormat='standoff',directory=mainDir,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)#,ignoreComplexRelations=ignoreComplexRelations)
+	corpus = kindred.loadDir(dataFormat='standoff',directory=mainDir,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)#,ignoreComplexRelations=ignoreComplexRelations)
 
 	shutil.rmtree(tempDir)
 
-	return relationData
+	return corpus
 

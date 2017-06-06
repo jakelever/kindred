@@ -6,7 +6,7 @@ import codecs
 import kindred
 
 def saveDataFromSTFormat(data,predictedRelations,txtPath,a1Path,a2Path):
-	assert isinstance(data,kindred.RelationData)
+	assert isinstance(data,kindred.Document)
 
 	with codecs.open(txtPath,'w','utf8') as txtFile, codecs.open(a1Path,'w','utf8') as a1File, codecs.open(a2Path,'w','utf8') as a2File:
 		txtFile.write(data.getText())
@@ -57,14 +57,12 @@ def saveDataFromSTFormat(data,predictedRelations,txtPath,a1Path,a2Path):
 			
 
 
-def save(dataList,dataFormat,directory,predictedRelations=[]):
+def save(corpus,dataFormat,directory,predictedRelations=[]):
 	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
 
-	assert isinstance(dataList,list)
-	for d in dataList:
-		assert isinstance(d,kindred.RelationData)
+	assert isinstance(corpus,kindred.Corpus)
 	
-	for i,d in enumerate(dataList):
+	for i,d in enumerate(corpus.documents):
 		if dataFormat == 'standoff':
 			
 			if d.getSourceFilename() is None:

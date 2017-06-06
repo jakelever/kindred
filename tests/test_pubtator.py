@@ -1,16 +1,27 @@
 
 import kindred
 
-def test_pubtator():
-	data = kindred.pubtator.load([19894120,19894121])
+def test_pubtator_pmid():
+	corpus = kindred.pubtator.load(19894120)
 
-	assert isinstance(data,list)
-	for d in data:
-		assert isinstance(d,kindred.RelationData)
+	assert isinstance(corpus,kindred.Corpus)
 
-	fileCount = len(data)
-	entityCount = sum([ len(d.getEntities()) for d in data ])
-	relationCount = sum([ len(d.getRelations()) for d in data ])
+	fileCount = len(corpus.documents)
+	entityCount = sum([ len(d.getEntities()) for d in corpus.documents ])
+	relationCount = sum([ len(d.getRelations()) for d in corpus.documents ])
+	
+	assert fileCount == 1
+	assert relationCount == 0
+	assert entityCount == 17
+
+def test_pubtator_pmids():
+	corpus = kindred.pubtator.load([19894120,19894121])
+
+	assert isinstance(corpus,kindred.Corpus)
+
+	fileCount = len(corpus.documents)
+	entityCount = sum([ len(d.getEntities()) for d in corpus.documents ])
+	relationCount = sum([ len(d.getRelations()) for d in corpus.documents ])
 	
 	assert fileCount == 2
 	assert relationCount == 0

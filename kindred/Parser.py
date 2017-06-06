@@ -21,10 +21,8 @@ class Parser:
 
 	nlp = None
 
-	def parse(self,data):
-		assert isinstance(data,list)
-		for d in data:
-			assert isinstance(d,kindred.RelationData) or isinstance(d,kindred.TextAndEntityData)
+	def parse(self,corpus):
+		assert isinstance(corpus,kindred.Corpus)
 
 		if Parser.nlp is None:
 			try:
@@ -40,7 +38,7 @@ class Parser:
 		
 
 		allSentenceData = []
-		for d in data:
+		for d in corpus.documents:
 			entityIDsToEntities = d.getEntityIDsToEntities()
 		
 			denotationTree = IntervalTree()
@@ -91,7 +89,7 @@ class Parser:
 					
 				relations = []
 				# Let's also put in the relation information if we can get it
-				if isinstance(d,kindred.RelationData):
+				if isinstance(d,kindred.Document):
 					tmpRelations = d.getRelations()
 					entitiesInSentence = entityIDsToTokenLocs.keys()
 					for tmpRelation in tmpRelations:
