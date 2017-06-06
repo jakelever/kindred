@@ -15,10 +15,12 @@ def assertProcessedEntity(entity,expectedType,expectedLocs,expectedSourceEntityI
 
 def test_simpleSentenceParse():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">lung</cancer> and unknown <cancer id="2">cancers</cancer>'
-	data = [kindred.TextAndEntityData(text)]
+	corpus = kindred.Corpus()
+	doc = kindred.Document(text)
+	corpus.addDocument(doc)
 	
 	parser = Parser()
-	processedSentences = parser.parse(data)
+	processedSentences = parser.parse(corpus)
 	
 	assert isinstance(processedSentences,list)
 	assert len(processedSentences) == 1
@@ -45,10 +47,12 @@ def test_simpleSentenceParse():
 	
 def test_twoSentenceParse():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer>. <drug id="3">Aspirin</drug> is the main cause of <disease id="4">boneitis</disease>.'
-	data = [kindred.TextAndEntityData(text)]
+	corpus = kindred.Corpus()
+	doc = kindred.Document(text)
+	corpus.addDocument(doc)
 	
 	parser = Parser()
-	processedSentences = parser.parse(data)
+	processedSentences = parser.parse(corpus)
 	
 	assert isinstance(processedSentences,list)
 	assert len(processedSentences) == 2
@@ -89,19 +93,6 @@ def test_twoSentenceParse():
 	assert len(processedSentence1.processedEntities) == 2
 	assertProcessedEntity(processedSentence1.processedEntities[0],'drug',[0],'3')
 	assertProcessedEntity(processedSentence1.processedEntities[1],'disease',[6],'4')
-
-#TODO: Test parser with relations
-#if test_sentenceParseWithRelations():
-#	assert False
-
-#@profile
-def runPerfTest():
-	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">lung</cancer> and unknown <cancer id=2>cancers</cancer>.'
-	text = " ".join([ text for _ in xrange(100)] )
-	data = [ kindred.TextAndEntityData(text) for _ in range(2) ]
-	
-	parser = Parser()
-	processedSentences = parser.parse(data)
 
 if __name__ == '__main__':
 	#test_stanfordDependencyParser()
