@@ -36,8 +36,6 @@ class Parser:
 				 	raise RuntimeError("Cannot access local CoreNLP at http://localhost:9000 and cannot find CoreNLP files to launch subprocess. Please download using kindred.downloadCoreNLP() if subprocess should be used")
 				
 		
-
-		allSentenceData = []
 		for d in corpus.documents:
 			entityIDsToEntities = d.getEntityIDsToEntities()
 		
@@ -97,8 +95,7 @@ class Parser:
 						if all(matched):
 							relations.append(tmpRelation)
 					
-				sentenceData = kindred.ProcessedSentence(tokens, dependencies, processedEntities, relations, d.getSourceFilename())
-				allSentenceData.append(sentenceData)
-		return allSentenceData
+				sentence = kindred.ProcessedSentence(tokens, dependencies, processedEntities, relations, d.getSourceFilename())
+				d.addProcessedSentence(sentence)
 	
 	#return allSentenceData

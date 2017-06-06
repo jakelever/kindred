@@ -9,28 +9,23 @@ class CandidateBuilder:
 	def __init__(self):
 		self.initialized = False
 	
-	def build(self,data):
-		assert isinstance(data,kindred.Corpus)
+	def build(self,corpus):
+		assert isinstance(corpus,kindred.Corpus)
 			
 		parser = Parser()
-		processedSentences = parser.parse(data)
-		
-		assert isinstance(processedSentences,list)
-		for processedSentence in processedSentences:
-			assert isinstance(processedSentence,kindred.ProcessedSentence)
-		
-		#entityIDsToEntityTypes = data.getEntityIDsToEntityTypes()
+		parser.parse(corpus)
 		
 		if not self.initialized:
 			self.relTypes = set()
 		
-			for processedSentence in processedSentences:
-				knownRelations = processedSentence.relations
-				for r in knownRelations:
-					assert isinstance(r,kindred.Relation)
-				
-				tmpRelTypesAndArgCount = [ tuple([r.relationType] + r.argNames) for r in knownRelations ]
-				self.relTypes.update(tmpRelTypesAndArgCount)
+			for doc in corpus.documents:
+				for processedSentence in doc.processedSentences:
+					knownRelations = processedSentence.relations
+					for r in knownRelations:
+						assert isinstance(r,kindred.Relation)
+					
+					tmpRelTypesAndArgCount = [ tuple([r.relationType] + r.argNames) for r in knownRelations ]
+					self.relTypes.update(tmpRelTypesAndArgCount)
 				
 			self.relTypes = sorted(list(self.relTypes))
 			self.relClasses = { relType:(i+1) for i,relType in enumerate(self.relTypes) }
@@ -40,31 +35,32 @@ class CandidateBuilder:
 		candidateRelations = []
 		candidateClasses = []
 		
-		for processedSentence in processedSentences:
-			
-			existingRelations = defaultdict(list)
-			for r in processedSentence.relations:
-				assert isinstance(r,kindred.Relation)
+		for doc in corpus.documents:
+			for processedSentence in doc.processedSentences:
 				
-				relationType = r.relationType
-				entityIDs = tuple(r.entityIDs)
-				
-				relKey = tuple([r.relationType] + r.argNames)
-				if relKey in self.relClasses:
-					relationClass = self.relClasses[relKey]
-					existingRelations[entityIDs].append(relationClass)
+				existingRelations = defaultdict(list)
+				for r in processedSentence.relations:
+					assert isinstance(r,kindred.Relation)
+					
+					relationType = r.relationType
+					entityIDs = tuple(r.entityIDs)
+					
+					relKey = tuple([r.relationType] + r.argNames)
+					if relKey in self.relClasses:
+						relationClass = self.relClasses[relKey]
+						existingRelations[entityIDs].append(relationClass)
 
-			entitiesInSentence = processedSentence.getEntityIDs()
-						
-			for entitiesInRelation in itertools.permutations(entitiesInSentence,2):
-				candidateRelation = kindred.CandidateRelation(processedSentence, entitiesInRelation)
-				candidateClass = [0]
-				relKey = tuple(entitiesInRelation)
-				if relKey in existingRelations:
-					candidateClass = existingRelations[relKey]
-				
-				candidateRelations.append(candidateRelation)
-				candidateClasses.append(candidateClass)
+				entitiesInSentence = processedSentence.getEntityIDs()
+							
+				for entitiesInRelation in itertools.permutations(entitiesInSentence,2):
+					candidateRelation = kindred.CandidateRelation(processedSentence, entitiesInRelation)
+					candidateClass = [0]
+					relKey = tuple(entitiesInRelation)
+					if relKey in existingRelations:
+						candidateClass = existingRelations[relKey]
+					
+					candidateRelations.append(candidateRelation)
+					candidateClasses.append(candidateClass)
 					
 		assert len(candidateRelations) == len(candidateClasses)
 		

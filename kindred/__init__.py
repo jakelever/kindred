@@ -136,8 +136,11 @@ class TextAndEntityData:
 		return self.__str__()
 		
 class Corpus:
-	def __init__(self):
+	def __init__(self,text=None):
 		self.documents = []
+		if not text is None:
+			doc = kindred.Document(text)
+			self.addDocument(doc)
 
 	def addDocument(self,doc):
 		assert isinstance(doc,kindred.Document)
@@ -175,6 +178,12 @@ class Document:
 				relations.append(newR)
 				
 			self.relations = relations
+
+		self.processedSentences = []
+
+	def addProcessedSentence(self,sentence):
+		assert isinstance(sentence,kindred.ProcessedSentence)
+		self.processedSentences.append(sentence)
 		
 	def getEntities(self):
 		return self.textAndEntityData.getEntities()

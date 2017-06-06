@@ -15,17 +15,17 @@ def assertProcessedEntity(entity,expectedType,expectedLocs,expectedSourceEntityI
 
 def test_simpleSentenceParse():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">lung</cancer> and unknown <cancer id="2">cancers</cancer>'
-	corpus = kindred.Corpus()
-	doc = kindred.Document(text)
-	corpus.addDocument(doc)
+	corpus = kindred.Corpus(text)
 	
 	parser = Parser()
-	processedSentences = parser.parse(corpus)
+	parser.parse(corpus)
 	
-	assert isinstance(processedSentences,list)
-	assert len(processedSentences) == 1
+	assert len(corpus.documents) == 1
+	doc = corpus.documents[0]
+	assert isinstance(doc.processedSentences,list)
+	assert len(doc.processedSentences) == 1
 	
-	processedSentence = processedSentences[0]
+	processedSentence = doc.processedSentences[0]
 	assert isinstance(processedSentence,kindred.ProcessedSentence)
 	
 	expectedWords = "Erlotinib is a common treatment for lung and unknown cancers".split()
@@ -47,18 +47,18 @@ def test_simpleSentenceParse():
 	
 def test_twoSentenceParse():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer>. <drug id="3">Aspirin</drug> is the main cause of <disease id="4">boneitis</disease>.'
-	corpus = kindred.Corpus()
-	doc = kindred.Document(text)
-	corpus.addDocument(doc)
+	corpus = kindred.Corpus(text)
 	
 	parser = Parser()
-	processedSentences = parser.parse(corpus)
+	parser.parse(corpus)
 	
-	assert isinstance(processedSentences,list)
-	assert len(processedSentences) == 2
+	assert len(corpus.documents) == 1
+	doc = corpus.documents[0]
+	assert isinstance(doc.processedSentences,list)
+	assert len(doc.processedSentences) == 2
 	
 	# Check types
-	for processedSentence in processedSentences:
+	for processedSentence in doc.processedSentences:
 		assert isinstance(processedSentence,kindred.ProcessedSentence)
 		assert isinstance(processedSentence.tokens,list)
 		for t in processedSentence.tokens:
@@ -71,7 +71,7 @@ def test_twoSentenceParse():
 		
 	# First sentence
 	expectedWords = "Erlotinib is a common treatment for NSCLC .".split()
-	processedSentence0 = processedSentences[0]
+	processedSentence0 = doc.processedSentences[0]
 	assert len(expectedWords) == len(processedSentence0.tokens)
 	for w,t in zip(expectedWords,processedSentence0.tokens):
 		assert w == t.word
@@ -83,7 +83,7 @@ def test_twoSentenceParse():
 	
 	# Second sentence	
 	expectedWords = "Aspirin is the main cause of boneitis .".split()
-	processedSentence1 = processedSentences[1]
+	processedSentence1 = doc.processedSentences[1]
 	
 	assert len(expectedWords) == len(processedSentence1.tokens)
 	for w,t in zip(expectedWords,processedSentence1.tokens):
