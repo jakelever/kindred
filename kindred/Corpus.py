@@ -1,0 +1,28 @@
+import kindred
+
+class Corpus:
+	def __init__(self,text=None):
+		self.documents = []
+		if not text is None:
+			doc = kindred.Document(text)
+			self.addDocument(doc)
+
+	def addDocument(self,doc):
+		assert isinstance(doc,kindred.Document)
+		self.documents.append(doc)
+
+	def clone(self):
+		cloned = Corpus()
+		for doc in self.documents:
+			cloned.addDocument(doc.clone())
+		return cloned
+
+	def getRelations(self):
+		relations = []
+		for doc in self.documents:
+			relations += doc.getRelations()
+		return relations
+
+	def removeRelations(self):
+		for doc in self.documents:
+			doc.removeRelations()
