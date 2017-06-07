@@ -1,7 +1,8 @@
 
+import kindred
 from collections import Counter
 
-def evaluate(goldSet,testSet,metric='f1score',display=True):
+def evaluate(goldCorpus,testCorpus,metric='f1score',display=True):
 	""" This does something
 	
 	:params goldSet: The gold standard set of data
@@ -13,14 +14,20 @@ def evaluate(goldSet,testSet,metric='f1score',display=True):
 	:returns: float -- the score given the metric
 	"""
 
+	assert isinstance(goldCorpus,kindred.Corpus)
+	assert isinstance(testCorpus,kindred.Corpus)
+
 	TPs,FPs,FNs = Counter(),Counter(),Counter()
 	
-	goldTuples = [ ]
-	for relations in goldSet:
-		relTuples = [ (r.relationType,tuple(r.entityIDs)) for r in relations ]
-		goldTuples += relTuples
+	#goldTuples = [ ]
+	#for doc in goldCorpus.documents:
+	#	relTuples = [ (r.relationType,tuple(r.entityIDs)) for r in doc.getRelations() ]
+	#	goldTuples += relTuples
 		
-	testTuples = [ (r.relationType,tuple(r.entityIDs)) for r in testSet ]
+	goldTuples = [ (r.relationType,tuple(r.entityIDs)) for r in goldCorpus.getRelations() ]
+	print "goldTuples", goldTuples
+	testTuples = [ (r.relationType,tuple(r.entityIDs)) for r in testCorpus.getRelations() ]
+	print "testTuples", testTuples
 
 	totalSet = set(goldTuples + testTuples)
 	for relation in totalSet:

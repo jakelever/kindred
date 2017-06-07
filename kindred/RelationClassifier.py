@@ -286,8 +286,19 @@ class RelationClassifier:
 						
 						predictedRelation = kindred.Relation(relType,list(candidateRelation.entitiesInRelation),argNames=argNames)
 						predictedRelations.append(predictedRelation)
-					
-		return predictedRelations
-					
-					
-					
+		
+		# Add the predicted relations into the corpus
+		entitiesToDoc = {}
+		for i,doc in enumerate(corpus.documents):
+			for e in doc.getEntities():
+				entitiesToDoc[e.entityID] = i
+
+		for predictedRelation in predictedRelations:
+			docIDs = [ entitiesToDoc[eID] for eID in predictedRelation.entityIDs ]
+			docIDs = list(set(docIDs))
+			assert len(docIDs) > 0, "Predicted relation contains entities that don't match any documents in corpus"
+			assert len(docIDs) == 1, "Predicted relation contains entities that are spread across documents"
+
+			docID = docIDs[0]
+			corpus.documents[docID].addRelation(predictedRelation)
+

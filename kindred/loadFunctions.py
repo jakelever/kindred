@@ -123,7 +123,7 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],i
 
 	baseTxtFile = os.path.basename(txtFile)
 	baseFilename = baseTxtFile[0:-4]
-	combinedData = kindred.Document(text,relations,entities=entities,sourceFilename=baseFilename)
+	combinedData = kindred.Document(text,entities=entities,relations=relations,sourceFilename=baseFilename)
 			
 	return combinedData
 
@@ -172,7 +172,7 @@ def parseJSON(data,ignoreEntities=[]):
 	extraFields = [ k for k in data.keys() if not k in expected]
 	assert len(extraFields) == 0, "Found additional unexpected fields (%s) in JSON" % (",".join(extraFields))
 		
-	combinedData = kindred.Document(text,relations,entities=entities)
+	combinedData = kindred.Document(text,entities=entities,relations=relations)
 
 	return combinedData
 
@@ -248,7 +248,7 @@ def parseSimpleTag(text,ignoreEntities=[]):
 					
 	entities = mergeEntitiesWithMatchingIDs(unmergedEntities)
 			
-	combinedData = kindred.Document(text,relations,entities=entities)
+	combinedData = kindred.Document(text,entities=entities,relations=relations)
 	return combinedData
 
 def loadDataFromBioC(filename,ignoreEntities=[]):
@@ -305,7 +305,7 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 				r = kindred.Relation(relationType=relationType,entityIDs=entityIDs,argNames=argNames)
 				relations.append(r)
 				
-			relData = kindred.Document(text,relations,entities=entities)
+			relData = kindred.Document(text,entities=entities,relations=relations)
 			parsed.append(relData)
 			
 	return parsed

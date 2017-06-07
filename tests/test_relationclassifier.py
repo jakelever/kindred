@@ -4,17 +4,17 @@ from kindred.RelationClassifier import RelationClassifier
 from kindred.datageneration import generateData,generateTestData
 
 def test_simpleRelationClassifier():
-	trainData, testData = generateTestData(positiveCount=100,negativeCount=100)
+	trainCorpus, testCorpusGold = generateTestData(positiveCount=100,negativeCount=100)
 
-	testData_TextAndEntities = [ d.getTextAndEntities() for d in testData ]
-	testData_Relations = [ d.getRelations() for d in testData ]
-	
+	predictionCorpus = testCorpusGold.clone()
+	predictionCorpus.removeRelations()
+
 	classifier = RelationClassifier()
-	classifier.train(trainData)
+	classifier.train(trainCorpus)
 	
-	predictedRelations = classifier.predict(testData_TextAndEntities)
+	classifier.predict(predictionCorpus)
 	
-	f1score = kindred.evaluate(testData_Relations, predictedRelations, metric='f1score')
+	f1score = kindred.evaluate(testCorpusGold, predictionCorpus, metric='f1score')
 	assert f1score == 1.0
 
 if __name__ == '__main__':
