@@ -19,11 +19,10 @@ class CandidateBuilder:
 			self.relTypes = set()
 		
 			for doc in corpus.documents:
+				knownRelations = doc.getRelations()
+				for r in knownRelations:
+					assert isinstance(r,kindred.Relation)
 				for processedSentence in doc.processedSentences:
-					knownRelations = processedSentence.relations
-					for r in knownRelations:
-						assert isinstance(r,kindred.Relation)
-					
 					tmpRelTypesAndArgCount = [ tuple([r.relationType] + r.argNames) for r in knownRelations ]
 					self.relTypes.update(tmpRelTypesAndArgCount)
 				
@@ -36,20 +35,19 @@ class CandidateBuilder:
 		candidateClasses = []
 		
 		for doc in corpus.documents:
-			for processedSentence in doc.processedSentences:
+			existingRelations = defaultdict(list)
+			for r in doc.getRelations():
+				assert isinstance(r,kindred.Relation)
 				
-				existingRelations = defaultdict(list)
-				for r in processedSentence.relations:
-					assert isinstance(r,kindred.Relation)
-					
-					relationType = r.relationType
-					entityIDs = tuple(r.entityIDs)
-					
-					relKey = tuple([r.relationType] + r.argNames)
-					if relKey in self.relClasses:
-						relationClass = self.relClasses[relKey]
-						existingRelations[entityIDs].append(relationClass)
+				relationType = r.relationType
+				entityIDs = tuple(r.entityIDs)
+				
+				relKey = tuple([r.relationType] + r.argNames)
+				if relKey in self.relClasses:
+					relationClass = self.relClasses[relKey]
+					existingRelations[entityIDs].append(relationClass)
 
+			for processedSentence in doc.processedSentences:
 				entitiesInSentence = processedSentence.getEntityIDs()
 							
 				for entitiesInRelation in itertools.permutations(entitiesInSentence,2):

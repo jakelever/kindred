@@ -85,17 +85,7 @@ class Parser:
 					processedEntity = kindred.ProcessedEntity(e.entityType,entityLocs,entityID,e.sourceEntityID,e.position,e.text)
 					processedEntities.append(processedEntity)
 					
-				relations = []
-				# Let's also put in the relation information if we can get it
-				if isinstance(d,kindred.Document):
-					tmpRelations = d.getRelations()
-					entitiesInSentence = entityIDsToTokenLocs.keys()
-					for tmpRelation in tmpRelations:
-						matched = [ (relationEntityID in entitiesInSentence) for relationEntityID in tmpRelation.entityIDs ]
-						if all(matched):
-							relations.append(tmpRelation)
-					
-				sentence = kindred.ProcessedSentence(tokens, dependencies, processedEntities, relations, d.getSourceFilename())
+				sentence = kindred.ProcessedSentence(tokens, dependencies, processedEntities, d.getSourceFilename())
 				d.addProcessedSentence(sentence)
 	
 	#return allSentenceData
