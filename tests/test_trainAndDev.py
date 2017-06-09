@@ -6,37 +6,39 @@ from kindred.RelationClassifier import RelationClassifier
 from kindred.datageneration import generateData,generateTestData
 
 def _bionlpst_bb3(swap):
-	trainData = kindred.bionlpst.load('2016-BB3-event-train')
-	devData = kindred.bionlpst.load('2016-BB3-event-dev')
+	trainCorpus = kindred.bionlpst.load('2016-BB3-event-train')
+	devCorpus = kindred.bionlpst.load('2016-BB3-event-dev')
 
 	if swap:
-		trainData,devData = devData,trainData
-	
-	devData_TextAndEntities = [ d.getTextAndEntities() for d in devData ]
-	devData_Relations = [ d.getRelations() for d in devData ]
+		trainCorpus,devCorpus = devCorpus,trainCorpus
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
 
 	classifier = RelationClassifier(useBuilder=True)
-	classifier.train(trainData)
-	predictedRelations = classifier.predict(devData) #devData_TextAndEntities)
-	scores = kindred.evaluate(devData_Relations, predictedRelations, metric='all')
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='all')
 	print("bb3 scores:",scores,swap)
 
 def _bionlpst_seedev(swap):
-	trainData = kindred.bionlpst.load('2016-SeeDev-binary-train')
-	devData = kindred.bionlpst.load('2016-SeeDev-binary-dev')
+	trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
+	devCorpus = kindred.bionlpst.load('2016-SeeDev-binary-dev')
 	
 	if swap:
-		trainData,devData = devData,trainData
+		trainCorpus,devCorpus = devCorpus,trainCorpus
 
-	devData_TextAndEntities = [ d.getTextAndEntities() for d in devData ]
-	devData_Relations = [ d.getRelations() for d in devData ]
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
 
 	classifier = RelationClassifier()
-	classifier.train(trainData)
-
-	predictedRelations = classifier.predict(devData) #devData_TextAndEntities)
-
-	scores = kindred.evaluate(devData_Relations, predictedRelations, metric='all')
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='all')
 	print("seedev scores:",scores,swap)
 
 if __name__ == '__main__':
