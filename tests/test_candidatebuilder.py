@@ -17,17 +17,12 @@ def test_simpleRelationCandidates():
 	assert candidateClasses == [[0], [1], [0], [0]]
 	assert len(candidateRelations) == 4
 	
-	assert str(candidateRelations[0].processedSentence) == 'Erlotinib is a common treatment for NSCLC .'
-	assert str(candidateRelations[1].processedSentence) == 'Erlotinib is a common treatment for NSCLC .'
-	assert str(candidateRelations[2].processedSentence) == 'Aspirin is the main cause of boneitis .'
-	assert str(candidateRelations[3].processedSentence) == 'Aspirin is the main cause of boneitis .'
-	
 	sourceEntityIDsToEntityIDs = corpus.documents[0].getSourceEntityIDsToEntityIDs()
 
-	assert candidateRelations[0].entitiesInRelation == (sourceEntityIDsToEntityIDs['1'], sourceEntityIDsToEntityIDs['2'])
-	assert candidateRelations[1].entitiesInRelation == (sourceEntityIDsToEntityIDs['2'], sourceEntityIDsToEntityIDs['1'])
-	assert candidateRelations[2].entitiesInRelation == (sourceEntityIDsToEntityIDs['3'], sourceEntityIDsToEntityIDs['4'])
-	assert candidateRelations[3].entitiesInRelation == (sourceEntityIDsToEntityIDs['4'], sourceEntityIDsToEntityIDs['3'])
+	assert candidateRelations[0].entityIDs == [sourceEntityIDsToEntityIDs['1'], sourceEntityIDsToEntityIDs['2']]
+	assert candidateRelations[1].entityIDs == [sourceEntityIDsToEntityIDs['2'], sourceEntityIDsToEntityIDs['1']]
+	assert candidateRelations[2].entityIDs == [sourceEntityIDsToEntityIDs['3'], sourceEntityIDsToEntityIDs['4']]
+	assert candidateRelations[3].entityIDs == [sourceEntityIDsToEntityIDs['4'], sourceEntityIDsToEntityIDs['3']]
 
 if __name__ == '__main__':
 	test_simpleRelationCandidates()

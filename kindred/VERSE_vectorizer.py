@@ -171,12 +171,24 @@ def ProcessedSentenceToVerseSentence(s):
 
 	return verseS
 
-def CandidateRelationToExample(r):
-	assert isinstance(r,kindred.CandidateRelation)
+def findSentenceContainingRelation(corpus,r):
+	for doc in corpus.documents:
+		for sentence in doc.processedSentences:
+			sentenceEntityIDs = sentence.getEntityIDs()
+			relEntitiesInSentence = [ eID in sentenceEntityIDs for eID in r.entityIDs ]
+			if all(relEntitiesInSentence):
+				return sentence
+	return None
 
-	eID_to_locs = { e.entityID:e.entityLocs for e in r.processedSentence.processedEntities }
-	s = ProcessedSentenceToVerseSentence(r.processedSentence)
-	locs = [ eID_to_locs[eID] for eID in r.entitiesInRelation ]
+def CandidateRelationToExample(corpus,r):
+	assert isinstance(corpus,kindred.Corpus)
+	assert isinstance(r,kindred.Relation)
+
+	processedSentence = findSentenceContainingRelation(corpus,r)
+
+	eID_to_locs = { e.entityID:e.entityLocs for e in processedSentence.processedEntities }
+	s = ProcessedSentenceToVerseSentence(processedSentence)
+	locs = [ eID_to_locs[eID] for eID in r.entityIDs ]
 	example = Example("None",[s],locs)
 
 	return example
@@ -193,8 +205,8 @@ class VERSEVectorizer:
 	def getFeatureNames(self):
 		return self.vectorize(examples=[],featureNamesOnly=True)
 	
-	def vectorize(self,candidates,featureNamesOnly=False):
-		examples = [ CandidateRelationToExample(c) for c in candidates ]
+	def vectorize(self,corpus,candidates,featureNamesOnly=False):
+		examples = [ CandidateRelationToExample(corpus,c) for c in candidates ]
 
 		assert len(examples) > 0, "Expected more than zero examples to vectorize"
 		for e in examples:
@@ -388,7 +400,7 @@ class VERSEVectorizer:
 	def getTrainingVectors(self):
 		return self.trainingVectors
 		
-	def __init__(self, candidates, featureChoice=None, tfidf=False):
+	def __init__(self, corpus, candidates, featureChoice=None, tfidf=False):
 		#assert isinstance(candidates)
 		#for c in candidates:
 		#	assert isinstance(c,kindred.CandidateRelation)
@@ -408,8 +420,8 @@ class VERSEVectorizer:
 			
 		self.tfidf = tfidf
 		#self.argCount = len(examples[0].arguments)
-		self.argCount = len(candidates[0].entitiesInRelation)
+		self.argCount = len(candidates[0].entityIDs)
 		self.tools = {}
-		self.trainingVectors = self.vectorize(candidates)
+		self.trainingVectors = self.vectorize(corpus,candidates)
 
 

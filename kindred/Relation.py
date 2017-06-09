@@ -2,7 +2,7 @@ import kindred
 
 
 class Relation:
-	def __init__(self,relationType,entityIDs,argNames=None):
+	def __init__(self,relationType=None,entityIDs=[],argNames=None):
 		assert isinstance(entityIDs,list)
 
 		self.relationType = relationType

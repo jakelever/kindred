@@ -4,7 +4,6 @@ from kindred.Corpus import Corpus
 from kindred.Document import Document
 from kindred.Entity import Entity
 from kindred.Relation import Relation
-from kindred.CandidateRelation import CandidateRelation
 from kindred.Token import Token
 from kindred.ProcessedEntity import ProcessedEntity
 from kindred.ProcessedSentence import ProcessedSentence

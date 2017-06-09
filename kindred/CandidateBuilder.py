@@ -3,7 +3,6 @@ from collections import defaultdict
 import itertools
 
 import kindred
-from kindred.Parser import Parser
 
 class CandidateBuilder:
 	def __init__(self):
@@ -12,7 +11,7 @@ class CandidateBuilder:
 	def build(self,corpus):
 		assert isinstance(corpus,kindred.Corpus)
 			
-		parser = Parser()
+		parser = kindred.Parser()
 		parser.parse(corpus)
 		
 		if not self.initialized:
@@ -51,7 +50,7 @@ class CandidateBuilder:
 				entitiesInSentence = processedSentence.getEntityIDs()
 							
 				for entitiesInRelation in itertools.permutations(entitiesInSentence,2):
-					candidateRelation = kindred.CandidateRelation(processedSentence, entitiesInRelation)
+					candidateRelation = kindred.Relation(entityIDs=list(entitiesInRelation))
 					candidateClass = [0]
 					relKey = tuple(entitiesInRelation)
 					if relKey in existingRelations:

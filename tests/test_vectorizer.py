@@ -14,7 +14,7 @@ def test_simpleVectorizer():
 	
 	# We'll just get the vectors for the selectedTokenTypes
 	vectorizer = Vectorizer()
-	vectors = vectorizer.transform(candidateRelations)
+	vectors = vectorizer.transform(corpus,candidateRelations)
 	
 	tuples = [(0, 2),(1, 0),(2, 2),(3, 1),(0, 3),(1, 5),(2, 4),(3, 5)]
 	expectedRows = [ r for r,c in tuples ]

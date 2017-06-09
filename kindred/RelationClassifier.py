@@ -186,7 +186,7 @@ class RelationClassifier:
 				chosenFeatures = self.defaultFeatures
 
 			self.vectorizer = Vectorizer()
-			trainVectors = self.vectorizer.transform(candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
+			trainVectors = self.vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
 		
 			assert trainVectors.shape[0] == len(candidateClasses)
 		
@@ -202,7 +202,7 @@ class RelationClassifier:
 				chosenFeatures = self.defaultFeatures
 
 				self.vectorizer = Vectorizer()
-				tmpMatrix = self.vectorizer.transform(candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
+				tmpMatrix = self.vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
 			self.clfs = {}
 			self.vectorizers = {}
 			for c in self.allClasses:
@@ -242,12 +242,15 @@ class RelationClassifier:
 		#saveClasses('test.classes',tmpClassData)
 
 		
-
+		entityIDsToType = {}
+		for doc in corpus.documents:
+			for e in doc.getEntities():
+				entityIDsToType[e.entityID] = e.entityType
 		
 		predictedRelations = []
 		
 		if self.useSingleClassifier:
-			tmpMatrix = self.vectorizer.transform(candidateRelations)
+			tmpMatrix = self.vectorizer.transform(corpus,candidateRelations)
 
 			#predictedClasses = self.clfs[c].predict(testVectors)
 			predictedClasses = self.clf.predict(tmpMatrix)
@@ -257,15 +260,15 @@ class RelationClassifier:
 					relType = relKey[0]
 					argNames = relKey[1:]
 					
-					candidateRelationEntityTypes = tuple(candidateRelation.getEntityTypes())
+					candidateRelationEntityTypes = tuple( [ entityIDsToType[eID] for eID in candidateRelation.entityIDs ] )
 					if not tuple(candidateRelationEntityTypes) in self.relTypeToValidEntityTypes[relKey]:
 						continue
 
-					predictedRelation = kindred.Relation(relType,list(candidateRelation.entitiesInRelation),argNames=argNames)
+					predictedRelation = kindred.Relation(relType,candidateRelation.entityIDs,argNames=argNames)
 					predictedRelations.append(predictedRelation)
 		else:
 			if not self.useBuilder:
-				tmpMatrix = self.vectorizer.transform(candidateRelations)
+				tmpMatrix = self.vectorizer.transform(corpus,candidateRelations)
 
 			for c in self.allClasses:
 
@@ -280,11 +283,11 @@ class RelationClassifier:
 						relType = relKey[0]
 						argNames = relKey[1:]
 						
-						candidateRelationEntityTypes = tuple(candidateRelation.getEntityTypes())
+						candidateRelationEntityTypes = tuple( [ entityIDsToType[eID] for eID in candidateRelation.entityIDs ] )
 						if not tuple(candidateRelationEntityTypes) in self.relTypeToValidEntityTypes[relKey]:
 							continue
 						
-						predictedRelation = kindred.Relation(relType,list(candidateRelation.entitiesInRelation),argNames=argNames)
+						predictedRelation = kindred.Relation(relType,candidateRelation.entityIDs,argNames=argNames)
 						predictedRelations.append(predictedRelation)
 		
 		# Add the predicted relations into the corpus

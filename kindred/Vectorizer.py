@@ -43,13 +43,17 @@ class Vectorizer:
 			
 		return self.corpusToVectors(corpus,'SelectedTokenTypes_'+str(argID),False)
 		
-	def transform(self,candidateRelations,featureChoice=None,tfidf=None):
+	def transform(self,corpus,candidateRelations,featureChoice=None,tfidf=None):
+		assert isinstance(corpus,kindred.Corpus)
+		assert isinstance(candidateRelations,list)
+		for r in candidateRelations:
+			assert isinstance(r,kindred.Relation)
 		
 		if self.verseVectorizer is None:
-			self.verseVectorizer = VERSEVectorizer(candidateRelations,featureChoice,tfidf)
+			self.verseVectorizer = VERSEVectorizer(corpus,candidateRelations,featureChoice,tfidf)
 			return self.verseVectorizer.getTrainingVectors()
 		else:
-			return self.verseVectorizer.vectorize(candidateRelations)
+			return self.verseVectorizer.vectorize(corpus,candidateRelations)
 
 
 	def transform2(self,candidateRelations):
