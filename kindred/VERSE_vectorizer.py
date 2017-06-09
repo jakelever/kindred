@@ -401,10 +401,6 @@ class VERSEVectorizer:
 		return self.trainingVectors
 		
 	def __init__(self, corpus, candidates, featureChoice=None, tfidf=False):
-		#assert isinstance(candidates)
-		#for c in candidates:
-		#	assert isinstance(c,kindred.CandidateRelation)
-		
 		options = ["selectedTokenTypes","ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
 
 		if featureChoice is None:

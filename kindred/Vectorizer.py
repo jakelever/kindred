@@ -56,21 +56,3 @@ class Vectorizer:
 			return self.verseVectorizer.vectorize(corpus,candidateRelations)
 
 
-	def transform2(self,candidateRelations):
-		assert isinstance(candidateRelations,list)
-		assert len(candidateRelations) > 0
-		for candidateRelation in candidateRelations:
-			assert isinstance(candidateRelation,kindred.CandidateRelation)
-			
-		if not 'maxArgCount' in self.__dict__:
-			self.maxArgCount = max( [ len(candidateRelation.entitiesInRelation) for candidate in candidateRelations ] )
-			
-		allVecs = []
-		for argID in range(self.maxArgCount):
-			vecs = self.doSelectedTokenTypes(candidateRelations,argID)
-			allVecs.append(vecs)
-			
-		combined = hstack( allVecs )
-		
-		return combined
-		
