@@ -279,7 +279,7 @@ class RelationClassifier:
 				predicted = self.clfs[c].predict(tmpMatrix)
 				for p,candidateRelation in zip(predicted,candidateRelations):
 					if p != 0:
-						relKey = self.classToRelType[predictedClass]
+						relKey = self.classToRelType[p]
 						relType = relKey[0]
 						argNames = relKey[1:]
 						

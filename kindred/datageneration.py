@@ -2,7 +2,7 @@ import random
 
 import kindred
 
-def generateData(positiveCount=100,negativeCount=100):
+def generateData(positiveCount=100,negativeCount=100,relTypes=1):
 	random.seed(1)
 
 	positivePatterns = ['<drug id="ID1">DRUG</drug> treats <disease id="ID2">DISEASE</disease>.',
@@ -19,6 +19,8 @@ def generateData(positiveCount=100,negativeCount=100):
 	
 	totalCount = positiveCount + negativeCount
 	
+	relNames = [ "treats_%d" % i for i in range(relTypes) ]
+
 	entityID = 1
 	corpus = kindred.Corpus()
 	for _ in range(positiveCount):
@@ -30,7 +32,8 @@ def generateData(positiveCount=100,negativeCount=100):
 		text = text.replace('ID2',str(entityID+1))
 		#relations = [ kindred.Relation('treats',[entityID,entityID+1]) ]
 
-		text += '<relation type="%s" subj="%d" obj="%d" />' % ('treats',entityID,entityID+1)
+		relName = random.choice(relNames)
+		text += '<relation type="%s" subj="%d" obj="%d" />' % (relName,entityID,entityID+1)
 		
 		entityID += 2
 		
@@ -56,8 +59,9 @@ def generateData(positiveCount=100,negativeCount=100):
 		
 	return corpus
 	
-def generateTestData(positiveCount = 100,negativeCount = 100):
-	corpus = generateData(positiveCount, negativeCount)
+def generateTestData(positiveCount = 100,negativeCount = 100, relTypes = 1):
+	random.seed(1)
+	corpus = generateData(positiveCount, negativeCount, relTypes)
 	docCount = len(corpus.documents)
 	halfDataCount = int(docCount/2.0)
 	trainIndices = random.sample(range(docCount),halfDataCount)

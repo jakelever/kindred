@@ -17,6 +17,138 @@ def test_simpleRelationClassifier():
 	f1score = kindred.evaluate(testCorpusGold, predictionCorpus, metric='f1score')
 	assert f1score == 1.0
 
+def test_simpleMultiClassRelationClassifier():
+	trainCorpus, testCorpusGold = generateTestData(positiveCount=100,negativeCount=100)
+
+	predictionCorpus = testCorpusGold.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = RelationClassifier(useSingleClassifier=False)
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(testCorpusGold, predictionCorpus, metric='f1score')
+	assert f1score == 1.0
+
+def test_singleClassifier():
+	trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
+	devCorpus = kindred.bionlpst.load('2016-SeeDev-binary-dev')
+
+	trainCorpus.documents = trainCorpus.documents[1:2]
+	devCorpus.documents = devCorpus.documents[:1]
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = RelationClassifier()
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.235
+
+def test_multiClassifiers():
+	trainCorpus, devCorpus = generateTestData(positiveCount=500,negativeCount=500,relTypes=2)
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = RelationClassifier(useSingleClassifier=False)
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.463
+
+def test_featureBuilder():
+	trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
+	devCorpus = kindred.bionlpst.load('2016-SeeDev-binary-dev')
+
+	trainCorpus.documents = trainCorpus.documents[:2]
+	devCorpus.documents = devCorpus.documents[:1]
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = RelationClassifier(useBuilder=True)
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.329
+
+def test_multiClassifiersAndFeatureBuilder():
+	trainCorpus, devCorpus = generateTestData(positiveCount=500,negativeCount=500,relTypes=2)
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = RelationClassifier(useSingleClassifier=False,useBuilder=True)
+	classifier.train(trainCorpus)
+
+	classifier.predict(predictionCorpus)
+
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.463
+
+def test_noTFIDF():
+	trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
+	devCorpus = kindred.bionlpst.load('2016-SeeDev-binary-dev')
+
+	trainCorpus.documents = trainCorpus.documents[1:2]
+	devCorpus.documents = devCorpus.documents[:1]
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = RelationClassifier(tfidf=False)
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.114
+
+def test_threshold():
+	trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
+	devCorpus = kindred.bionlpst.load('2016-SeeDev-binary-dev')
+
+	trainCorpus.documents = trainCorpus.documents[1:2]
+	devCorpus.documents = devCorpus.documents[:1]
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = RelationClassifier(threshold=0.3)
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.175
+
+def test_singleFeature_selectionTokenTypes():
+	trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
+	devCorpus = kindred.bionlpst.load('2016-SeeDev-binary-dev')
+
+	trainCorpus.documents = trainCorpus.documents[1:2]
+	devCorpus.documents = devCorpus.documents[:1]
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = RelationClassifier(features=['selectedTokenTypes'])
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.290
+
 if __name__ == '__main__':
 	test_simpleRelationClassifier()
 
