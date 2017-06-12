@@ -88,14 +88,14 @@ class RelationClassifier:
 		self.threshold = threshold
 		#self.defaultFeatures = ["selectedTokenTypes","dependencyPathElements"]
 
-	def buildFeatureSet(self,candidateRelations,classes,tfidf):
+	def buildFeatureSet(self,corpus,candidateRelations,classes,tfidf):
 		vectorizers = {}
 		trainVectors = {}
 
-		featureChoice = ["selectedTokenTypes","dependencyPathElements","ngrams_betweenEntities","bigrams_betweenEntities","bigramsOfDependencyPath"]
+		featureChoice = ["selectedTokenTypes","ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
 		for feature in featureChoice:
 			vectorizers[feature] = Vectorizer()
-			trainVectors[feature] = vectorizers[feature].transform(candidateRelations,[feature],tfidf=tfidf)
+			trainVectors[feature] = vectorizers[feature].transform(corpus,candidateRelations,[feature],tfidf=tfidf)
 
 		groupVector = None
 		chosenFeatures = []
@@ -181,7 +181,7 @@ class RelationClassifier:
 			#assert False
 	
 			if self.useBuilder:
-				chosenFeatures = self.buildFeatureSet(candidateRelations,simplifiedClasses,self.tfidf)
+				chosenFeatures = self.buildFeatureSet(corpus,candidateRelations,simplifiedClasses,self.tfidf)
 			else:
 				chosenFeatures = self.defaultFeatures
 
@@ -209,9 +209,9 @@ class RelationClassifier:
 				tmpClassData = [ (c in candidateClassGroup) for candidateClassGroup in candidateClasses ]
 
 				if self.useBuilder:
-					chosenFeatures = self.buildFeatureSet(candidateRelations,tmpClassData,self.tfidf)
+					chosenFeatures = self.buildFeatureSet(corpus,candidateRelations,tmpClassData,self.tfidf)
 					self.vectorizers[c] = Vectorizer()
-					tmpMatrix = self.vectorizers[c].transform(candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
+					tmpMatrix = self.vectorizers[c].transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
 
 				#save_sparse_csr('train.matrix',trainVectors.tocsr())
 				#saveClasses('train.classes',tmpClassData)
@@ -273,7 +273,7 @@ class RelationClassifier:
 			for c in self.allClasses:
 
 				if self.useBuilder:
-					tmpMatrix = self.vectorizers[c].transform(candidateRelations)
+					tmpMatrix = self.vectorizers[c].transform(corpus,candidateRelations)
 
 				#predictedClasses = self.clfs[c].predict(testVectors)
 				predicted = self.clfs[c].predict(tmpMatrix)

@@ -20,7 +20,7 @@ def _bionlpst_bb3(swap):
 	
 	classifier.predict(predictionCorpus)
 	
-	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='all')
+	scores = kindred.evaluate(devCorpus, predictionCorpus, metric='all')
 	print("bb3 scores:",scores,swap)
 
 def _bionlpst_seedev(swap):
@@ -38,7 +38,7 @@ def _bionlpst_seedev(swap):
 	
 	classifier.predict(predictionCorpus)
 	
-	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='all')
+	scores = kindred.evaluate(devCorpus, predictionCorpus, metric='all')
 	print("seedev scores:",scores,swap)
 
 if __name__ == '__main__':

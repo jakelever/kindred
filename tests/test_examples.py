@@ -12,7 +12,7 @@ def _bionlpst_bb3():
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = RelationClassifier()
+	classifier = RelationClassifier(useBuilder=True)
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
