@@ -97,7 +97,7 @@ def test_twoSentenceParse():
 def test_largeSentence():
 	repeatCount = 1000
 	singleSentence = 'Erlotinib is a common treatment for lung and unknown cancers.'
-	text = " ".join( [ singleSentence for _ in xrange(repeatCount) ] )
+	text = " ".join( [ singleSentence for _ in range(repeatCount) ] )
 	corpus = kindred.Corpus(text)
 	
 	parser = Parser()
