@@ -94,6 +94,20 @@ def test_twoSentenceParse():
 	assertProcessedEntity(processedSentence1.processedEntities[0],'drug',[0],'3')
 	assertProcessedEntity(processedSentence1.processedEntities[1],'disease',[6],'4')
 
+def test_largeSentence():
+	repeatCount = 1000
+	singleSentence = 'Erlotinib is a common treatment for lung and unknown cancers.'
+	text = " ".join( [ singleSentence for _ in xrange(repeatCount) ] )
+	corpus = kindred.Corpus(text)
+	
+	parser = Parser()
+	parser.parse(corpus)
+	
+	assert len(corpus.documents) == 1
+	doc = corpus.documents[0]
+	assert isinstance(doc.processedSentences,list)
+	assert len(doc.processedSentences) == repeatCount
+
 if __name__ == '__main__':
 	#test_stanfordDependencyParser()
 	#test_maltParser()
@@ -103,5 +117,6 @@ if __name__ == '__main__':
 	#parser = Parser()
 	#processedSentences = parser.parse(data)
 	#runPerfTest()
-	test_simpleSentenceParse()
+	#test_simpleSentenceParse()
+	test_largeSentence()
 	
