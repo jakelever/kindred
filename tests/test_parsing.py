@@ -95,7 +95,7 @@ def test_twoSentenceParse():
 	assertProcessedEntity(processedSentence1.processedEntities[1],'disease',[6],'4')
 
 def test_largeSentence():
-	repeatCount = 1000
+	repeatCount = 100
 	singleSentence = 'Erlotinib is a common treatment for lung and unknown cancers.'
 	text = " ".join( [ singleSentence for _ in range(repeatCount) ] )
 	corpus = kindred.Corpus(text)
