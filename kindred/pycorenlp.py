@@ -34,13 +34,13 @@ class StanfordCoreNLP:
         if ('outputFormat' in properties
              and properties['outputFormat'] == 'json'):
             try:
-        	output = json.loads(output, encoding='utf-8', strict=False)
+                output = json.loads(output, encoding='utf-8', strict=False)
             except:
-		    print("TEXT")
-		    print(unicode(text))
-		    print("OUTPUT")
-		    print(unicode(output))
-		    raise RuntimeError("CoreNLP returned data not in JSON format")
+                print("TEXT")
+                print(unicode(text))
+                print("OUTPUT")
+                print(unicode(output))
+                raise RuntimeError("CoreNLP returned data not in JSON format")
 
         return output
 
