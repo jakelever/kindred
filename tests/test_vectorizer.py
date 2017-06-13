@@ -36,16 +36,12 @@ def test_vectorizer_selectedTokenTypes():
 
 	candidateBuilder = CandidateBuilder()
 	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(corpus)
-	print('LEN',len(candidateRelations))
-	for candidateRelation in candidateRelations:
-		print('X', candidateRelation)
 
 	chosenFeatures = ["selectedTokenTypes"]
 	vectorizer = Vectorizer()
 	
 	matrix = vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=True)
 	colmeans = np.sum(matrix,axis=0)
-	print(colmeans)
 	assert colmeans.tolist() == [[ 5,2,7, 5,2,7 ]]
 
 
