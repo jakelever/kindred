@@ -1,5 +1,4 @@
 import sys
-import random
 from collections import defaultdict, Counter, OrderedDict
 from sklearn import svm
 from sklearn.feature_extraction.text import CountVectorizer
