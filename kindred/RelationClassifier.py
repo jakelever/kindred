@@ -187,14 +187,17 @@ class RelationClassifier:
 
 			self.vectorizer = Vectorizer()
 			trainVectors = self.vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
+			print("TRAINVECTORS",np.sum(trainVectors,axis=0))
 		
 			assert trainVectors.shape[0] == len(candidateClasses)
 		
 			if self.threshold is None:
-				self.clf = svm.LinearSVC(class_weight='balanced')
+				self.clf = svm.LinearSVC(class_weight='balanced',random_state=1)
 			else:
 				self.clf = Classifier_With_Threshold(self.threshold)
 			self.clf.fit(trainVectors,simplifiedClasses)
+			print("CLASSIFIER", self.clf.coef_)
+			print("CLASSIFIER", self.clf.intercept_)
 		else:
 			# TODO: Should we take into account the argument count when grouping classifiers?
 
@@ -217,7 +220,7 @@ class RelationClassifier:
 				#saveClasses('train.classes',tmpClassData)
 
 				if self.threshold is None:
-					self.clfs[c] = svm.LinearSVC(class_weight='balanced')
+					self.clfs[c] = svm.LinearSVC(class_weight='balanced',random_state=1)
 				else:
 					self.clfs[c] = Classifier_With_Threshold(self.threshold)
 				#self.clfs[c] = AdaBoostClassifier(n_estimators=2)
@@ -251,9 +254,11 @@ class RelationClassifier:
 		
 		if self.useSingleClassifier:
 			tmpMatrix = self.vectorizer.transform(corpus,candidateRelations)
+			print("PREDICT", np.sum(tmpMatrix,axis=0))
 
 			#predictedClasses = self.clfs[c].predict(testVectors)
 			predictedClasses = self.clf.predict(tmpMatrix)
+			print("CLASSES",predictedClasses.mean())
 			for predictedClass,candidateRelation in zip(predictedClasses,candidateRelations):
 				if predictedClass != 0:
 					relKey = self.classToRelType[predictedClass]
