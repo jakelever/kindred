@@ -5,7 +5,7 @@ import hashlib
 # random module is not consistent across platforms
 # Based on idea from:
 # https://stackoverflow.com/questions/9023660/how-to-generate-a-repeatable-random-number-sequence
-hashVal = "seed"
+hashVal = b'seed'
 def customRandom():
 	global hashVal
 	hashVal = hashlib.md5(hashVal).digest()
