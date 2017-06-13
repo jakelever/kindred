@@ -1,3 +1,4 @@
+import numpy as np
 import kindred
 from kindred.CandidateBuilder import CandidateBuilder
 from kindred.Vectorizer import Vectorizer
@@ -27,3 +28,21 @@ def test_simpleVectorizer():
 	vectorsCSR = vectors.tocsr()
 	for r,c in tuples:
 		assert vectorsCSR[r,c] == 1.0
+
+def test_vectorizer_selectedTokenTypes():
+	corpus, _ = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+
+	candidateBuilder = CandidateBuilder()
+	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(corpus)
+	chosenFeatures = ["selectedTokenTypes"]
+	vectorizer = Vectorizer()
+	
+	matrix = vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=True)
+	colmeans = np.sum(matrix,axis=0)
+	print(colmeans)
+	assert colmeans.tolist() == [[ 52.,  46.,  98.,  52.,  46.,  98.]]
+
+
+
+if __name__ == '__main__':
+	test_vectorizer_selectedTokenTypes()
