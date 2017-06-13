@@ -1,6 +1,6 @@
 import kindred
 
-import md5
+import hashlib
 
 # random module is not consistent across platforms
 # Based on idea from:
@@ -8,7 +8,7 @@ import md5
 hashVal = "seed"
 def customRandom():
 	global hashVal
-	hashVal = md5.md5(hashVal).digest()
+	hashVal = hashlib.md5(hashVal).digest()
 		#for c in hash:
 	num = 256*ord(hashVal[0]) + ord(hashVal[1])
 	return num/float(256*256)
