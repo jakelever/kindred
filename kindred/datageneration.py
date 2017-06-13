@@ -6,6 +6,10 @@ import hashlib
 # Based on idea from:
 # https://stackoverflow.com/questions/9023660/how-to-generate-a-repeatable-random-number-sequence
 hashVal = b'seed'
+def customSeed(seed):
+	global hashVal
+	hashVal = bytes(seed)
+
 def customRandom():
 	global hashVal
 	hashVal = hashlib.md5(hashVal).digest()
@@ -32,6 +36,7 @@ def customSample(population,k):
 	return chosen
 
 def generateData(positiveCount=100,negativeCount=100,relTypes=1):
+	customSeed("seed")
 	positivePatterns = ['<drug id="ID1">DRUG</drug> treats <disease id="ID2">DISEASE</disease>.',
 						'<drug id="ID1">DRUG</drug> is a common treatment for <disease id="ID2">DISEASE</disease>.',
 						'<drug id="ID1">DRUG</drug> is often used for <disease id="ID2">DISEASE</disease>.',

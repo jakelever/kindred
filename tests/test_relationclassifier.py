@@ -61,7 +61,7 @@ def test_singleClassifier():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.458
+	assert round(f1score,3) == 0.538
 
 def test_multiClassifiers():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
@@ -75,7 +75,7 @@ def test_multiClassifiers():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.646
+	assert round(f1score,3) == 0.423
 
 def test_featureBuilder():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
@@ -89,7 +89,7 @@ def test_featureBuilder():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.604
+	assert round(f1score,3) == 0.481
 
 def test_multiClassifiersAndFeatureBuilder():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
@@ -103,7 +103,7 @@ def test_multiClassifiersAndFeatureBuilder():
 	classifier.predict(predictionCorpus)
 
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.646
+	assert round(f1score,3) == 0.423
 
 def test_noTFIDF():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
@@ -117,7 +117,7 @@ def test_noTFIDF():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.438
+	assert round(f1score,3) == 0.558
 
 def test_threshold():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
@@ -131,7 +131,7 @@ def test_threshold():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.583
+	assert round(f1score,3) == 0.519
 
 def test_singleFeature_selectedTokenTypes():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
@@ -145,7 +145,7 @@ def test_singleFeature_selectedTokenTypes():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.354
+	assert round(f1score,3) == 0.577
 
 if __name__ == '__main__':
 	test_singleFeature_selectedTokenTypes()
