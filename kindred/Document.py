@@ -86,7 +86,7 @@ class Document:
 		return self.sourceFilename
 
 	def __str__(self):
-		return str((self.textAndEntityData.__str__(),self.relations))
+		return str((self.text,self.entities,self.relations))
 		
 	def __repr__(self):
 		return self.__str__()

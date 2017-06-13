@@ -31,6 +31,8 @@ def test_simpleVectorizer():
 
 def test_vectorizer_selectedTokenTypes():
 	corpus, _ = generateTestData(positiveCount=8,negativeCount=8)
+	for doc in corpus.documents:
+		print(doc)
 
 	candidateBuilder = CandidateBuilder()
 	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(corpus)
