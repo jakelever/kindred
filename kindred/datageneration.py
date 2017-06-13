@@ -8,7 +8,8 @@ import hashlib
 hashVal = b'seed'
 def customSeed(seed):
 	global hashVal
-	hashVal = bytes(seed)
+	assert isinstance(seed,bytes)
+	hashVal = seed
 
 def customRandom():
 	global hashVal
@@ -36,7 +37,7 @@ def customSample(population,k):
 	return chosen
 
 def generateData(positiveCount=100,negativeCount=100,relTypes=1):
-	customSeed("seed")
+	customSeed(b'seed')
 	positivePatterns = ['<drug id="ID1">DRUG</drug> treats <disease id="ID2">DISEASE</disease>.',
 						'<drug id="ID1">DRUG</drug> is a common treatment for <disease id="ID2">DISEASE</disease>.',
 						'<drug id="ID1">DRUG</drug> is often used for <disease id="ID2">DISEASE</disease>.',
@@ -92,7 +93,7 @@ def generateData(positiveCount=100,negativeCount=100,relTypes=1):
 	return corpus
 	
 def generateTestData(positiveCount = 100,negativeCount = 100, relTypes = 1):
-	customSeed("seed")
+	customSeed(b'seed')
 	corpus = generateData(positiveCount, negativeCount, relTypes)
 	docCount = len(corpus.documents)
 	halfDataCount = int(docCount/2.0)
@@ -108,3 +109,7 @@ def generateTestData(positiveCount = 100,negativeCount = 100, relTypes = 1):
 
 	return trainCorpus,testCorpus
 
+if __name__ == '__main__':
+	customSeed(b'test')
+	nums = [ customRandom() for _ in range(5) ]
+	print(nums)
