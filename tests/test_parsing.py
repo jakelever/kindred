@@ -109,14 +109,5 @@ def test_largeSentence():
 	assert len(doc.processedSentences) == repeatCount
 
 if __name__ == '__main__':
-	#test_stanfordDependencyParser()
-	#test_maltParser()
-	#text = "<drug id=1>Erlotinib</drug> is a common treatment for <cancer id=2>lung</cancer> and unknown <cancer id=2>cancers</cancer>"
-	#data = [ kindred.TextAndEntityData(text) for _ in range(2) ]
-	
-	#parser = Parser()
-	#processedSentences = parser.parse(data)
-	#runPerfTest()
-	#test_simpleSentenceParse()
 	test_largeSentence()
 	
