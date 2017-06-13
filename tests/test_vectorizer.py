@@ -34,6 +34,10 @@ def test_vectorizer_selectedTokenTypes():
 
 	candidateBuilder = CandidateBuilder()
 	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(corpus)
+	print('LEN',len(candidateRelations))
+	for candidateRelation in candidateRelations:
+		print('X', candidateRelation)
+
 	chosenFeatures = ["selectedTokenTypes"]
 	vectorizer = Vectorizer()
 	
