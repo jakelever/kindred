@@ -6,4 +6,4 @@ Welcome to kindred documentation!
 .. autosummary::
    :toctree: _autosummary
 
-   RelatonClassifier
+   RelationClassifier
