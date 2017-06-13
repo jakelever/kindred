@@ -26,10 +26,11 @@ class StanfordCoreNLP:
         #    '$ java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer')
 
         data = text.encode('utf8')
+	print(data)
         r = requests.post(
             self.server_url, params={
                 'properties': str(properties)
-            }, data=data, headers={'Connection': 'close'})
+            }, data=data)#, headers={'Connection': 'close'})
         output = r.text
         if ('outputFormat' in properties
              and properties['outputFormat'] == 'json'):
