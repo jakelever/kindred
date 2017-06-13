@@ -64,7 +64,7 @@ def test_singleClassifier():
 	assert round(f1score,3) == 0.458
 
 def test_multiClassifiers():
-	trainCorpus, devCorpus = generateTestData(positiveCount=200,negativeCount=200,relTypes=2)
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
 
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
@@ -75,7 +75,7 @@ def test_multiClassifiers():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.479
+	assert round(f1score,3) == 0.646
 
 def test_featureBuilder():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
@@ -92,7 +92,7 @@ def test_featureBuilder():
 	assert round(f1score,3) == 0.604
 
 def test_multiClassifiersAndFeatureBuilder():
-	trainCorpus, devCorpus = generateTestData(positiveCount=200,negativeCount=200,relTypes=2)
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
 
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
@@ -103,7 +103,7 @@ def test_multiClassifiersAndFeatureBuilder():
 	classifier.predict(predictionCorpus)
 
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.479
+	assert round(f1score,3) == 0.646
 
 def test_noTFIDF():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
