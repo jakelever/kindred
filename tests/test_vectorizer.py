@@ -30,7 +30,7 @@ def test_simpleVectorizer():
 		assert vectorsCSR[r,c] == 1.0
 
 def test_vectorizer_selectedTokenTypes():
-	corpus, _ = generateTestData(positiveCount=4,negativeCount=4)
+	corpus, _ = generateTestData(positiveCount=8,negativeCount=8)
 
 	candidateBuilder = CandidateBuilder()
 	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(corpus)
@@ -40,7 +40,7 @@ def test_vectorizer_selectedTokenTypes():
 	matrix = vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=True)
 	colmeans = np.sum(matrix,axis=0)
 	print(colmeans)
-	assert colmeans.tolist() == [[ 5,4,9, 5,4,9 ]]
+	assert colmeans.tolist() == [[ 5,2,7, 5,2,7 ]]
 
 
 
