@@ -18,19 +18,18 @@ class StanfordCoreNLP:
             assert isinstance(properties, dict)
 
         # Checks that the Stanford CoreNLP server is started.
-        #try:
-        #    requests.get(self.server_url)
-        #except requests.exceptions.ConnectionError:
-        #    raise Exception('Check whether you have started the CoreNLP server e.g.\n'
-        #    '$ cd stanford-corenlp-full-2015-12-09/ \n'
-        #    '$ java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer')
+        try:
+            requests.get(self.server_url)
+        except requests.exceptions.ConnectionError:
+            raise Exception('Check whether you have started the CoreNLP server e.g.\n'
+            '$ cd stanford-corenlp-full-2015-12-09/ \n'
+            '$ java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer')
 
         data = text.encode('utf8')
-	print(data)
         r = requests.post(
             self.server_url, params={
                 'properties': str(properties)
-            }, data=data)#, headers={'Connection': 'close'})
+            }, data=data, headers={'Connection': 'close'})
         output = r.text
         if ('outputFormat' in properties
              and properties['outputFormat'] == 'json'):
