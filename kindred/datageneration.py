@@ -9,8 +9,12 @@ hashVal = b'seed'
 def customRandom():
 	global hashVal
 	hashVal = hashlib.md5(hashVal).digest()
-		#for c in hash:
-	num = 256*ord(hashVal[0]) + ord(hashVal[1])
+	
+	if isinstance(hashVal,str):
+		num = 256*ord(hashVal[0]) + ord(hashVal[1])
+	else:
+		num = 256*hashVal[0] + hashVal[1]
+		
 	return num/float(256*256)
 
 def customChoice(seq):
