@@ -30,7 +30,7 @@ def test_simpleVectorizer():
 		assert vectorsCSR[r,c] == 1.0
 
 def test_vectorizer_selectedTokenTypes():
-	corpus, _ = generateTestData(positiveCount=10,negativeCount=10)
+	corpus, _ = generateTestData(positiveCount=4,negativeCount=4)
 
 	candidateBuilder = CandidateBuilder()
 	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(corpus)
