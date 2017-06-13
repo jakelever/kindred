@@ -8,7 +8,8 @@ import subprocess
 import shlex
 import time
 import atexit
-from nltk.parse import malt
+import tempfile
+import requests
 
 if sys.version_info >= (3, 0):
 	import urllib.request
@@ -65,9 +66,16 @@ def _downloadFiles(files):
 			
 
 corenlpProcess = None
+stdoutFile = None
+stderrFile = None
 def killCoreNLP():
+	global corenlpProcess
+	global stdoutFile
+	global stderrFile
 	if not corenlpProcess is None:
 		corenlpProcess.kill()
+		stdoutFile.close()
+		stderrFile.close()
 
 def checkCoreNLPDownload():
 	directory = _findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
@@ -88,8 +96,11 @@ def downloadCoreNLP():
 		print ("CoreNLP is already downloaded. No need to download")
 
 
+
 def initializeCoreNLP():
 	global corenlpProcess
+	global stdoutFile
+	global stderrFile
 
 	directory = _findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
 	if directory is None:
@@ -98,19 +109,27 @@ def initializeCoreNLP():
 	command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 150000'
 
 	os.chdir(directory)
-	corenlpProcess = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=directory)#, shell=True)
+
+	stdoutFile = tempfile.NamedTemporaryFile(delete=True)
+	stderrFile = tempfile.NamedTemporaryFile(delete=True)
+
+	corenlpProcess = subprocess.Popen(shlex.split(command), stdout=stdoutFile, stderr=stderrFile, cwd=directory)#, shell=True)
 
 	atexit.register(killCoreNLP)
 
-	while True:
-		line = corenlpProcess.stderr.readline()
-		line = str(line)
-		if line == '':
-			continue
-		
-		print("X", line.strip())
-		if line.find('listening') != -1:
+	maxTries = 10
+
+	connectionSuccess = False
+	for tries in range(maxTries):
+		try:
+			requests.get('http://localhost:9000')
+			connectionSuccess = True
 			break
+		except requests.exceptions.ConnectionError:
+			time.sleep(5)
+
+	if not connectionSuccess:
+		raise RuntimeError("Unable to connect to launched CoreNLP subprocess")
 
 	time.sleep(1)
 		
