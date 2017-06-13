@@ -92,6 +92,7 @@ def generateData(positiveCount=100,negativeCount=100,relTypes=1):
 	return corpus
 	
 def generateTestData(positiveCount = 100,negativeCount = 100, relTypes = 1):
+	customSeed("seed")
 	corpus = generateData(positiveCount, negativeCount, relTypes)
 	docCount = len(corpus.documents)
 	halfDataCount = int(docCount/2.0)
