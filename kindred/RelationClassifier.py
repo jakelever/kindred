@@ -26,7 +26,7 @@ from kindred.Vectorizer import Vectorizer
 class Classifier_With_Threshold:
 	def __init__(self,threshold=0.5):
 		#self.clf = svm.SVC(kernel='linear', class_weight='balanced', probability=True)
-		self.clf = LogisticRegression(class_weight='balanced')
+		self.clf = LogisticRegression(class_weight='balanced',random_state=1)
 		self.threshold = threshold
 
 	def fit(self,X,Y):
@@ -187,7 +187,6 @@ class RelationClassifier:
 
 			self.vectorizer = Vectorizer()
 			trainVectors = self.vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
-			print("TRAINVECTORS",np.sum(trainVectors,axis=0))
 		
 			assert trainVectors.shape[0] == len(candidateClasses)
 		
@@ -196,8 +195,6 @@ class RelationClassifier:
 			else:
 				self.clf = Classifier_With_Threshold(self.threshold)
 			self.clf.fit(trainVectors,simplifiedClasses)
-			print("CLASSIFIER", self.clf.coef_)
-			print("CLASSIFIER", self.clf.intercept_)
 		else:
 			# TODO: Should we take into account the argument count when grouping classifiers?
 
@@ -254,11 +251,9 @@ class RelationClassifier:
 		
 		if self.useSingleClassifier:
 			tmpMatrix = self.vectorizer.transform(corpus,candidateRelations)
-			print("PREDICT", np.sum(tmpMatrix,axis=0))
 
 			#predictedClasses = self.clfs[c].predict(testVectors)
 			predictedClasses = self.clf.predict(tmpMatrix)
-			print("CLASSES",predictedClasses.mean())
 			for predictedClass,candidateRelation in zip(predictedClasses,candidateRelations):
 				if predictedClass != 0:
 					relKey = self.classToRelType[predictedClass]
