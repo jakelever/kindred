@@ -1,9 +1,9 @@
 Welcome to kindred documentation!
 =================================
 
-.. toctree::
+.. currentmodule:: kindred
 
 .. autosummary::
    :toctree: _autosummary
 
-   kindred.RelatonClassifier
+   RelatonClassifier
