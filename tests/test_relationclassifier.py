@@ -133,7 +133,7 @@ def test_threshold():
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
 	assert round(f1score,3) == 0.583
 
-def test_singleFeature_selectionTokenTypes():
+def test_singleFeature_selectedTokenTypes():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
 
 	predictionCorpus = devCorpus.clone()
@@ -148,5 +148,5 @@ def test_singleFeature_selectionTokenTypes():
 	assert round(f1score,3) == 0.354
 
 if __name__ == '__main__':
-	test_singleFeature_selectionTokenTypes()
+	test_singleFeature_selectedTokenTypes()
 
