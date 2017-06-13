@@ -145,7 +145,7 @@ def test_singleFeature_selectionTokenTypes():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.646
+	assert round(f1score,3) == 0.354
 
 if __name__ == '__main__':
 	test_singleFeature_selectionTokenTypes()
