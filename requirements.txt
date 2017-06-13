@@ -1,0 +1,11 @@
+nltk
+scikit-learn
+numpy
+scipy
+intervaltree
+networkx
+wget
+pycorenlp
+lxml
+future
+bioc
