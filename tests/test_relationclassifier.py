@@ -148,5 +148,5 @@ def test_singleFeature_selectionTokenTypes():
 	assert round(f1score,3) == 0.646
 
 if __name__ == '__main__':
-	test_simpleRelationClassifier()
+	test_singleFeature_selectionTokenTypes()
 
