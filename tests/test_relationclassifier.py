@@ -31,7 +31,7 @@ def test_simpleMultiClassRelationClassifier():
 	f1score = kindred.evaluate(testCorpusGold, predictionCorpus, metric='f1score')
 	assert f1score == 1.0
 
-def test_SeeDevmini():
+def _SeeDevmini():
 	trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
 	devCorpus = kindred.bionlpst.load('2016-SeeDev-binary-dev')
 
