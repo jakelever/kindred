@@ -1,4 +1,5 @@
 import numpy as np
+import random
 import kindred
 from kindred.CandidateBuilder import CandidateBuilder
 from kindred.Vectorizer import Vectorizer
@@ -30,6 +31,12 @@ def test_simpleVectorizer():
 		assert vectorsCSR[r,c] == 1.0
 
 def test_vectorizer_selectedTokenTypes():
+	random.seed("test")
+	nums = [ random.randint(1,100) for _ in range(5) ]
+	print(nums)
+	assert nums == [18, 45, 71, 47, 27]
+	return
+
 	corpus, _ = generateTestData(positiveCount=8,negativeCount=8)
 	for doc in corpus.documents:
 		print(doc)
