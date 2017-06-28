@@ -16,6 +16,10 @@ def shortenDepName(depName):
 	 	return depName.split(":")[0]
 
 class Parser:
+	"""
+	Runs CoreNLP on corpus to get sentences and associated tokens
+	"""
+	
 	def __init__(self):
 		pass
 

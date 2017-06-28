@@ -2,6 +2,10 @@ import kindred
 
 
 class ProcessedSentence:
+	"""
+	Set of tokens for a sentence after parsing
+	"""
+	
 	def __str__(self):
 		tokenWords = [ t.word for t in self.tokens ]
 		return " ".join(tokenWords)

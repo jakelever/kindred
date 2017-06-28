@@ -8,6 +8,10 @@ import kindred
 from kindred.VERSE_vectorizer import VERSEVectorizer
 
 class Vectorizer:
+	"""
+	Vectorizes set of candidate relations into scipy sparse matrix.
+	"""
+	
 	def __init__(self):
 		self.verseVectorizer = None
 		pass

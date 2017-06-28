@@ -1,6 +1,10 @@
 import kindred
 
 class Corpus:
+	"""
+	Collection of text documents.
+	"""
+	
 	def __init__(self,text=None):
 		self.documents = []
 		if not text is None:

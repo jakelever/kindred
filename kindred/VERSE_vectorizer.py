@@ -201,6 +201,10 @@ class VERSEVectorizer:
 	# - ngrams for selected tokens with POS (or just POS?)
 	# - bigrams on path from tokens to root
 	
+	"""
+	Legacy code from VERSE that turns set of candidate relations into sparse matrix.
+	"""
+	
 	def getFeatureNames(self):
 		return self.vectorize(examples=[],featureNamesOnly=True)
 	
