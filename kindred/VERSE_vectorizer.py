@@ -206,14 +206,15 @@ class VERSEVectorizer:
 	"""
 	
 	def getFeatureNames(self):
-		return self.vectorize(examples=[],featureNamesOnly=True)
+		return self.vectorize(corpus=None,candidates=[],featureNamesOnly=True)
 	
 	def vectorize(self,corpus,candidates,featureNamesOnly=False):
 		examples = [ CandidateRelationToExample(corpus,c) for c in candidates ]
 
-		assert len(examples) > 0, "Expected more than zero examples to vectorize"
-		for e in examples:
-			assert self.argCount == len(e.arguments), 'All examples must have the same number of arguments (%d)' % self.argCount
+		if featureNamesOnly == False:
+			assert len(examples) > 0, "Expected more than zero examples to vectorize"
+			for e in examples:
+				assert self.argCount == len(e.arguments), 'All examples must have the same number of arguments (%d)' % self.argCount
 			
 		data = OrderedDict()
 		if "ngrams_betweenEntities" in self.chosenFeatures:
@@ -237,7 +238,6 @@ class VERSEVectorizer:
 				assert isinstance(strlist,list)
 			combined = sum(data.values(),[])
 			for t in combined:
-				print(t)
 				assert isinstance(t,str)
 		else:
 			# And combine the rest
@@ -252,7 +252,6 @@ class VERSEVectorizer:
 			assert vectorizerName in self.tools
 			featureNames = []
 			for fn in self.tools[vectorizerName].get_feature_names():
-				print(name, fn)
 				if fn is None:
 					fn = u'None'
 				elif isinstance(fn,tuple):
@@ -298,7 +297,7 @@ class VERSEVectorizer:
 			tokens = [ sentence.tokens[t].word.lower() for t in window ]
 			
 			corpus.append(Counter(tokens))
-		return self.corpusToVectors(corpus,featureNamesOnly,"ngrams_betweenEntites",self.tfidf)
+		return self.corpusToVectors(corpus,featureNamesOnly,"ngrams_betweenentities",self.tfidf)
 		
 	def doSelectedTokenTypes(self,examples,argID,featureNamesOnly):
 		corpus = []
@@ -313,7 +312,7 @@ class VERSEVectorizer:
 			if key in sentence.locsToTriggerTypes:
 				type = sentence.locsToTriggerTypes[key]
 			corpus.append(Counter([type]))
-		return self.corpusToVectors(corpus,featureNamesOnly,'SelectedTokenTypes_'+str(argID),False)
+		return self.corpusToVectors(corpus,featureNamesOnly,'selectedtokentypes_'+str(argID),False)
 
 		
 	def doBiGrams(self,examples,featureNamesOnly):
@@ -326,7 +325,7 @@ class VERSEVectorizer:
 				allBigrams = allBigrams + bigrams
 			
 			corpus.append(Counter(allBigrams))
-		return self.corpusToVectors(corpus,featureNamesOnly, 'BiGrams', self.tfidf)
+		return self.corpusToVectors(corpus,featureNamesOnly, 'bigrams', self.tfidf)
 		
 	def doDependencyPathNearSelected(self,examples,argID,featureNamesOnly):
 		corpus = []
@@ -364,7 +363,7 @@ class VERSEVectorizer:
 			
 			#sys.exit(0)
 	
-		return self.corpusToVectors(corpus,featureNamesOnly, 'DependencyPathNearSelectedToken_' + str(argID), False)
+		return self.corpusToVectors(corpus,featureNamesOnly, 'dependencypathnearselectedtoken_' + str(argID), False)
 
 	
 	def doDependencyPathElements(self,examples,featureNamesOnly):
@@ -398,7 +397,7 @@ class VERSEVectorizer:
 
 			corpus.append(Counter(edgeTypes))
 	
-		return self.corpusToVectors(corpus,featureNamesOnly, 'DependencyPathElements', False)
+		return self.corpusToVectors(corpus,featureNamesOnly, 'dependencypathelements', False)
 
 	def getTrainingVectors(self):
 		return self.trainingVectors

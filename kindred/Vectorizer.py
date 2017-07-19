@@ -14,7 +14,10 @@ class Vectorizer:
 	
 	def __init__(self):
 		self.verseVectorizer = None
-		pass
+		
+	def getFeatureNames(self):
+		assert not self.verseVectorizer is None, "Must have fit data first"
+		return self.verseVectorizer.getFeatureNames()
 		
 	def transform(self,corpus,candidateRelations,featureChoice=None,tfidf=None):
 		assert isinstance(corpus,kindred.Corpus)
