@@ -1,3 +1,6 @@
+"""
+Importer for PubTator data
+"""
 
 import sys
 import kindred

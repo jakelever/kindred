@@ -58,6 +58,10 @@ def saveDataFromSTFormat(data,predictedRelations,txtPath,a1Path,a2Path):
 
 
 def save(corpus,dataFormat,directory,predictedRelations=[]):
+	"""
+	Save a corpus to a directory
+	"""
+	
 	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
 
 	assert isinstance(corpus,kindred.Corpus)

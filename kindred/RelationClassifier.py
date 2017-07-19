@@ -69,7 +69,7 @@ def saveClasses(filename,classes):
 
 class RelationClassifier:
 	"""
-	This is a class. Fantastic!
+	Manages binary classifier(s) for relation classification.
 	"""
 	def __init__(self,useSingleClassifier=True,useBuilder=False,tfidf=True,features=None,threshold=None):
 		"""

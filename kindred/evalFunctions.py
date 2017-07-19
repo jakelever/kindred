@@ -3,11 +3,11 @@ import kindred
 from collections import Counter
 
 def evaluate(goldCorpus,testCorpus,metric='f1score',display=True):
-	""" This does something
+	""" Compares the gold corpus with the test corpus and calculate appropriate metrics.
 	
-	:params goldSet: The gold standard set of data
+	:params goldCorpus: The gold standard set of data
 	:type name: str
-	:params testSet: The test set for comparison
+	:params testCorpus: The test set for comparison
 	:type state: bool
 	:params metric: Which metric to use (precision/recall/f1score)
 	:type name: str

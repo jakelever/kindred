@@ -1,3 +1,6 @@
+"""
+Importer for BioNLP Shared Task data
+"""
 
 import tempfile
 

@@ -5,6 +5,9 @@ import itertools
 import kindred
 
 class CandidateBuilder:
+	"""
+	Generates set of all possible relations in corpus.
+	"""
 	def __init__(self):
 		self.initialized = False
 	

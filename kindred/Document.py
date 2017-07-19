@@ -2,6 +2,10 @@ import kindred
 
 
 class Document:
+	"""
+	Span of text with associated tagged entities and relations between entities.
+	"""
+	
 	def __init__(self,text,entities=None,relations=None,relationsUseSourceIDs=True,sourceFilename=None):
 		loadFromSimpleTag = (entities is None)
 

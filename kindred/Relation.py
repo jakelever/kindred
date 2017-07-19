@@ -2,6 +2,10 @@ import kindred
 
 
 class Relation:
+	"""
+	Describes relationship between entities (including relation type and argument names if applicable).
+	"""
+	
 	def __init__(self,relationType=None,entityIDs=[],argNames=None):
 		assert isinstance(entityIDs,list)
 

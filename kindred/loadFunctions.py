@@ -312,6 +312,10 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 	
 	
 def loadDoc(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
+	"""
+	Loads a single document from a single file (for JSON or SimpleTag) or set of files (for standoff)
+	"""
+	
 	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
 	
 	if dataFormat == 'standoff':
@@ -335,6 +339,9 @@ def loadDoc(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=Fa
 	return doc
 
 def loadDocs(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
+	"""
+	Loads a set of documents from a single file (for BioC)
+	"""
 	assert dataFormat == 'bioc'
 	if dataFormat == 'bioc':
 		assert not path is None
@@ -347,6 +354,9 @@ def loadDocs(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=F
 	return docs
 	
 def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
+	"""
+	Loads a directory of files with the given data format.
+	"""
 	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json' or dataFormat == 'bioc'
 	assert os.path.isdir(directory), "%s must be a directory"
 	

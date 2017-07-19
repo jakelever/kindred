@@ -2,6 +2,10 @@ import kindred
 import sys
 
 class Entity:
+	"""
+	Biomedical entity with information of location in text
+	"""
+	
 	nextInternalID = 1
 
 	def __init__(self,entityType,text,position,sourceEntityID=None):

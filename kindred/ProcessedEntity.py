@@ -2,6 +2,10 @@ import kindred
 
 
 class ProcessedEntity:
+	"""
+	Entity associated with tokenized text
+	"""
+	
 	def __init__(self,entityType,entityLocs,entityID,sourceEntityID,entityPosition,entityText):
 		self.entityType = entityType
 		self.entityLocs = entityLocs

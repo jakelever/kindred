@@ -2,6 +2,10 @@ import kindred
 
 
 class Token:
+	"""
+	Individual word with lemma, part-of-speech and location in text.
+	"""
+	
 	def __init__(self,word,lemma,partofspeech,startPos,endPos):
 		self.word = word
 		self.lemma = lemma
