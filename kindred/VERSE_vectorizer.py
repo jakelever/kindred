@@ -234,7 +234,7 @@ class VERSEVectorizer:
 				data["selectedTokenTypes_" + str(i)] = self.doSelectedTokenTypes(examples,i,featureNamesOnly)		
 
 		if featureNamesOnly:
-			for id,strlist in data.iteritems():
+			for id,strlist in data.items():
 				assert isinstance(strlist,list)
 			combined = sum(data.values(),[])
 			for t in combined:
