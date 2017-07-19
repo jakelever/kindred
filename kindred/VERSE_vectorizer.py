@@ -237,8 +237,6 @@ class VERSEVectorizer:
 			for id,strlist in data.items():
 				assert isinstance(strlist,list)
 			combined = sum(data.values(),[])
-			for t in combined:
-				assert isinstance(t,str)
 		else:
 			# And combine the rest
 			combined = hstack( [ d for d in data.values() if not d is None ] )
@@ -257,7 +255,7 @@ class VERSEVectorizer:
 				elif isinstance(fn,tuple):
 					fn = u"_".join(map(unicode,list(fn)))
 				featureNames.append(fn)
-			return [ "%s_%s" % (name,fname.encode('utf8')) for fname in featureNames ]
+			return [ u"%s_%s" % (name,fname) for fname in featureNames ]
 		else:
 			if not vectorizerName in self.tools:
 				self.tools[vectorizerName] = DictVectorizer()
