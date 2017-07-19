@@ -94,8 +94,8 @@ class RelationClassifier:
 
 		featureChoice = ["selectedTokenTypes","ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
 		for feature in featureChoice:
-			vectorizers[feature] = Vectorizer()
-			trainVectors[feature] = vectorizers[feature].transform(corpus,candidateRelations,[feature],tfidf=tfidf)
+			vectorizers[feature] = Vectorizer(featureChoice=[feature],tfidf=tfidf)
+			trainVectors[feature] = vectorizers[feature].fit_transform(corpus,candidateRelations)
 
 		groupVector = None
 		chosenFeatures = []
@@ -185,8 +185,8 @@ class RelationClassifier:
 			else:
 				chosenFeatures = self.defaultFeatures
 
-			self.vectorizer = Vectorizer()
-			trainVectors = self.vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
+			self.vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=self.tfidf)
+			trainVectors = self.vectorizer.fit_transform(corpus,candidateRelations)
 		
 			assert trainVectors.shape[0] == len(candidateClasses)
 		
@@ -201,8 +201,8 @@ class RelationClassifier:
 			if not self.useBuilder:
 				chosenFeatures = self.defaultFeatures
 
-				self.vectorizer = Vectorizer()
-				tmpMatrix = self.vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
+				self.vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=self.tfidf)
+				tmpMatrix = self.vectorizer.fit_transform(corpus,candidateRelations)
 			self.clfs = {}
 			self.vectorizers = {}
 			for c in self.allClasses:
@@ -210,8 +210,8 @@ class RelationClassifier:
 
 				if self.useBuilder:
 					chosenFeatures = self.buildFeatureSet(corpus,candidateRelations,tmpClassData,self.tfidf)
-					self.vectorizers[c] = Vectorizer()
-					tmpMatrix = self.vectorizers[c].transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=self.tfidf)
+					self.vectorizers[c] = Vectorizer(featureChoice=chosenFeatures,tfidf=self.tfidf)
+					tmpMatrix = self.vectorizers[c].fit_transform(corpus,candidateRelations)
 
 				#save_sparse_csr('train.matrix',trainVectors.tocsr())
 				#saveClasses('train.classes',tmpClassData)

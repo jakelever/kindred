@@ -12,23 +12,36 @@ class Vectorizer:
 	Vectorizes set of candidate relations into scipy sparse matrix.
 	"""
 	
-	def __init__(self):
+	def __init__(self,featureChoice=None,tfidf=True):
 		self.verseVectorizer = None
+		self.featureChoice = featureChoice
+		self.tfidf = tfidf
 		
 	def getFeatureNames(self):
 		assert not self.verseVectorizer is None, "Must have fit data first"
 		return self.verseVectorizer.getFeatureNames()
+				
+	def fit_transform(self,corpus,candidateRelations):
+		assert self.verseVectorizer is None, "Vectorizer has already been fit. Use transform() instead"
+	
+		assert isinstance(corpus,kindred.Corpus)
+		assert isinstance(candidateRelations,list)
+		for r in candidateRelations:
+			assert isinstance(r,kindred.Relation)
+			
+		self.verseVectorizer = VERSEVectorizer(corpus,candidateRelations,self.featureChoice,self.tfidf)
+		return self.verseVectorizer.getTrainingVectors()
 		
-	def transform(self,corpus,candidateRelations,featureChoice=None,tfidf=None):
+	def fit(self,corpus,candidateRelations):
+		self.fit_transform(self,corpus,candidateRelations)
+		
+	def transform(self,corpus,candidateRelations):
+		assert not self.verseVectorizer is None, "Vectorizer has not been fit. Use fit() or fit_transform() first"
+		
 		assert isinstance(corpus,kindred.Corpus)
 		assert isinstance(candidateRelations,list)
 		for r in candidateRelations:
 			assert isinstance(r,kindred.Relation)
 		
-		if self.verseVectorizer is None:
-			self.verseVectorizer = VERSEVectorizer(corpus,candidateRelations,featureChoice,tfidf)
-			return self.verseVectorizer.getTrainingVectors()
-		else:
-			return self.verseVectorizer.vectorize(corpus,candidateRelations)
-
-
+		return self.verseVectorizer.vectorize(corpus,candidateRelations)
+		

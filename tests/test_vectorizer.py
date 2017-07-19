@@ -15,7 +15,7 @@ def test_simpleVectorizer():
 	
 	# We'll just get the vectors for the selectedTokenTypes
 	vectorizer = Vectorizer()
-	vectors = vectorizer.transform(corpus,candidateRelations)
+	vectors = vectorizer.fit_transform(corpus,candidateRelations)
 	
 	tuples = [(0, 2),(1, 0),(2, 2),(3, 1),(0, 3),(1, 5),(2, 4),(3, 5)]
 	expectedRows = [ r for r,c in tuples ]
@@ -38,10 +38,10 @@ def test_vectorizer_selectedTokenTypes():
 	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["selectedTokenTypes"]
-	vectorizer = Vectorizer()
+	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
-	matrix1 = vectorizer.transform(corpus1,candidateRelations1,featureChoice=chosenFeatures,tfidf=True)
-	matrix2 = vectorizer.transform(corpus2,candidateRelations2,featureChoice=chosenFeatures,tfidf=True)
+	matrix1 = vectorizer.fit_transform(corpus1,candidateRelations1)
+	matrix2 = vectorizer.transform(corpus2,candidateRelations2)
 		
 	colnames = vectorizer.getFeatureNames()
 	expectedNames = ['selectedtokentypes_0_disease', 'selectedtokentypes_0_disease2', 'selectedtokentypes_0_drug', 'selectedtokentypes_1_disease', 'selectedtokentypes_1_disease2', 'selectedtokentypes_1_drug']
@@ -63,10 +63,10 @@ def test_vectorizer_ngrams_betweenEntities():
 	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["ngrams_betweenEntities"]
-	vectorizer = Vectorizer()
+	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
-	matrix1 = vectorizer.transform(corpus1,candidateRelations1,featureChoice=chosenFeatures,tfidf=True)
-	matrix2 = vectorizer.transform(corpus2,candidateRelations2,featureChoice=chosenFeatures,tfidf=True)
+	matrix1 = vectorizer.fit_transform(corpus1,candidateRelations1)
+	matrix2 = vectorizer.transform(corpus2,candidateRelations2)
 			
 	colnames = vectorizer.getFeatureNames()
 	expectedNames = [u'ngrams_betweenentities_a', u'ngrams_betweenentities_be', u'ngrams_betweenentities_can', u'ngrams_betweenentities_clinical', u'ngrams_betweenentities_common', u'ngrams_betweenentities_effect', u'ngrams_betweenentities_failed', u'ngrams_betweenentities_for', u'ngrams_betweenentities_is', u'ngrams_betweenentities_known', u'ngrams_betweenentities_of', u'ngrams_betweenentities_side', u'ngrams_betweenentities_treated', u'ngrams_betweenentities_treatment', u'ngrams_betweenentities_trials', u'ngrams_betweenentities_with']
@@ -92,10 +92,10 @@ def test_vectorizer_bigrams():
 	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["bigrams"]
-	vectorizer = Vectorizer()
+	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
-	matrix1 = vectorizer.transform(corpus1,candidateRelations1,featureChoice=chosenFeatures,tfidf=True)
-	matrix2 = vectorizer.transform(corpus2,candidateRelations2,featureChoice=chosenFeatures,tfidf=True)
+	matrix1 = vectorizer.fit_transform(corpus1,candidateRelations1)
+	matrix2 = vectorizer.transform(corpus2,candidateRelations2)
 	
 	colnames = vectorizer.getFeatureNames()
 	expectedNames = [u'bigrams_a_common', u'bigrams_a_known', u'bigrams_be_treated', u'bigrams_bmzvpvwbpw_failed', u'bigrams_can_be', u'bigrams_clinical_trials', u'bigrams_common_treatment', u'bigrams_effect_of', u'bigrams_failed_clinical', u'bigrams_for_kyekjnkrfo', u'bigrams_for_zgwivlcmly', u'bigrams_gnorcyvmer_is', u'bigrams_is_a', u'bigrams_known_side', u'bigrams_kyekjnkrfo_.', u'bigrams_of_ruswdgzajr', u'bigrams_ootopaoxbg_can', u'bigrams_pehhjnlvvewbjccovflf_is', u'bigrams_ruswdgzajr_.', u'bigrams_side_effect', u'bigrams_treated_with', u'bigrams_treatment_for', u'bigrams_trials_for', u'bigrams_vgypkemhjr_.', u'bigrams_with_vgypkemhjr', u'bigrams_zgwivlcmly_.']
@@ -123,10 +123,10 @@ def test_vectorizer_dependencyPathElements():
 	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["dependencyPathElements"]
-	vectorizer = Vectorizer()
+	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
-	matrix1 = vectorizer.transform(corpus1,candidateRelations1,featureChoice=chosenFeatures,tfidf=True)
-	matrix2 = vectorizer.transform(corpus2,candidateRelations2,featureChoice=chosenFeatures,tfidf=True)
+	matrix1 = vectorizer.fit_transform(corpus1,candidateRelations1)
+	matrix2 = vectorizer.transform(corpus2,candidateRelations2)
 	
 	colnames = vectorizer.getFeatureNames()
 	expectedNames = [u'dependencypathelements_nmod', u'dependencypathelements_nsubj', u'dependencypathelements_nsubjpass', u'dependencypathelements_punct']
@@ -150,10 +150,10 @@ def test_vectorizer_dependencyPathNearSelected():
 	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["dependencyPathNearSelected"]
-	vectorizer = Vectorizer()
+	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
-	matrix1 = vectorizer.transform(corpus1,candidateRelations1,featureChoice=chosenFeatures,tfidf=True)
-	matrix2 = vectorizer.transform(corpus2,candidateRelations2,featureChoice=chosenFeatures,tfidf=True)
+	matrix1 = vectorizer.fit_transform(corpus1,candidateRelations1)
+	matrix2 = vectorizer.transform(corpus2,candidateRelations2)
 	
 	colnames = vectorizer.getFeatureNames()
 	expectedNames = ['dependencypathnearselectedtoken_0_nsubj', 'dependencypathnearselectedtoken_0_nsubjpass', 'dependencypathnearselectedtoken_1_nsubj', 'dependencypathnearselectedtoken_1_nsubjpass']
