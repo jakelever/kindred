@@ -255,7 +255,7 @@ class VERSEVectorizer:
 				if fn is None:
 					fn = u'None'
 				elif isinstance(fn,tuple):
-					fn = u"_".join(list(fn))
+					fn = u"_".join(map(unicode,list(fn)))
 				featureNames.append(fn)
 			return [ "%s_%s" % (name,fname.encode('utf8')) for fname in featureNames ]
 		else:
