@@ -44,6 +44,10 @@ def test_vectorizer_selectedTokenTypes():
 	colmeans = np.sum(matrix,axis=0)
 	assert colmeans.tolist() == [[ 5,2,7, 5,2,7 ]]
 	
+	colnames = vectorizer.getFeatureNames()
+	expectedNames = ['selectedtokentypes_0_disease', 'selectedtokentypes_0_disease2', 'selectedtokentypes_0_drug', 'selectedtokentypes_1_disease', 'selectedtokentypes_1_disease2', 'selectedtokentypes_1_drug']
+	assert colnames == expectedNames
+	
 def test_vectorizer_ngrams_betweenEntities():
 	corpus, _ = generateTestData(positiveCount=8,negativeCount=8)
 
@@ -60,6 +64,10 @@ def test_vectorizer_ngrams_betweenEntities():
 	colmeans = np.sum(matrix,axis=0).tolist()[0]
 	for gotVal,expectedVal in zip(colmeans,expected):
 		assert round(gotVal,8) == round(expectedVal,8) # Check rounded values (for floating point comparison issue)
+		
+	colnames = vectorizer.getFeatureNames()
+	expectedNames = ['ngrams_betweenentities_a', 'ngrams_betweenentities_be', 'ngrams_betweenentities_can', 'ngrams_betweenentities_cause', 'ngrams_betweenentities_clinical', 'ngrams_betweenentities_common', 'ngrams_betweenentities_failed', 'ngrams_betweenentities_for', 'ngrams_betweenentities_is', 'ngrams_betweenentities_main', 'ngrams_betweenentities_of', 'ngrams_betweenentities_the', 'ngrams_betweenentities_treated', 'ngrams_betweenentities_treatment', 'ngrams_betweenentities_treats', 'ngrams_betweenentities_trials', 'ngrams_betweenentities_with']
+	assert colnames == expectedNames
 	
 def test_vectorizer_bigrams():
 	corpus, _ = generateTestData(positiveCount=8,negativeCount=8)
@@ -77,6 +85,10 @@ def test_vectorizer_bigrams():
 	colmeans = np.sum(matrix,axis=0).tolist()[0]
 	for gotVal,expectedVal in zip(colmeans,expected):
 		assert round(gotVal,8) == round(expectedVal,8) # Check rounded values (for floating point comparison issue)
+		
+	colnames = vectorizer.getFeatureNames()
+	expectedNames = ['bigrams_a_common', 'bigrams_be_treated', 'bigrams_bmzvpvwbpw_is', 'bigrams_can_be', 'bigrams_cause_of', 'bigrams_clinical_trials', 'bigrams_common_treatment', 'bigrams_elvptnpvyc_is', 'bigrams_failed_clinical', 'bigrams_for_kfjqxlpvew', 'bigrams_for_kneqlzjegs', 'bigrams_for_zgwivlcmly', 'bigrams_gnorcyvmer_.', 'bigrams_hfymprbifs_.', 'bigrams_is_a', 'bigrams_is_the', 'bigrams_kfjqxlpvew_.', 'bigrams_kneqlzjegs_.', 'bigrams_kyekjnkrfo_can', 'bigrams_main_cause', 'bigrams_of_kfjqxlpvew', 'bigrams_pehhjnlvvewbjccovflf_failed', 'bigrams_pehhjnlvvewbjccovflf_is', 'bigrams_ruswdgzajr_.', 'bigrams_the_main', 'bigrams_treated_with', 'bigrams_treatment_for', 'bigrams_treats_gnorcyvmer', 'bigrams_treats_hfymprbifs', 'bigrams_trials_for', 'bigrams_usckfljzxu_treats', 'bigrams_vgypkemhjr_treats', 'bigrams_with_ruswdgzajr', 'bigrams_zgwivlcmly_.']
+	assert colnames == expectedNames
 	
 def test_vectorizer_dependencyPathElements():
 	corpus, _ = generateTestData(positiveCount=8,negativeCount=8)
@@ -93,6 +105,10 @@ def test_vectorizer_dependencyPathElements():
 	colmeans = np.sum(matrix,axis=0)
 	assert colmeans.tolist() == [[ 4, 10, 12, 2, 4 ]]
 	
+	colnames = vectorizer.getFeatureNames()
+	expectedNames = ['dependencypathelements_dobj', 'dependencypathelements_nmod', 'dependencypathelements_nsubj', 'dependencypathelements_nsubjpass', 'dependencypathelements_punct']
+	assert colnames == expectedNames
+	
 def test_vectorizer_dependencyPathNearSelected():
 	corpus, _ = generateTestData(positiveCount=8,negativeCount=8)
 
@@ -107,6 +123,10 @@ def test_vectorizer_dependencyPathNearSelected():
 	# As a quick check, we'll confirm that the column means are as expected
 	colmeans = np.sum(matrix,axis=0)
 	assert colmeans.tolist() == [[ 6, 1, 6, 1 ]]
+	
+	colnames = vectorizer.getFeatureNames()
+	expectedNames = ['dependencypathnearselectedtoken_0_nsubj', 'dependencypathnearselectedtoken_0_nsubjpass', 'dependencypathnearselectedtoken_1_nsubj', 'dependencypathnearselectedtoken_1_nsubjpass']
+	assert colnames == expectedNames
 	
 
 
