@@ -41,9 +41,85 @@ def test_vectorizer_selectedTokenTypes():
 	vectorizer = Vectorizer()
 	
 	matrix = vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=True)
+	
+	# As a quick check, we'll confirm that the column means are as expected
 	colmeans = np.sum(matrix,axis=0)
 	assert colmeans.tolist() == [[ 5,2,7, 5,2,7 ]]
+	
+def test_vectorizer_ngrams_betweenEntities():
+	corpus, _ = generateTestData(positiveCount=8,negativeCount=8)
+	for doc in corpus.documents:
+		print(doc)
 
+	candidateBuilder = CandidateBuilder()
+	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(corpus)
+
+	chosenFeatures = ["ngrams_betweenEntities"]
+	vectorizer = Vectorizer()
+	
+	matrix = vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=True)
+	
+	# As a quick check, we'll confirm that the column means are as expected
+	expected = [ 1.90474276 , 1. , 1. , 0.94744995 , 1.0758251 , 1.90474276 , 1.0758251 , 2.32585296 , 2.23916188 , 0.94744995 , 0.94744995 , 0.94744995 , 1. , 1.90474276 , 4. , 1.0758251 , 1. ]
+	colmeans = np.sum(matrix,axis=0).tolist()[0]
+	print colmeans
+	for gotVal,expectedVal in zip(colmeans,expected):
+		assert round(gotVal,8) == round(expectedVal,8) # Check rounded values (for floating point comparison issue)
+	
+def test_vectorizer_bigrams():
+	corpus, _ = generateTestData(positiveCount=8,negativeCount=8)
+	for doc in corpus.documents:
+		print(doc)
+
+	candidateBuilder = CandidateBuilder()
+	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(corpus)
+
+	chosenFeatures = ["bigrams"]
+	vectorizer = Vectorizer()
+	
+	matrix = vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=True)
+	
+	# As a quick check, we'll confirm that the column means are as expected
+	expected = [ 1.3609683196826348, 0.816496580927726, 0.8461215895327386, 0.816496580927726, 0.77575336284949, 0.8416446466035913, 1.3609683196826348, 0.77575336284949, 0.8416446466035913, 0.8416446466035913, 0.8461215895327386, 0.8461215895327389, 1.1547005383792517, 1.1547005383792517, 1.3609683196826348, 0.77575336284949, 1.3007748995029198, 0.8461215895327386, 0.816496580927726, 0.77575336284949, 0.77575336284949, 0.8416446466035913, 0.8461215895327389, 0.816496580927726, 0.77575336284949, 0.816496580927726, 1.3609683196826348, 1.1547005383792517, 1.1547005383792517, 0.8416446466035913, 1.1547005383792517, 1.1547005383792517, 0.816496580927726, 0.8461215895327389 ]
+	colmeans = np.sum(matrix,axis=0).tolist()[0]
+	print colmeans
+	for gotVal,expectedVal in zip(colmeans,expected):
+		assert round(gotVal,8) == round(expectedVal,8) # Check rounded values (for floating point comparison issue)
+	
+def test_vectorizer_dependencyPathElements():
+	corpus, _ = generateTestData(positiveCount=8,negativeCount=8)
+	for doc in corpus.documents:
+		print(doc)
+
+	candidateBuilder = CandidateBuilder()
+	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(corpus)
+
+	chosenFeatures = ["dependencyPathElements"]
+	vectorizer = Vectorizer()
+	
+	matrix = vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=True)
+	
+	# As a quick check, we'll confirm that the column means are as expected
+	colmeans = np.sum(matrix,axis=0)
+	assert colmeans.tolist() == [[ 4, 10, 12, 2, 4 ]]
+	
+def test_vectorizer_dependencyPathNearSelected():
+	corpus, _ = generateTestData(positiveCount=8,negativeCount=8)
+	for doc in corpus.documents:
+		print(doc)
+
+	candidateBuilder = CandidateBuilder()
+	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(corpus)
+
+	chosenFeatures = ["dependencyPathNearSelected"]
+	vectorizer = Vectorizer()
+	
+	matrix = vectorizer.transform(corpus,candidateRelations,featureChoice=chosenFeatures,tfidf=True)
+	
+	# As a quick check, we'll confirm that the column means are as expected
+	colmeans = np.sum(matrix,axis=0)
+	assert colmeans.tolist() == [[ 6, 1, 6, 1 ]]
+	
 
 
 if __name__ == '__main__':
