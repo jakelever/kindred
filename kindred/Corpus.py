@@ -26,6 +26,13 @@ class Corpus:
 		for doc in self.documents:
 			relations += doc.getRelations()
 		return relations
+		
+	def getEntityMapping(self):
+		entityMapping = {}
+		for doc in self.documents:
+			for e in doc.entities:
+				entityMapping[e.entityID] = e
+		return entityMapping
 
 	def removeRelations(self):
 		for doc in self.documents:
