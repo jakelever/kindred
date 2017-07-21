@@ -97,13 +97,14 @@ class RelationClassifier:
 
 	def buildFeatureSet(self,corpus,candidateRelations,classes,tfidf):
 		"""
-		Constructor for the RelationClassifier class
+		Builds the set of features that gives best cross-validated F1-score
 		
 		:param self: Object instance
 		:param corpus: Corpus of documents to use for training
 		:param candidateRelations: List of candidate relations to use for training
 		:param classes: Associated numerical classes for training
 		:param tfidf: Whether to use tfidf for the vectorizer
+		:returns: A list of features to use for vectorizer
 		"""
 		
 		vectorizers = {}
