@@ -15,11 +15,22 @@ def loadPMID(pmid):
 	annotationsURL = "https://www.ncbi.nlm.nih.gov/CBBresearch/Lu/Demo/RESTful/tmTool.cgi/BioConcept/%d/JSON" % pmid
 	
 	annotations = requests.get(annotationsURL).json()
-	parsed = parseJSON(annotations)
+	doc = parseJSON(annotations)
 	
-	return parsed
+	return doc
 
 def load(pmids):
+	"""
+	Load a set of documents with annotations from Pubmed given a list of Pubmed IDs (PMIDs)
+	
+	>>> corpus = load(19894120)
+	>>> len(corpus.documents)
+	1
+
+	:param pmids: the list of Pubmed IDs (integers)
+	:returns: a kindred corpus object
+	"""
+
 	assert isinstance(pmids,list) or isinstance(pmids,int)
 
 	corpus = kindred.Corpus()
