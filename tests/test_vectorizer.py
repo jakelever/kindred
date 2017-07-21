@@ -12,19 +12,17 @@ def test_simpleVectorizer():
 	candidateBuilder.fit_transform(corpus)
 	
 	# We'll just get the vectors for the selectedTokenTypes
-	vectorizer = kindred.Vectorizer()
+	vectorizer = kindred.Vectorizer(featureChoice=["selectedTokenTypes"])
 	vectors = vectorizer.fit_transform(corpus)
 	
-	tuples = [(0, 2),(1, 0),(2, 2),(3, 1),(0, 3),(1, 5),(2, 4),(3, 5)]
-	expectedRows = [ r for r,c in tuples ]
-	expectedCols = [ c for r,c in tuples ]
+	expected = [(0, 2),(1, 0),(2, 2),(3, 1),(0, 3),(1, 5),(2, 4),(3, 5)]
 	
 	rows,cols = vectors.nonzero()
-	assert expectedRows == rows.tolist()
-	assert expectedCols == cols.tolist()
+	rowsWithCols = list(zip(rows.tolist(),cols.tolist()))
+	assert sorted(expected) == sorted(rowsWithCols)
 	
 	vectorsCSR = vectors.tocsr()
-	for r,c in tuples:
+	for r,c in expected:
 		assert vectorsCSR[r,c] == 1.0
 
 def test_vectorizer_selectedTokenTypes():
