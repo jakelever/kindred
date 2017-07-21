@@ -24,9 +24,9 @@ class CandidateBuilder:
 				knownRelations = doc.getRelations()
 				for r in knownRelations:
 					assert isinstance(r,kindred.Relation)
-				for processedSentence in doc.processedSentences:
-					tmpRelTypesAndArgCount = [ tuple([r.relationType] + r.argNames) for r in knownRelations ]
-					self.relTypes.update(tmpRelTypesAndArgCount)
+				
+				tmpRelTypesAndArgCount = [ tuple([r.relationType] + r.argNames) for r in knownRelations ]
+				self.relTypes.update(tmpRelTypesAndArgCount)
 				
 			self.relTypes = sorted(list(self.relTypes))
 			self.relClasses = { relType:(i+1) for i,relType in enumerate(self.relTypes) }
@@ -49,8 +49,8 @@ class CandidateBuilder:
 					relationClass = self.relClasses[relKey]
 					existingRelations[entityIDs].append(relationClass)
 
-			for processedSentence in doc.processedSentences:
-				entitiesInSentence = processedSentence.getEntityIDs()
+			for sentence in doc.sentences:
+				entitiesInSentence = sentence.getEntityIDs()
 							
 				for entitiesInRelation in itertools.permutations(entitiesInSentence,2):
 					candidateRelation = kindred.Relation(entityIDs=list(entitiesInRelation))

@@ -46,7 +46,7 @@ class Document:
 				
 			self.relations = correctedRelations
 
-		self.processedSentences = []
+		self.sentences = []
 
 	def clone(self):
 		cloned = Document(self.text,entities=self.entities,relations=self.relations,relationsUseSourceIDs=False,sourceFilename=self.sourceFilename)
@@ -57,7 +57,7 @@ class Document:
 
 	def addSentence(self,sentence):
 		assert isinstance(sentence,kindred.Sentence)
-		self.processedSentences.append(sentence)
+		self.sentences.append(sentence)
 	
 	def addRelation(self,relation):
 		self.relations.append(relation)

@@ -172,7 +172,7 @@ def SentenceToVerseSentence(s):
 
 def findSentenceContainingRelation(corpus,r):
 	for doc in corpus.documents:
-		for sentence in doc.processedSentences:
+		for sentence in doc.sentences:
 			sentenceEntityIDs = sentence.getEntityIDs()
 			relEntitiesInSentence = [ eID in sentenceEntityIDs for eID in r.entityIDs ]
 			if all(relEntitiesInSentence):
