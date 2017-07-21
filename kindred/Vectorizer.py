@@ -56,8 +56,7 @@ class Vectorizer2:
 	def __init__(self,featureChoice=None,tfidf=True):
 		self.fitted = False
 		
-		validFeatures = ["selectedTokenTypes"]
-		#validFeatures = ["ngrams_betweenEntities"]
+		validFeatures = ["selectedTokenTypes","ngrams_betweenEntities"]
 		if featureChoice is None:
 			self.chosenFeatures = validFeatures
 		else:
@@ -71,8 +70,9 @@ class Vectorizer2:
 		self.dictVectorizers = {}
 
 	def _registerFunctions(self):
-		self.funcCalls = {}
-		self.funcCalls['selectedTokenTypes'] = Vectorizer.doSelectedTokenTypes
+		self.featureInfo = {}
+		self.featureInfo['selectedTokenTypes'] = {'func':Vectorizer.doSelectedTokenTypes,'never_tfidf':True}
+		self.featureInfo['ngrams_betweenEntities'] = {'func':Vectorizer.doNGramsBetweenEntities,'never_tfidf':False}
 		
 	def getFeatureNames(self):
 		assert self.fitted == True, "Must have fit data first"
@@ -83,6 +83,18 @@ class Vectorizer2:
 		
 
 	def doSelectedTokenTypes(self,corpus,candidateRelations):
+		entityMapping = corpus.getEntityMapping()
+		data = []	
+		for cr in candidateRelations:
+			tokenInfo = {}
+			for argI,eID in enumerate(cr.entityIDs):
+				eType = entityMapping[eID].entityType
+				argName = "selectedtokentypes_%d_%s" % (argI,eType)
+				tokenInfo[argName] = 1
+			data.append(tokenInfo)
+		return data
+	
+	def doNGramsBetweenEntities(self,corpus,candidateRelations):
 		entityMapping = corpus.getEntityMapping()
 		data = []	
 		for cr in candidateRelations:
@@ -102,8 +114,9 @@ class Vectorizer2:
 			
 		matrices = []
 		for feature in self.chosenFeatures:
-			assert feature in self.funcCalls
-			featureFunction = self.funcCalls[feature]
+			assert feature in self.featureInfo.keys()
+			featureFunction = self.featureInfo[feature]['func']
+			never_tfidf = self.featureInfo[feature]['never_tfidf']
 			data = featureFunction(self,corpus,candidateRelations)
 			if fit:
 				self.dictVectorizers[feature] = DictVectorizer()
