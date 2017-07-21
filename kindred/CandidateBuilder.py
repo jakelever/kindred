@@ -9,30 +9,41 @@ class CandidateBuilder:
 	Generates set of all possible relations in corpus.
 	"""
 	def __init__(self):
-		self.initialized = False
-	
-	def build(self,corpus):
+		self.fitted = False
+
+	def fit_transform(self,corpus):
+		assert self.fitted == False, "CandidateBuilder has already been fit to corpus"
 		assert isinstance(corpus,kindred.Corpus)
+
+		if not corpus.parsed:
+			parser = kindred.Parser()
+			parser.parse(corpus)
+		
+		self.relTypes = set()
+	
+		for doc in corpus.documents:
+			knownRelations = doc.getRelations()
+			for r in knownRelations:
+				assert isinstance(r,kindred.Relation)
 			
-		parser = kindred.Parser()
-		parser.parse(corpus)
-		
-		if not self.initialized:
-			self.relTypes = set()
-		
-			for doc in corpus.documents:
-				knownRelations = doc.getRelations()
-				for r in knownRelations:
-					assert isinstance(r,kindred.Relation)
-				
-				tmpRelTypesAndArgCount = [ tuple([r.relationType] + r.argNames) for r in knownRelations ]
-				self.relTypes.update(tmpRelTypesAndArgCount)
-				
-			self.relTypes = sorted(list(self.relTypes))
-			self.relClasses = { relType:(i+1) for i,relType in enumerate(self.relTypes) }
+			tmpRelTypesAndArgCount = [ tuple([r.relationType] + r.argNames) for r in knownRelations ]
+			self.relTypes.update(tmpRelTypesAndArgCount)
 			
-			self.initialized = True
-		
+		self.relTypes = sorted(list(self.relTypes))
+		self.relClasses = { relType:(i+1) for i,relType in enumerate(self.relTypes) }
+			
+		self.fitted = True
+	
+		return self.transform(corpus)
+
+	def transform(self,corpus):
+		assert self.fitted == True, "CandidateBuilder must be fit to corpus first"
+		assert isinstance(corpus,kindred.Corpus)
+
+		if not corpus.parsed:
+			parser = kindred.Parser()
+			parser.parse(corpus)
+
 		candidateRelations = []
 		candidateClasses = []
 		
@@ -65,3 +76,4 @@ class CandidateBuilder:
 		assert len(candidateRelations) == len(candidateClasses)
 		
 		return self.relTypes, candidateRelations, candidateClasses
+

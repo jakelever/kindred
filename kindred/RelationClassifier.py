@@ -155,7 +155,7 @@ class RelationClassifier:
 		assert isinstance(corpus,kindred.Corpus)
 			
 		self.candidateBuilder = CandidateBuilder()
-		relTypes,candidateRelations,candidateClasses = self.candidateBuilder.build(corpus)
+		relTypes,candidateRelations,candidateClasses = self.candidateBuilder.fit_transform(corpus)
 		
 		self.relTypeToValidEntityTypes = defaultdict(set)
 		
@@ -249,7 +249,7 @@ class RelationClassifier:
 	
 		assert isinstance(corpus,kindred.Corpus)
 			
-		_,candidateRelations,testClasses = self.candidateBuilder.build(corpus)
+		_,candidateRelations,testClasses = self.candidateBuilder.transform(corpus)
 
 		#if False:
 		#	testVectors = self.vectorizer.transform(candidateRelations)

@@ -10,6 +10,7 @@ class Corpus:
 		if not text is None:
 			doc = kindred.Document(text)
 			self.addDocument(doc)
+		self.parsed = False
 
 	def addDocument(self,doc):
 		assert isinstance(doc,kindred.Document)

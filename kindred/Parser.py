@@ -91,5 +91,6 @@ class Parser:
 					
 				sentence = kindred.Sentence(tokens, dependencies, entitiesWithLocations, d.getSourceFilename())
 				d.addSentence(sentence)
-	
-	#return allSentenceData
+
+		corpus.parsed = True
+

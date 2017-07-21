@@ -11,7 +11,7 @@ def test_simpleVectorizer():
 	corpus = kindred.Corpus(text)
 	
 	candidateBuilder = CandidateBuilder()
-	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(corpus)
+	relTypes,candidateRelations,candidateClasses = candidateBuilder.fit_transform(corpus)
 	
 	# We'll just get the vectors for the selectedTokenTypes
 	vectorizer = Vectorizer()
@@ -34,8 +34,8 @@ def test_vectorizer_selectedTokenTypes():
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
 	candidateBuilder = CandidateBuilder()
-	relTypes1,candidateRelations1,candidateClasses1 = candidateBuilder.build(corpus1)
-	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.build(corpus2)
+	relTypes1,candidateRelations1,candidateClasses1 = candidateBuilder.fit_transform(corpus1)
+	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.transform(corpus2)
 
 	chosenFeatures = ["selectedTokenTypes"]
 	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
@@ -59,8 +59,8 @@ def test_vectorizer_ngrams_betweenEntities():
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
 	candidateBuilder = CandidateBuilder()
-	relTypes1,candidateRelations1,candidateClasses1 = candidateBuilder.build(corpus1)
-	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.build(corpus2)
+	relTypes1,candidateRelations1,candidateClasses1 = candidateBuilder.fit_transform(corpus1)
+	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.transform(corpus2)
 
 	chosenFeatures = ["ngrams_betweenEntities"]
 	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
@@ -88,8 +88,8 @@ def test_vectorizer_bigrams():
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
 	candidateBuilder = CandidateBuilder()
-	relTypes1,candidateRelations1,candidateClasses1 = candidateBuilder.build(corpus1)
-	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.build(corpus2)
+	relTypes1,candidateRelations1,candidateClasses1 = candidateBuilder.fit_transform(corpus1)
+	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.transform(corpus2)
 
 	chosenFeatures = ["bigrams"]
 	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
@@ -119,8 +119,8 @@ def test_vectorizer_dependencyPathElements():
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
 	candidateBuilder = CandidateBuilder()
-	relTypes1,candidateRelations1,candidateClasses1 = candidateBuilder.build(corpus1)
-	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.build(corpus2)
+	relTypes1,candidateRelations1,candidateClasses1 = candidateBuilder.fit_transform(corpus1)
+	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.transform(corpus2)
 
 	chosenFeatures = ["dependencyPathElements"]
 	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
@@ -146,8 +146,8 @@ def test_vectorizer_dependencyPathNearSelected():
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
 	candidateBuilder = CandidateBuilder()
-	relTypes1,candidateRelations1,candidateClasses1 = candidateBuilder.build(corpus1)
-	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.build(corpus2)
+	relTypes1,candidateRelations1,candidateClasses1 = candidateBuilder.fit_transform(corpus1)
+	relTypes2,candidateRelations2,candidateClasses2 = candidateBuilder.transform(corpus2)
 
 	chosenFeatures = ["dependencyPathNearSelected"]
 	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)

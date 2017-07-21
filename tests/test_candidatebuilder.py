@@ -11,7 +11,7 @@ def test_simpleRelationCandidates():
 	corpus.addDocument(doc)
 	
 	candidateBuilder = CandidateBuilder()
-	relTypes,candidateRelations,candidateClasses = candidateBuilder.build(corpus)
+	relTypes,candidateRelations,candidateClasses = candidateBuilder.fit_transform(corpus)
 	
 	assert relTypes == [('treats', 'obj', 'subj')]
 	assert candidateClasses == [[0], [1], [0], [0]]
