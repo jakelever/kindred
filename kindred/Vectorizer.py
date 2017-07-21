@@ -45,7 +45,9 @@ class Vectorizer:
 	def __init__(self,featureChoice=None,tfidf=True):
 		self.fitted = False
 		
-		validFeatures = ["selectedTokenTypes","ngrams_betweenEntities"]
+		self._registerFunctions()
+		validFeatures = self.featureInfo.keys()
+
 		if featureChoice is None:
 			self.chosenFeatures = validFeatures
 		else:
@@ -55,7 +57,7 @@ class Vectorizer:
 		
 		self.tfidf = tfidf
 
-		self._registerFunctions()
+
 		self.dictVectorizers = {}
 		self.tfidfTransformers = {}
 
@@ -63,6 +65,7 @@ class Vectorizer:
 		self.featureInfo = {}
 		self.featureInfo['selectedTokenTypes'] = {'func':Vectorizer.doSelectedTokenTypes,'never_tfidf':True}
 		self.featureInfo['ngrams_betweenEntities'] = {'func':Vectorizer.doNGramsBetweenEntities,'never_tfidf':False}
+		self.featureInfo['bigrams'] = {'func':Vectorizer.doBigrams,'never_tfidf':False}
 		
 	def getFeatureNames(self):
 		assert self.fitted == True, "Must have fit data first"
@@ -104,6 +107,24 @@ class Vectorizer:
 					tokenData = [ sentence.tokens[i].word.lower() for i in range(startPos,endPos) ]
 					for t in tokenData:
 						dataForThisCR[u"ngrams_betweenentities_%s" % t] += 1
+					data.append(dataForThisCR)
+
+		return data
+	
+	def doBigrams(self,corpus):
+		entityMapping = corpus.getEntityMapping()
+		data = []	
+		for doc in corpus.documents:
+			for sentence in doc.sentences:
+				for cr,_ in sentence.candidateRelationsWithClasses:
+					dataForThisCR = Counter()
+
+					startPos = 0
+					endPos = len(sentence.tokens)
+
+					tokenData = [ (sentence.tokens[i].word.lower(),sentence.tokens[i+1].word.lower()) for i in range(startPos,endPos-1) ]
+					for t in tokenData:
+						dataForThisCR[u"bigrams_%s_%s" % t] += 1
 					data.append(dataForThisCR)
 
 		return data
