@@ -156,7 +156,6 @@ def test_vectorizer_dependencyPathNearSelected():
 	matrix2 = vectorizer.transform(corpus2)
 	
 	colnames = vectorizer.getFeatureNames()
-	print colnames
 	expectedNames = ['dependencypathnearselectedtoken_0_nsubj', 'dependencypathnearselectedtoken_0_nsubjpass', 'dependencypathnearselectedtoken_1_nsubj', 'dependencypathnearselectedtoken_1_nsubjpass']
 	assert colnames == expectedNames
 	
