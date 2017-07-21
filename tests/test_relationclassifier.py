@@ -1,5 +1,4 @@
 import kindred
-from kindred.RelationClassifier import RelationClassifier
 
 from kindred.datageneration import generateData,generateTestData
 
@@ -9,7 +8,7 @@ def test_simpleRelationClassifier():
 	predictionCorpus = testCorpusGold.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = RelationClassifier()
+	classifier = kindred.RelationClassifier()
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
@@ -23,7 +22,7 @@ def test_simpleMultiClassRelationClassifier():
 	predictionCorpus = testCorpusGold.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = RelationClassifier(useSingleClassifier=False)
+	classifier = kindred.RelationClassifier(useSingleClassifier=False)
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
@@ -41,7 +40,7 @@ def _SeeDevmini():
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = RelationClassifier()
+	classifier = kindred.RelationClassifier()
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
@@ -55,7 +54,7 @@ def test_singleClassifier():
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = RelationClassifier()
+	classifier = kindred.RelationClassifier()
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
@@ -69,7 +68,7 @@ def test_multiClassifiers():
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = RelationClassifier(useSingleClassifier=False)
+	classifier = kindred.RelationClassifier(useSingleClassifier=False)
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
@@ -83,7 +82,7 @@ def test_featureBuilder():
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = RelationClassifier(useBuilder=True)
+	classifier = kindred.RelationClassifier(useBuilder=True)
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
@@ -97,7 +96,7 @@ def test_multiClassifiersAndFeatureBuilder():
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = RelationClassifier(useSingleClassifier=False,useBuilder=True)
+	classifier = kindred.RelationClassifier(useSingleClassifier=False,useBuilder=True)
 	classifier.train(trainCorpus)
 
 	classifier.predict(predictionCorpus)
@@ -111,7 +110,7 @@ def test_noTFIDF():
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = RelationClassifier(tfidf=False)
+	classifier = kindred.RelationClassifier(tfidf=False)
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
@@ -125,7 +124,7 @@ def test_threshold():
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = RelationClassifier(threshold=0.3)
+	classifier = kindred.RelationClassifier(threshold=0.3)
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
@@ -139,7 +138,7 @@ def test_singleFeature_selectedTokenTypes():
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = RelationClassifier(features=['selectedTokenTypes'])
+	classifier = kindred.RelationClassifier(features=['selectedTokenTypes'])
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)

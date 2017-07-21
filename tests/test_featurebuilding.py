@@ -1,5 +1,4 @@
 import kindred
-from kindred.RelationClassifier import RelationClassifier
 
 from kindred.datageneration import generateData,generateTestData
 
@@ -26,7 +25,7 @@ def _featureBuilding(useBB3):
 		bestF1,bestFeature = -1,-1
 		for feature in featureChoice:
 			chosenFeatures = finalChosenFeatures + [feature]
-			classifier = RelationClassifier(useBuilder=useBuilder,features=chosenFeatures)
+			classifier = kindred.RelationClassifier(useBuilder=useBuilder,features=chosenFeatures)
 			classifier.train(trainData)
 		
 			predictedRelations = classifier.predict(testData_TextAndEntities)

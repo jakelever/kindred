@@ -1,5 +1,4 @@
 import kindred
-from kindred.RelationClassifier import RelationClassifier
 
 from kindred.datageneration import generateData,generateTestData
 
@@ -25,7 +24,7 @@ def _featureBuilding(useBB3):
 
 	for threshold in range(1,100,2):
 		fthreshold = threshold/float(100)
-		classifier = RelationClassifier(useBuilder=False,features=chosenFeatures,threshold=fthreshold)
+		classifier = kindred.RelationClassifier(useBuilder=False,features=chosenFeatures,threshold=fthreshold)
 		classifier.train(trainData)
 	
 		predictedRelations = classifier.predict(testData_TextAndEntities)

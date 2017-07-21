@@ -1,7 +1,6 @@
 import sys
 
 import kindred
-from kindred.RelationClassifier import RelationClassifier
 
 from kindred.datageneration import generateData,generateTestData
 
@@ -12,7 +11,7 @@ def _bionlpst_bb3():
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = RelationClassifier(useBuilder=True)
+	classifier = kindred.RelationClassifier(useBuilder=True)
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
@@ -28,7 +27,7 @@ def _bionlpst_seedev():
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = RelationClassifier()
+	classifier = kindred.RelationClassifier()
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)

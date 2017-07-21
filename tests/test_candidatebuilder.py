@@ -1,5 +1,4 @@
 import kindred
-from kindred.CandidateBuilder import CandidateBuilder
 
 from kindred.datageneration import generateData,generateTestData
 	
@@ -10,7 +9,7 @@ def test_simpleRelationCandidates():
 	doc = kindred.Document(text)
 	corpus.addDocument(doc)
 	
-	candidateBuilder = CandidateBuilder()
+	candidateBuilder = kindred.CandidateBuilder()
 	candidateBuilder.fit_transform(corpus)
 	
 	assert corpus.relationTypes == [('treats', 'obj', 'subj')]

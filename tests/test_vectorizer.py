@@ -1,7 +1,5 @@
 import numpy as np
 import kindred
-from kindred.CandidateBuilder import CandidateBuilder
-from kindred.Vectorizer import Vectorizer
 
 from kindred.datageneration import generateData,generateTestData
 	
@@ -10,11 +8,11 @@ def test_simpleVectorizer():
 
 	corpus = kindred.Corpus(text)
 	
-	candidateBuilder = CandidateBuilder()
+	candidateBuilder = kindred.CandidateBuilder()
 	candidateBuilder.fit_transform(corpus)
 	
 	# We'll just get the vectors for the selectedTokenTypes
-	vectorizer = Vectorizer()
+	vectorizer = kindred.Vectorizer()
 	vectors = vectorizer.fit_transform(corpus)
 	
 	tuples = [(0, 2),(1, 0),(2, 2),(3, 1),(0, 3),(1, 5),(2, 4),(3, 5)]
@@ -33,14 +31,14 @@ def test_vectorizer_selectedTokenTypes():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
-	candidateBuilder = CandidateBuilder()
+	candidateBuilder = kindred.CandidateBuilder()
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
 
 	candidates = corpus1.getCandidateRelations()
 
 	chosenFeatures = ["selectedTokenTypes"]
-	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
+	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)
 	matrix2 = vectorizer.transform(corpus2)
@@ -60,12 +58,12 @@ def test_vectorizer_ngrams_betweenEntities():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
-	candidateBuilder = CandidateBuilder()
+	candidateBuilder = kindred.CandidateBuilder()
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
 
 	chosenFeatures = ["ngrams_betweenEntities"]
-	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
+	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)
 	matrix2 = vectorizer.transform(corpus2)
@@ -89,12 +87,12 @@ def test_vectorizer_bigrams():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
-	candidateBuilder = CandidateBuilder()
+	candidateBuilder = kindred.CandidateBuilder()
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
 
 	chosenFeatures = ["bigrams"]
-	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
+	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)
 	matrix2 = vectorizer.transform(corpus2)
@@ -120,12 +118,12 @@ def test_vectorizer_dependencyPathElements():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
-	candidateBuilder = CandidateBuilder()
+	candidateBuilder = kindred.CandidateBuilder()
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
 
 	chosenFeatures = ["dependencyPathElements"]
-	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
+	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)
 	matrix2 = vectorizer.transform(corpus2)
@@ -147,12 +145,12 @@ def test_vectorizer_dependencyPathNearSelected():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
-	candidateBuilder = CandidateBuilder()
+	candidateBuilder = kindred.CandidateBuilder()
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
 
 	chosenFeatures = ["dependencyPathNearSelected"]
-	vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=True)
+	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)
 	matrix2 = vectorizer.transform(corpus2)
