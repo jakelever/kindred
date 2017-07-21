@@ -34,7 +34,7 @@ class CandidateBuilder:
 			
 		self.fitted = True
 	
-		return self.transform(corpus)
+		self.transform(corpus)
 
 	def transform(self,corpus):
 		assert self.fitted == True, "CandidateBuilder must be fit to corpus first"
@@ -44,9 +44,6 @@ class CandidateBuilder:
 			parser = kindred.Parser()
 			parser.parse(corpus)
 
-		candidateRelations = []
-		candidateClasses = []
-		
 		for doc in corpus.documents:
 			existingRelations = defaultdict(list)
 			for r in doc.getRelations():
@@ -70,10 +67,9 @@ class CandidateBuilder:
 					if relKey in existingRelations:
 						candidateClass = existingRelations[relKey]
 					
-					candidateRelations.append(candidateRelation)
-					candidateClasses.append(candidateClass)
+					sentence.addCandidateRelation(candidateRelation,candidateClass)
+
+				sentence.candidateRelationsProcessed = True
 					
-		assert len(candidateRelations) == len(candidateClasses)
-		
-		return self.relTypes, candidateRelations, candidateClasses
+		corpus.addRelationTypes(self.relTypes)
 

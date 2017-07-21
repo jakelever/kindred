@@ -1,11 +1,10 @@
 
 import kindred
-from kindred.RelationClassifier import RelationClassifier
-
 from kindred.datageneration import generateData,generateTestData
 
 def test_longParse():
 	trainCorpus, testCorpusGold = generateTestData(positiveCount=100,negativeCount=100)
+	print kindred.Parser
 	parser = kindred.Parser()
 	print("A")
 	parser.parse(trainCorpus)
@@ -33,3 +32,5 @@ def test_longParse():
 	parser.parse(devCorpus)
 	print("H")
 
+if __name__ == '__main__':
+	test_longParse()

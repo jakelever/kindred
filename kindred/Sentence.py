@@ -15,6 +15,9 @@ class Sentence:
 	def getEntityType(self,entityID):
 		return self.entityIDToType[entityID]
 
+	def addCandidateRelation(self, relation, relationtypeClass):
+		self.candidateRelationsWithClasses.append((relation,relationtypeClass))
+
 	def __init__(self, tokens, dependencies, entitiesWithLocations, sourceFilename=None):
 		assert isinstance(tokens, list) 
 		assert isinstance(dependencies, list) 
@@ -32,5 +35,8 @@ class Sentence:
 		self.dependencies = dependencies
 		
 		self.entityIDToType = { e.entityID:e.entityType for e,_ in self.entitiesWithLocations }
+
+		self.candidateRelationsWithClasses = []
+		self.candidateRelationsProcessed = False
 	
 

@@ -71,6 +71,22 @@ class Document:
 	def getRelations(self):
 		return self.relations
 	
+	def getCandidateRelations(self):
+		assert not self.sentences is None, "Document must be parsed and CandidateBuilder use to get candidate relations first"
+		relations = []
+		for sentence in self.sentences:
+			assert sentence.candidateRelationsProcessed == True, "CandidateBuilder use to get candidate relations first"
+			relations += [ relation for relation,relationtypeClass in sentence.candidateRelationsWithClasses ]
+		return relations
+
+	def getCandidateClasses(self):
+		assert not self.sentences is None, "Document must be parsed and CandidateBuilder use to get candidate relations first"
+		classes = []
+		for sentence in self.sentences:
+			assert sentence.candidateRelationsProcessed == True, "CandidateBuilder use to get candidate relations first"
+			classes += [ relationtypeClass for relation,relationtypeClass in sentence.candidateRelationsWithClasses ]
+		return classes
+
 	def getSourceEntityIDsToEntityIDs(self):
 		return {e.sourceEntityID:e.entityID for e in self.entities}
 	

@@ -21,29 +21,18 @@ class Vectorizer:
 		assert not self.verseVectorizer is None, "Must have fit data first"
 		return self.verseVectorizer.getFeatureNames()
 				
-	def fit_transform(self,corpus,candidateRelations):
+	def fit_transform(self,corpus):
 		assert self.verseVectorizer is None, "Vectorizer has already been fit. Use transform() instead"
-	
 		assert isinstance(corpus,kindred.Corpus)
-		assert isinstance(candidateRelations,list)
-		for r in candidateRelations:
-			assert isinstance(r,kindred.Relation)
 			
-		self.verseVectorizer = VERSEVectorizer(corpus,candidateRelations,self.featureChoice,self.tfidf)
+		self.verseVectorizer = VERSEVectorizer(corpus,self.featureChoice,self.tfidf)
 		return self.verseVectorizer.getTrainingVectors()
 		
-	def fit(self,corpus,candidateRelations):
-		self.fit_transform(self,corpus,candidateRelations)
-		
-	def transform(self,corpus,candidateRelations):
+	def transform(self,corpus):
 		assert not self.verseVectorizer is None, "Vectorizer has not been fit. Use fit() or fit_transform() first"
-		
 		assert isinstance(corpus,kindred.Corpus)
-		assert isinstance(candidateRelations,list)
-		for r in candidateRelations:
-			assert isinstance(r,kindred.Relation)
 		
-		return self.verseVectorizer.vectorize(corpus,candidateRelations)
+		return self.verseVectorizer.vectorize(corpus)
 		
 
 

@@ -1,9 +1,6 @@
 import os
 
 import kindred
-import kindred.Dependencies
-from kindred.Parser import Parser
-
 from kindred.datageneration import generateData,generateTestData
 
 def assertEntityWithLocation(entityWithLocation,expectedType,expectedLocs,expectedSourceEntityID):
@@ -22,7 +19,7 @@ def test_simpleSentenceParse():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">lung</cancer> and unknown <cancer id="2">cancers</cancer>'
 	corpus = kindred.Corpus(text)
 	
-	parser = Parser()
+	parser = kindred.Parser()
 	parser.parse(corpus)
 	
 	assert len(corpus.documents) == 1
@@ -54,7 +51,7 @@ def test_twoSentenceParse():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer>. <drug id="3">Aspirin</drug> is the main cause of <disease id="4">boneitis</disease>.'
 	corpus = kindred.Corpus(text)
 	
-	parser = Parser()
+	parser = kindred.Parser()
 	parser.parse(corpus)
 	
 	assert len(corpus.documents) == 1
@@ -105,7 +102,7 @@ def test_largeSentence():
 	text = " ".join( [ singleSentence for _ in range(repeatCount) ] )
 	corpus = kindred.Corpus(text)
 	
-	parser = Parser()
+	parser = kindred.Parser()
 	parser.parse(corpus)
 	
 	assert len(corpus.documents) == 1

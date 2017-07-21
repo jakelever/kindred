@@ -11,9 +11,12 @@ def test_simpleRelationCandidates():
 	corpus.addDocument(doc)
 	
 	candidateBuilder = CandidateBuilder()
-	relTypes,candidateRelations,candidateClasses = candidateBuilder.fit_transform(corpus)
+	candidateBuilder.fit_transform(corpus)
 	
-	assert relTypes == [('treats', 'obj', 'subj')]
+	assert corpus.relationTypes == [('treats', 'obj', 'subj')]
+	candidateRelations = corpus.getCandidateRelations()
+	candidateClasses = corpus.getCandidateClasses()
+
 	assert candidateClasses == [[0], [1], [0], [0]]
 	assert len(candidateRelations) == 4
 	

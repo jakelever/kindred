@@ -12,9 +12,33 @@ class Corpus:
 			self.addDocument(doc)
 		self.parsed = False
 
+		self.relationTypes = None
+
 	def addDocument(self,doc):
 		assert isinstance(doc,kindred.Document)
 		self.documents.append(doc)
+
+	def getCandidateRelations(self):
+		relations = []
+		for doc in self.documents:
+			relations += doc.getCandidateRelations()
+		return relations
+	
+	def getCandidateClasses(self):
+		classes = []
+		for doc in self.documents:
+			classes += doc.getCandidateClasses()
+		return classes
+
+	#def getRelationtypeClasses(self):
+	#	relationtypeClasses = []
+	#	for doc in self.documents:
+	#		for sentence in doc.sentences:
+	#			relationtypeClasses += [ relationtypeClass for relation,relationtypeClass in sentence.relationsWithClasses ]
+	#	return relationtypeClasses
+
+	def addRelationTypes(self,relationTypes):
+		self.relationTypes = relationTypes
 
 	def clone(self):
 		cloned = Corpus()

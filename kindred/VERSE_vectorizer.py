@@ -206,9 +206,11 @@ class VERSEVectorizer:
 	"""
 	
 	def getFeatureNames(self):
-		return self.vectorize(corpus=None,candidates=[],featureNamesOnly=True)
+		return self.featureNames
 	
-	def vectorize(self,corpus,candidates,featureNamesOnly=False):
+	def vectorize(self,corpus,featureNamesOnly=False):
+		candidates = corpus.getCandidateRelations()
+
 		examples = [ CandidateRelationToExample(corpus,c) for c in candidates ]
 
 		if featureNamesOnly == False:
@@ -400,7 +402,7 @@ class VERSEVectorizer:
 	def getTrainingVectors(self):
 		return self.trainingVectors
 		
-	def __init__(self, corpus, candidates, featureChoice=None, tfidf=False):
+	def __init__(self, corpus, featureChoice=None, tfidf=False):
 		options = ["selectedTokenTypes","ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
 
 		if featureChoice is None:
@@ -414,10 +416,14 @@ class VERSEVectorizer:
 		for feature in self.chosenFeatures:
 			assert feature in options, "Feature (%s) is not a valid feature" % feature
 			
+		candidates = corpus.getCandidateRelations()
+
 		self.tfidf = tfidf
 		#self.argCount = len(examples[0].arguments)
 		self.argCount = len(candidates[0].entityIDs)
 		self.tools = {}
-		self.trainingVectors = self.vectorize(corpus,candidates)
+		self.trainingVectors = self.vectorize(corpus)
+
+		self.featureNames = self.vectorize(corpus,featureNamesOnly=True)
 
 

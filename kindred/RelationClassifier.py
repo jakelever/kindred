@@ -113,7 +113,7 @@ class RelationClassifier:
 		featureChoice = ["selectedTokenTypes","ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
 		for feature in featureChoice:
 			vectorizers[feature] = Vectorizer(featureChoice=[feature],tfidf=tfidf)
-			trainVectors[feature] = vectorizers[feature].fit_transform(corpus,candidateRelations)
+			trainVectors[feature] = vectorizers[feature].fit_transform(corpus)
 
 		groupVector = None
 		chosenFeatures = []
@@ -155,7 +155,7 @@ class RelationClassifier:
 		assert isinstance(corpus,kindred.Corpus)
 			
 		self.candidateBuilder = CandidateBuilder()
-		relTypes,candidateRelations,candidateClasses = self.candidateBuilder.fit_transform(corpus)
+		self.candidateBuilder.fit_transform(corpus)
 		
 		self.relTypeToValidEntityTypes = defaultdict(set)
 		
@@ -169,14 +169,11 @@ class RelationClassifier:
 				self.relTypeToValidEntityTypes[relKey].add(validEntityTypes)
 			
 				
-		self.classToRelType = { (i+1):relType for i,relType in enumerate(relTypes) }
-		
-		allClasses = set()
-		for c in candidateClasses:
-			allClasses.update(c)
-		allClasses = sorted(list(allClasses))
-		allClasses = [ c for c in allClasses if c != 0 ]
-		
+		self.classToRelType = { (i+1):relType for i,relType in enumerate(corpus.relationTypes) }
+
+		# Get the set of valid classes
+		relationtypeCount = len(corpus.relationTypes)
+		allClasses = list(range(1,relationtypeCount+1))
 		self.allClasses = allClasses
 	
 		#options = ["ngrams","selectedngrams","bigrams","ngramsPOS","selectedngramsPOS","ngramsOfDependencyPath","bigramsOfDependencyPath","selectedTokenTypes","lemmas","selectedlemmas","dependencyPathElements","dependencyPathNearSelected","splitAcrossSentences","skipgrams_2","skipgrams_3","skipgrams_4","skipgrams_5","skipgrams_6","skipgrams_7","skipgrams_8","skipgrams_9","skipgrams_10","ngrams_betweenEntities","bigrams_betweenEntities"]
@@ -185,11 +182,12 @@ class RelationClassifier:
 
 		#tmpClassData = [ (1 in candidateClassGroup) for candidateClassGroup in candidateClasses ]
 
+		candidateRelations = corpus.getCandidateRelations()
+		candidateClasses = corpus.getCandidateClasses()
+
 		#useSingleClassifier = False
 		if self.useSingleClassifier:
 			#chosenFeatures = ["selectedTokenTypes","dependencyPathElements","ngrams_betweenEntities","bigrams_betweenEntities","bigramsOfDependencyPath"]
-
-
 
 			simplifiedClasses = []
 			# TODO: Try sparse matrix rep
@@ -204,7 +202,7 @@ class RelationClassifier:
 				chosenFeatures = self.defaultFeatures
 
 			self.vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=self.tfidf)
-			trainVectors = self.vectorizer.fit_transform(corpus,candidateRelations)
+			trainVectors = self.vectorizer.fit_transform(corpus)
 		
 			assert trainVectors.shape[0] == len(candidateClasses)
 		
@@ -220,7 +218,7 @@ class RelationClassifier:
 				chosenFeatures = self.defaultFeatures
 
 				self.vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=self.tfidf)
-				tmpMatrix = self.vectorizer.fit_transform(corpus,candidateRelations)
+				tmpMatrix = self.vectorizer.fit_transform(corpus)
 			self.clfs = {}
 			self.vectorizers = {}
 			for c in self.allClasses:
@@ -229,7 +227,7 @@ class RelationClassifier:
 				if self.useBuilder:
 					chosenFeatures = self.buildFeatureSet(corpus,candidateRelations,tmpClassData,self.tfidf)
 					self.vectorizers[c] = Vectorizer(featureChoice=chosenFeatures,tfidf=self.tfidf)
-					tmpMatrix = self.vectorizers[c].fit_transform(corpus,candidateRelations)
+					tmpMatrix = self.vectorizers[c].fit_transform(corpus)
 
 				#save_sparse_csr('train.matrix',trainVectors.tocsr())
 				#saveClasses('train.classes',tmpClassData)
@@ -249,7 +247,7 @@ class RelationClassifier:
 	
 		assert isinstance(corpus,kindred.Corpus)
 			
-		_,candidateRelations,testClasses = self.candidateBuilder.transform(corpus)
+		self.candidateBuilder.transform(corpus)
 
 		#if False:
 		#	testVectors = self.vectorizer.transform(candidateRelations)
@@ -259,6 +257,8 @@ class RelationClassifier:
 		#save_sparse_csr('test.matrix',testVectors.tocsr())
 		#saveClasses('test.classes',tmpClassData)
 
+		candidateRelations = corpus.getCandidateRelations()
+		candidateClasses = corpus.getCandidateClasses()
 		
 		entityIDsToType = {}
 		for doc in corpus.documents:
@@ -268,7 +268,7 @@ class RelationClassifier:
 		predictedRelations = []
 		
 		if self.useSingleClassifier:
-			tmpMatrix = self.vectorizer.transform(corpus,candidateRelations)
+			tmpMatrix = self.vectorizer.transform(corpus)
 
 			#predictedClasses = self.clfs[c].predict(testVectors)
 			predictedClasses = self.clf.predict(tmpMatrix)
@@ -286,12 +286,12 @@ class RelationClassifier:
 					predictedRelations.append(predictedRelation)
 		else:
 			if not self.useBuilder:
-				tmpMatrix = self.vectorizer.transform(corpus,candidateRelations)
+				tmpMatrix = self.vectorizer.transform(corpus)
 
 			for c in self.allClasses:
 
 				if self.useBuilder:
-					tmpMatrix = self.vectorizers[c].transform(corpus,candidateRelations)
+					tmpMatrix = self.vectorizers[c].transform(corpus)
 
 				#predictedClasses = self.clfs[c].predict(testVectors)
 				predicted = self.clfs[c].predict(tmpMatrix)
