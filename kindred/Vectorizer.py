@@ -56,6 +56,7 @@ class Vectorizer2:
 		self.fitted = False
 		
 		validFeatures = ["selectedTokenTypes"]
+		validFeatures = ["ngrams_betweenEntities"]
 		if featureChoice is None:
 			self.chosenFeatures = validFeatures
 		else:
