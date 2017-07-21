@@ -7,7 +7,7 @@ from scipy.sparse import coo_matrix, csr_matrix, lil_matrix, hstack, vstack
 import kindred
 from kindred.VERSE_vectorizer import VERSEVectorizer
 
-class Vectorizer:
+class Vectorizer2:
 	"""
 	Vectorizes set of candidate relations into scipy sparse matrix.
 	"""
@@ -37,7 +37,7 @@ class Vectorizer:
 
 
 
-class Vectorizer2:
+class Vectorizer:
 	"""
 	Vectorizes set of candidate relations into scipy sparse matrix.
 	"""
@@ -57,6 +57,7 @@ class Vectorizer2:
 
 		self._registerFunctions()
 		self.dictVectorizers = {}
+		self.tfidfTransformers = {}
 
 	def _registerFunctions(self):
 		self.featureInfo = {}
@@ -83,16 +84,28 @@ class Vectorizer2:
 			data.append(tokenInfo)
 		return data
 	
-	def doNGramsBetweenEntities(self,corpus,candidateRelations):
+	def doNGramsBetweenEntities(self,corpus):
 		entityMapping = corpus.getEntityMapping()
 		data = []	
-		for cr in corpus.getCandidateRelations():
-			stuff = {}
-			for argI,eID in enumerate(cr.entityIDs):
-				eType = entityMapping[eID].entityType
-				argName = "selectedtokentypes_%d_%s" % (argI,eType)
-				stuff[argName] = 1
-			data.append(stuff)
+		for doc in corpus.documents:
+			for sentence in doc.sentences:
+				for cr,_ in sentence.candidateRelationsWithClasses:
+					dataForThisCR = Counter()
+
+					assert len(cr.entityIDs) == 2
+					pos1 = sentence.entityIDToLoc[cr.entityIDs[0]]
+					pos2 = sentence.entityIDToLoc[cr.entityIDs[1]]
+					
+					if max(pos1) < min(pos2):
+						startPos,endPos = max(pos1)+1,min(pos2)
+					else:
+						startPos,endPos = max(pos2)+1,min(pos1)
+
+					tokenData = [ sentence.tokens[i].word.lower() for i in range(startPos,endPos) ]
+					for t in tokenData:
+						dataForThisCR[u"ngrams_betweenentities_%s" % t] += 1
+					data.append(dataForThisCR)
+
 		return data
 
 	def _vectorize(self,corpus,fit):
@@ -106,9 +119,18 @@ class Vectorizer2:
 			data = featureFunction(self,corpus)
 			if fit:
 				self.dictVectorizers[feature] = DictVectorizer()
-				matrices.append(self.dictVectorizers[feature].fit_transform(data))
+				if self.tfidf and not never_tfidf:
+					self.tfidfTransformers[feature] = TfidfTransformer()
+					intermediate = self.dictVectorizers[feature].fit_transform(data)
+					matrices.append(self.tfidfTransformers[feature].fit_transform(intermediate))
+				else:
+					matrices.append(self.dictVectorizers[feature].fit_transform(data))
 			else:
-				matrices.append(self.dictVectorizers[feature].transform(data))
+				if self.tfidf and not never_tfidf:
+					intermediate = self.dictVectorizers[feature].transform(data)
+					matrices.append(self.tfidfTransformers[feature].transform(intermediate))
+				else:
+					matrices.append(self.dictVectorizers[feature].transform(data))
 
 		mergedMatrix = hstack(matrices)
 		return mergedMatrix

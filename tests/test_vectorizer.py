@@ -69,6 +69,7 @@ def test_vectorizer_ngrams_betweenEntities():
 	matrix2 = vectorizer.transform(corpus2)
 			
 	colnames = vectorizer.getFeatureNames()
+	print colnames
 	expectedNames = [u'ngrams_betweenentities_a', u'ngrams_betweenentities_be', u'ngrams_betweenentities_can', u'ngrams_betweenentities_clinical', u'ngrams_betweenentities_common', u'ngrams_betweenentities_effect', u'ngrams_betweenentities_failed', u'ngrams_betweenentities_for', u'ngrams_betweenentities_is', u'ngrams_betweenentities_known', u'ngrams_betweenentities_of', u'ngrams_betweenentities_side', u'ngrams_betweenentities_treated', u'ngrams_betweenentities_treatment', u'ngrams_betweenentities_trials', u'ngrams_betweenentities_with']
 	assert colnames == expectedNames
 	

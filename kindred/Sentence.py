@@ -35,6 +35,7 @@ class Sentence:
 		self.dependencies = dependencies
 		
 		self.entityIDToType = { e.entityID:e.entityType for e,_ in self.entitiesWithLocations }
+		self.entityIDToLoc = { e.entityID:loc for e,loc in self.entitiesWithLocations }
 
 		self.candidateRelationsWithClasses = []
 		self.candidateRelationsProcessed = False
