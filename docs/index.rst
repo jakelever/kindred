@@ -26,8 +26,7 @@ Data types
    Document
    Relation
    Entity
-   ProcessedSentence
-   ProcessedEntity
+   Sentence
    Token
 
 Data sources
