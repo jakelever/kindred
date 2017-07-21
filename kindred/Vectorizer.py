@@ -71,10 +71,10 @@ class Vectorizer2:
 		return featureNames
 		
 
-	def doSelectedTokenTypes(self,corpus,candidateRelations):
+	def doSelectedTokenTypes(self,corpus):
 		entityMapping = corpus.getEntityMapping()
-		data = []	
-		for cr in candidateRelations:
+		data = []
+		for cr in corpus.getCandidateRelations():
 			tokenInfo = {}
 			for argI,eID in enumerate(cr.entityIDs):
 				eType = entityMapping[eID].entityType
@@ -86,7 +86,7 @@ class Vectorizer2:
 	def doNGramsBetweenEntities(self,corpus,candidateRelations):
 		entityMapping = corpus.getEntityMapping()
 		data = []	
-		for cr in candidateRelations:
+		for cr in corpus.getCandidateRelations():
 			stuff = {}
 			for argI,eID in enumerate(cr.entityIDs):
 				eType = entityMapping[eID].entityType
@@ -95,18 +95,15 @@ class Vectorizer2:
 			data.append(stuff)
 		return data
 
-	def _vectorize(self,corpus,candidateRelations,fit):
+	def _vectorize(self,corpus,fit):
 		assert isinstance(corpus,kindred.Corpus)
-		assert isinstance(candidateRelations,list)
-		for r in candidateRelations:
-			assert isinstance(r,kindred.Relation)
 			
 		matrices = []
 		for feature in self.chosenFeatures:
 			assert feature in self.featureInfo.keys()
 			featureFunction = self.featureInfo[feature]['func']
 			never_tfidf = self.featureInfo[feature]['never_tfidf']
-			data = featureFunction(self,corpus,candidateRelations)
+			data = featureFunction(self,corpus)
 			if fit:
 				self.dictVectorizers[feature] = DictVectorizer()
 				matrices.append(self.dictVectorizers[feature].fit_transform(data))
@@ -116,17 +113,14 @@ class Vectorizer2:
 		mergedMatrix = hstack(matrices)
 		return mergedMatrix
 			
-	def fit_transform(self,corpus,candidateRelations):
+	def fit_transform(self,corpus):
 		assert self.fitted == False
 		self.fitted = True
-		return self._vectorize(corpus,candidateRelations,True)
+		return self._vectorize(corpus,True)
 	
-	def fit(self,corpus,candidateRelations):
-		fit_transform(self,corpus,candidateRelations)
-		
-	def transform(self,corpus,candidateRelations):
+	def transform(self,corpus):
 		assert self.fitted == True
-		return self._vectorize(corpus,candidateRelations,False)
+		return self._vectorize(corpus,False)
 		
 		
 	
