@@ -47,6 +47,7 @@ class Vectorizer:
 		
 
 
+
 class Vectorizer2:
 	"""
 	Vectorizes set of candidate relations into scipy sparse matrix.
@@ -56,7 +57,7 @@ class Vectorizer2:
 		self.fitted = False
 		
 		validFeatures = ["selectedTokenTypes"]
-		validFeatures = ["ngrams_betweenEntities"]
+		#validFeatures = ["ngrams_betweenEntities"]
 		if featureChoice is None:
 			self.chosenFeatures = validFeatures
 		else:
@@ -65,46 +66,65 @@ class Vectorizer2:
 			self.chosenFeatures = featureChoice
 		
 		self.tfidf = tfidf
+
+		self._registerFunctions()
+		self.dictVectorizers = {}
+
+	def _registerFunctions(self):
+		self.funcCalls = {}
+		self.funcCalls['selectedTokenTypes'] = Vectorizer.doSelectedTokenTypes
 		
 	def getFeatureNames(self):
 		assert self.fitted == True, "Must have fit data first"
 		featureNames = []
-		return self.dictVec_selectedtokentypes.get_feature_names()
+		for feature in self.chosenFeatures:
+			featureNames += self.dictVectorizers[feature].get_feature_names()
+		return featureNames
 		
-	def doStuff(self,corpus,candidateRelations,fit):
-		assert isinstance(corpus,kindred.Corpus)
-		assert isinstance(candidateRelations,list)
-		for r in candidateRelations:
-			assert isinstance(r,kindred.Relation)
-					
+
+	def doSelectedTokenTypes(self,corpus,candidateRelations):
 		entityMapping = corpus.getEntityMapping()
-				
-		lotsOData = []
+		data = []	
 		for cr in candidateRelations:
 			stuff = {}
 			for argI,eID in enumerate(cr.entityIDs):
 				eType = entityMapping[eID].entityType
 				argName = "selectedtokentypes_%d_%s" % (argI,eType)
 				stuff[argName] = 1
-			lotsOData.append(stuff)
+			data.append(stuff)
+		return data
+
+	def _vectorize(self,corpus,candidateRelations,fit):
+		assert isinstance(corpus,kindred.Corpus)
+		assert isinstance(candidateRelations,list)
+		for r in candidateRelations:
+			assert isinstance(r,kindred.Relation)
 			
-		if fit:
-			self.dictVec_selectedtokentypes = DictVectorizer()
-			return self.dictVec_selectedtokentypes.fit_transform(lotsOData)
-		else:
-			return self.dictVec_selectedtokentypes.transform(lotsOData)
+		matrices = []
+		for feature in self.chosenFeatures:
+			assert feature in self.funcCalls
+			featureFunction = self.funcCalls[feature]
+			data = featureFunction(self,corpus,candidateRelations)
+			if fit:
+				self.dictVectorizers[feature] = DictVectorizer()
+				matrices.append(self.dictVectorizers[feature].fit_transform(data))
+			else:
+				matrices.append(self.dictVectorizers[feature].transform(data))
+
+		mergedMatrix = hstack(matrices)
+		return mergedMatrix
 			
 	def fit_transform(self,corpus,candidateRelations):
 		assert self.fitted == False
 		self.fitted = True
-		return self.doStuff(corpus,candidateRelations,True)
+		return self._vectorize(corpus,candidateRelations,True)
 	
 	def fit(self,corpus,candidateRelations):
 		fit_transform(self,corpus,candidateRelations)
 		
 	def transform(self,corpus,candidateRelations):
 		assert self.fitted == True
-		return self.doStuff(corpus,candidateRelations,False)
+		return self._vectorize(corpus,candidateRelations,False)
 		
 		
 	
