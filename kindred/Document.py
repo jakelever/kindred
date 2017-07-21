@@ -55,8 +55,8 @@ class Document:
 	def removeRelations(self):
 		self.relations = []
 
-	def addProcessedSentence(self,sentence):
-		assert isinstance(sentence,kindred.ProcessedSentence)
+	def addSentence(self,sentence):
+		assert isinstance(sentence,kindred.Sentence)
 		self.processedSentences.append(sentence)
 	
 	def addRelation(self,relation):

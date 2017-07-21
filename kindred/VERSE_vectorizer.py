@@ -160,10 +160,10 @@ class Example:
 		#self.arguments = [(arg1_sentenceid, arg1_locs),(arg2_sentenceid, arg2_locs)]
 		self.arguments = [ (0,loc) for loc in arg_locs ]
 
-def ProcessedSentenceToVerseSentence(s):
-	assert isinstance(s,kindred.ProcessedSentence)
-	argTypes = { e.entityID:e.entityType for e in s.processedEntities }
-	argLocs = { e.entityID:e.entityLocs for e in s.processedEntities }
+def SentenceToVerseSentence(s):
+	assert isinstance(s,kindred.Sentence)
+	argTypes = { e.entityID:e.entityType for e,locs in s.entitiesWithLocations }
+	argLocs = { e.entityID:locs for e,locs in s.entitiesWithLocations }
 	#def __init__(self, tokens, dependencies, eventTriggerLocs, eventTriggerTypes, argumentTriggerLocs, argumentTriggerTypes):
 
 	verseS = SentenceModel(s.tokens,s.dependencies,{},{},argLocs,argTypes)
@@ -183,12 +183,12 @@ def CandidateRelationToExample(corpus,r):
 	assert isinstance(corpus,kindred.Corpus)
 	assert isinstance(r,kindred.Relation)
 
-	processedSentence = findSentenceContainingRelation(corpus,r)
+	kindredSentence = findSentenceContainingRelation(corpus,r)
 
-	eID_to_locs = { e.entityID:e.entityLocs for e in processedSentence.processedEntities }
-	s = ProcessedSentenceToVerseSentence(processedSentence)
+	eID_to_locs = { e.entityID:locs for e,locs in kindredSentence.entitiesWithLocations }
+	verseSentence = SentenceToVerseSentence(kindredSentence)
 	locs = [ eID_to_locs[eID] for eID in r.entityIDs ]
-	example = Example("None",[s],locs)
+	example = Example("None",[verseSentence],locs)
 
 	return example
 			

@@ -82,14 +82,14 @@ class Parser:
 						entityIDsToTokenLocs[entityID].append(i)
 
 				# Let's gather up the information about the "known" entities in the sentence
-				processedEntities = []
+				entitiesWithLocations = []
 				for entityID,entityLocs in sorted(entityIDsToTokenLocs.items()):
 					entityType = entityTypeLookup[entityID]
 					e = entityIDsToEntities[entityID]
-					processedEntity = kindred.ProcessedEntity(e.entityType,entityLocs,entityID,e.sourceEntityID,e.position,e.text)
-					processedEntities.append(processedEntity)
+					entityWithLocation = (e, entityLocs)
+					entitiesWithLocations.append(entityWithLocation)
 					
-				sentence = kindred.ProcessedSentence(tokens, dependencies, processedEntities, d.getSourceFilename())
-				d.addProcessedSentence(sentence)
+				sentence = kindred.Sentence(tokens, dependencies, entitiesWithLocations, d.getSourceFilename())
+				d.addSentence(sentence)
 	
 	#return allSentenceData

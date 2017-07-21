@@ -10,7 +10,7 @@ class Sentence:
 		return " ".join(tokenWords)
 
 	def getEntityIDs(self):
-		return [ e.entityID for e in self.processedEntities ]
+		return [ e.entityID for e,_ in self.entitiesWithLocations ]
 		
 	def getEntityType(self,entityID):
 		return self.entityIDToType[entityID]
