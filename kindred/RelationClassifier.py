@@ -73,7 +73,14 @@ class RelationClassifier:
 	"""
 	def __init__(self,useSingleClassifier=True,useBuilder=False,tfidf=True,features=None,threshold=None):
 		"""
-		Constructor-time
+		Constructor for the RelationClassifier class
+		
+		:param self: Object instance
+		:param useSingleClassifier: Whether to use a single classifier
+		:param useBuilder: Whether to use the feature builder functionality
+		:param tfidf: Whether to use tfidf for the vectorizer
+		:param features: A list of specific features
+		:param threshold: A specific threshold to use for classification (which will then use a logistic regression classifier)
 		"""
 		self.isTrained = False
 		self.useSingleClassifier = useSingleClassifier
@@ -89,6 +96,16 @@ class RelationClassifier:
 		#self.defaultFeatures = ["selectedTokenTypes","dependencyPathElements"]
 
 	def buildFeatureSet(self,corpus,candidateRelations,classes,tfidf):
+		"""
+		Constructor for the RelationClassifier class
+		
+		:param self: Object instance
+		:param corpus: Corpus of documents to use for training
+		:param candidateRelations: List of candidate relations to use for training
+		:param classes: Associated numerical classes for training
+		:param tfidf: Whether to use tfidf for the vectorizer
+		"""
+		
 		vectorizers = {}
 		trainVectors = {}
 
