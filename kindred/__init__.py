@@ -7,6 +7,7 @@ from kindred.Relation import Relation
 from kindred.Token import Token
 from kindred.ProcessedEntity import ProcessedEntity
 from kindred.ProcessedSentence import ProcessedSentence
+from kindred.Sentence import Sentence
 
 # Components
 from kindred.Parser import Parser
