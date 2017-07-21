@@ -66,6 +66,8 @@ class Vectorizer:
 		self.featureInfo['selectedTokenTypes'] = {'func':Vectorizer.doSelectedTokenTypes,'never_tfidf':True}
 		self.featureInfo['ngrams_betweenEntities'] = {'func':Vectorizer.doNGramsBetweenEntities,'never_tfidf':False}
 		self.featureInfo['bigrams'] = {'func':Vectorizer.doBigrams,'never_tfidf':False}
+		self.featureInfo['dependencyPathElements'] = {'func':Vectorizer.doDependencyPathElements,'never_tfidf':True}
+		self.featureInfo['dependencyPathNearSelected'] = {'func':Vectorizer.doDependencyPathNearSelected,'never_tfidf':True}
 		
 	def getFeatureNames(self):
 		assert self.fitted == True, "Must have fit data first"
@@ -111,6 +113,51 @@ class Vectorizer:
 
 		return data
 	
+	def doDependencyPathElements(self,corpus):
+		entityMapping = corpus.getEntityMapping()
+		data = []	
+		for doc in corpus.documents:
+			for sentence in doc.sentences:
+				for cr,_ in sentence.candidateRelationsWithClasses:
+					dataForThisCR = Counter()
+
+					assert len(cr.entityIDs) == 2
+					pos1 = sentence.entityIDToLoc[cr.entityIDs[0]]
+					pos2 = sentence.entityIDToLoc[cr.entityIDs[1]]
+
+					combinedPos = pos1 + pos2
+
+					nodes,edges = sentence.extractMinSubgraphContainingNodes(combinedPos)
+					for a,b,dependencyType in edges:
+						dataForThisCR[u"dependencypathelements_%s" % dependencyType] += 1
+					data.append(dataForThisCR)
+
+		return data
+	
+	def doDependencyPathNearSelected(self,corpus):
+		entityMapping = corpus.getEntityMapping()
+		data = []	
+		for doc in corpus.documents:
+			for sentence in doc.sentences:
+				for cr,_ in sentence.candidateRelationsWithClasses:
+					dataForThisCR = Counter()
+
+					allEntityLocs = []
+					for eID in cr.entityIDs:
+						allEntityLocs += sentence.entityIDToLoc[eID]
+					
+					nodes,edges = sentence.extractMinSubgraphContainingNodes(allEntityLocs)
+					for i,eID in enumerate(cr.entityIDs):
+
+						pos = sentence.entityIDToLoc[eID]
+
+						for a,b,dependencyType in edges:
+							if a in pos:
+								dataForThisCR[u"dependencypathnearselectedtoken_%d_%s" % (i,dependencyType)] += 1
+					data.append(dataForThisCR)
+
+		return data
+
 	def doBigrams(self,corpus):
 		entityMapping = corpus.getEntityMapping()
 		data = []	

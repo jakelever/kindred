@@ -1,9 +1,53 @@
 import kindred
+import networkx as nx
+import itertools
 
 class Sentence:
 	"""
 	Set of tokens for a sentence after parsing
 	"""
+	
+	def extractMinSubgraphContainingNodes(self, minSet):
+		assert isinstance(minSet, list)
+		for i in minSet:
+			assert isinstance(i, int)
+			assert i >= 0
+			assert i < len(self.tokens)
+		G1 = nx.Graph()
+		for a,b,depType in self.dependencies:
+			G1.add_edge(a,b,dependencyType=depType)
+
+		G2 = nx.Graph()
+		paths = {}
+
+		minSet = sorted(list(set(minSet)))
+		setCount1 = len(minSet)
+		minSet = [ a for a in minSet if G1.has_node(a) ]
+		setCount2 = len(minSet)
+		if setCount1 != setCount2:
+			print("WARNING. %d node(s) not found in dependency graph!" % (setCount1-setCount2))
+		for a,b in itertools.combinations(minSet,2):
+			try:
+				path = nx.shortest_path(G1,a,b)
+				paths[(a,b)] = path
+				G2.add_edge(a,b,weight=len(path))
+			except nx.exception.NetworkXNoPath:
+				print("WARNING. No path found between nodes %d and %d!" % (a,b))
+			
+		# TODO: This may through an error if G2 ends up having multiple components. Catch it gracefully.
+		minTree = nx.minimum_spanning_tree(G2)
+		nodes = set()
+		allEdges = set()
+		for a,b in minTree.edges():
+			path = paths[(min(a,b),max(a,b))]
+			for i in range(len(path)-1):
+				a,b = path[i],path[i+1]
+				dependencyType = G1.get_edge_data(a,b)['dependencyType']
+				edge = (min(a,b),max(a,b),dependencyType)
+				allEdges.add(edge)
+			nodes.update(path)
+
+		return nodes,allEdges
 	
 	def __str__(self):
 		tokenWords = [ t.word for t in self.tokens ]
