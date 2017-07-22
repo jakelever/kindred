@@ -35,4 +35,4 @@ def test_evaluate():
 
 	with pytest.raises(RuntimeError) as excinfo:
 		kindred.evaluate(goldCorpus,testCorpus,metric='nonsense')
-	assert excinfo.value.message == 'Unknown metric: nonsense'
+	assert excinfo.value.args == ('Unknown metric: nonsense',)
