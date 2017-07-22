@@ -166,12 +166,14 @@ class Vectorizer:
 				for cr,_ in sentence.candidateRelationsWithClasses:
 					dataForThisCR = Counter()
 
-					startPos = 0
-					endPos = len(sentence.tokens)
+					for _ in cr.entityIDs:
 
-					tokenData = [ (sentence.tokens[i].word.lower(),sentence.tokens[i+1].word.lower()) for i in range(startPos,endPos-1) ]
-					for t in tokenData:
-						dataForThisCR[u"bigrams_%s_%s" % t] += 1
+						startPos = 0
+						endPos = len(sentence.tokens)
+
+						tokenData = [ (sentence.tokens[i].word.lower(),sentence.tokens[i+1].word.lower()) for i in range(startPos,endPos-1) ]
+						for t in tokenData:
+							dataForThisCR[u"bigrams_%s_%s" % t] += 1
 					data.append(dataForThisCR)
 
 		return data
