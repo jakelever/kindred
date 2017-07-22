@@ -34,7 +34,7 @@ class Entity:
 		Entity.nextInternalID += 1
 		
 	def __str__(self):
-		out = "%s:'%s' id=%d sourceid=%s %s" % (self.entityType,self.text,self.entityID,str(self.sourceEntityID),str(self.position))
+		out = "<Entity %s:'%s' id=%d sourceid=%s %s>" % (self.entityType,self.text,self.entityID,str(self.sourceEntityID),str(self.position))
 		return out
 		
 	def __repr__(self):
