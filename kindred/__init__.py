@@ -12,7 +12,7 @@ from kindred.Parser import Parser
 from kindred.CandidateBuilder import CandidateBuilder
 from kindred.Vectorizer import Vectorizer
 from kindred.RelationClassifier import RelationClassifier
-
+from kindred.LogisticRegressionWithThreshold import LogisticRegressionWithThreshold
 
 # General functions
 from kindred.loadFunctions import loadDoc,loadDocs,loadDir

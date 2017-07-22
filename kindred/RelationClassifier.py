@@ -10,49 +10,16 @@ from sklearn.metrics import f1_score,confusion_matrix
 from sklearn.ensemble import AdaBoostClassifier,GradientBoostingClassifier,BaggingClassifier,RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.linear_model import LogisticRegression
 
 from sklearn.model_selection import cross_val_score,cross_val_predict,StratifiedKFold
 from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC,SVC
 
 from scipy.sparse import coo_matrix, csr_matrix, lil_matrix, hstack, vstack
-from sklearn.linear_model import LogisticRegression
 
 import kindred
 from kindred.CandidateBuilder import CandidateBuilder
 from kindred.Vectorizer import Vectorizer
-
-class Classifier_With_Threshold:
-	def __init__(self,threshold=0.5):
-		#self.clf = svm.SVC(kernel='linear', class_weight='balanced', probability=True)
-		self.clf = LogisticRegression(class_weight='balanced',random_state=1)
-		self.threshold = threshold
-
-	def fit(self,X,Y):
-		self.clf.fit(X,Y)
-		self.classes_ = self.clf.classes_
-
-	def predictSimple(self,X,Y):
-		return self.clf.predict(X)
-	def predict_proba(self,X):
-		return self.clf.predict_proba(X)
-		
-	def predict(self,X):
-		probs = self.clf.predict_proba(X)
-
-		# Ignore probabilities that fall below our threshold
-		probs[probs<self.threshold] = -1.0
-
-		# But make sure that the negative class (class=0) always has a slightly higher value
-		probs[:,0][probs[:,0]<self.threshold] = -0.5
-
-		# And get the highest probability for each row
-		predictions = np.argmax(probs,axis=1)
-
-		return predictions
-		
-		
 
 
 def save_sparse_csr(filename,array):
@@ -209,7 +176,7 @@ class RelationClassifier:
 			if self.threshold is None:
 				self.clf = svm.LinearSVC(class_weight='balanced',random_state=1)
 			else:
-				self.clf = Classifier_With_Threshold(self.threshold)
+				self.clf = kindred.LogisticRegressionWithThreshold(self.threshold)
 			self.clf.fit(trainVectors,simplifiedClasses)
 		else:
 			# TODO: Should we take into account the argument count when grouping classifiers?
@@ -235,7 +202,7 @@ class RelationClassifier:
 				if self.threshold is None:
 					self.clfs[c] = svm.LinearSVC(class_weight='balanced',random_state=1)
 				else:
-					self.clfs[c] = Classifier_With_Threshold(self.threshold)
+					self.clfs[c] = kindred.LogisticRegressionWithThreshold(self.threshold)
 				#self.clfs[c] = AdaBoostClassifier(n_estimators=2)
 				#self.clfs[c].fit(trainVectors,tmpClassData)
 				self.clfs[c].fit(tmpMatrix,tmpClassData)
