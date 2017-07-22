@@ -20,9 +20,6 @@ def test_evaluate():
 	testDoc.addRelation(kindred.Relation("typeX",entityIDs=[mapping["T1"],mapping["T2"]]))
 	testDoc.addRelation(kindred.Relation("typeX",entityIDs=[mapping["T1"],mapping["T3"]]))
 
-	print goldCorpus.getRelations()
-	print testCorpus.getRelations()
-
 	precision = kindred.evaluate(goldCorpus,testCorpus,metric='precision')
 	assert precision == 4.0/6.0
 	recall = kindred.evaluate(goldCorpus,testCorpus,metric='recall')
