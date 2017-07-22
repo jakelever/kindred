@@ -24,7 +24,7 @@ class Relation:
 		return not self.__eq__(other)
 
 	def __str__(self):
-		return "[Relation %s %s %s]" % (self.relationType,str(self.entityIDs),str(self.argNames))
+		return "<Relation %s %s %s>" % (self.relationType,str(self.entityIDs),str(self.argNames))
 
 	def __repr__(self):
 		return self.__str__()
