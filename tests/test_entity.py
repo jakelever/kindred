@@ -23,6 +23,8 @@ def test_entity_equals():
 	e1 = kindred.Entity(entityType="drug",text="Erlotinib",position=[(0,9)],sourceEntityID=None)
 	e2 = kindred.Entity(entityType="drug",text="Erlotinib",position=[(0,9)],sourceEntityID="T16")
 	e3 = kindred.Entity(entityType="drug",text="Erlotinib",position=[(0,9)],sourceEntityID=None)
+	
+	rel1 = kindred.Relation(relationType="causes",entityIDs=[1,2],argNames=None)
 
 	assert e1 == e1
 	assert e1 != e2
@@ -30,3 +32,6 @@ def test_entity_equals():
 	assert e2 == e2
 	assert e2 != e3
 
+	assert e1 != rel1
+	assert e2 != rel1
+	assert e3 != rel1
