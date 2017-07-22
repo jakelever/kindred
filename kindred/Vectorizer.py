@@ -5,37 +5,6 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from scipy.sparse import coo_matrix, csr_matrix, lil_matrix, hstack, vstack
 
 import kindred
-from kindred.VERSE_vectorizer import VERSEVectorizer
-
-class Vectorizer2:
-	"""
-	Vectorizes set of candidate relations into scipy sparse matrix.
-	"""
-	
-	def __init__(self,featureChoice=None,tfidf=True):
-		self.verseVectorizer = None
-		self.featureChoice = featureChoice
-		self.tfidf = tfidf
-		
-	def getFeatureNames(self):
-		assert not self.verseVectorizer is None, "Must have fit data first"
-		return self.verseVectorizer.getFeatureNames()
-				
-	def fit_transform(self,corpus):
-		assert self.verseVectorizer is None, "Vectorizer has already been fit. Use transform() instead"
-		assert isinstance(corpus,kindred.Corpus)
-			
-		self.verseVectorizer = VERSEVectorizer(corpus,self.featureChoice,self.tfidf)
-		return self.verseVectorizer.getTrainingVectors()
-		
-	def transform(self,corpus):
-		assert not self.verseVectorizer is None, "Vectorizer has not been fit. Use fit() or fit_transform() first"
-		assert isinstance(corpus,kindred.Corpus)
-		
-		return self.verseVectorizer.vectorize(corpus)
-		
-
-
 
 class Vectorizer:
 	"""
