@@ -10,7 +10,7 @@ def test_document_str():
 
 	doc2 = kindred.Document('<disease id="T1">Cancer</disease> is caused by mutations in <gene id="T2">ABCDE1</gene>.<relation type="causes" subj="T2" obj="T1" />')
 	mapping2 = doc2.getSourceEntityIDsToEntityIDs()
-	expected2 = "<Document Cancer is caused by mutations in ABCDE1. [<Entity disease:'Cancer' id=%d sourceid=T1 [(0, 6)]>, <Entity gene:'ABCDE1' id=%d sourceid=T2 [(33, 39)]>] [<Relation causes [%d, %d] [u'obj', u'subj']>]>" % (mapping2["T1"],mapping2["T2"],mapping2["T1"],mapping2["T2"])
+	expected2 = "<Document Cancer is caused by mutations in ABCDE1. [<Entity disease:'Cancer' id=%d sourceid=T1 [(0, 6)]>, <Entity gene:'ABCDE1' id=%d sourceid=T2 [(33, 39)]>] [<Relation causes [%d, %d] ['obj', 'subj']>]>" % (mapping2["T1"],mapping2["T2"],mapping2["T1"],mapping2["T2"])
 	
 	assert str(doc2) == expected2
 	assert doc2.__repr__() == expected2

@@ -11,7 +11,10 @@ class Relation:
 
 		self.relationType = relationType
 		self.entityIDs = entityIDs
-		self.argNames = argNames
+		if argNames == None:
+			self.argNames = None
+		else:
+			self.argNames = [ str(a) for a in argNames ]
 	
 	def __eq__(self, other):
 		"""Override the default Equals behavior"""
