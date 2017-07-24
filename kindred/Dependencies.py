@@ -90,11 +90,20 @@ def downloadCoreNLP():
 		print ("CoreNLP is already downloaded. No need to download")
 
 
+def testCoreNLPConnection():
+	try:
+		requests.get('http://localhost:9000')
+		return True
+	except requests.exceptions.ConnectionError:
+		return False
 
 def initializeCoreNLP():
 	global corenlpProcess
 	global stdoutFile
 	global stderrFile
+
+	if testCoreNLPConnection():
+		return True
 
 	directory = _findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
 	if directory is None:
@@ -115,16 +124,13 @@ def initializeCoreNLP():
 
 	connectionSuccess = False
 	for tries in range(maxTries):
-		try:
-			requests.get('http://localhost:9000')
+		if testCoreNLPConnection():
 			connectionSuccess = True
 			break
-		except requests.exceptions.ConnectionError:
-			time.sleep(5)
+		time.sleep(5)
 
 	if not connectionSuccess:
 		raise RuntimeError("Unable to connect to launched CoreNLP subprocess")
 
 	time.sleep(1)
 		
-	
