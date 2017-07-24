@@ -13,6 +13,7 @@ import os
 import sys
 import wget
 import shutil
+import six
 
 if sys.version_info >= (3, 0):
 	import urllib.request
@@ -106,10 +107,7 @@ def load(taskName,ignoreEntities=[]):
 	except:
 		exc_info = sys.exc_info()
 		shutil.rmtree(tempDir)
-		if sys.version_info >= (3, 0):
-			raise exc_info[1]
-		else:
-			raise exc_info[0], exc_info[1], exc_info[2]
+		six.reraise(*exc_info)
 
 	mainDir = _findDir(expectedDir,tempDir)
 

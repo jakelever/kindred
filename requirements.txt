@@ -9,3 +9,4 @@ lxml
 future
 bioc
 pytest_socket
+six
