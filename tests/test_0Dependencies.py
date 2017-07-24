@@ -30,10 +30,11 @@ def test_corenlpDownloadFail():
 	pytest_socket.enable_socket()
 	assert excinfo.value.args == ("Unable to download CoreNLP files",)
 
-def test_corenlpDownloadFail_existingFile():
+def test_corenlpDownloadFail_corruptExistingFile():
 	if os.path.isdir(kindred.Dependencies.downloadDirectory):
 		shutil.rmtree(kindred.Dependencies.downloadDirectory)
 
+	# Create a corrupt file that will fail a SHA256 test
 	corenlpDownloadPath = os.path.join(kindred.Dependencies.downloadDirectory,'stanford-corenlp-full-2016-10-31.zip')
 	os.mkdir(kindred.Dependencies.downloadDirectory)
 	with open(corenlpDownloadPath,'w') as f:
