@@ -53,6 +53,9 @@ class Sentence:
 	def __str__(self):
 		tokenWords = [ t.word for t in self.tokens ]
 		return " ".join(tokenWords)
+	
+	def __repr__(self):
+		return self.__str__()
 
 	def getEntityIDs(self):
 		return [ e.entityID for e,_ in self.entitiesWithLocations ]
