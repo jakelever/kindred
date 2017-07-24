@@ -370,9 +370,9 @@ def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRe
 	for filename in filenames:
 		if dataFormat == 'standoff' and filename.endswith('.txt'):
 			base = filename[0:-4]
-			txtPath = directory + base + '.txt'
-			a1Path = directory + base + '.a1'
-			a2Path = directory + base + '.a2'
+			txtPath = os.path.join(directory, base + '.txt')
+			a1Path = os.path.join(directory, base + '.a1')
+			a2Path = os.path.join(directory, base + '.a2')
 
 			assert os.path.isfile(txtPath), "%s must exist" % txtPath
 			assert os.path.isfile(a1Path), "%s must exist" % a1Path
@@ -380,13 +380,16 @@ def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRe
 			doc = loadDoc(dataFormat,txtPath=txtPath,a1Path=a1Path,a2Path=a2Path,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
 			corpus.addDocument(doc)
 		elif dataFormat == 'simpletag' and filename.endswith('.simple'):
-			doc = loadDoc(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
+			absPath = os.path.join(directory, filename)
+			doc = loadDoc(dataFormat,path=absPath,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
 			corpus.addDocument(doc)
 		elif dataFormat == 'json' and filename.endswith('.json'):
-			doc = loadDoc(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
+			absPath = os.path.join(directory, filename)
+			doc = loadDoc(dataFormat,path=absPath,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
 			corpus.addDocument(doc)
 		elif dataFormat == 'bioc' and filename.endswith('.bioc.xml'):
-			docs = loadDoc(dataFormat,path=filename,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
+			absPath = os.path.join(directory, filename)
+			docs = loadDocs(dataFormat,path=absPath,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
 			for doc in docs:
 				corpus.addDocument(doc)
 			
