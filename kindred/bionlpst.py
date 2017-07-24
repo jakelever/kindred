@@ -22,13 +22,6 @@ else:
 def _calcSHA256(filename):
 	return hashlib.sha256(open(filename, 'rb').read()).hexdigest()
 
-def _findFile(name, path):
-	assert os.path.isdir(path), "Must provide directory as path"
-	for root, dirs, files in os.walk(path):
-		if name in files:
-			return os.path.abspath(os.path.join(root, name))
-	return None
-	
 def _findDir(name, path):
 	assert os.path.isdir(path), "Must provide directory as path"
 	for root, dirs, files in os.walk(path):
@@ -37,16 +30,16 @@ def _findDir(name, path):
 	return None
 
 def _downloadFiles(files,downloadDirectory):
-	if not os.path.isdir(downloadDirectory):
-		os.mkdir(downloadDirectory)
-
-	if downloadDirectory[-1] != '/':
-		downloadDirectory += '/'
-	
 	for url,shortName,expectedSHA256 in files:
 		downloadedPath = os.path.join(downloadDirectory,shortName)
-		if not os.path.isfile(downloadedPath):
 		
+		# Check if the file is already downloaded (and delete if the SHA256 doesn't match)
+		if os.path.isfile(downloadedPath):
+			downloadedSHA256 = _calcSHA256(downloadedPath)
+			if not downloadedSHA256 == expectedSHA256:
+				os.remove(downloadedPath)
+
+		if not os.path.isfile(downloadedPath):
 			try:
 				#print("Downloading %s" % shortName)
 				#if sys.version_info >= (3, 0):
@@ -67,13 +60,8 @@ def _downloadFiles(files,downloadDirectory):
 					zip_ref.extractall(path=downloadDirectory)
 					zip_ref.close()
 			except:
-				exc_info = sys.exc_info()
-				if os.path.isfile(downloadedPath):
-					os.remove(downloadedPath)
-				#raise exc_info[0], exc_info[1], exc_info[2]
-				# TODO: Make this work in Python2/3 nicely
-				print("ERROR: ",exc_info)
-				sys.exit(255)
+				raise RuntimeError("Unable to download BioNLP ST files")
+
 
 def load(taskName,ignoreEntities=[]):
 	tempDir = tempfile.mkdtemp()
@@ -126,7 +114,7 @@ def load(taskName,ignoreEntities=[]):
 
 	mainDir = _findDir(expectedDir,tempDir)
 
-	corpus = kindred.loadDir(dataFormat='standoff',directory=mainDir,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)#,ignoreComplexRelations=ignoreComplexRelations)
+	corpus = kindred.loadDir(dataFormat='standoff',directory=mainDir,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
 
 	shutil.rmtree(tempDir)
 

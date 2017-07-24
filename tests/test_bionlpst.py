@@ -1,5 +1,14 @@
 
 import kindred
+import pytest
+import pytest_socket
+
+def test_loadBioNLP_fail():
+	pytest_socket.disable_socket()
+	with pytest.raises(RuntimeError) as excinfo:
+		corpus = kindred.bionlpst.load('2016-BB3-event-train')
+	pytest_socket.enable_socket()
+	assert excinfo.value.args == ('Unable to download BioNLP ST files',)
 
 def test_loadBioNLP_BB3_event_train():
 	corpus = kindred.bionlpst.load('2016-BB3-event-train')#,ignoreEntities=['Title','Paragraph'])
