@@ -101,7 +101,12 @@ def load(taskName,ignoreEntities=[]):
 	assert taskName in taskOptions.keys(), "%s not a valid option in %s" % (taskName, taskOptions.keys())
 	filesToDownload,expectedDir,ignoreComplexRelations = taskOptions[taskName]
 
-	_downloadFiles(filesToDownload,tempDir)
+	try:
+		_downloadFiles(filesToDownload,tempDir)
+	except:
+		exc_info = sys.exc_info()
+		shutil.rmtree(tempDir)
+		raise exc_info[0], exc_info[1], exc_info[2]
 
 	mainDir = _findDir(expectedDir,tempDir)
 
