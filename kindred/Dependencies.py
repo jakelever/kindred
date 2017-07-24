@@ -10,6 +10,7 @@ import time
 import atexit
 import tempfile
 import requests
+import pytest_socket
 
 if sys.version_info >= (3, 0):
 	import urllib.request
@@ -50,13 +51,10 @@ def _downloadFiles(files):
 					zip_ref.extractall(downloadDirectory)
 					zip_ref.close()
 			except:
-				exc_info = sys.exc_info()
+				# Do some cleanup if required (possibly partially downloaded files)
 				if os.path.isfile(downloadedPath):
 					os.remove(downloadedPath)
-				#raise exc_info[0], exc_info[1], exc_info[2]
-				# TODO: Make this work in Python2/3 nicely
-				print("ERROR: ",exc_info)
-				sys.exit(255)
+				raise RuntimeError("Unable to download CoreNLP files")
 			
 
 corenlpProcess = None
@@ -96,6 +94,8 @@ def testCoreNLPConnection():
 		return True
 	except requests.exceptions.ConnectionError:
 		return False
+	except pytest_socket.SocketBlockedError:
+		return False
 
 def initializeCoreNLP():
 	global corenlpProcess
@@ -130,6 +130,7 @@ def initializeCoreNLP():
 		time.sleep(5)
 
 	if not connectionSuccess:
+		killCoreNLP()
 		raise RuntimeError("Unable to connect to launched CoreNLP subprocess")
 
 	time.sleep(1)
