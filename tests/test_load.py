@@ -165,6 +165,65 @@ def test_loadBiocFile_dir():
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
 	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 
+def test_loadStandoffFile_missingA2(capfd):
+	scriptDir = os.path.dirname(__file__)
+	txtPath = os.path.join(scriptDir,'data_missingA2','example.txt')
+	a1Path = os.path.join(scriptDir,'data_missingA2','example.a1')
+	a2Path = os.path.join(scriptDir,'data_missingA2','example.a2')
+	
+	# Run quietly
+	data = kindred.loadDoc(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
+
+	out, err = capfd.readouterr()
+	assert out.strip() == ""
+	assert err.strip() == ""
+	
+	# Run verbose
+	data = kindred.loadDoc(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path,verbose=True)
+
+	out, err = capfd.readouterr()
+	assert out.strip() == ""
+	assert err.strip() == 'Note: No A2 file found : example.a2'
+	
+	assert isinstance(data,kindred.Document)
+	entities = data.getEntities()
+	relations = data.getRelations()
+
+	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+
+	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+	assert relations == []
+
+def test_loadStandoffFile_extraLines(capfd):
+	scriptDir = os.path.dirname(__file__)
+	txtPath = os.path.join(scriptDir,'data_extraLines','example.txt')
+	a1Path = os.path.join(scriptDir,'data_extraLines','example.a1')
+	a2Path = os.path.join(scriptDir,'data_extraLines','example.a2')
+
+	# Run quietly
+	data = kindred.loadDoc(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
+
+	out, err = capfd.readouterr()
+	assert out.strip() == ""
+	assert err.strip() == ""
+	
+	# Run verbose
+	data = kindred.loadDoc(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path,verbose=True)
+
+	out, err = capfd.readouterr()
+	assert out.strip() == ""
+	assert err.strip() == "Unable to process line: *\tEXTRALINE"
+	
+	assert isinstance(data,kindred.Document)
+	entities = data.getEntities()
+	relations = data.getRelations()
+
+	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+
+	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
 if __name__ == '__main__':
 	test_loadBiocFile()
