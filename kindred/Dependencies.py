@@ -17,6 +17,13 @@ if sys.version_info >= (3, 0):
 else:
 	import urllib
 
+homeDirectory = os.path.expanduser('~')
+downloadDirectory = os.path.join(homeDirectory,'.kindred')
+	
+corenlpProcess = None
+stdoutFile = None
+stderrFile = None
+
 def _calcSHA256(filename):
 	return hashlib.sha256(open(filename, 'rb').read()).hexdigest()
 
@@ -26,8 +33,6 @@ def _findDir(name, path):
 			return os.path.abspath(os.path.join(root, name))
 	return None
 
-homeDirectory = os.path.expanduser('~')
-downloadDirectory = os.path.join(homeDirectory,'.kindred')
 def _downloadFiles(files):
 	global downloadDirectory
 	
@@ -56,10 +61,6 @@ def _downloadFiles(files):
 					os.remove(downloadedPath)
 				raise RuntimeError("Unable to download CoreNLP files")
 			
-
-corenlpProcess = None
-stdoutFile = None
-stderrFile = None
 def killCoreNLP():
 	global corenlpProcess
 	global stdoutFile
