@@ -22,6 +22,10 @@ else:
 def _calcSHA256(filename):
 	return hashlib.sha256(open(filename, 'rb').read()).hexdigest()
 
+def _isDirEmpty(path):
+	files = os.listdir(path)
+	return files == []
+
 def _findDir(name, path):
 	assert os.path.isdir(path), "Must provide directory as path"
 	for root, dirs, files in os.walk(path):
@@ -30,14 +34,10 @@ def _findDir(name, path):
 	return None
 
 def _downloadFiles(files,downloadDirectory):
+	assert _isDirEmpty(downloadDirectory)
+
 	for url,shortName,expectedSHA256 in files:
 		downloadedPath = os.path.join(downloadDirectory,shortName)
-		
-		# Check if the file is already downloaded (and delete if the SHA256 doesn't match)
-		if os.path.isfile(downloadedPath):
-			downloadedSHA256 = _calcSHA256(downloadedPath)
-			if not downloadedSHA256 == expectedSHA256:
-				os.remove(downloadedPath)
 
 		if not os.path.isfile(downloadedPath):
 			try:
