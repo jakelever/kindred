@@ -104,7 +104,7 @@ def initializeCoreNLP():
 
 	directory = _findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
 	if directory is None:
-		raise RuntimeError("Could not find  the Stanford CoreNLP files. Use kindred.downloadCoreNLP() first")
+		raise RuntimeError("Could not find the Stanford CoreNLP files. Use kindred.downloadCoreNLP() first")
 
 	command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 150000'
 
