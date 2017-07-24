@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 import os
 
 import kindred
@@ -109,6 +110,37 @@ def test_largeSentence():
 	doc = corpus.documents[0]
 	assert isinstance(doc.sentences,list)
 	assert len(doc.sentences) == repeatCount
+
+def test_unicodeParse():
+	text = u"<drug id='1'>Erlotinib</drug> is a common treatment for NF-κB positive <cancer id='2'>lung</cancer> and unknown <cancer id='2'>cancers</cancer>"
+	corpus = kindred.Corpus(text)
+	
+	parser = kindred.Parser()
+	parser.parse(corpus)
+	
+	assert len(corpus.documents) == 1
+	doc = corpus.documents[0]
+	assert isinstance(doc.sentences,list)
+	assert len(doc.sentences) == 1
+	
+	sentence = doc.sentences[0]
+	assert isinstance(sentence,kindred.Sentence)
+	
+	expectedWords = u"Erlotinib is a common treatment for NF-κB positive lung and unknown cancers".split()
+	assert isinstance(sentence.tokens,list)
+	assert len(expectedWords) == len(sentence.tokens)
+	for w,t in zip(expectedWords,sentence.tokens):
+		assert isinstance(t,kindred.Token)
+		assert len(t.lemma) > 0
+		assert w == t.word
+	
+	assert isinstance(sentence.entitiesWithLocations,list)
+	assert len(sentence.entitiesWithLocations) == 2
+	assertEntityWithLocation(sentence.entitiesWithLocations[0],'drug',[0],'1')
+	assertEntityWithLocation(sentence.entitiesWithLocations[1],'cancer',[8,11],'2')
+	
+	assert isinstance(sentence.dependencies,list)
+	assert len(sentence.dependencies) > 0
 
 if __name__ == '__main__':
 	test_largeSentence()
