@@ -17,7 +17,7 @@ install:
   - pip install python-coveralls
   - pip install --upgrade coverage
   - pip install .
-  - python -c "import kindred; kindred.downloadCoreNLP()"
+#  - python -c "import kindred; kindred.downloadCoreNLP()" # not used as initial dependencies tests will run this
 # command to run tests
 script:
   - java -version
