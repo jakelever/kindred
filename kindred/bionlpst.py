@@ -106,7 +106,10 @@ def load(taskName,ignoreEntities=[]):
 	except:
 		exc_info = sys.exc_info()
 		shutil.rmtree(tempDir)
-		raise exc_info[0], exc_info[1], exc_info[2]
+		if sys.version_info >= (3, 0):
+			raise exc_info[1]
+		else:
+			raise exc_info[0], exc_info[1], exc_info[2]
 
 	mainDir = _findDir(expectedDir,tempDir)
 
