@@ -11,6 +11,7 @@ from xml.dom import minidom
 import kindred
 
 import bioc
+import sys
 from future.utils import native
 
 def loadEntity(line,text):
@@ -117,9 +118,9 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],i
 					if not relation is None:
 						relations.append(relation)
 				elif verbose:
-					print("Unable to process line: %s" % line.strip())
+					sys.stderr.write("Unable to process line: %s\n" % line.strip())
 	elif verbose:
-		print("Note: No A2 file found. ", a2File)
+		sys.stderr.write("Note: No A2 file found : %s\n" % os.path.basename(a2File))
 
 	baseTxtFile = os.path.basename(txtFile)
 	baseFilename = baseTxtFile[0:-4]
