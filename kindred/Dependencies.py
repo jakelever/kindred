@@ -41,8 +41,14 @@ def _downloadFiles(files):
 	
 	for url,shortName,expectedSHA256 in files:
 		downloadedPath = os.path.join(downloadDirectory,shortName)
-		if not os.path.isfile(downloadedPath):
 		
+		# Check if the file is already downloaded (and delete if the SHA256 doesn't match)
+		if os.path.isfile(downloadedPath):
+			downloadedSHA256 = _calcSHA256(downloadedPath)
+			if not downloadedSHA256 == expectedSHA256:
+				os.remove(downloadedPath)
+
+		if not os.path.isfile(downloadedPath):
 			try:
 				print("Downloading %s" % shortName)
 				wget.download(url,out=downloadedPath,bar=None)
@@ -56,9 +62,6 @@ def _downloadFiles(files):
 					zip_ref.extractall(downloadDirectory)
 					zip_ref.close()
 			except:
-				# Do some cleanup if required (possibly partially downloaded files)
-				if os.path.isfile(downloadedPath):
-					os.remove(downloadedPath)
 				raise RuntimeError("Unable to download CoreNLP files")
 			
 def killCoreNLP():

@@ -30,6 +30,24 @@ def test_corenlpDownloadFail():
 	pytest_socket.enable_socket()
 	assert excinfo.value.args == ("Unable to download CoreNLP files",)
 
+def test_corenlpDownloadFail_existingFile():
+	if os.path.isdir(kindred.Dependencies.downloadDirectory):
+		shutil.rmtree(kindred.Dependencies.downloadDirectory)
+
+	corenlpDownloadPath = os.path.join(kindred.Dependencies.downloadDirectory,'stanford-corenlp-full-2016-10-31.zip')
+	os.mkdir(kindred.Dependencies.downloadDirectory)
+	with open(corenlpDownloadPath,'w') as f:
+		f.write("\n".join(map(str,range(100))))
+	
+	assert kindred.Dependencies.checkCoreNLPDownload() == False
+	assert kindred.Dependencies.testCoreNLPConnection() == False
+
+	pytest_socket.disable_socket()
+	with pytest.raises(RuntimeError) as excinfo:
+		kindred.Dependencies.downloadCoreNLP()
+	pytest_socket.enable_socket()
+	assert excinfo.value.args == ("Unable to download CoreNLP files",)
+
 def test_corenlpDownload():
 	if os.path.isdir(kindred.Dependencies.downloadDirectory):
 		shutil.rmtree(kindred.Dependencies.downloadDirectory)
