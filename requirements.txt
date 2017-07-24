@@ -8,3 +8,4 @@ pycorenlp
 lxml
 future
 bioc
+pytest_socket

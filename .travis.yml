@@ -13,7 +13,7 @@ before_install:
 install:
   - pip install --upgrade pip setuptools wheel
   - pip install --only-binary=numpy,scipy numpy scipy
-  - pip install pytest coverage pytest-timeout
+  - pip install pytest coverage pytest-timeout pytest_socket
   - pip install python-coveralls
   - pip install --upgrade coverage
   - pip install .
