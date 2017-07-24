@@ -1,6 +1,7 @@
 import kindred
 import networkx as nx
 import itertools
+import sys
 
 class Sentence:
 	"""
@@ -25,14 +26,14 @@ class Sentence:
 		minSet = [ a for a in minSet if G1.has_node(a) ]
 		setCount2 = len(minSet)
 		if setCount1 != setCount2:
-			print("WARNING. %d node(s) not found in dependency graph!" % (setCount1-setCount2))
+			sys.stderr.write("WARNING. %d node(s) not found in dependency graph!\n" % (setCount1-setCount2))
 		for a,b in itertools.combinations(minSet,2):
 			try:
 				path = nx.shortest_path(G1,a,b)
 				paths[(a,b)] = path
 				G2.add_edge(a,b,weight=len(path))
 			except nx.exception.NetworkXNoPath:
-				print("WARNING. No path found between nodes %d and %d!" % (a,b))
+				sys.stderr.write("WARNING. No path found between nodes %d and %d!\n" % (a,b))
 			
 		# TODO: This may through an error if G2 ends up having multiple components. Catch it gracefully.
 		minTree = nx.minimum_spanning_tree(G2)
