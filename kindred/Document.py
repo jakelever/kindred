@@ -106,7 +106,7 @@ class Document:
 		return self.sourceFilename
 
 	def __str__(self):
-		return str((self.text,self.entities,self.relations))
+		return u"<Document %s %s %s>"  % (self.text,str(self.entities),str(self.relations))
 		
 	def __repr__(self):
 		return self.__str__()
