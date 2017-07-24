@@ -19,12 +19,6 @@ else:
 def _calcSHA256(filename):
 	return hashlib.sha256(open(filename, 'rb').read()).hexdigest()
 
-def _findFile(name, path):
-	for root, dirs, files in os.walk(path):
-		if name in files:
-			return os.path.abspath(os.path.join(root, name))
-	return None
-	
 def _findDir(name, path):
 	for root, dirs, files in os.walk(path):
 		if name in dirs:
