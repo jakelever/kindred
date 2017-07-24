@@ -50,5 +50,12 @@ def test_corenlpKill():
 
 	assert kindred.Dependencies.testCoreNLPConnection() == True
 
+def test_initializeTwice():
+	kindred.Dependencies.initializeCoreNLP()
+
+	kindred.Dependencies.initializeCoreNLP()
+
+	assert kindred.Dependencies.checkCoreNLPDownload() == True
+
 if __name__ == '__main__':
 	test_corenlpFail()

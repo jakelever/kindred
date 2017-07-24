@@ -103,7 +103,7 @@ def initializeCoreNLP():
 	global stderrFile
 
 	if testCoreNLPConnection():
-		return True
+		return
 
 	directory = _findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
 	if directory is None:
