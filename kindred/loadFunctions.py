@@ -234,7 +234,8 @@ def mergeEntitiesWithMatchingIDs(unmergedEntities):
 	return list(entityDict.values())
 	
 def parseSimpleTag(text,ignoreEntities=[]):
-	xmldoc = minidom.parseString("<doc>%s</doc>" % text)
+	docText = u"<doc>%s</doc>" % text
+	xmldoc = minidom.parseString(docText.encode('utf8'))
 	docNode = xmldoc.childNodes[0]
 	text,unmergedEntities,relations = parseSimpleTag_helper(docNode,ignoreEntities=ignoreEntities)
 	
