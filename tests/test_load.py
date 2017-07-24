@@ -80,6 +80,90 @@ def test_loadBiocFile():
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
 	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	
+	
+	
+def test_loadStandoffFile_dir():
+	scriptDir = os.path.dirname(__file__)
+	dataPath = os.path.join(scriptDir,'data')
+
+	corpus = kindred.loadDir(dataFormat='standoff',directory=dataPath)
+	
+	assert isinstance(corpus,kindred.Corpus)
+	assert len(corpus.documents) == 1
+	data = corpus.documents[0]
+	
+	assert isinstance(data,kindred.Document)
+	entities = data.getEntities()
+	relations = data.getRelations()
+
+	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+
+	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	
+
+def test_loadSimpleTagFile_dir():
+	scriptDir = os.path.dirname(__file__)
+	dataPath = os.path.join(scriptDir,'data')
+
+	corpus = kindred.loadDir(dataFormat='simpletag',directory=dataPath)
+	
+	assert isinstance(corpus,kindred.Corpus)
+	assert len(corpus.documents) == 1
+	data = corpus.documents[0]
+	
+	assert isinstance(data,kindred.Document)
+	entities = data.getEntities()
+	relations = data.getRelations()
+
+	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+
+	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	
+	
+def test_loadJsonFile_dir():
+	scriptDir = os.path.dirname(__file__)
+	dataPath = os.path.join(scriptDir,'data')
+
+	corpus = kindred.loadDir(dataFormat='json',directory=dataPath)
+	
+	assert isinstance(corpus,kindred.Corpus)
+	assert len(corpus.documents) == 1
+	data = corpus.documents[0]
+	
+	assert isinstance(data,kindred.Document)
+	entities = data.getEntities()
+	relations = data.getRelations()
+
+	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+
+	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+
+def test_loadBiocFile_dir():
+	scriptDir = os.path.dirname(__file__)
+	dataPath = os.path.join(scriptDir,'data')
+
+	corpus = kindred.loadDir(dataFormat='bioc',directory=dataPath)
+	
+	assert isinstance(corpus,kindred.Corpus)
+	assert len(corpus.documents) == 1
+	data = corpus.documents[0]
+		
+	assert isinstance(data,kindred.Document)
+	entities = data.getEntities()
+	relations = data.getRelations()
+
+	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+
+	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 
 	
 if __name__ == '__main__':
