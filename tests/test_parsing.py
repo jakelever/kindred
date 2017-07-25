@@ -47,6 +47,35 @@ def test_simpleSentenceParse():
 	assert isinstance(sentence.dependencies,list)
 	assert len(sentence.dependencies) > 0
 	
+def test_parsing_dependencyGraph():
+	text = 'You need to turn in your homework by next week'
+	corpus = kindred.Corpus(text)
+	
+	parser = kindred.Parser()
+	parser.parse(corpus)
+	
+	assert len(corpus.documents) == 1
+	doc = corpus.documents[0]
+	assert isinstance(doc.sentences,list)
+	assert len(doc.sentences) == 1
+	
+	sentence = doc.sentences[0]
+	assert isinstance(sentence,kindred.Sentence)
+	
+	expectedWords = "You need to turn in your homework by next week".split()
+	assert isinstance(sentence.tokens,list)
+	assert len(expectedWords) == len(sentence.tokens)
+	for w,t in zip(expectedWords,sentence.tokens):
+		assert isinstance(t,kindred.Token)
+		assert len(t.lemma) > 0
+		assert w == t.word
+	
+	assert isinstance(sentence.entitiesWithLocations,list)
+	assert len(sentence.entitiesWithLocations) == 0
+	
+	assert isinstance(sentence.dependencies,list)
+	expectedDependencies = [(-1, 1, u'ROOT'), (1, 0, u'nsubj'), (3, 0, u'nsubj'), (3, 2, u'mark'), (1, 3, u'xcomp'), (3, 4, u'compound:prt'), (6, 5, u'nmod:poss'), (3, 6, u'dobj'), (9, 7, u'case'), (9, 8, u'amod'), (3, 9, u'nmod')]
+	assert sentence.dependencies == expectedDependencies
 	
 def test_twoSentenceParse():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer>. <drug id="3">Aspirin</drug> is the main cause of <disease id="4">boneitis</disease>.'
