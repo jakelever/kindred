@@ -49,20 +49,17 @@ def _downloadFiles(files):
 				os.remove(downloadedPath)
 
 		if not os.path.isfile(downloadedPath):
-			try:
-				print("Downloading %s" % shortName)
-				wget.download(url,out=downloadedPath,bar=None)
-				
-				downloadedSHA256 = _calcSHA256(downloadedPath)
-				assert downloadedSHA256 == expectedSHA256
-				
-				if shortName.endswith('.zip'):
-					print("Unzipping %s" % shortName)
-					zip_ref = zipfile.ZipFile(downloadedPath, 'r')
-					zip_ref.extractall(downloadDirectory)
-					zip_ref.close()
-			except:
-				raise RuntimeError("Unable to download CoreNLP files")
+			print("Downloading %s" % shortName)
+			wget.download(url,out=downloadedPath,bar=None)
+			
+			downloadedSHA256 = _calcSHA256(downloadedPath)
+			assert downloadedSHA256 == expectedSHA256
+			
+			if shortName.endswith('.zip'):
+				print("Unzipping %s" % shortName)
+				zip_ref = zipfile.ZipFile(downloadedPath, 'r')
+				zip_ref.extractall(downloadDirectory)
+				zip_ref.close()
 			
 def killCoreNLP():
 	global corenlpProcess
