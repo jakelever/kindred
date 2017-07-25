@@ -76,6 +76,20 @@ def test_multiClassifiers():
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
 	assert round(f1score,3) == 0.423
 
+def test_multiClassifiers_threshold():
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = kindred.RelationClassifier(useSingleClassifier=False,threshold=0.9)
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.225
+
 def test_featureBuilder():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
 
