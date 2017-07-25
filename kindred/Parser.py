@@ -1,7 +1,7 @@
 
 import json
 
-from pycorenlp import StanfordCoreNLP
+from kindred.pycorenlp import StanfordCoreNLP
 
 import kindred
 from intervaltree import Interval, IntervalTree
@@ -61,7 +61,6 @@ class Parser:
 				for a,b in e.position:
 					denotationTree[a:b] = e.entityID
 				
-			print(type(d.getText()))
 			parsed = Parser.nlp.annotate(d.getText(), properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
 	
 			
