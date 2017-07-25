@@ -121,5 +121,9 @@ def test_corenlpInitializeFail():
 
 	assert kindred.Dependencies.testCoreNLPConnection() == False
 
+	kindred.Dependencies.initializeCoreNLP()
+
+	assert kindred.Dependencies.testCoreNLPConnection() == True
+
 if __name__ == '__main__':
 	test_corenlpFail()
