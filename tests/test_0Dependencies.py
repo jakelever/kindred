@@ -6,6 +6,8 @@ import pytest
 import pytest_socket
 
 def test_corenlpFail():
+	if kindred.Dependencies.testCoreNLPConnection():
+		kindred.Dependencies.killCoreNLP()
 	if os.path.isdir(kindred.Dependencies.downloadDirectory):
 		shutil.rmtree(kindred.Dependencies.downloadDirectory)
 
@@ -17,6 +19,8 @@ def test_corenlpFail():
 	assert excinfo.value.args == ("Could not find the Stanford CoreNLP files. Use kindred.downloadCoreNLP() first",)
 
 def test_parseFailWithNoCoreNLP():
+	if kindred.Dependencies.testCoreNLPConnection():
+		kindred.Dependencies.killCoreNLP()
 	if os.path.isdir(kindred.Dependencies.downloadDirectory):
 		shutil.rmtree(kindred.Dependencies.downloadDirectory)
 
@@ -33,6 +37,8 @@ def test_parseFailWithNoCoreNLP():
 	assert excinfo.value.args == ("Cannot access local CoreNLP at http://localhost:9000 and cannot find CoreNLP files to launch subprocess. Please download using kindred.downloadCoreNLP() if subprocess should be used",)
 
 def test_corenlpDownloadFail():
+	if kindred.Dependencies.testCoreNLPConnection():
+		kindred.Dependencies.killCoreNLP()
 	if os.path.isdir(kindred.Dependencies.downloadDirectory):
 		shutil.rmtree(kindred.Dependencies.downloadDirectory)
 	
@@ -46,6 +52,8 @@ def test_corenlpDownloadFail():
 	assert excinfo.value.args == ("A test tried to use socket.socket.",)
 
 def test_corenlpDownloadFail_corruptExistingFile():
+	if kindred.Dependencies.testCoreNLPConnection():
+		kindred.Dependencies.killCoreNLP()
 	if os.path.isdir(kindred.Dependencies.downloadDirectory):
 		shutil.rmtree(kindred.Dependencies.downloadDirectory)
 
@@ -65,6 +73,8 @@ def test_corenlpDownloadFail_corruptExistingFile():
 	assert excinfo.value.args == ("A test tried to use socket.socket.",)
 
 def test_corenlpDownload():
+	if kindred.Dependencies.testCoreNLPConnection():
+		kindred.Dependencies.killCoreNLP()
 	if os.path.isdir(kindred.Dependencies.downloadDirectory):
 		shutil.rmtree(kindred.Dependencies.downloadDirectory)
 	
