@@ -37,10 +37,6 @@ def load(projectName):
 			parsed = parseJSON(annotations)
 			loaded.addDocument(parsed)
 	
-	#sys.exit(0)
-	# http://pubannotation.org/projects/example/docs/sourcedb/PubMed/sourceid/25314077/annotations
-	# http://pubannotation.org/projects/bionlp-st-ge-2016-reference/docs/sourcedb/PMC/sourceid/1134658/annotations.json
-	
 	return loaded
 	
 	
