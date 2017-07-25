@@ -21,19 +21,6 @@ import kindred
 from kindred.CandidateBuilder import CandidateBuilder
 from kindred.Vectorizer import Vectorizer
 
-
-def save_sparse_csr(filename,array):
-	np.savez(filename,data = array.data ,indices=array.indices,indptr =array.indptr, shape=array.shape )
-
-def load_sparse_csr(filename):
-	loader = np.load(filename)
-	return csr_matrix((  loader['data'], loader['indices'], loader['indptr']),shape = loader['shape'])
-
-def saveClasses(filename,classes):
-	with open(filename,'w') as f:
-		for c in classes:
-			f.write("1\n" if c == True else "0\n")
-
 class RelationClassifier:
 	"""
 	Manages binary classifier(s) for relation classification.
