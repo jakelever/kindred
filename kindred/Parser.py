@@ -36,6 +36,7 @@ class Parser:
 				if checkCoreNLPDownload():
 					initializeCoreNLP()
 					Parser.nlp = StanfordCoreNLP('http://localhost:9000')
+					parsed = Parser.nlp.annotate("This is a test", properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
 				else:
 				 	raise RuntimeError("Cannot access local CoreNLP at http://localhost:9000 and cannot find CoreNLP files to launch subprocess. Please download using kindred.downloadCoreNLP() if subprocess should be used")
 				
