@@ -1,5 +1,5 @@
 
-from collections import Counter
+from collections import Counter,OrderedDict
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from scipy.sparse import coo_matrix, csr_matrix, lil_matrix, hstack, vstack
@@ -31,7 +31,7 @@ class Vectorizer:
 		self.tfidfTransformers = {}
 
 	def _registerFunctions(self):
-		self.featureInfo = {}
+		self.featureInfo = OrderedDict()
 		self.featureInfo['selectedTokenTypes'] = {'func':Vectorizer.doSelectedTokenTypes,'never_tfidf':True}
 		self.featureInfo['ngrams_betweenEntities'] = {'func':Vectorizer.doNGramsBetweenEntities,'never_tfidf':False}
 		self.featureInfo['bigrams'] = {'func':Vectorizer.doBigrams,'never_tfidf':False}
