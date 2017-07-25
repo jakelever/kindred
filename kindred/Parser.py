@@ -1,7 +1,7 @@
 
 import json
 
-from kindred.pycorenlp import StanfordCoreNLP
+from pycorenlp import StanfordCoreNLP
 
 import kindred
 from intervaltree import Interval, IntervalTree
