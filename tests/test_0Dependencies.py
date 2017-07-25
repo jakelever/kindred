@@ -132,6 +132,16 @@ def test_parseSucceedWithUninitializeCoreNLP():
 	parser = kindred.Parser()
 
 	parser.parse(corpus)
+
+	# And again
+	kindred.Dependencies.killCoreNLP()
+	
+	text2 = 'You need to turn in your homework by next week'
+	corpus2 = kindred.Corpus(text2)
+	
+	parser2 = kindred.Parser()
+
+	parser2.parse(corpus2)
 	
 
 def test_corenlpInitializeFail():
