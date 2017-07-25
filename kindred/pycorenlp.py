@@ -27,13 +27,9 @@ class StanfordCoreNLP:
             self.server_url, params={
                 'properties': str(properties)
             }, data=data, headers={'Connection': 'close'})
-        output = r.text
-        if ('outputFormat' in properties
-             and properties['outputFormat'] == 'json'):
-            try:
-                output = json.loads(output, encoding='utf-8', strict=False)
-            except:
-                raise RuntimeError("CoreNLP returned data not in JSON format")
+        
+        assert 'outputFormat' in properties and properties['outputFormat'] == 'json'
+        output = json.loads(r.text, encoding='utf-8', strict=False)
 
         return output
 
