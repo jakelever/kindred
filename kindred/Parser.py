@@ -60,7 +60,8 @@ class Parser:
 			
 				for a,b in e.position:
 					denotationTree[a:b] = e.entityID
-					
+				
+			print(type(d.getText()))
 			parsed = Parser.nlp.annotate(d.getText(), properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
 	
 			
