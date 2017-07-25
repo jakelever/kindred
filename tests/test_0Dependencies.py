@@ -115,9 +115,10 @@ def test_corenlpInitializeFail():
 
 	with pytest.raises(RuntimeError) as excinfo:
 		kindred.Dependencies.initializeCoreNLP()
-	assert excinfo.value.args == ("Unable to connect to launched CoreNLP subprocess",)
 
 	pytest_socket.enable_socket()
+
+	assert excinfo.value.args == ("Unable to connect to launched CoreNLP subprocess",)
 
 	assert kindred.Dependencies.testCoreNLPConnection() == False
 
