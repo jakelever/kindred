@@ -160,6 +160,70 @@ def test_singleFeature_selectedTokenTypes():
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
 	assert round(f1score,3) == 0.577
 
+def test_filterByEntityTypes_validTypes():
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = kindred.RelationClassifier(features=["ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"])
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.519
+
+def test_filterByEntityTypes_invalidTypes():
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	for doc in devCorpus.documents:
+		for e in doc.entities:
+			e.entityType = 'a new type'
+
+	classifier = kindred.RelationClassifier(features=["ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"])
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.0
+
+def test_filterByEntityTypes_validTypes_multi():
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = kindred.RelationClassifier(useSingleClassifier=False, features=["ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"])
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.423
+
+def test_filterByEntityTypes_invalidTypes_multi():
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	for doc in devCorpus.documents:
+		for e in doc.entities:
+			e.entityType = 'a new type'
+
+	classifier = kindred.RelationClassifier(useSingleClassifier=False, features=["ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"])
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.0
+
 if __name__ == '__main__':
 	test_singleFeature_selectedTokenTypes()
 
