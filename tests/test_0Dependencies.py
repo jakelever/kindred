@@ -28,7 +28,7 @@ def test_corenlpDownloadFail():
 	with pytest.raises(RuntimeError) as excinfo:
 		kindred.Dependencies.downloadCoreNLP()
 	pytest_socket.enable_socket()
-	assert excinfo.value.args == ("Unable to download CoreNLP files",)
+	assert excinfo.value.args == ("A test tried to use socket.socket.",)
 
 def test_corenlpDownloadFail_corruptExistingFile():
 	if os.path.isdir(kindred.Dependencies.downloadDirectory):
@@ -47,7 +47,7 @@ def test_corenlpDownloadFail_corruptExistingFile():
 	with pytest.raises(RuntimeError) as excinfo:
 		kindred.Dependencies.downloadCoreNLP()
 	pytest_socket.enable_socket()
-	assert excinfo.value.args == ("Unable to download CoreNLP files",)
+	assert excinfo.value.args == ("A test tried to use socket.socket.",)
 
 def test_corenlpDownload():
 	if os.path.isdir(kindred.Dependencies.downloadDirectory):
