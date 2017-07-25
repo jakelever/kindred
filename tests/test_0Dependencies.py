@@ -87,6 +87,8 @@ def test_corenlpDownloadTwice():
 	assert kindred.Dependencies.checkCoreNLPDownload() == True
 
 def test_corenlpKill():
+	if not kindred.Dependencies.checkCoreNLPDownload():
+		kindred.Dependencies.downloadCoreNLP()
 	if not kindred.Dependencies.testCoreNLPConnection():
 		kindred.Dependencies.initializeCoreNLP()
 
@@ -99,13 +101,32 @@ def test_corenlpKill():
 	assert kindred.Dependencies.testCoreNLPConnection() == True
 
 def test_initializeTwice():
+	if not kindred.Dependencies.checkCoreNLPDownload():
+		kindred.Dependencies.downloadCoreNLP()
+
 	kindred.Dependencies.initializeCoreNLP()
 
 	kindred.Dependencies.initializeCoreNLP()
 
 	assert kindred.Dependencies.checkCoreNLPDownload() == True
 
+def test_parseSucceedWithUninitializeCoreNLP():
+	if not kindred.Dependencies.checkCoreNLPDownload():
+		kindred.Dependencies.downloadCoreNLP()
+	if kindred.Dependencies.testCoreNLPConnection():
+		kindred.Dependencies.killCoreNLP()
+
+	text = 'You need to turn in your homework by next week'
+	corpus = kindred.Corpus(text)
+	
+	parser = kindred.Parser()
+
+	parser.parse(corpus)
+	
+
 def test_corenlpInitializeFail():
+	if not kindred.Dependencies.checkCoreNLPDownload():
+		kindred.Dependencies.downloadCoreNLP()
 	if kindred.Dependencies.testCoreNLPConnection():
 		kindred.Dependencies.killCoreNLP()
 
