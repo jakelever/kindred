@@ -70,6 +70,10 @@ def killCoreNLP():
 		stdoutFile.close()
 		stderrFile.close()
 
+		corenlpProcess = None
+		stdoutFile = None
+		stderrFile = None
+
 def checkCoreNLPDownload():
 	directory = _findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
 	return not directory is None
