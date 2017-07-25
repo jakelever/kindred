@@ -109,7 +109,3 @@ def generateTestData(positiveCount = 100,negativeCount = 100, relTypes = 1):
 
 	return trainCorpus,testCorpus
 
-if __name__ == '__main__':
-	customSeed(b'test')
-	nums = [ customRandom() for _ in range(5) ]
-	print(nums)
