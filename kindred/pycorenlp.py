@@ -10,12 +10,9 @@ class StanfordCoreNLP:
             server_url = server_url[:-1]
         self.server_url = server_url
 
-    def annotate(self, text, properties=None):
+    def annotate(self, text, properties={}):
         assert isinstance(text, str) or isinstance(text,unicode)
-        if properties is None:
-            properties = {}
-        else:
-            assert isinstance(properties, dict)
+        assert isinstance(properties, dict)
 
         # Checks that the Stanford CoreNLP server is started.
         try:
@@ -36,29 +33,7 @@ class StanfordCoreNLP:
             try:
                 output = json.loads(output, encoding='utf-8', strict=False)
             except:
-                print("TEXT")
-                print(unicode(text))
-                print("OUTPUT")
-                print(unicode(output))
                 raise RuntimeError("CoreNLP returned data not in JSON format")
 
         return output
 
-    def tokensregex(self, text, pattern, filter):
-        return self.regex('/tokensregex', text, pattern, filter)
-
-    def semgrex(self, text, pattern, filter):
-        return self.regex('/semgrex', text, pattern, filter)
-
-    def regex(self, endpoint, text, pattern, filter):
-        r = requests.get(
-            self.server_url + endpoint, params={
-                'pattern':  pattern,
-                'filter': filter
-            }, data=text)
-        output = r.text
-        try:
-            output = json.loads(r.text)
-        except:
-            pass
-        return output
