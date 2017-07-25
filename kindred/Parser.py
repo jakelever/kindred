@@ -6,7 +6,7 @@ from kindred.pycorenlp import StanfordCoreNLP
 import kindred
 from intervaltree import Interval, IntervalTree
 from collections import defaultdict
-from kindred.Dependencies import initializeCoreNLP,checkCoreNLPDownload
+from kindred.Dependencies import initializeCoreNLP,checkCoreNLPDownload,testCoreNLPConnection
 
 def shortenDepName(depName):
 	acceptedSubNames = set(['acl:relcl','cc:preconj','compound:prt','det:predet','nmod:npmod','nmod:poss','nmod:tmod'])
@@ -25,21 +25,30 @@ class Parser:
 
 	nlp = None
 
+	def testConnection(self):
+		if Parser.nlp is None:
+			return False
+	
+		try:
+			parsed = Parser.nlp.annotate("This is a test", properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
+			return True
+		except:
+			return False
+
+	def setupConnection(self):
+		if not checkCoreNLPDownload():
+			raise RuntimeError("Cannot access local CoreNLP at http://localhost:9000 and cannot find CoreNLP files to launch subprocess. Please download using kindred.downloadCoreNLP() if subprocess should be used")
+
+		initializeCoreNLP()
+		Parser.nlp = StanfordCoreNLP('http://localhost:9000')
+			
+		assert self.testConnection() == True
+
 	def parse(self,corpus):
 		assert isinstance(corpus,kindred.Corpus)
 
-		if Parser.nlp is None:
-			try:
-				Parser.nlp = StanfordCoreNLP('http://localhost:9000')
-				parsed = Parser.nlp.annotate("This is a test", properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
-			except:
-				if checkCoreNLPDownload():
-					initializeCoreNLP()
-					Parser.nlp = StanfordCoreNLP('http://localhost:9000')
-					parsed = Parser.nlp.annotate("This is a test", properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
-				else:
-				 	raise RuntimeError("Cannot access local CoreNLP at http://localhost:9000 and cannot find CoreNLP files to launch subprocess. Please download using kindred.downloadCoreNLP() if subprocess should be used")
-				
+		if self.testConnection() == False:
+			self.setupConnection()
 		
 		for d in corpus.documents:
 			entityIDsToEntities = d.getEntityIDsToEntities()
