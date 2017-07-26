@@ -106,19 +106,24 @@ def test_corenlpKill():
 
 	assert kindred.Dependencies.testCoreNLPConnection() == False
 
-	kindred.Dependencies.initializeCoreNLP()
-
-	assert kindred.Dependencies.testCoreNLPConnection() == True
-
-def test_initializeTwice():
+def test_corenlpInitializeFail():
 	if not kindred.Dependencies.checkCoreNLPDownload():
 		kindred.Dependencies.downloadCoreNLP()
+	if kindred.Dependencies.testCoreNLPConnection():
+		kindred.Dependencies.killCoreNLP()
 
-	kindred.Dependencies.initializeCoreNLP()
+	assert kindred.Dependencies.testCoreNLPConnection() == False
 
-	kindred.Dependencies.initializeCoreNLP()
+	pytest_socket.disable_socket()
 
-	assert kindred.Dependencies.checkCoreNLPDownload() == True
+	with pytest.raises(RuntimeError) as excinfo:
+		kindred.Dependencies.initializeCoreNLP()
+
+	pytest_socket.enable_socket()
+
+	assert excinfo.value.args == ("Unable to connect to launched CoreNLP subprocess",)
+
+	assert kindred.Dependencies.testCoreNLPConnection() == False
 
 def test_parseSucceedWithUninitializeCoreNLP():
 	if not kindred.Dependencies.checkCoreNLPDownload():
@@ -142,30 +147,16 @@ def test_parseSucceedWithUninitializeCoreNLP():
 	parser2 = kindred.Parser()
 
 	parser2.parse(corpus2)
-	
 
-def test_corenlpInitializeFail():
+def test_initializeTwice():
 	if not kindred.Dependencies.checkCoreNLPDownload():
 		kindred.Dependencies.downloadCoreNLP()
-	if kindred.Dependencies.testCoreNLPConnection():
-		kindred.Dependencies.killCoreNLP()
-
-	assert kindred.Dependencies.testCoreNLPConnection() == False
-
-	pytest_socket.disable_socket()
-
-	with pytest.raises(RuntimeError) as excinfo:
-		kindred.Dependencies.initializeCoreNLP()
-
-	pytest_socket.enable_socket()
-
-	assert excinfo.value.args == ("Unable to connect to launched CoreNLP subprocess",)
-
-	assert kindred.Dependencies.testCoreNLPConnection() == False
 
 	kindred.Dependencies.initializeCoreNLP()
 
-	assert kindred.Dependencies.testCoreNLPConnection() == True
+	kindred.Dependencies.initializeCoreNLP()
+
+	assert kindred.Dependencies.checkCoreNLPDownload() == True
 
 if __name__ == '__main__':
 	test_corenlpFail()
