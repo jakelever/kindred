@@ -193,7 +193,7 @@ def test_vectorizer_dependencyPathEdges():
 	assert colmeans2.tolist() == [[ 10, 14, 2, 6 ]]
 	
 	
-def test_vectorizer_dependencyPathNearSelected():
+def test_vectorizer_dependencyPathEdgesNearEntities():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
@@ -201,7 +201,7 @@ def test_vectorizer_dependencyPathNearSelected():
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
 
-	chosenFeatures = ["dependencyPathNearSelected"]
+	chosenFeatures = ["dependencyPathEdgesNearEntities"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)
@@ -353,7 +353,7 @@ def test_vectorizer_dependencyPathEdges_noTFIDF():
 	assert colmeans2.tolist() == [[ 10, 14, 2, 6 ]]
 	
 	
-def test_vectorizer_dependencyPathNearSelected_noTFIDF():
+def test_vectorizer_dependencyPathEdgesNearEntities_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
@@ -361,7 +361,7 @@ def test_vectorizer_dependencyPathNearSelected_noTFIDF():
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
 
-	chosenFeatures = ["dependencyPathNearSelected"]
+	chosenFeatures = ["dependencyPathEdgesNearEntities"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=False)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)

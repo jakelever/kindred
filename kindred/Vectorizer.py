@@ -36,7 +36,7 @@ class Vectorizer:
 		self.featureInfo['unigramsBetweenEntities'] = {'func':Vectorizer.doUnigramsBetweenEntities,'never_tfidf':False}
 		self.featureInfo['bigrams'] = {'func':Vectorizer.doBigrams,'never_tfidf':False}
 		self.featureInfo['dependencyPathEdges'] = {'func':Vectorizer.doDependencyPathEdges,'never_tfidf':True}
-		self.featureInfo['dependencyPathNearSelected'] = {'func':Vectorizer.doDependencyPathNearSelected,'never_tfidf':True}
+		self.featureInfo['dependencyPathEdgesNearEntities'] = {'func':Vectorizer.doDependencyPathEdgesNearEntities,'never_tfidf':True}
 		
 	def getFeatureNames(self):
 		assert self.fitted == True, "Must have fit data first"
@@ -103,7 +103,7 @@ class Vectorizer:
 
 		return data
 	
-	def doDependencyPathNearSelected(self,corpus):
+	def doDependencyPathEdgesNearEntities(self,corpus):
 		entityMapping = corpus.getEntityMapping()
 		data = []	
 		for doc in corpus.documents:
