@@ -35,7 +35,7 @@ class Vectorizer:
 		self.featureInfo['entityTypes'] = {'func':Vectorizer.doEntityTypes,'never_tfidf':True}
 		self.featureInfo['unigramsBetweenEntities'] = {'func':Vectorizer.doUnigramsBetweenEntities,'never_tfidf':False}
 		self.featureInfo['bigrams'] = {'func':Vectorizer.doBigrams,'never_tfidf':False}
-		self.featureInfo['dependencyPathElements'] = {'func':Vectorizer.doDependencyPathElements,'never_tfidf':True}
+		self.featureInfo['dependencyPathEdges'] = {'func':Vectorizer.doDependencyPathEdges,'never_tfidf':True}
 		self.featureInfo['dependencyPathNearSelected'] = {'func':Vectorizer.doDependencyPathNearSelected,'never_tfidf':True}
 		
 	def getFeatureNames(self):
@@ -82,7 +82,7 @@ class Vectorizer:
 
 		return data
 	
-	def doDependencyPathElements(self,corpus):
+	def doDependencyPathEdges(self,corpus):
 		entityMapping = corpus.getEntityMapping()
 		data = []	
 		for doc in corpus.documents:

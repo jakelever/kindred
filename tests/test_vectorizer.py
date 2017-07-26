@@ -163,7 +163,7 @@ def test_vectorizer_bigrams():
 		assert round(gotVal,8) == round(expectedVal,8) # Check rounded values (for floating point comparison issue)
 		
 	
-def test_vectorizer_dependencyPathElements():
+def test_vectorizer_dependencyPathEdges():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
@@ -171,7 +171,7 @@ def test_vectorizer_dependencyPathElements():
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
 
-	chosenFeatures = ["dependencyPathElements"]
+	chosenFeatures = ["dependencyPathEdges"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)
@@ -323,7 +323,7 @@ def test_vectorizer_bigrams_noTFIDF():
 		assert round(gotVal,8) == round(expectedVal,8) # Check rounded values (for floating point comparison issue)
 		
 	
-def test_vectorizer_dependencyPathElements_noTFIDF():
+def test_vectorizer_dependencyPathEdges_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
@@ -331,7 +331,7 @@ def test_vectorizer_dependencyPathElements_noTFIDF():
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
 
-	chosenFeatures = ["dependencyPathElements"]
+	chosenFeatures = ["dependencyPathEdges"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=False)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)

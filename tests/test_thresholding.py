@@ -12,7 +12,7 @@ def _featureBuilding(useBB3):
 	else:
 		trainData = kindred.bionlpst.load('2016-SeeDev-binary-train')
 		testData = kindred.bionlpst.load('2016-SeeDev-binary-dev')
-		chosenFeatures = ["entityTypes","unigramsBetweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
+		chosenFeatures = ["entityTypes","unigramsBetweenEntities","bigrams","dependencyPathEdges","dependencyPathNearSelected"]
 
 	testData_TextAndEntities = [ d.getTextAndEntities() for d in testData ]
 	testData_Relations = [ d.getRelations() for d in testData ]

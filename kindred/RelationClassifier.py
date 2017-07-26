@@ -41,13 +41,13 @@ class RelationClassifier:
 		self.useBuilder = useBuilder
 		self.tfidf = tfidf
 
-		self.defaultFeatures = ["entityTypes","unigramsBetweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
+		self.defaultFeatures = ["entityTypes","unigramsBetweenEntities","bigrams","dependencyPathEdges","dependencyPathNearSelected"]
 		if not features is None:
 			assert isinstance(features,list)
 			self.defaultFeatures = features
 			
 		self.threshold = threshold
-		#self.defaultFeatures = ["entityTypes","dependencyPathElements"]
+		#self.defaultFeatures = ["entityTypes","dependencyPathEdges"]
 
 	def buildFeatureSet(self,corpus,candidateRelations,classes,tfidf):
 		"""
@@ -64,7 +64,7 @@ class RelationClassifier:
 		vectorizers = {}
 		trainVectors = {}
 
-		featureChoice = ["entityTypes","unigramsBetweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
+		featureChoice = ["entityTypes","unigramsBetweenEntities","bigrams","dependencyPathEdges","dependencyPathNearSelected"]
 		for feature in featureChoice:
 			vectorizers[feature] = Vectorizer(featureChoice=[feature],tfidf=tfidf)
 			trainVectors[feature] = vectorizers[feature].fit_transform(corpus)
@@ -130,7 +130,7 @@ class RelationClassifier:
 		allClasses = list(range(1,relationtypeCount+1))
 		self.allClasses = allClasses
 	
-		#options = ["ngrams","selectedngrams","bigrams","ngramsPOS","selectedngramsPOS","ngramsOfDependencyPath","bigramsOfDependencyPath","entityTypes","lemmas","selectedlemmas","dependencyPathElements","dependencyPathNearSelected","splitAcrossSentences","skipgrams_2","skipgrams_3","skipgrams_4","skipgrams_5","skipgrams_6","skipgrams_7","skipgrams_8","skipgrams_9","skipgrams_10","unigramsBetweenEntities","bigrams_betweenEntities"]
+		#options = ["ngrams","selectedngrams","bigrams","ngramsPOS","selectedngramsPOS","ngramsOfDependencyPath","bigramsOfDependencyPath","entityTypes","lemmas","selectedlemmas","dependencyPathEdges","dependencyPathNearSelected","splitAcrossSentences","skipgrams_2","skipgrams_3","skipgrams_4","skipgrams_5","skipgrams_6","skipgrams_7","skipgrams_8","skipgrams_9","skipgrams_10","unigramsBetweenEntities","bigrams_betweenEntities"]
 
 		# We'll just get the vectors for the entityTypes
 
@@ -141,7 +141,7 @@ class RelationClassifier:
 
 		#useSingleClassifier = False
 		if self.useSingleClassifier:
-			#chosenFeatures = ["entityTypes","dependencyPathElements","unigramsBetweenEntities","bigrams_betweenEntities","bigramsOfDependencyPath"]
+			#chosenFeatures = ["entityTypes","dependencyPathEdges","unigramsBetweenEntities","bigrams_betweenEntities","bigramsOfDependencyPath"]
 
 			simplifiedClasses = []
 			# TODO: Try sparse matrix rep
