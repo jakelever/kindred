@@ -20,8 +20,8 @@ class Parser:
 	Runs CoreNLP on corpus to get sentences and associated tokens
 	"""
 	
-	def __init__(self):
-		pass
+	def __init__(self,corenlp_url='http://localhost:9000'):
+		self.corenlp_url = corenlp_url
 
 	nlp = None
 
@@ -40,7 +40,7 @@ class Parser:
 			raise RuntimeError("Cannot access local CoreNLP at http://localhost:9000 and cannot find CoreNLP files to launch subprocess. Please download using kindred.downloadCoreNLP() if subprocess should be used")
 
 		initializeCoreNLP()
-		Parser.nlp = StanfordCoreNLP('http://localhost:9000')
+		Parser.nlp = StanfordCoreNLP(self.corenlp_url)
 			
 		assert self.testConnection() == True
 
