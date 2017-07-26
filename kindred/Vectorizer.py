@@ -33,7 +33,7 @@ class Vectorizer:
 	def _registerFunctions(self):
 		self.featureInfo = OrderedDict()
 		self.featureInfo['entityTypes'] = {'func':Vectorizer.doEntityTypes,'never_tfidf':True}
-		self.featureInfo['ngrams_betweenEntities'] = {'func':Vectorizer.doNGramsBetweenEntities,'never_tfidf':False}
+		self.featureInfo['unigramsBetweenEntities'] = {'func':Vectorizer.doUnigramsBetweenEntities,'never_tfidf':False}
 		self.featureInfo['bigrams'] = {'func':Vectorizer.doBigrams,'never_tfidf':False}
 		self.featureInfo['dependencyPathElements'] = {'func':Vectorizer.doDependencyPathElements,'never_tfidf':True}
 		self.featureInfo['dependencyPathNearSelected'] = {'func':Vectorizer.doDependencyPathNearSelected,'never_tfidf':True}
@@ -58,7 +58,7 @@ class Vectorizer:
 			data.append(tokenInfo)
 		return data
 	
-	def doNGramsBetweenEntities(self,corpus):
+	def doUnigramsBetweenEntities(self,corpus):
 		entityMapping = corpus.getEntityMapping()
 		data = []	
 		for doc in corpus.documents:

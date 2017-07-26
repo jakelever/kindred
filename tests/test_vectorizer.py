@@ -93,7 +93,7 @@ def test_vectorizer_entityTypes():
 	colmeans2 = np.sum(matrix2,axis=0)
 	assert colmeans2.tolist() == [[ 5,4,9, 5,4,9 ]]
 	
-def test_vectorizer_ngrams_betweenEntities():
+def test_vectorizer_unigramsBetweenEntities():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
@@ -101,7 +101,7 @@ def test_vectorizer_ngrams_betweenEntities():
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
 
-	chosenFeatures = ["ngrams_betweenEntities"]
+	chosenFeatures = ["unigramsBetweenEntities"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)
@@ -253,7 +253,7 @@ def test_vectorizer_entityTypes_noTFIDF():
 	colmeans2 = np.sum(matrix2,axis=0)
 	assert colmeans2.tolist() == [[ 5,4,9, 5,4,9 ]]
 	
-def test_vectorizer_ngrams_betweenEntities_noTFIDF():
+def test_vectorizer_unigramsBetweenEntities_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
@@ -261,7 +261,7 @@ def test_vectorizer_ngrams_betweenEntities_noTFIDF():
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
 
-	chosenFeatures = ["ngrams_betweenEntities"]
+	chosenFeatures = ["unigramsBetweenEntities"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=False)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)

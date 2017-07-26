@@ -166,7 +166,7 @@ def test_filterByEntityTypes_validTypes():
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = kindred.RelationClassifier(features=["ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"])
+	classifier = kindred.RelationClassifier(features=["unigramsBetweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"])
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
@@ -184,7 +184,7 @@ def test_filterByEntityTypes_invalidTypes():
 		for e in doc.entities:
 			e.entityType = 'a new type'
 
-	classifier = kindred.RelationClassifier(features=["ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"])
+	classifier = kindred.RelationClassifier(features=["unigramsBetweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"])
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
@@ -198,7 +198,7 @@ def test_filterByEntityTypes_validTypes_multi():
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = kindred.RelationClassifier(useSingleClassifier=False, features=["ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"])
+	classifier = kindred.RelationClassifier(useSingleClassifier=False, features=["unigramsBetweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"])
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
@@ -216,7 +216,7 @@ def test_filterByEntityTypes_invalidTypes_multi():
 		for e in doc.entities:
 			e.entityType = 'a new type'
 
-	classifier = kindred.RelationClassifier(useSingleClassifier=False, features=["ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"])
+	classifier = kindred.RelationClassifier(useSingleClassifier=False, features=["unigramsBetweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"])
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
