@@ -35,23 +35,21 @@ Usage
 BioNLP Shared Task Example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
->>> import kindred
->>> train_data = kindred.bionlpst.load('2016-BB3-event-training')
->>> dev_data = kindred.bionlpst.load('2016-BB3-event-development')
+>>> trainCorpus = kindred.bionlpst.load('2016-BB3-event-train')
+>>> devCorpus = kindred.bionlpst.load('2016-BB3-event-dev')
+>>> predictionCorpus = devCorpus.clone()
+>>> predictionCorpus.removeRelations()
 >>> classifier = kindred.RelationClassifier()
->>> classifier.train(train_data)
->>> predicted_relations = classifier.predict(dev_data)
->>> f1score = kindred.evaluate(dev_data, prediction_relations, metric='f1score')
+>>> classifier.train(trainCorpus)
+>>> classifier.predict(predictionCorpus)
+>>> f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
 
 PubAnnotation Example
 ~~~~~~~~~~~~~~~~~~~~~
 
->>> import kindred
->>> train_data = kindred.pubannotation.load('bionlp-st-gro-2013-development')
->>> model = kindred.train(train_data)
+>>> corpus = kindred.pubannotation.load('bionlp-st-gro-2013-development')
 
 PubTator Example
 ~~~~~~~~~~~~~~~~
 
->>> import kindred
->>> data = kindred.pubtator.load([19894120,19894121])
+>>> corpus = kindred.pubtator.load([19894120,19894121])
