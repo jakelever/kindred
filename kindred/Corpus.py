@@ -9,9 +9,7 @@ class Corpus:
 		"""
 		Constructor
 		
-		:param self: Reference to object
 		:param text: Optional SimpleTag text to initalize a single document
-		:type self: kindred.Corpus
 		:type text: String (with SimpleTag format XML)
 		"""
 
@@ -27,9 +25,7 @@ class Corpus:
 		"""
 		Add a single document to the corpus
 		
-		:param self: Reference to object
 		:param doc: Document to add
-		:type self: kindred.Corpus
 		:type doc: kindred.Document
 		"""
 
@@ -41,9 +37,7 @@ class Corpus:
 		"""
 		Add a set of relation types that have been identified in corpus
 		
-		:param self: Reference to object
 		:param relationTypes: List of relation type names
-		:type self: kindred.Corpus
 		:type relationTypes: List of strings
 		"""
 
@@ -53,8 +47,6 @@ class Corpus:
 		"""
 		Clone the corpus
 		
-		:param self: Reference to object
-		:type self: kindred.Corpus
 		:return: Clone of the corpus
 		:rtype: kindred.Corpus
 		"""
@@ -68,8 +60,6 @@ class Corpus:
 		"""
 		Get all the classes (i.e. indices of relation types) for all the candidate relations in this corpus.
 		
-		:param self: Reference to object
-		:type self: kindred.Corpus
 		:return: List of indices (corresponding to the relation types) for each candidate relation. 0 means no relation type
 		:rtype: List of integers
 		"""
@@ -83,8 +73,6 @@ class Corpus:
 		"""
 		Get all the candidate relations in this corpus.
 		
-		:param self: Reference to object
-		:type self: kindred.Corpus
 		:return: List of candidate relations
 		:rtype: List of kindred.Relation
 		"""
@@ -96,10 +84,10 @@ class Corpus:
 		
 	def getEntityMapping(self):
 		"""
-		:param self: Reference to object
-		:type self: kindred.Corpus
-		:return: return description
-		:rtype: the return type description
+		Gets mapping from entity ID to entity instances
+		
+		:return: Map of entity ID to entity instance
+		:rtype: dict
 		"""
 
 		entityMapping = {}
@@ -110,10 +98,10 @@ class Corpus:
 
 	def getRelations(self):
 		"""
-		:param self: Reference to object
-		:type self: kindred.Corpus
-		:return: return description
-		:rtype: the return type description
+		Get all relations in this corpus
+		
+		:return: List of relations
+		:rtype: list
 		"""
 
 		relations = []
@@ -123,8 +111,7 @@ class Corpus:
 
 	def removeRelations(self):
 		"""
-		:param self: Reference to object
-		:type self: kindred.Corpus
+		Remove all relations in this corpus
 		"""
 
 		for doc in self.documents:
