@@ -214,6 +214,16 @@ class Document:
 		
 		return {e.sourceEntityID:e.entityID for e in self.entities}
 		
+	def getSourceFilename(self):
+		"""
+		Get the source filename for the document
+		
+		:return: Source filename
+		:rtype: str
+		"""
+		
+		return self.sourceFilename
+
 	def getText(self):
 		"""
 		Get the text associated with the document
