@@ -32,7 +32,7 @@ class Vectorizer:
 
 	def _registerFunctions(self):
 		self.featureInfo = OrderedDict()
-		self.featureInfo['selectedTokenTypes'] = {'func':Vectorizer.doSelectedTokenTypes,'never_tfidf':True}
+		self.featureInfo['entityTypes'] = {'func':Vectorizer.doEntityTypes,'never_tfidf':True}
 		self.featureInfo['ngrams_betweenEntities'] = {'func':Vectorizer.doNGramsBetweenEntities,'never_tfidf':False}
 		self.featureInfo['bigrams'] = {'func':Vectorizer.doBigrams,'never_tfidf':False}
 		self.featureInfo['dependencyPathElements'] = {'func':Vectorizer.doDependencyPathElements,'never_tfidf':True}
@@ -46,7 +46,7 @@ class Vectorizer:
 		return featureNames
 		
 
-	def doSelectedTokenTypes(self,corpus):
+	def doEntityTypes(self,corpus):
 		entityMapping = corpus.getEntityMapping()
 		data = []
 		for cr in corpus.getCandidateRelations():

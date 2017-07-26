@@ -17,7 +17,7 @@ def _featureBuilding(useBB3):
 	testData_TextAndEntities = [ d.getTextAndEntities() for d in testData ]
 	testData_Relations = [ d.getRelations() for d in testData ]
 
-	featureChoice = ["selectedTokenTypes","ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
+	featureChoice = ["entityTypes","ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
 
 	finalChosenFeatures = []
 

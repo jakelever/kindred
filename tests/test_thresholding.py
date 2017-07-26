@@ -8,11 +8,11 @@ def _featureBuilding(useBB3):
 	if useBB3:
 		trainData = kindred.bionlpst.load('2016-BB3-event-train')
 		testData = kindred.bionlpst.load('2016-BB3-event-dev')
-		chosenFeatures = ["selectedTokenTypes","ngrams_betweenEntities"]
+		chosenFeatures = ["entityTypes","ngrams_betweenEntities"]
 	else:
 		trainData = kindred.bionlpst.load('2016-SeeDev-binary-train')
 		testData = kindred.bionlpst.load('2016-SeeDev-binary-dev')
-		chosenFeatures = ["selectedTokenTypes","ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
+		chosenFeatures = ["entityTypes","ngrams_betweenEntities","bigrams","dependencyPathElements","dependencyPathNearSelected"]
 
 	testData_TextAndEntities = [ d.getTextAndEntities() for d in testData ]
 	testData_Relations = [ d.getRelations() for d in testData ]

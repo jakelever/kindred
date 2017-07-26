@@ -11,8 +11,8 @@ def test_simpleVectorizer():
 	candidateBuilder = kindred.CandidateBuilder()
 	candidateBuilder.fit_transform(corpus)
 	
-	# We'll just get the vectors for the selectedTokenTypes
-	vectorizer = kindred.Vectorizer(featureChoice=["selectedTokenTypes"])
+	# We'll just get the vectors for the entityTypes
+	vectorizer = kindred.Vectorizer(featureChoice=["entityTypes"])
 	vectors = vectorizer.fit_transform(corpus)
 
 	assert vectors.shape == (4,6)
@@ -63,7 +63,7 @@ def test_vectorizer_defaults():
 	for gotVal,expectedVal in zip(colmeans2,expected2):
 		assert round(gotVal,8) == round(expectedVal,8) # Check rounded values (for floating point comparison issue)
 
-def test_vectorizer_selectedTokenTypes():
+def test_vectorizer_entityTypes():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
@@ -73,7 +73,7 @@ def test_vectorizer_selectedTokenTypes():
 
 	candidates = corpus1.getCandidateRelations()
 
-	chosenFeatures = ["selectedTokenTypes"]
+	chosenFeatures = ["entityTypes"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)
@@ -223,7 +223,7 @@ def test_vectorizer_dependencyPathNearSelected():
 	assert colmeans2.tolist() == [[ 7, 1, 7, 1 ]]
 	
 
-def test_vectorizer_selectedTokenTypes_noTFIDF():
+def test_vectorizer_entityTypes_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
@@ -233,7 +233,7 @@ def test_vectorizer_selectedTokenTypes_noTFIDF():
 
 	candidates = corpus1.getCandidateRelations()
 
-	chosenFeatures = ["selectedTokenTypes"]
+	chosenFeatures = ["entityTypes"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=False)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)
@@ -385,4 +385,4 @@ def test_vectorizer_dependencyPathNearSelected_noTFIDF():
 
 
 if __name__ == '__main__':
-	test_vectorizer_selectedTokenTypes()
+	test_vectorizer_entityTypes()

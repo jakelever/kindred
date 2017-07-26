@@ -146,13 +146,13 @@ def test_threshold():
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
 	assert round(f1score,3) == 0.519
 
-def test_singleFeature_selectedTokenTypes():
+def test_singleFeature_entityTypes():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
 
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
 
-	classifier = kindred.RelationClassifier(features=['selectedTokenTypes'])
+	classifier = kindred.RelationClassifier(features=['entityTypes'])
 	classifier.train(trainCorpus)
 	
 	classifier.predict(predictionCorpus)
@@ -225,5 +225,5 @@ def test_filterByEntityTypes_invalidTypes_multi():
 	assert round(f1score,3) == 0.0
 
 if __name__ == '__main__':
-	test_singleFeature_selectedTokenTypes()
+	test_singleFeature_entityTypes()
 
