@@ -9,9 +9,24 @@ class CandidateBuilder:
 	Generates set of all possible relations in corpus.
 	"""
 	def __init__(self):
+		"""
+		Constructor
+		
+		:param self: Reference to object
+		:type self: kindred.CandidateBuilder
+		"""
 		self.fitted = False
 
 	def fit_transform(self,corpus):
+		"""
+		Creates the set of all possible relations that exist within the given corpus and adds these to the corpus under each kindred.Sentence instance. Each relation will be contained within a single sentence. This fitting function should be called the first time in order to initialise the set of known relationship types.
+		
+		:param self: Reference to object
+		:param corpus: Corpus of text with which to build relation candidates
+		:type self: kindred.CandidateBuilder
+		:type corpus: kindred.Corpus
+		"""
+
 		assert self.fitted == False, "CandidateBuilder has already been fit to corpus"
 		assert isinstance(corpus,kindred.Corpus)
 
@@ -37,6 +52,14 @@ class CandidateBuilder:
 		self.transform(corpus)
 
 	def transform(self,corpus):
+		"""
+		Creates the set of all possible relations that exist within the given corpus and adds these to the corpus under each kindred.Sentence instance. Each relation will be contained within a single sentence.
+		
+		:param self: Reference to object
+		:param corpus: Corpus of text with which to build relation candidates
+		:type self: kindred.CandidateBuilder
+		:type corpus: kindred.Corpus
+		"""
 		assert self.fitted == True, "CandidateBuilder must be fit to corpus first"
 		assert isinstance(corpus,kindred.Corpus)
 
