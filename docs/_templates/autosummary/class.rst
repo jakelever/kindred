@@ -1,6 +1,6 @@
-.. currentmasdasdodule:: {{ modasdasdule }}
+.. currentmodule:: {{ module }}
 
-. autasadoclass:: {{ objname }}
+.. autoclass:: {{ objname }}
 
    {% block methods %}
    {% if methods %}
