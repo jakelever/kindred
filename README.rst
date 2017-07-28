@@ -1,8 +1,13 @@
+=======
 Kindred
---------
+=======
 
-|build-status| |coverage| |docs| |license|
+|pypi| |build-status| |coverage| |docs| |license|
 
+.. |pypi| image:: https://img.shields.io/pypi/v/kindred.svg
+   :target: https://pypi.python.org/pypi/kindred
+   :alt: PyPI Release
+   
 .. |build-status| image:: https://travis-ci.org/jakelever/kindred.svg?branch=master
    :target: https://travis-ci.org/jakelever/kindred
    :alt: Travis CI status
@@ -21,8 +26,12 @@ Kindred
 
 Kindred is a package for relation extraction in biomedical texts. Given some training data, it can build a model to identify relations between entities (e.g. drugs, genes, etc) in a sentence.
 
-Install
--------
+Installation
+------------
+
+You can install "kindred" via `pip`_ from `PyPI`_::
+
+   $ pip install kindred
 
 Kindred relies on the Stanford CoreNLP toolkit for parsing. By default it will attempt to connect to a local server (localhost:9000). If you want Kindred to download the CoreNLP files and run it as a subprocess when a server can't be found, use the following command:
 
@@ -31,6 +40,8 @@ Kindred relies on the Stanford CoreNLP toolkit for parsing. By default it will a
 
 Usage
 -----
+
+Full documentation can be found at `readthedocs`_.
 
 BioNLP Shared Task Example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,3 +64,24 @@ PubTator Example
 ~~~~~~~~~~~~~~~~
 
 >>> corpus = kindred.pubtator.load([19894120,19894121])
+
+
+Contributing
+------------
+Contributions are very welcome.
+
+License
+-------
+
+Distributed under the terms of the `MIT`_ license, "kindred" is free and open source software
+
+Issues
+------
+
+If you encounter any problems, please `file an issue`_ along with a detailed description.
+
+.. _`MIT`: http://opensource.org/licenses/MIT
+.. _`file an issue`: https://github.com/jakelever/kindred/issues
+.. _`pip`: https://pypi.python.org/pypi/pip/
+.. _`PyPI`: https://pypi.python.org/pypi
+.. _`readthedocs`: http://kindred.readthedocs.io/
