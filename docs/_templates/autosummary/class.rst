@@ -1,26 +1,13 @@
-{{ fullname | escape | underline}}
+{% extends "!autosummary/class.rst" %}
 
-.. currentmodule:: {{ module }}
+{% block methods %}
+{% if methods %}
 
-.. autoclass:: {{ objname }}
+{% endif %}
+{% endblock %}
 
-   {% block methods %}
-   {% if methods %}
-   .. rubric:: Methods
+{% block attributes %}
+{% if attributes %}
 
-   {% for item in methods %}
-   .. automethod:: {{ item }}
-   {%- endfor %}
-   {% endif %}
-   {% endblock %}
-
-   {% block attributes %}
-   {% if attributes %}
-   .. rubric:: Attributes
-
-   .. autosummary::
-   {% for item in attributes %}
-      ~{{ name }}.{{ item }}
-   {%- endfor %}
-   {% endif %}
-   {% endblock %}
+{% endif %}
+{% endblock %}
