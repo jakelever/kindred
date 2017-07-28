@@ -1,13 +1,24 @@
-from setuptools import setup
+#!/usr/bin/env python
+
+from setuptools import setup, find_packages
+# To use a consistent encoding
+from codecs import open
+from os import path
+
+here = path.abspath(path.dirname(__file__))
+
+# Get the long description from the README file
+with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+    long_description = f.read()
 
 def readme():
 	with open('README.rst') as f:
 		return f.read()
 
 setup(name='kindred',
-	version='0.1',
+	version='1.0.0',
 	description='A relation extraction toolkit for biomedical text mining',
-	long_description=readme(),
+	long_description=long_description,
 	classifiers=[
 		'Intended Audience :: Developers',
 		'Intended Audience :: Education',
