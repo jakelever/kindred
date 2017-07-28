@@ -1,7 +1,7 @@
 
 import os
 
-def test_README():
+def _README():
 	thisDir = os.path.dirname(os.path.realpath(__file__))
 	parentDir = os.path.dirname(thisDir)
 	readmePath = os.path.join(parentDir,'README.rst')
