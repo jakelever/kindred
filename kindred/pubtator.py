@@ -7,15 +7,13 @@ import kindred
 import requests
 import re
 
-from kindred.loadFunctions import parseJSON
-
-def loadPMID(pmid):
+def _loadPMID(pmid):
 	assert isinstance(pmid,int)
 	
 	annotationsURL = "https://www.ncbi.nlm.nih.gov/CBBresearch/Lu/Demo/RESTful/tmTool.cgi/BioConcept/%d/JSON" % pmid
 	
 	annotations = requests.get(annotationsURL).json()
-	doc = parseJSON(annotations)
+	doc = kindred.loadFunctions.parseJSON(annotations)
 	
 	return doc
 
@@ -36,11 +34,11 @@ def load(pmids):
 	corpus = kindred.Corpus()
 	if isinstance(pmids,list):
 		for pmid in pmids:
-			doc = loadPMID(pmid)
+			doc = _loadPMID(pmid)
 			assert isinstance(doc,kindred.Document)
 			corpus.addDocument(doc)
 	elif isinstance(pmids,int):
-		doc = loadPMID(pmids)
+		doc = _loadPMID(pmids)
 		assert isinstance(doc,kindred.Document)
 		corpus.addDocument(doc)
 	return corpus

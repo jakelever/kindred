@@ -7,8 +7,6 @@ import kindred
 import requests
 import re
 
-from kindred.loadFunctions import parseJSON
-
 def load(projectName):
 	projectURL = "http://pubannotation.org/projects/%s/docs.json" % projectName
 	
@@ -31,10 +29,10 @@ def load(projectName):
 		
 		if isinstance(annotations,list):
 			for annotation in annotations:
-				parsed = parseJSON(annotation)
+				parsed = kindred.loadFunctions.parseJSON(annotation)
 				loaded.addDocument(parsed)
 		elif isinstance(annotations,dict):
-			parsed = parseJSON(annotations)
+			parsed = kindred.loadFunctions.parseJSON(annotations)
 			loaded.addDocument(parsed)
 	
 	return loaded
