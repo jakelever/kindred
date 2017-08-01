@@ -8,7 +8,85 @@ class Sentence:
 	Set of tokens for a sentence after parsing
 	"""
 	
+	def __init__(self, tokens, dependencies, entitiesWithLocations, sourceFilename=None):
+		"""
+		Constructor for Sentence class
+		
+		:param tokens: List of tokens in sentence
+		:param dependencies: List of dependencies from dependency path. Should be a list of tuples with form (tokenindex1,tokenindex2,dependency_type)
+		:param entitiesWithLocations: List of entities associated with tokens. Should be a list of tuples with form (kindred.Entity, list of tokenindices)"
+		:param sourceFilename: Filename of the source document
+		:type tokens: list of kindred.Token
+		:type dependencies: list of tuples
+		:type entitiesWithLocations: list of tuples
+		:type sourceFilename: str
+		"""
+
+		assert isinstance(tokens, list)
+		for token in tokens:
+			assert isinstance(token,kindred.Token)
+		
+		# Check that each entityWithLocation is a tuple of an entity with a location
+		assert isinstance(entitiesWithLocations, list)
+		for entityWithLocation in entitiesWithLocations:
+			assert isinstance(entityWithLocation,tuple)
+			assert len(entityWithLocation) == 2
+			assert isinstance(entityWithLocation[0],kindred.Entity)
+			assert isinstance(entityWithLocation[1],list)
+			
+		# Check the format of the Dependencies
+		dependencyErrorMsg = "Each dependency is expected to be a tuple of (tokenindex1,tokenindex2,dependency_type)"
+		assert isinstance(dependencies, list), dependencyErrorMsg
+		for dependency in dependencies:
+			assert isinstance(dependency,tuple),dependencyErrorMsg
+			assert len(dependency) == 3,dependencyErrorMsg
+			assert isinstance(dependency[0],int)
+			assert isinstance(dependency[1],int)
+			assert isinstance(dependency[2],str)
+			assert dependency[0] >= 0 and dependency[0] < len(tokens), dependencyErrorMsg
+			assert dependency[1] >= 0 and dependency[1] < len(tokens), dependencyErrorMsg
+		
+		self.tokens = tokens
+		self.entitiesWithLocations = entitiesWithLocations
+		self.sourceFilename = sourceFilename
+		
+		self.dependencies = dependencies
+		
+		self.entityIDToType = { e.entityID:e.entityType for e,_ in self.entitiesWithLocations }
+		self.entityIDToLoc = { e.entityID:loc for e,loc in self.entitiesWithLocations }
+
+		self.candidateRelationsWithClasses = []
+		self.candidateRelationsProcessed = False
+	
+	def __str__(self):
+		tokenWords = [ t.word for t in self.tokens ]
+		return " ".join(tokenWords)
+	
+	def __repr__(self):
+		return self.__str__()
+	
+	def addCandidateRelation(self, relation, relationtypeClass):
+		"""
+		Adds a candidate relation to a list of candidate relations associated with this sentence
+		
+		:param relation: Candidate relation to add to sentence
+		:param relationtypeClass: Class index for type of candidate relation
+		:type relation: kindred.Relation
+		:type relationtypeClass: int
+		"""
+
+		self.candidateRelationsWithClasses.append((relation,relationtypeClass))
+
 	def extractMinSubgraphContainingNodes(self, minSet):
+		"""
+		Find the minimum subgraph of the dependency graph that contains the provided set of nodes. Useful for finding dependency-path like structures
+		
+		:param minSet: List of token indices
+		:type minSet: List of ints
+		:return: All the nodes and edges in the minimal subgraph
+		:rtype: Tuple of nodes,edges where nodes is a list of token indices, and edges are the associated dependency edges between those tokens
+		"""
+
 		assert isinstance(minSet, list)
 		for i in minSet:
 			assert isinstance(i, int)
@@ -49,43 +127,27 @@ class Sentence:
 			nodes.update(path)
 
 		return nodes,allEdges
-	
-	def __str__(self):
-		tokenWords = [ t.word for t in self.tokens ]
-		return " ".join(tokenWords)
-	
-	def __repr__(self):
-		return self.__str__()
 
 	def getEntityIDs(self):
+		"""
+		Get the list of entity IDs contained within this sentence
+		
+		:return: List of entity IDs
+		:rtype: List of ints
+		"""
+
 		return [ e.entityID for e,_ in self.entitiesWithLocations ]
 		
 	def getEntityType(self,entityID):
+		"""
+		Get the entity type for a particular entity in this sentence given the entity ID
+		
+		:param entityID: Entity ID
+		:type entityID: int
+		:return: The entity type of the corresponding entity
+		:rtype: str
+		"""
+		
 		return self.entityIDToType[entityID]
 
-	def addCandidateRelation(self, relation, relationtypeClass):
-		self.candidateRelationsWithClasses.append((relation,relationtypeClass))
-
-	def __init__(self, tokens, dependencies, entitiesWithLocations, sourceFilename=None):
-		assert isinstance(tokens, list) 
-		assert isinstance(dependencies, list) 
-		assert isinstance(entitiesWithLocations, list)
-		for entityWithLocation in entitiesWithLocations:
-			assert isinstance(entityWithLocation,tuple)
-			assert len(entityWithLocation) == 2
-			assert isinstance(entityWithLocation[0],kindred.Entity)
-			assert isinstance(entityWithLocation[1],list)
-		
-		self.tokens = tokens
-		self.entitiesWithLocations = entitiesWithLocations
-		self.sourceFilename = sourceFilename
-		
-		self.dependencies = dependencies
-		
-		self.entityIDToType = { e.entityID:e.entityType for e,_ in self.entitiesWithLocations }
-		self.entityIDToLoc = { e.entityID:loc for e,loc in self.entitiesWithLocations }
-
-		self.candidateRelationsWithClasses = []
-		self.candidateRelationsProcessed = False
-	
 

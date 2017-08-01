@@ -9,6 +9,19 @@ class Entity:
 	nextInternalID = 1
 
 	def __init__(self,entityType,text,position,sourceEntityID=None):
+		"""
+		Constructor for Entity class
+		
+		:param entityType: Type of the entity
+		:param text: Text of the entity
+		:param position: Position within the text passage at which point entity appears. Entity may be non-contigious
+		:param sourceEntityID: Entity ID used in source document
+		:type entityType: str
+		:type text: str
+		:type position: list of tuples of two integers
+		:type sourceEntityID: str
+		"""
+	
 		posErrorMsg = "Entity position must be list of tuples (startPos,endPos)"
 
 		if sys.version_info >= (3, 0):
