@@ -42,7 +42,7 @@ class Parser:
 		initializeCoreNLP()
 		Parser._nlp = StanfordCoreNLP(self.corenlp_url)
 			
-		assert self.testConnection() == True
+		assert self._testConnection() == True
 
 	def parse(self,corpus):
 		assert isinstance(corpus,kindred.Corpus)
