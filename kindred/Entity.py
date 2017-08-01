@@ -7,7 +7,7 @@ class Entity:
 	Biomedical entity with information of location in text
 	"""
 	
-	nextInternalID = 1
+	_nextInternalID = 1
 
 	def __init__(self,entityType,text,position,sourceEntityID=None):
 		"""
@@ -41,7 +41,7 @@ class Entity:
 		self.position = position
 		
 		self.entityID = Entity.nextInternalID
-		Entity.nextInternalID += 1
+		Entity._nextInternalID += 1
 		
 	def __str__(self):
 		out = "<Entity %s:'%s' id=%d sourceid=%s %s>" % (self.entityType,self.text,self.entityID,str(self.sourceEntityID),str(self.position))
