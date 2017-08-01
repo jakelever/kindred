@@ -23,11 +23,10 @@ class Entity:
 		:type sourceEntityID: str
 		"""
 	
-		posErrorMsg = "Entity position must be list of tuples (startPos,endPos)"
-			
 		isinstance(entityType, six.string_types), "entityType must be a string"
 		isinstance(text, six.string_types), "text must be a string"
 
+		posErrorMsg = "Entity position must be list of tuples (startPos,endPos)"
 		assert isinstance(position,list), posErrorMsg
 		for p in position:
 			assert isinstance(p,tuple), posErrorMsg
