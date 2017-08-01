@@ -35,16 +35,16 @@ class Sentence:
 			assert isinstance(entityWithLocation[1],list)
 			
 		# Check the format of the Dependencies
-		dependencyErrorMsg = "Each dependency is expected to be a tuple of (tokenindex1,tokenindex2,dependency_type)"
+		dependencyErrorMsg = "Each dependency is expected to be a tuple of (tokenindex1,tokenindex2,dependency_type). Token index can be -1 to indicate an incoming edge."
 		assert isinstance(dependencies, list), dependencyErrorMsg
 		for dependency in dependencies:
 			assert isinstance(dependency,tuple),dependencyErrorMsg
 			assert len(dependency) == 3,dependencyErrorMsg
-			assert isinstance(dependency[0],int)
-			assert isinstance(dependency[1],int)
-			assert isinstance(dependency[2],str)
-			assert dependency[0] >= 0 and dependency[0] < len(tokens), dependencyErrorMsg
-			assert dependency[1] >= 0 and dependency[1] < len(tokens), dependencyErrorMsg
+			assert isinstance(dependency[0],int),dependencyErrorMsg
+			assert isinstance(dependency[1],int),dependencyErrorMsg
+			assert isinstance(dependency[2],str) or isinstance(dependency[2],unicode),"Dependency type:%s is %s" % (str(dependency[2]),str(type(dependency[2])))
+			assert dependency[0] >= -1 and dependency[0] < len(tokens), dependencyErrorMsg
+			assert dependency[1] >= -1 and dependency[1] < len(tokens), dependencyErrorMsg
 		
 		self.tokens = tokens
 		self.entitiesWithLocations = entitiesWithLocations
