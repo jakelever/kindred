@@ -39,7 +39,7 @@ class Entity:
 		self.text = text
 		self.position = position
 		
-		self.entityID = Entity.nextInternalID
+		self.entityID = Entity._nextInternalID
 		Entity._nextInternalID += 1
 		
 	def __str__(self):
