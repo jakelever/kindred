@@ -2,6 +2,7 @@
 # https://github.com/smilli/py-corenlp
 
 import json, requests
+import six
 
 class StanfordCoreNLP:
 
@@ -9,7 +10,7 @@ class StanfordCoreNLP:
         self.server_url = server_url
 
     def annotate(self, text, properties={}):
-        assert isinstance(text, str) or isinstance(text,unicode)
+		assert isinstance(text, six.string_types),"text must be a string"
         assert isinstance(properties, dict)
 
         data = text.encode('utf8')

@@ -1,5 +1,6 @@
 import kindred
 import sys
+import six
 
 class Entity:
 	"""
@@ -23,13 +24,9 @@ class Entity:
 		"""
 	
 		posErrorMsg = "Entity position must be list of tuples (startPos,endPos)"
-
-		if sys.version_info >= (3, 0):
-			assert isinstance(entityType,str)
-			assert isinstance(text,str)
-		else:
-			assert isinstance(entityType,basestring) or isinstance(entityType,unicode)
-			assert isinstance(text,basestring) or isinstance(text,unicode)
+			
+		isinstance(entityType, six.string_types), "entityType must be a string"
+		isinstance(text, six.string_types), "text must be a string"
 
 		assert isinstance(position,list), posErrorMsg
 		for p in position:

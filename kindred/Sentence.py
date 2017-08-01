@@ -2,6 +2,7 @@ import kindred
 import networkx as nx
 import itertools
 import sys
+import six
 
 class Sentence:
 	"""
@@ -42,7 +43,7 @@ class Sentence:
 			assert len(dependency) == 3,dependencyErrorMsg
 			assert isinstance(dependency[0],int),dependencyErrorMsg
 			assert isinstance(dependency[1],int),dependencyErrorMsg
-			assert isinstance(dependency[2],str) or isinstance(dependency[2],unicode),"Dependency type:%s is %s" % (str(dependency[2]),str(type(dependency[2])))
+			assert isinstance(dependency[2], six.string_types),dependencyErrorMsg
 			assert dependency[0] >= -1 and dependency[0] < len(tokens), dependencyErrorMsg
 			assert dependency[1] >= -1 and dependency[1] < len(tokens), dependencyErrorMsg
 		
