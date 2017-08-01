@@ -23,32 +23,32 @@ class Parser:
 	def __init__(self,corenlp_url='http://localhost:9000'):
 		self.corenlp_url = corenlp_url
 
-	nlp = None
+	_nlp = None
 
-	def testConnection(self):
-		if Parser.nlp is None:
+	def _testConnection(self):
+		if Parser._nlp is None:
 			return False
 	
 		try:
-			parsed = Parser.nlp.annotate("This is a test", properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
+			parsed = Parser._nlp.annotate("This is a test", properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
 			return True
 		except:
 			return False
 
-	def setupConnection(self):
+	def _setupConnection(self):
 		if not checkCoreNLPDownload():
 			raise RuntimeError("Cannot access local CoreNLP at http://localhost:9000 and cannot find CoreNLP files to launch subprocess. Please download using kindred.downloadCoreNLP() if subprocess should be used")
 
 		initializeCoreNLP()
-		Parser.nlp = StanfordCoreNLP(self.corenlp_url)
+		Parser._nlp = StanfordCoreNLP(self.corenlp_url)
 			
 		assert self.testConnection() == True
 
 	def parse(self,corpus):
 		assert isinstance(corpus,kindred.Corpus)
 
-		if self.testConnection() == False:
-			self.setupConnection()
+		if self._testConnection() == False:
+			self._setupConnection()
 		
 		for d in corpus.documents:
 			entityIDsToEntities = d.getEntityIDsToEntities()
@@ -61,7 +61,7 @@ class Parser:
 				for a,b in e.position:
 					denotationTree[a:b] = e.entityID
 				
-			parsed = Parser.nlp.annotate(d.getText(), properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
+			parsed = Parser._nlp.annotate(d.getText(), properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
 	
 			
 
