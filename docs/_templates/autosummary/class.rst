@@ -1,6 +1,5 @@
-.. currentmodule:: {{ module }}
+{% extends "!autosummary/class.rst" %}
 
-.. autoclass:: {{ objname }}
 
    {% block methods %}
    {% if methods %}
