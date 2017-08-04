@@ -154,8 +154,7 @@ Want to use only specific feature types (of which the options are: entityTypes, 
 Frequently Asked Questions
 --------------------------
 
-Does Kindred handle multiple relations that contain the same entities?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Does Kindred handle multiple relations that contain the same entities?**
 
 At the moment, no. Kindred will only use the first annotation of a relation.
 
