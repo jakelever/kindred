@@ -81,11 +81,100 @@ Lastly, we will evaluate how well we have done. The common measure is F1-score.
 Specific Examples
 -----------------
 
+Here we will show some of the individual steps that might be needed.
+
+Loading data from files
+~~~~~~~~~~~~~~~~~~~~~~~
+
+You have a directory of data files that you want to load. The files are in the JSON format.
+
+>>> corpus = kindred.loadDir(dataFormat='json',directory='/home/user/data/')
+
+And if it was in another format, you change the dataFormat parameter. Options include: 'standoff' for the standoff format used in the BioNLP Shared Tasks, 'bioc' for BioC files and 'simpletag' if there are a set of SimpleTag XML files. Note that we only use SimpleTag for generating easy test data and not for any large problems.
+
+Loading data from online resources
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Kindred integrates with several onlines resources to make it easy to import data. For BioNLP Shared Tasks, you can use the command below:
+
+>>> corpus = kindred.bionlpst.load('2016-BB3-event-dev')
+
+You can currently import data from the '2016-BB3-event' or '2016-SeeDev-binary' shared tasks. Add 'train', 'dev' or 'test' to them. The 'train' and 'dev' corpora contains relations while the 'test' corpus does not.
+
+You can import Pubmed abstracts annotated by Pubtator given a list of Pubmed IDs (or PMIDs for short). These will contain entity annotations but no relations. The command below will import the two articles with those PMIDs.
+
+>>> corpus = kindred.pubtator.load([19894120,19894121])
+
+You can also import text and annotation data from PubAnnotation. In this case, you provide the project name and Kindred will download all the annotations and associated text. For the 'bionlp-st-gro-2013-development' project, the command to import is below. These annotations may include relation information
+
+>>> corpus = kindred.pubannotation.load('bionlp-st-gro-2013-development')
+
+Parsing
+~~~~~~~
+
+If you want to parse a corpus, you use a Parser object.
+
+>>> parser = kindred.Parser()
+>>> parser.parse(corpus)
+
+Candidate Building
+~~~~~~~~~~~~~~~~~~
+
+Given a corpus with annotated entities, one may want to generate the set of all candidate relations between two entities within the same text. One can do this for the first set with the command below. Each Sentence object within the corpus will now have a set of candidate relations attached to it.
+
+>>> candidateBuilder = kindred.CandidateBuilder()
+>>> candidateBuilder.fit_transform(corpus)
+
+You can easily extract all the candidate relations using the command below:
+
+>>> candidateRelations = corpus.getCandidateRelations()
+
+The corpus contains a list of relation types contained within.
+
+>>> print(corpus.relationTypes)
+
+And if the corpus contains annotated relations, the candidate relations will be assigned a non-zero class index. Hence a candidate relation with class 0 has not been annotated, but a candidate relation with class 1 is of the first relation type in corpus.relationTypes.
+
+Vectorizing
+~~~~~~~~~~~
+
+You may want to generate vectors for each candidate relation. The command below will produce the vectorized matrix with the default set of feature types.
+
+>>> vectorizer = kindred.Vectorizer()
+>>> trainMatrix = vectorizer.fit_transform(trainCorpus)
+
+Once you've fit the vectorizer to the training set, remember to only use transform for the test set.
+
+>>> testMatrix = vectorizer.transform(testCorpus)
+
+Want to use only specific feature types (of which the options are: entityTypes, unigramsBetweenEntities, bigrams, dependencyPathEdges, dependencyPathEdgesNearEntities)? Use a command like below:
+
+>>> vectorizer = kindred.Vectorizer(featureChoice=['entityTypes','bigrams'])
+
 Frequently Asked Questions
 --------------------------
 
+Does Kindred handle multiple relations that contain the same entities?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+At the moment, no. Kindred will only use the first annotation of a relation.
+
 Citing
 ------
+
+If your work makes use of Kindred, it'd be really nice if you cited us.
+
+.. code:: bibtex
+
+   @article{lever2017painless,
+            title={Painless {R}elation {E}xtraction with {K}indred},
+            author={Lever, Jake and Jones, Steven JM},
+            journal={Bio{NLP} 2017},
+            pages={176},
+            year={2017}
+            }
+
+
 
 Reference
 ---------
@@ -133,8 +222,6 @@ Essential functions
    :toctree: _autosummary
    :nosignatures:
 
-   loadDoc
-   loadDocs
    loadDir
    save
    evaluate
