@@ -3,14 +3,20 @@ language: python
 
 matrix:
   include:
+    - os: linux
+      sudo: required
+      python: 2.7
+      env: TOXENV=py27
+    - os: linux
+      sudo: required
+      python: 3.6
+      env: TOXENV=py36
     - os: osx
       language: generic
       env: TOXENV=py27
-
-# versions of java to test (for parsers)
-#before_install:
-#  - sudo apt-get update
-#  - sudo apt-get install oracle-java8-installer oracle-java8-set-default
+    - os: osx
+      language: generic
+      env: TOXENV=py36
 # command to install dependencies
 install:
   - source ./.travis/install.sh
@@ -25,7 +31,7 @@ install:
 script:
   - java -version
   - coverage --version
-  - coverage run --branch -m pytest -v --timeout=90 && coverage report -m
+  - coverage run --branch -m pytest -v --timeout=90 tests/test_bionlpst.py && coverage report -m
 after_success:
   - coveralls
 env:

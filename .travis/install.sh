@@ -23,7 +23,8 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 	esac
 else
 	# Install some custom requirements on Linux
-	echo
+	sudo apt-get update
+	sudo apt-get install oracle-java8-installer oracle-java8-set-default
 fi
 
 python --version
