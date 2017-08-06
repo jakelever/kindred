@@ -82,8 +82,7 @@ def downloadCoreNLP():
 	directory = _findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
 	if directory is None:
 		files = []
-		#files.append(('http://nlp.stanford.edu/software/stanford-corenlp-full-2016-10-31.zip','stanford-corenlp-full-2016-10-31.zip','753dd5aae1ea4ba14ed8eca46646aef06f6808a9ce569e52a09840f6928d00d8'))
-		files.append(('http://bcgsc.ca/downloads/jlever/stanford-corenlp-full-2016-10-31.zip','stanford-corenlp-full-2016-10-31.zip','753dd5aae1ea4ba14ed8eca46646aef06f6808a9ce569e52a09840f6928d00d8'))
+		files.append(('http://nlp.stanford.edu/software/stanford-corenlp-full-2016-10-31.zip','stanford-corenlp-full-2016-10-31.zip','753dd5aae1ea4ba14ed8eca46646aef06f6808a9ce569e52a09840f6928d00d8'))
 		
 		print("Downloading CoreNLP to %s" % downloadDirectory)
 		_downloadFiles(files)
