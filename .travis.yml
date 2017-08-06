@@ -32,7 +32,7 @@ script:
   - java -version
   - coverage --version
   - python --version
-  - coverage run --branch -m pytest -v --timeout=90 tests/test_bionlpst.py && coverage report -m
+  - coverage run --branch -m pytest -v --timeout=90 && coverage report -m
 after_success:
   - coveralls
 env:
