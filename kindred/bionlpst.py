@@ -41,18 +41,15 @@ def _downloadFiles(files,downloadDirectory):
 		downloadedPath = os.path.join(downloadDirectory,shortName)
 
 		if not os.path.isfile(downloadedPath):
-			try:
-				wget.download(url,out=downloadedPath,bar=None)
-				
-				downloadedSHA256 = _calcSHA256(downloadedPath)
-				assert downloadedSHA256 == expectedSHA256, "SHA256 mismatch with downloaded file: %s" % shortName
-				
-				if shortName.endswith('.zip'):
-					zip_ref = zipfile.ZipFile(downloadedPath, 'r')
-					zip_ref.extractall(path=downloadDirectory)
-					zip_ref.close()
-			except:
-				raise RuntimeError("Unable to download BioNLP ST files")
+			wget.download(url,out=downloadedPath,bar=None)
+			
+			downloadedSHA256 = _calcSHA256(downloadedPath)
+			assert downloadedSHA256 == expectedSHA256, "SHA256 mismatch with downloaded file: %s" % shortName
+			
+			if shortName.endswith('.zip'):
+				zip_ref = zipfile.ZipFile(downloadedPath, 'r')
+				zip_ref.extractall(path=downloadDirectory)
+				zip_ref.close()
 
 
 def load(taskName,ignoreEntities=[]):
