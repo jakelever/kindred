@@ -11,7 +11,7 @@ def test_loadBioNLP_fail():
 	with pytest.raises(RuntimeError) as excinfo:
 		corpus = kindred.bionlpst.load('2016-BB3-event-train')
 	pytest_socket.enable_socket()
-	assert excinfo.value.args == ('Unable to download BioNLP ST files',)
+	assert excinfo.value.args == ('A test tried to use socket.socket.',)
 
 def test_loadBioNLP_findDir():
 	tempDir = tempfile.mkdtemp()

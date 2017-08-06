@@ -355,20 +355,22 @@ def loadDocs(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=F
 		
 	return docs
 	
-def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
+def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
 	"""
-	:param dataFormat: description
-	:param directory: description
-	:param verbose: description
-	:param ignoreEntities: description
-	:param ignoreComplexRelations: description
-	:type dataFormat: type description
-	:type directory: type description
-	:type verbose: type description
-	:type ignoreEntities: type description
-	:type ignoreComplexRelations: type description
-	:return: return description
-	:rtype: the return type description
+	Load a directory of corpus data from a variety of data formats
+	
+	:param dataFormat: Format of the data files to load ('standoff','simpletag','json' or 'bioc')
+	:param directory: Path to directory of data to load
+	:param verbose: Whether to print statements about loading to std out
+	:param ignoreEntities: List of entity types to ignore while loading
+	:param ignoreComplexRelations: Whether to filter out relations where one argument is another relation (must be True as kindred doesn't currently support complex relations)
+	:type dataFormat: str
+	:type directory: str
+	:type verbose: bool
+	:type ignoreEntities: list
+	:type ignoreComplexRelations: bool
+	:return: Corpus of loaded documents
+	:rtype: kindred.Corpus
 	"""
 	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json' or dataFormat == 'bioc'
 	assert os.path.isdir(directory), "%s must be a directory"
