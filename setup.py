@@ -16,7 +16,7 @@ def readme():
 		return f.read()
 
 setup(name='kindred',
-	version='1.0.0',
+	version='1.1.0',
 	description='A relation extraction toolkit for biomedical text mining',
 	long_description=long_description,
 	classifiers=[
@@ -25,10 +25,10 @@ setup(name='kindred',
 		'Intended Audience :: Information Technology',
 		'Intended Audience :: Science/Research',
 		'License :: OSI Approved :: MIT License',
-		'Operating System :: OS Independent',
+		'Operating System :: Unix',
+		'Operating System :: MacOS :: MacOS X',
 		'Programming Language :: Python :: 2.7',
-		'Programming Language :: Python :: 3.4',
-		'Programming Language :: Python :: 3.5',
+		'Programming Language :: Python :: 3.6',
 		'Topic :: Scientific/Engineering',
 		'Topic :: Scientific/Engineering :: Artificial Intelligence',
 		'Topic :: Scientific/Engineering :: Human Machine Interfaces',

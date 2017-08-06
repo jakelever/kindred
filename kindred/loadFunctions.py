@@ -357,7 +357,18 @@ def loadDocs(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=F
 	
 def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
 	"""
-	Loads a directory of files with the given data format.
+	:param dataFormat: description
+	:param directory: description
+	:param verbose: description
+	:param ignoreEntities: description
+	:param ignoreComplexRelations: description
+	:type dataFormat: type description
+	:type directory: type description
+	:type verbose: type description
+	:type ignoreEntities: type description
+	:type ignoreComplexRelations: type description
+	:return: return description
+	:rtype: the return type description
 	"""
 	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json' or dataFormat == 'bioc'
 	assert os.path.isdir(directory), "%s must be a directory"
