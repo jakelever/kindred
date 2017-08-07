@@ -25,8 +25,10 @@ def load(pmids):
 	>>> len(corpus.documents)
 	1
 
-	:param pmids: the list of Pubmed IDs (integers)
+	:param pmids: the list of Pubmed IDs
+	:type pmids: List of ints
 	:returns: a kindred corpus object
+	:rtype: kindred.Corpus
 	"""
 
 	assert isinstance(pmids,list) or isinstance(pmids,int)

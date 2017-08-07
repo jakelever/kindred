@@ -8,6 +8,14 @@ import requests
 import re
 
 def load(projectName):
+	"""
+	Download and load the corresponding corpus from the PubAnnotation resource
+	
+	:param projectName: The name of the PubAnnotation project to download
+	:type projectName: str
+	:return: The loaded corpus
+	:rtype: kindred.Corpus
+	"""
 	projectURL = "http://pubannotation.org/projects/%s/docs.json" % projectName
 	
 	loaded = kindred.Corpus()

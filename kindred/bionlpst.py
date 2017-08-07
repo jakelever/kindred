@@ -10,6 +10,17 @@ import six
 import kindred
 
 def load(taskName,ignoreEntities=[]):
+	"""
+	Download and load the corresponding corpus from the BioNLP Shared Task
+	
+	:param taskName: The name of the shared task to download (e.g. 'BioNLP-ST-2016_BB-event_train')
+	:param ignoreEntities: A list of any entities that should be ignored during loading
+	:type taskName: str
+	:type ignoreEntities: list of str
+	:return: The loaded corpus
+	:rtype: kindred.Corpus
+	"""
+
 	tempDir = tempfile.mkdtemp()
 
 	taskOptions = {}

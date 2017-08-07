@@ -21,6 +21,13 @@ class Parser:
 	"""
 	
 	def __init__(self,corenlp_url='http://localhost:9000'):
+		"""
+		Create a Parser object that will use CoreNLP for parsing
+		
+		:param corenlp_url: URL of the CoreNLP instance
+		:type corenlp_url: str
+		"""
+
 		self.corenlp_url = corenlp_url
 
 	_nlp = None
@@ -45,6 +52,13 @@ class Parser:
 		assert self._testConnection() == True
 
 	def parse(self,corpus):
+		"""
+		Parse the corpus. Each document will be split into sentences which are then tokenized and parsed for their dependency graph. All parsed information is stored within the corpus object.
+		
+		:param corpus: Corpus to parse
+		:type corpus: kindred.Corpus
+		"""
+
 		assert isinstance(corpus,kindred.Corpus)
 
 		if self._testConnection() == False:

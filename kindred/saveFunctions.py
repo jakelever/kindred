@@ -60,9 +60,18 @@ def saveDataFromSTFormat(data,predictedRelations,txtPath,a1Path,a2Path):
 def save(corpus,dataFormat,directory,predictedRelations=[]):
 	"""
 	Save a corpus to a directory
+	
+	:param corpus: The corpus of documents to save
+	:param dataFormat: Format of data to save (only 'standoff' is supported currently)
+	:param directory: Path to directory in which files should be saved
+	:param predictedRelations: Set of predicted relations to also save
+	:type corpus: kindred.Corpus
+	:type dataFormat: str
+	:type directory: str
+	:type predictedRelations: List of kindred.Relation
 	"""
 	
-	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
+	assert dataFormat == 'standoff'
 
 	assert isinstance(corpus,kindred.Corpus)
 	
