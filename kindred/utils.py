@@ -1,6 +1,7 @@
 
 import kindred
 
+import socket
 import zipfile
 import hashlib
 import os
@@ -29,6 +30,9 @@ def _findDir(name, path):
 	return None
 
 def _downloadFiles(files,downloadDirectory):
+	oldTimeout = socket.getdefaulttimeout()
+	socket.setdefaulttimeout(180)
+
 	if not os.path.isdir(downloadDirectory):
 		os.mkdir(downloadDirectory)
 
@@ -51,3 +55,4 @@ def _downloadFiles(files,downloadDirectory):
 				zip_ref.extractall(path=downloadDirectory)
 				zip_ref.close()
 	
+	socket.setdefaulttimeout(oldTimeout)
