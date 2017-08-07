@@ -13,14 +13,6 @@ def test_loadBioNLP_fail():
 	pytest_socket.enable_socket()
 	assert excinfo.value.args == ('A test tried to use socket.socket.',)
 
-def test_loadBioNLP_findDir():
-	tempDir = tempfile.mkdtemp()
-	actualDirPath = os.path.join(tempDir,'actualDir')
-	os.mkdir(actualDirPath)
-	assert kindred.bionlpst._findDir('actualDir',tempDir) == actualDirPath
-	assert kindred.bionlpst._findDir('doesntExist',tempDir) == None
-	shutil.rmtree(tempDir)
-
 def test_loadBioNLP_BB3_event_train():
 	corpus = kindred.bionlpst.load('2016-BB3-event-train')#,ignoreEntities=['Title','Paragraph'])
 

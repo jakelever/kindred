@@ -3,54 +3,11 @@ Importer for BioNLP Shared Task data
 """
 
 import tempfile
-
-import kindred
-
-
-import zipfile
-import hashlib
-import os
 import sys
-import wget
 import shutil
 import six
 
-if sys.version_info >= (3, 0):
-	import urllib.request
-else:
-	import urllib
-
-def _calcSHA256(filename):
-	return hashlib.sha256(open(filename, 'rb').read()).hexdigest()
-
-def _isDirEmpty(path):
-	files = os.listdir(path)
-	return files == []
-
-def _findDir(name, path):
-	assert os.path.isdir(path), "Must provide directory as path"
-	for root, dirs, files in os.walk(path):
-		if name in dirs:
-			return os.path.abspath(os.path.join(root, name))
-	return None
-
-def _downloadFiles(files,downloadDirectory):
-	assert _isDirEmpty(downloadDirectory)
-
-	for url,shortName,expectedSHA256 in files:
-		downloadedPath = os.path.join(downloadDirectory,shortName)
-
-		if not os.path.isfile(downloadedPath):
-			wget.download(url,out=downloadedPath,bar=None)
-			
-			downloadedSHA256 = _calcSHA256(downloadedPath)
-			assert downloadedSHA256 == expectedSHA256, "SHA256 mismatch with downloaded file: %s" % shortName
-			
-			if shortName.endswith('.zip'):
-				zip_ref = zipfile.ZipFile(downloadedPath, 'r')
-				zip_ref.extractall(path=downloadDirectory)
-				zip_ref.close()
-
+import kindred
 
 def load(taskName,ignoreEntities=[]):
 	tempDir = tempfile.mkdtemp()
@@ -100,13 +57,13 @@ def load(taskName,ignoreEntities=[]):
 	filesToDownload,expectedDir,ignoreComplexRelations = taskOptions[taskName]
 
 	try:
-		_downloadFiles(filesToDownload,tempDir)
+		kindred.utils._downloadFiles(filesToDownload,tempDir)
 	except:
 		exc_info = sys.exc_info()
 		shutil.rmtree(tempDir)
 		six.reraise(*exc_info)
 
-	mainDir = _findDir(expectedDir,tempDir)
+	mainDir = kindred.utils._findDir(expectedDir,tempDir)
 
 	corpus = kindred.loadDir(dataFormat='standoff',directory=mainDir,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
 
