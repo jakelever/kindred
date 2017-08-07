@@ -25,27 +25,6 @@ downloadDirectory = os.path.join(homeDirectory,'.kindred')
 corenlpProcess = None
 stdoutFile = None
 stderrFile = None
-
-def _downloadFiles(files):
-	
-	
-	for url,shortName,expectedSHA256 in files:
-		downloadedPath = os.path.join(downloadDirectory,shortName)
-		
-		# Check if the file is already downloaded (and delete if the SHA256 doesn't match)
-
-		if not os.path.isfile(downloadedPath):
-			print("Downloading %s" % shortName)
-			wget.download(url,out=downloadedPath,bar=None)
-			
-			downloadedSHA256 = _calcSHA256(downloadedPath)
-			assert downloadedSHA256 == expectedSHA256
-			
-			if shortName.endswith('.zip'):
-				print("Unzipping %s" % shortName)
-				zip_ref = zipfile.ZipFile(downloadedPath, 'r')
-				zip_ref.extractall(downloadDirectory)
-				zip_ref.close()
 			
 def killCoreNLP():
 	global corenlpProcess
