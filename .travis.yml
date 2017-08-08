@@ -33,7 +33,7 @@ script:
   - java -version
   - coverage --version
   - python --version
-  - coverage run --branch -m pytest -v --timeout=90 && coverage report -m
+  - coverage run --branch -m pytest -v --timeout=250 && coverage report -m
 after_success:
   - coveralls
 env:
