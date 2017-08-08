@@ -9,10 +9,6 @@ import traceback
 def _calcSHA256(filename):
 	return hashlib.sha256(open(filename, 'rb').read()).hexdigest()
 
-def _isDirEmpty(path):
-	files = os.listdir(path)
-	return files == []
-
 def _findDir(name, path):
 	if os.path.isdir(path):
 		for root, dirs, files in os.walk(path):
