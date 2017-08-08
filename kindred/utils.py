@@ -3,6 +3,8 @@ import os
 import zipfile
 import hashlib
 import requests
+import logging
+import traceback
 
 def _calcSHA256(filename):
 	return hashlib.sha256(open(filename, 'rb').read()).hexdigest()
@@ -48,7 +50,12 @@ def _downloadFiles(files,downloadDirectory):
 
 		if not os.path.isfile(downloadedPath):
 			#wget.download(url,out=downloadedPath,bar=None)
-			_downloadFile(url,downloadedPath)
+			try:
+				_downloadFile(url,downloadedPath)
+			except Exception as e:
+				logging.error(traceback.format_exc())
+				print(type(e))
+				raise
 			
 			downloadedSHA256 = _calcSHA256(downloadedPath)
 			assert downloadedSHA256 == expectedSHA256, "SHA256 mismatch with downloaded file: %s" % shortName
