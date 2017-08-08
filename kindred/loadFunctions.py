@@ -46,8 +46,10 @@ def loadEntity(line,text):
 
 	return entity
 	
-def loadRelation(line,ignoreComplexRelations=False):
+def loadRelation(line,ignoreComplexRelations=True):
 	assert line[0] == 'E' or line[0] == 'R', "Relation input should start with a E or R"
+	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
+
 	split = line.strip().split('\t')
 	#relationID = split[0]
 	eventInfo = split[1]
@@ -90,6 +92,8 @@ def loadRelation(line,ignoreComplexRelations=False):
 	
 # TODO: Deal with complex relations more clearly
 def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
+	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
+
 	with codecs.open(txtFile, "r", "utf-8") as f:
 		text = f.read()
 			
@@ -311,12 +315,13 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 	return parsed
 	
 	
-def loadDoc(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
+def loadDoc(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
 	"""
 	Loads a single document from a single file (for JSON or SimpleTag) or set of files (for standoff)
 	"""
 	
 	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
+	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
 	
 	if dataFormat == 'standoff':
 		assert not txtPath is None
@@ -338,11 +343,13 @@ def loadDoc(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=Fa
 	assert isinstance(doc,kindred.Document)
 	return doc
 
-def loadDocs(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=False):
+def loadDocs(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
 	"""
 	Loads a set of documents from a single file (for BioC)
 	"""
 	assert dataFormat == 'bioc'
+	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
+
 	if dataFormat == 'bioc':
 		assert not path is None
 		docs = loadDataFromBioC(path,ignoreEntities=ignoreEntities)
@@ -372,6 +379,7 @@ def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRe
 	"""
 	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json' or dataFormat == 'bioc'
 	assert os.path.isdir(directory), "%s must be a directory"
+	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
 	
 	if directory[-1] != '/':
 		directory += '/'
