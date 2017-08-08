@@ -5,6 +5,7 @@ import hashlib
 import requests
 import logging
 import traceback
+import time
 
 def _calcSHA256(filename):
 	return hashlib.sha256(open(filename, 'rb').read()).hexdigest()
@@ -23,11 +24,17 @@ def _downloadFile(url,filename,timeout=180):
 
 	# Open the output file and make sure we write in binary mode
 	with open(filename, 'wb') as fh:
+		downloadedSize = 0.0
 		# Walk through the request response in chunks of 1024 * 1024 bytes, so 1MiB
 		for chunk in request.iter_content(1024 * 1024):
 			# Write the chunk to the file
 			fh.write(chunk)
 			# Optionally we can check here if the download is taking too long
+			downloadedSize += (len(chunk) / float(1024*1024))
+
+			currentDateTime = time.strftime("%Y/%m/%d %H:%M:%S")
+			print("%s : Downloaded %.1f MB" % (currentDateTime,downloadedSize))
+			
 
 def _downloadFiles(files,downloadDirectory):
 	#oldTimeout = socket.getdefaulttimeout()
