@@ -6,6 +6,15 @@ import pytest
 import pytest_socket
 import shutil
 
+def test_loadBioNLP_listTasks():
+	expectedTaskNames = set()
+	with open(os.path.join(os.path.dirname(kindred.bionlpst.__file__),'bionlpst_files.txt'),'r') as f:
+		for line in f:
+			taskName = line.strip().split('\t')[0]
+			expectedTaskNames.add(taskName)
+
+	assert set(kindred.bionlpst.listTasks()) == expectedTaskNames
+
 def test_loadBioNLP_fail():
 	pytest_socket.disable_socket()
 	with pytest.raises(RuntimeError) as excinfo:
