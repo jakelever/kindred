@@ -36,6 +36,9 @@ class Parser:
 	
 		try:
 			parsed = Parser._nlp.annotate("This is a test", properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
+			
+			assert not parsed is None
+
 			return True
 		except:
 			return False
@@ -106,7 +109,6 @@ class Parser:
 				# Let's gather up the information about the "known" entities in the sentence
 				entitiesWithLocations = []
 				for entityID,entityLocs in sorted(entityIDsToTokenLocs.items()):
-					entityType = entityTypeLookup[entityID]
 					e = entityIDsToEntities[entityID]
 					entityWithLocation = (e, entityLocs)
 					entitiesWithLocations.append(entityWithLocation)

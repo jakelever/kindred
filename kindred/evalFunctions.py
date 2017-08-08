@@ -43,7 +43,7 @@ def evaluate(goldCorpus,testCorpus,metric='f1score',display=True):
 
 	sortedRelTypes = sorted( list(set( [relation[0] for relation in totalSet] )))
 
-	maxLen = max( [len(relType) for relType in sortedRelTypes ] )
+	maxLen = max( [len(rt) for rt in sortedRelTypes ] )
 	formatString = '%-' + str(maxLen) + 's\tTP:%d FP:%d FN:%d\tP:%f R:%f F1:%f'
 
 	for relType in sortedRelTypes:

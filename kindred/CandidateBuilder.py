@@ -65,7 +65,6 @@ class CandidateBuilder:
 			for r in doc.getRelations():
 				assert isinstance(r,kindred.Relation)
 				
-				relationType = r.relationType
 				entityIDs = tuple(r.entityIDs)
 				
 				relKey = tuple([r.relationType] + r.argNames)

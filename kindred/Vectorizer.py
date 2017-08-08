@@ -59,7 +59,6 @@ class Vectorizer:
 		return data
 	
 	def doUnigramsBetweenEntities(self,corpus):
-		entityMapping = corpus.getEntityMapping()
 		data = []	
 		for doc in corpus.documents:
 			for sentence in doc.sentences:
@@ -83,7 +82,6 @@ class Vectorizer:
 		return data
 	
 	def doDependencyPathEdges(self,corpus):
-		entityMapping = corpus.getEntityMapping()
 		data = []	
 		for doc in corpus.documents:
 			for sentence in doc.sentences:
@@ -104,7 +102,6 @@ class Vectorizer:
 		return data
 	
 	def doDependencyPathEdgesNearEntities(self,corpus):
-		entityMapping = corpus.getEntityMapping()
 		data = []	
 		for doc in corpus.documents:
 			for sentence in doc.sentences:
@@ -128,7 +125,6 @@ class Vectorizer:
 		return data
 
 	def doBigrams(self,corpus):
-		entityMapping = corpus.getEntityMapping()
 		data = []	
 		for doc in corpus.documents:
 			for sentence in doc.sentences:

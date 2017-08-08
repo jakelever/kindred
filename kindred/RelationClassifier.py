@@ -57,7 +57,6 @@ class RelationClassifier:
 			vectorizers[feature] = Vectorizer(featureChoice=[feature],tfidf=tfidf)
 			trainVectors[feature] = vectorizers[feature].fit_transform(corpus)
 
-		groupVector = None
 		chosenFeatures = []
 		prevScore,prevMatrix = -1.0, None
 		while True:
@@ -200,7 +199,6 @@ class RelationClassifier:
 		#saveClasses('test.classes',tmpClassData)
 
 		candidateRelations = corpus.getCandidateRelations()
-		candidateClasses = corpus.getCandidateClasses()
 		
 		entityIDsToType = {}
 		for doc in corpus.documents:

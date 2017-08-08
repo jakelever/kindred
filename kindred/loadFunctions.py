@@ -1,7 +1,7 @@
+import sys
 import codecs
 import os
 import json
-import sys
 import re
 from collections import OrderedDict
 
@@ -10,7 +10,6 @@ from xml.dom import minidom
 import kindred
 
 import bioc
-import sys
 from future.utils import native
 
 def loadEntity(line,text):
@@ -50,7 +49,7 @@ def loadEntity(line,text):
 def loadRelation(line,ignoreComplexRelations=False):
 	assert line[0] == 'E' or line[0] == 'R', "Relation input should start with a E or R"
 	split = line.strip().split('\t')
-	relationID = split[0]
+	#relationID = split[0]
 	eventInfo = split[1]
 	typeSpacePos = eventInfo.index(' ')
 	
@@ -65,10 +64,10 @@ def loadRelation(line,ignoreComplexRelations=False):
 	for argument in argumentText.strip().split(' '):
 		split2 = argument.strip().split(':')
 		assert len(split2) == 2
-		argName = split2[0]
-		entityID = split2[1]
+		tmpArgName = split2[0]
+		tmpEntityID = split2[1]
 
-		isComplexRelation = (entityID[0] == 'R' or entityID[0] == 'E')
+		isComplexRelation = (tmpEntityID[0] == 'R' or tmpEntityID[0] == 'E')
 
 		# We'll skip this relation as
 		if ignoreComplexRelations and isComplexRelation:
@@ -76,8 +75,8 @@ def loadRelation(line,ignoreComplexRelations=False):
 
 		assert not isComplexRelation, "kindred does not support complex relations (where one relation has another relation as an argument), use ignoreComplexRelations=True to ignore these"
 
-		assert not argName in arguments
-		arguments.append((argName,entityID))
+		assert not tmpArgName in arguments
+		arguments.append((tmpArgName,tmpEntityID))
 
 	if ignoreComplexRelations and isComplexRelation:
 		return None
@@ -149,7 +148,7 @@ def parseJSON(data,ignoreEntities=[]):
 				entities.append(entity)
 	if 'relations' in data:
 		for r in data['relations']:
-			relationID = r['id']
+			#relationID = r['id']
 			obj = r['obj']
 			relationType = r['pred']
 			subj = r['subj']
@@ -225,7 +224,7 @@ def mergeEntitiesWithMatchingIDs(unmergedEntities):
 	for e in unmergedEntities:
 		assert isinstance(e, kindred.Entity)
 		if e.sourceEntityID in entityDict:
-			position = e.position
+			#position = e.position
 			entityDict[e.sourceEntityID].text += " " + e.text
 			entityDict[e.sourceEntityID].position += e.position
 		else:
@@ -291,7 +290,7 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 				
 			for r in passage.relations:
 				assert isinstance(r,bioc.BioCRelation)
-				relationID = r.id
+				#relationID = r.id
 				relationType = r.infons['type']
 				
 				arguments = []

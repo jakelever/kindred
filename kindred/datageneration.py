@@ -50,8 +50,6 @@ def generateData(positiveCount=100,negativeCount=100,relTypes=1):
 	fakeDrugNames = ['bmzvpvwbpw','pehhjnlvve''wbjccovflf','usckfljzxu','ruswdgzajr','vgypkemhjr','oxzbaapqct','elvptnpvyc']
 	fakeDiseaseNames = ['gnorcyvmer','hfymprbifs','ootopaoxbg','knetvjnjun','kfjqxlpvew','zgwivlcmly','kneqlzjegs','kyekjnkrfo']
 	
-	totalCount = positiveCount + negativeCount
-	
 	relNames = [ "treats_%d" % i for i in range(relTypes) ]
 
 	entityID = 1
