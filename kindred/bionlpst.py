@@ -20,6 +20,13 @@ with open(bionlpstFile,'r') as f:
 			taskOptions[taskName] = (url,expectedFile,expectedSHA256)
 
 def listTasks():
+	"""
+	List the names of the BioNLP Shared Task datasets that can be loaded. These values can be passed to the kindred.bionlpst.load function as the taskName argument
+
+	:return: List of valid taskNames
+	:rtype: str
+	"""
+	
 	return sorted(list(taskOptions.keys()))
 
 def load(taskName,ignoreEntities=[]):
