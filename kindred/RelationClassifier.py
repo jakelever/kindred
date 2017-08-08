@@ -1,21 +1,9 @@
 
-import sys
-
 from sklearn import svm
-import numpy as np
 from collections import defaultdict
 
-from sklearn.feature_selection import SelectKBest,chi2,SelectPercentile,RFECV
-from sklearn.metrics import f1_score,confusion_matrix
-from sklearn.ensemble import AdaBoostClassifier,GradientBoostingClassifier,BaggingClassifier,RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
-
-from sklearn.model_selection import cross_val_score,cross_val_predict,StratifiedKFold
-from sklearn.pipeline import Pipeline
-from sklearn.svm import LinearSVC,SVC
-
-from scipy.sparse import coo_matrix, csr_matrix, lil_matrix, hstack, vstack
+from sklearn.model_selection import cross_val_score
+from scipy.sparse import hstack
 
 import kindred
 from kindred.CandidateBuilder import CandidateBuilder

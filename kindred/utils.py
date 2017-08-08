@@ -1,21 +1,8 @@
 
-import kindred
-
-import socket
-import ssl
+import os
 import zipfile
 import hashlib
-import os
-import sys
-import wget
-import shutil
-import six
 import requests
-
-if sys.version_info >= (3, 0):
-	import urllib.request
-else:
-	import urllib
 
 def _calcSHA256(filename):
 	return hashlib.sha256(open(filename, 'rb').read()).hexdigest()

@@ -1,5 +1,3 @@
-import kindred
-
 
 class Relation:
 	"""

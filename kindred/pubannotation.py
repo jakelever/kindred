@@ -2,7 +2,6 @@
 Importer for PubAnnotation data
 """
 
-import sys
 import kindred
 import requests
 import re

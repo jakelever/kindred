@@ -1,5 +1,3 @@
-import kindred
-import sys
 import six
 
 class Entity:

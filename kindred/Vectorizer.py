@@ -2,7 +2,7 @@
 from collections import Counter,OrderedDict
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
-from scipy.sparse import coo_matrix, csr_matrix, lil_matrix, hstack, vstack
+from scipy.sparse import hstack
 
 import kindred
 

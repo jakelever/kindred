@@ -1,11 +1,7 @@
 
 import kindred
 
-import zipfile
-import hashlib
 import os
-import sys
-import wget
 import subprocess
 import shlex
 import time
@@ -13,11 +9,6 @@ import atexit
 import tempfile
 import requests
 import pytest_socket
-
-if sys.version_info >= (3, 0):
-	import urllib.request
-else:
-	import urllib
 
 homeDirectory = os.path.expanduser('~')
 downloadDirectory = os.path.join(homeDirectory,'.kindred')

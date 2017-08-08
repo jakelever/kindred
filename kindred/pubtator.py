@@ -2,10 +2,8 @@
 Importer for PubTator data
 """
 
-import sys
 import kindred
 import requests
-import re
 
 def _loadPMID(pmid):
 	assert isinstance(pmid,int)

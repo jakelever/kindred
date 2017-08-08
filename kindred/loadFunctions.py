@@ -1,7 +1,6 @@
 import codecs
 import os
 import json
-from pprint import pprint
 import sys
 import re
 from collections import OrderedDict
