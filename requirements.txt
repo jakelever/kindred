@@ -3,7 +3,6 @@ numpy
 scipy
 intervaltree
 networkx
-wget
 pycorenlp
 lxml
 future

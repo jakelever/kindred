@@ -9,11 +9,10 @@ here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
+	long_description = f.read()
 
-def readme():
-	with open('README.rst') as f:
-		return f.read()
+with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
+	requirements = f.readlines()
 
 setup(name='kindred',
 	version='1.1.0',
@@ -43,7 +42,7 @@ setup(name='kindred',
 	author_email='jake.lever@gmail.com',
 	license='MIT',
 	packages=['kindred'],
-	install_requires=['scikit-learn','numpy','scipy','intervaltree','networkx','wget','pycorenlp','lxml','future','bioc','pytest_socket','six'],
+	install_requires=requirements,
 	include_package_data=True,
 	zip_safe=False,
 	test_suite='nose.collector',
