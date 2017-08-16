@@ -6,12 +6,13 @@ def evaluate(goldCorpus,testCorpus,metric='f1score',display=True):
 	""" Compares the gold corpus with the test corpus and calculate appropriate metrics.
 	
 	:params goldCorpus: The gold standard set of data
-	:type name: str
+	:type goldCorpus: kindred.Corpus
 	:params testCorpus: The test set for comparison
-	:type state: bool
+	:type testCorpus: kindred.Corpus
 	:params metric: Which metric to use (precision/recall/f1score)
-	:type name: str
-	:returns: float -- the score given the metric
+	:type metric: str
+	:returns: the score given the metric
+	:rtype: float
 	"""
 
 	assert isinstance(goldCorpus,kindred.Corpus)
