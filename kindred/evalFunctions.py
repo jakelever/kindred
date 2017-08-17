@@ -5,13 +5,13 @@ from collections import Counter
 def evaluate(goldCorpus,testCorpus,metric='f1score',display=True):
 	""" Compares the gold corpus with the test corpus and calculate appropriate metrics.
 	
-	:params goldCorpus: The gold standard set of data
+	:param goldCorpus: The gold standard set of data
 	:type goldCorpus: kindred.Corpus
-	:params testCorpus: The test set for comparison
+	:param testCorpus: The test set for comparison
 	:type testCorpus: kindred.Corpus
-	:params metric: Which metric to use (precision/recall/f1score)
+	:param metric: Which metric to use (precision/recall/f1score)
 	:type metric: str
-	:returns: the score given the metric
+	:return: The value of the corresponding metric
 	:rtype: float
 	"""
 
