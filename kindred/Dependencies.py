@@ -31,19 +31,19 @@ def killCoreNLP():
 		stderrFile = None
 
 def checkCoreNLPDownload():
-	directory = kindred.utils._findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
+	directory = kindred.utils._findDir('stanford-corenlp-full-2017-06-09',downloadDirectory)
 	return not directory is None
 
 def downloadCoreNLP():
 	global downloadDirectory
-	directory = kindred.utils._findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
+	directory = kindred.utils._findDir('stanford-corenlp-full-2017-06-09',downloadDirectory)
 	if directory is None:
 		files = []
-		files.append(('http://nlp.stanford.edu/software/stanford-corenlp-full-2016-10-31.zip','stanford-corenlp-full-2016-10-31.zip','753dd5aae1ea4ba14ed8eca46646aef06f6808a9ce569e52a09840f6928d00d8'))
+		files.append(('http://nlp.stanford.edu/software/stanford-corenlp-full-2017-06-09.zip','stanford-corenlp-full-2017-06-09.zip','7fb27a0e8dd39c1a90e4155c8f27cd829956e8b8ec6df76b321c04b1fe887961'))
 		
 		print("Downloading CoreNLP to %s" % downloadDirectory)
 		kindred.utils._downloadFiles(files,downloadDirectory)
-		directory = kindred.utils._findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
+		directory = kindred.utils._findDir('stanford-corenlp-full-2017-06-09',downloadDirectory)
 		assert not directory is None, "Error after downloading, could not find corenlp directory"
 		print ("Download complete.")
 	else:
@@ -67,7 +67,7 @@ def initializeCoreNLP():
 	if testCoreNLPConnection():
 		return
 
-	directory = kindred.utils._findDir('stanford-corenlp-full-2016-10-31',downloadDirectory)
+	directory = kindred.utils._findDir('stanford-corenlp-full-2017-06-09',downloadDirectory)
 	if directory is None:
 		raise RuntimeError("Could not find the Stanford CoreNLP files. Use kindred.downloadCoreNLP() first")
 
