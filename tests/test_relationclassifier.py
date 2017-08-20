@@ -88,7 +88,7 @@ def test_multiClassifiers_threshold():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.225
+	assert round(f1score,3) == 0.176
 
 def test_featureBuilder():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
@@ -172,7 +172,7 @@ def test_filterByEntityTypes_validTypes():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.519
+	assert round(f1score,3) == 0.5
 
 def test_filterByEntityTypes_invalidTypes():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)

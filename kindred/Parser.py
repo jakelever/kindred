@@ -18,26 +18,31 @@ class Parser:
 	Runs CoreNLP on corpus to get sentences and associated tokens
 	"""
 	
-	def __init__(self,corenlp_url='http://localhost:9000'):
+	def __init__(self,corenlp_url='http://localhost:9000',useConstituencyParserOnly=False):
 		"""
 		Create a Parser object that will use CoreNLP for parsing
 		
 		:param corenlp_url: URL of the CoreNLP instance
+		:param useConstituencyParserOnly: Use CoreNLP's constituency parser (with a conversion) for the depenency parse information, and not the CoreNLP dependency parser. This is slower
 		:type corenlp_url: str
+		:type useConstituencyParserOnly: bool
 		"""
 
 		self.corenlp_url = corenlp_url
 
-	_nlp = None
+		if useConstituencyParserOnly:
+			self.annotators = 'ssplit,tokenize,pos,lemma,parse'
+		else:
+			self.annotators = 'ssplit,tokenize,pos,lemma,depparse'
 
-	_annotators = 'tokenize,ssplit,lemma,pos,depparse,parse'
+	_nlp = None
 
 	def _testConnection(self):
 		if Parser._nlp is None:
 			return False
 	
 		try:
-			parsed = Parser._nlp.annotate("This is a test", properties={'annotators': Parser._annotators,'outputFormat': 'json'})
+			parsed = Parser._nlp.annotate("This is a test", properties={'annotators': self.annotators,'outputFormat': 'json'})
 			
 			assert not parsed is None
 
@@ -78,7 +83,7 @@ class Parser:
 				for a,b in e.position:
 					denotationTree[a:b] = e.entityID
 				
-			parsed = Parser._nlp.annotate(d.getText(), properties={'annotators': Parser._annotators,'outputFormat': 'json'})
+			parsed = Parser._nlp.annotate(d.getText(), properties={'annotators': self.annotators,'outputFormat': 'json'})
 	
 			
 
