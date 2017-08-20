@@ -6,7 +6,7 @@ import six
 
 class StanfordCoreNLP:
 
-	useSessions = True
+	useSessions = False
 	sessions = {}
 
 	def __init__(self, server_url):
