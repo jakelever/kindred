@@ -30,12 +30,14 @@ class Parser:
 
 	_nlp = None
 
+	_annotators = 'tokenize,ssplit,lemma,pos,depparse,parse'
+
 	def _testConnection(self):
 		if Parser._nlp is None:
 			return False
 	
 		try:
-			parsed = Parser._nlp.annotate("This is a test", properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
+			parsed = Parser._nlp.annotate("This is a test", properties={'annotators': Parser._annotators,'outputFormat': 'json'})
 			
 			assert not parsed is None
 
@@ -76,7 +78,7 @@ class Parser:
 				for a,b in e.position:
 					denotationTree[a:b] = e.entityID
 				
-			parsed = Parser._nlp.annotate(d.getText(), properties={'annotators': 'tokenize,ssplit,lemma,pos,depparse,parse','outputFormat': 'json'})
+			parsed = Parser._nlp.annotate(d.getText(), properties={'annotators': Parser._annotators,'outputFormat': 'json'})
 	
 			
 
