@@ -382,27 +382,6 @@ def test_vectorizer_dependencyPathEdgesNearEntities_noTFIDF():
 	colmeans2 = np.sum(matrix2,axis=0)
 	assert colmeans2.tolist() == [[ 7, 1, 7, 1 ]]
 	
-def depparse_mystery():
-	corpus, _ = generateTestData(positiveCount=5,negativeCount=5)
-	print("STARTED")
-	for doc in corpus.documents:
-		newcorpus = kindred.Corpus()
-		newcorpus.addDocument(doc.clone())
-		parser = kindred.Parser()
-		parser.parse(newcorpus)
-		for s in newcorpus.documents[0].sentences:
-			print(s)
-			print(s.dependencies)
-
-def depparse_shortmystery():
-	#text = 'bmzvpvwbpw failed clinical trials for kyekjnkrfo . '
-	text = 'A drug failed clinical trials for a disease.'
-	corpus = kindred.Corpus(text)
-	parser = kindred.Parser()
-	parser.parse(corpus)
-	for s in corpus.documents[0].sentences:
-		print(s)
-		print(s.dependencies)
 
 if __name__ == '__main__':
 	#test_vectorizer_entityTypes()

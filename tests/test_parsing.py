@@ -171,6 +171,35 @@ def test_unicodeParse():
 	assert isinstance(sentence.dependencies,list)
 	assert len(sentence.dependencies) > 0
 
+def test_depparse_default():
+	text = 'A drug failed clinical trials for a disease.'
+	corpus = kindred.Corpus(text)
+	parser = kindred.Parser(useConstituencyParserOnly=False)
+	parser.parse(corpus)
+	assert len(corpus.documents) == 1
+	doc = corpus.documents[0]
+	assert len(doc.sentences) == 1
+	sentence = doc.sentences[0]
+
+	expectedDeps = [(-1, 2, u'ROOT'), (1, 0, u'det'), (2, 1, u'nsubj'), (4, 3, u'amod'), (2, 4, u'dobj'), (7, 5, u'case'), (7, 6, u'det'), (4, 7, u'nmod'), (2, 8, u'punct')]
+	print sentence.dependencies
+	assert sentence.dependencies == expectedDeps
+
+def test_depparse_ConstituencyParser():
+	text = 'A drug failed clinical trials for a disease.'
+	corpus = kindred.Corpus(text)
+	parser = kindred.Parser(useConstituencyParserOnly=True)
+	parser.parse(corpus)
+	assert len(corpus.documents) == 1
+	doc = corpus.documents[0]
+	assert len(doc.sentences) == 1
+	sentence = doc.sentences[0]
+
+	# Note that this output is very slightly different from the default behaviour
+	expectedDeps = [(-1, 2, u'ROOT'), (1, 0, u'det'), (2, 1, u'nsubj'), (4, 3, u'amod'), (2, 4, u'dobj'), (7, 5, u'case'), (7, 6, u'det'), (2, 7, u'nmod'), (2, 8, u'punct')]
+	assert sentence.dependencies == expectedDeps
+
+
 if __name__ == '__main__':
 	test_largeSentence()
 	
