@@ -182,7 +182,6 @@ def test_depparse_default():
 	sentence = doc.sentences[0]
 
 	expectedDeps = [(-1, 2, u'ROOT'), (1, 0, u'det'), (2, 1, u'nsubj'), (4, 3, u'amod'), (2, 4, u'dobj'), (7, 5, u'case'), (7, 6, u'det'), (4, 7, u'nmod'), (2, 8, u'punct')]
-	print sentence.dependencies
 	assert sentence.dependencies == expectedDeps
 
 def test_depparse_ConstituencyParser():
