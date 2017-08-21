@@ -2,17 +2,19 @@
 import kindred
 from collections import Counter
 
-def evaluate(goldCorpus,testCorpus,metric='f1score',display=True):
+def evaluate(goldCorpus,testCorpus,metric='f1score',display=False):
 	""" Compares the gold corpus with the test corpus and calculate appropriate metrics.
 	
 	:param goldCorpus: The gold standard set of data
-	:type goldCorpus: kindred.Corpus
 	:param testCorpus: The test set for comparison
+	:param metric: Which metric to use (precision/recall/f1score). 'all' will provide all three as a tuple
+	:param display: Whether to print (to stdout) specific statistics for each relation type
+	:type goldCorpus: kindred.Corpus
 	:type testCorpus: kindred.Corpus
-	:param metric: Which metric to use (precision/recall/f1score)
 	:type metric: str
-	:return: The value of the corresponding metric
-	:rtype: float
+	:type display: bool
+	:return: The value of the corresponding metric (or metrics)
+	:rtype: float (or tuple of floats)
 	"""
 
 	assert isinstance(goldCorpus,kindred.Corpus)
