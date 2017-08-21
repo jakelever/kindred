@@ -9,6 +9,7 @@ import atexit
 import tempfile
 import requests
 import pytest_socket
+import sys
 
 homeDirectory = os.path.expanduser('~')
 downloadDirectory = os.path.join(homeDirectory,'.kindred')
@@ -42,6 +43,7 @@ def downloadCoreNLP():
 		files.append(('http://nlp.stanford.edu/software/stanford-corenlp-full-2017-06-09.zip','stanford-corenlp-full-2017-06-09.zip','7fb27a0e8dd39c1a90e4155c8f27cd829956e8b8ec6df76b321c04b1fe887961'))
 		
 		print("Downloading CoreNLP to %s" % downloadDirectory)
+		sys.stdout.flush()
 		kindred.utils._downloadFiles(files,downloadDirectory)
 		directory = kindred.utils._findDir('stanford-corenlp-full-2017-06-09',downloadDirectory)
 		assert not directory is None, "Error after downloading, could not find corenlp directory"
