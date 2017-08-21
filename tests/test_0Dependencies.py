@@ -58,7 +58,7 @@ def test_corenlpDownloadFail_corruptExistingFile():
 		shutil.rmtree(kindred.Dependencies.downloadDirectory)
 
 	# Create a corrupt file that will fail a SHA256 test
-	corenlpDownloadPath = os.path.join(kindred.Dependencies.downloadDirectory,'stanford-corenlp-full-2016-10-31.zip')
+	corenlpDownloadPath = os.path.join(kindred.Dependencies.downloadDirectory,'stanford-corenlp-full-2017-06-09.zip')
 	os.mkdir(kindred.Dependencies.downloadDirectory)
 	with open(corenlpDownloadPath,'w') as f:
 		f.write("\n".join(map(str,range(100))))
