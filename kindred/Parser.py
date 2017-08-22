@@ -35,10 +35,7 @@ class Parser:
 		else:
 			self.annotators = 'ssplit,tokenize,pos,lemma,depparse'
 
-		self.nlp = None
-
-		if self._testConnection() == False:
-			self._setupConnection()
+		self.nlp = StanfordCoreNLP(self.corenlp_url)
 
 	def _testConnection(self):
 		if self.nlp is None:
@@ -72,7 +69,8 @@ class Parser:
 
 		assert isinstance(corpus,kindred.Corpus)
 
-
+		if self._testConnection() == False:
+			self._setupConnection()
 		
 		for d in corpus.documents:
 			entityIDsToEntities = d.getEntityIDsToEntities()
