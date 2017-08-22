@@ -108,9 +108,14 @@ class Parser:
 			
 				for a,b in e.position:
 					denotationTree[a:b] = e.entityID
+			
+			try:
+				parsed = self.nlp.annotate(d.getText(), properties={'annotators': self.annotators,'outputFormat': 'json'})
+			except ValueError:
+				# ValueError is thrown if document d is malformed.
+                                f = str(d.sourceFilename)
+                                raise ValueError("Cannot read JSON file %s." % f) 
 				
-			parsed = self.nlp.annotate(d.getText(), properties={'annotators': self.annotators,'outputFormat': 'json'})
-
 			for sentence in parsed["sentences"]:
 				#assert False
 				tokens = []
