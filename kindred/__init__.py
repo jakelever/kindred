@@ -23,7 +23,7 @@ from kindred.evalFunctions import evaluate
 from kindred import bionlpst, pubannotation, pubtator, utils
 
 # Installing
-from kindred.Dependencies import downloadCoreNLP
+from kindred.Dependencies import downloadCoreNLP,downloadCoreNLPLanguage
 
 
 
