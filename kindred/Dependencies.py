@@ -17,7 +17,9 @@ downloadDirectory = os.path.join(homeDirectory,'.kindred')
 corenlpProcess = None
 stdoutFile = None
 stderrFile = None
-			
+
+currentCoreNLPInfo = {'url':'http://nlp.stanford.edu/software/stanford-corenlp-full-2017-06-09.zip','archive':'stanford-corenlp-full-2017-06-09.zip','directory':'stanford-corenlp-full-2017-06-09','sha256':'7fb27a0e8dd39c1a90e4155c8f27cd829956e8b8ec6df76b321c04b1fe887961'}
+
 def killCoreNLP():
 	global corenlpProcess
 	global stdoutFile
@@ -32,27 +34,33 @@ def killCoreNLP():
 		stderrFile = None
 
 def checkCoreNLPDownload():
-	directory = kindred.utils._findDir('stanford-corenlp-full-2017-06-09',downloadDirectory)
-	return not directory is None
+	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
+	return not corenlpDir is None
+
+def hasOldCoreNLP():
+	pass
 
 def downloadCoreNLP():
 	"""
 	Download the files necessary to run Stanford CoreNLP
 	"""
 	global downloadDirectory
-	directory = kindred.utils._findDir('stanford-corenlp-full-2017-06-09',downloadDirectory)
-	if directory is None:
+	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
+	if corenlpDir is None:
 		files = []
-		files.append(('http://nlp.stanford.edu/software/stanford-corenlp-full-2017-06-09.zip','stanford-corenlp-full-2017-06-09.zip','7fb27a0e8dd39c1a90e4155c8f27cd829956e8b8ec6df76b321c04b1fe887961'))
+		files.append((currentCoreNLPInfo['url'],currentCoreNLPInfo['archive'],currentCoreNLPInfo['sha256']))
 		
 		print("Downloading CoreNLP to %s" % downloadDirectory)
 		sys.stdout.flush()
 		kindred.utils._downloadFiles(files,downloadDirectory)
-		directory = kindred.utils._findDir('stanford-corenlp-full-2017-06-09',downloadDirectory)
-		assert not directory is None, "Error after downloading, could not find corenlp directory"
+		corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
+		assert not corenlpDir is None, "Error after downloading, could not find corenlp directory"
 		print ("Download complete.")
 	else:
 		print ("CoreNLP is already downloaded. No need to download")
+
+def upgradeCoreNLP():
+	pass
 
 def getCoreNLPLanguageFileInfo(language):
 	acceptedLanguages = ['arabic','chinese','english','french','german','spanish']
@@ -71,7 +79,7 @@ def coreNLPLanguageFileExists(language):
 	acceptedLanguages = ['arabic','chinese','french','german','spanish']
 	assert language in acceptedLanguages
 
-	kindredDir = kindred.utils._findDir('stanford-corenlp-full-2017-06-09',downloadDirectory)
+	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
 	expectedBasename = getCoreNLPLanguageFileInfo(language)[1]
 	expectedFullname = os.path.join(kindredDir,expectedBasename)
 
@@ -88,8 +96,8 @@ def downloadCoreNLPLanguage(language):
 	acceptedLanguages = ['arabic','chinese','french','german','spanish']
 	assert language in acceptedLanguages
 
-	kindredDir = kindred.utils._findDir('stanford-corenlp-full-2017-06-09',downloadDirectory)
-	kindred.utils._downloadFiles([getCoreNLPLanguageFileInfo(language)],kindredDir)
+	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
+	kindred.utils._downloadFiles([getCoreNLPLanguageFileInfo(language)],corenlpDir)
 
 	assert coreNLPLanguageFileExists(language), 'Error downloading CoreNLP language file'
 
@@ -102,6 +110,8 @@ def testCoreNLPConnection():
 		return False
 	except pytest_socket.SocketBlockedError:
 		return False
+
+
 
 def initializeCoreNLP(language='english'):
 	"""
@@ -122,8 +132,8 @@ def initializeCoreNLP(language='english'):
 	if testCoreNLPConnection():
 		return
 
-	directory = kindred.utils._findDir('stanford-corenlp-full-2017-06-09',downloadDirectory)
-	if directory is None:
+	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
+	if corenlpDir is None:
 		raise RuntimeError("Could not find the Stanford CoreNLP files. Use kindred.downloadCoreNLP() first")
 
 	if language != 'english' and not coreNLPLanguageFileExists(language):
@@ -134,12 +144,12 @@ def initializeCoreNLP(language='english'):
 	else:
 		command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -serverProperties StanfordCoreNLP-%s.properties -port 9000 -timeout 150000' % language
 
-	os.chdir(directory)
+	os.chdir(corenlpDir)
 
 	stdoutFile = tempfile.NamedTemporaryFile(delete=True)
 	stderrFile = tempfile.NamedTemporaryFile(delete=True)
 
-	corenlpProcess = subprocess.Popen(shlex.split(command), stdout=stdoutFile, stderr=stderrFile, cwd=directory)#, shell=True)
+	corenlpProcess = subprocess.Popen(shlex.split(command), stdout=stdoutFile, stderr=stderrFile, cwd=corenlpDir)#, shell=True)
 
 	atexit.register(killCoreNLP)
 
