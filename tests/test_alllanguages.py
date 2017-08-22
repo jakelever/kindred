@@ -181,27 +181,21 @@ def runLanguageTest(language,killCoreNLPIfNeeded,doDownloadIfNeeded):
 	letPass = False
 
 	word = [ [ t.word for t in sentence.tokens ] for sentence in doc.sentences ]
-	print word
 	assert letPass or word == expected['word']
 
 	lemma = [ [ t.lemma for t in sentence.tokens ] for sentence in doc.sentences ]
-	print lemma
 	assert letPass or lemma == expected['lemma']
 	
 	partofspeech = [ [ t.partofspeech for t in sentence.tokens ] for sentence in doc.sentences ]
-	print partofspeech
 	assert letPass or partofspeech == expected['partofspeech']
 
 	startPos = [ [ t.startPos for t in sentence.tokens ] for sentence in doc.sentences ]
-	print startPos
 	assert letPass or startPos == expected['startPos']
 
 	endPos = [ [ t.endPos for t in sentence.tokens ] for sentence in doc.sentences ]
-	print endPos
 	assert letPass or endPos == expected['endPos']
 
 	dependencies = [ sentence.dependencies for sentence in doc.sentences ]
-	print dependencies
 	assert letPass or dependencies == expected['dependencies']
 
 	kindred.Dependencies.killCoreNLP()
