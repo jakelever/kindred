@@ -1,4 +1,5 @@
 import kindred
+import random
 
 class Corpus:
 	"""
@@ -116,3 +117,55 @@ class Corpus:
 
 		for doc in self.documents:
 			doc.removeRelations()
+
+	def split(self,trainFraction):
+		"""
+		Randomly split the corpus into two corpus for use as a training and test set
+
+		:param trainFraction: Fraction of documents to use in training set
+		:type trainFraction: float
+		:return: Tuple of training and test corpus
+		:rtype: (kindred.Corpus,kindred.Corpus)
+		"""
+		assert isinstance(trainFraction,float)
+		assert trainFraction > 0.0 and trainFraction < 1.0
+		trainIndices = random.sample(range(len(self.documents)),int(round(trainFraction*len(self.documents))))
+		trainIndices = set(trainIndices)
+
+		trainCorpus,testCorpus = kindred.Corpus(),kindred.Corpus()
+		for i,doc in enumerate(self.documents):
+			if i in trainIndices:
+				trainCorpus.addDocument(doc)
+			else:
+				testCorpus.addDocument(doc)
+
+		return trainCorpus,testCorpus
+
+	def nfold_split(self,folds):
+		"""
+		Method for splitting up the corpus multiple times and is used for an n-fold cross validation approach (as a generator). Each iteration, the training and test set for that fold are provided.
+
+		:param folds: Number of folds to create
+		:type trainFraction: int
+		:return: Tuple of training and test corpus (for iterations=folds)
+		:rtype: (kindred.Corpus,kindred.Corpus)
+		"""
+		assert isinstance(folds,int)
+		assert folds > 0
+
+		indices = range(len(self.documents))
+		random.shuffle(indices)
+
+		chunkSize = int(len(self.documents)/float(folds))
+		indexChunks = [ indices[i:i+chunkSize] for i in range(0,len(self.documents),chunkSize) ]
+
+		for f in range(folds):
+			trainCorpus,testCorpus = kindred.Corpus(),kindred.Corpus()
+			for i,indexChunk in enumerate(indexChunks):
+				for j in indexChunk:
+					if i==f:
+						testCorpus.addDocument(self.documents[j])
+					else:
+						trainCorpus.addDocument(self.documents[j])
+			yield trainCorpus,testCorpus
+
