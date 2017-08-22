@@ -16,8 +16,8 @@ Kindred
    :target: https://coveralls.io/github/jakelever/kindred?branch=master
    :alt: Coverage status
    
-.. |docs| image:: https://readthedocs.org/projects/kindred/badge/
-   :target: http://kindred.readthedocs.io/
+.. |docs| image:: https://readthedocs.org/projects/kindred/badge/?version=stable
+   :target: http://kindred.readthedocs.io/en/stable/
    :alt: Documentation status
    
 .. |license| image:: https://img.shields.io/badge/License-MIT-blue.svg
