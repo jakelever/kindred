@@ -26,7 +26,7 @@ class Parser:
 		
 		:param corenlp_url: URL of the CoreNLP instance
 		:param useConstituencyParserOnly: Use CoreNLP's constituency parser (with a conversion) for the depenency parse information, and not the CoreNLP dependency parser. This is slower
-		:param language: Language to parse (english/arabic/chinese/french/german/spanish). The parser will check that the current CoreNLP is using the matching language. If not CoreNLP instance is running, it will launch one with the correct language.
+		:param language: Language to parse (english/arabic/chinese/french/german/spanish). The parser will check that the current CoreNLP is using the matching language. If no CoreNLP instance is running, it will launch one with the correct language.
 		:type corenlp_url: str
 		:type useConstituencyParserOnly: bool
 		:type language: str
