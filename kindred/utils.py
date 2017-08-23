@@ -45,11 +45,13 @@ def _downloadFiles(files,downloadDirectory):
 
 	for url,shortName,expectedSHA256 in files:
 		downloadedPath = os.path.join(downloadDirectory,shortName)
-		
+	
+		print downloadedPath
 		if os.path.isfile(downloadedPath):
 			downloadedSHA256 = _calcSHA256(downloadedPath)
 			if not downloadedSHA256 == expectedSHA256:
 				os.remove(downloadedPath)
+				print "HELLO"
 
 		if not os.path.isfile(downloadedPath):
 			#wget.download(url,out=downloadedPath,bar=None)
