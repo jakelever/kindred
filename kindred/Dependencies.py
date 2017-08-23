@@ -10,6 +10,7 @@ import tempfile
 import requests
 import pytest_socket
 import sys
+import shutil
 
 homeDirectory = os.path.expanduser('~')
 downloadDirectory = os.path.join(homeDirectory,'.kindred')
@@ -38,12 +39,41 @@ def checkCoreNLPDownload():
 	return not corenlpDir is None
 
 def hasOldCoreNLP():
-	pass
+	for root, dirs, files in os.walk(path):
+		for dirName in dirs:
+			if dirName.startswith('stanford-corenlp') and not dirName == currentCoreNLPInfo['directory']:
+				return True
+	return False
+
+def deleteOldCoreNLP():
+	filesToDelete = []
+	for root, dirs, files in os.walk(downloadDirectory):
+		for fileName in files:
+			if fileName.startswith('stanford-corenlp') and fileName.endswith('.zip'):
+				fullPath = os.path.join(root,fileName)
+				filesToDelete.append(fullPath)
+
+	directoriesToDelete = []
+	for root, dirs, files in os.walk(downloadDirectory):
+		for dirName in dirs:
+			if dirName.startswith('stanford-corenlp') and not dirName == currentCoreNLPInfo['directory']:
+				fullPath = os.path.join(root,dirName)
+				directoriesToDelete.append(fullPath)
+
+	for fileToDelete in filesToDelete:
+		if os.path.isfile(fileToDelete):
+			os.remove(fileToDelete)
+
+	for directoryToDelete in directoriesToDelete:
+		if os.path.isdir(directoryToDelete):
+			shutil.rmtree(directoryToDelete)
 
 def downloadCoreNLP():
 	"""
 	Download the files necessary to run Stanford CoreNLP
 	"""
+	deleteOldCoreNLP()
+
 	global downloadDirectory
 	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
 	if corenlpDir is None:
@@ -58,9 +88,6 @@ def downloadCoreNLP():
 		print ("Download complete.")
 	else:
 		print ("CoreNLP is already downloaded. No need to download")
-
-def upgradeCoreNLP():
-	pass
 
 def getCoreNLPLanguageFileInfo(language):
 	acceptedLanguages = ['arabic','chinese','english','french','german','spanish']
@@ -131,6 +158,9 @@ def initializeCoreNLP(language='english'):
 
 	if testCoreNLPConnection():
 		return
+
+	if hasOldCoreNLP():
+		raise RuntimeError("Kindred needs a newer version of CoreNLP. Please use kindred.downloadCoreNLP() to upgrade to the latest version (and clear out the old version)")
 
 	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
 	if corenlpDir is None:
