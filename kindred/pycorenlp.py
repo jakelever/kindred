@@ -21,7 +21,13 @@ class StanfordCoreNLP:
 			}, data=data, headers={'Connection': 'close'})
 		
 		assert 'outputFormat' in properties and properties['outputFormat'] == 'json'
-		output = json.loads(r.text, encoding='utf-8', strict=False)
+
+		try:
+			output = json.loads(r.text, encoding='utf-8', strict=False)
+		except:
+			# Output from CoreNLP is not in json.
+			message = "CoreNLP Error. Last output (possibly truncated): %s" % r.text[:1000]
+			raise RuntimeError(message)
 
 		return output
 
