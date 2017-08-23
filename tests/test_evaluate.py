@@ -1,7 +1,7 @@
 import kindred
 import pytest
 
-def test_evaluate():
+def test_evaluate(capfd):
 	goldText = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene>. We also studied <disease id="T3">glioblastoma</disease>.'
 	goldText += '<relation type="typeA" subj="T2" obj="T1" />'
 	goldText += '<relation type="typeB" subj="T2" obj="T3" />'
@@ -32,10 +32,14 @@ def test_evaluate():
 	assert recall2 == 4.0/5.0
 	assert round(f1score2,10) == round(72.0/99.0,10)
 
-
 	with pytest.raises(RuntimeError) as excinfo:
 		kindred.evaluate(goldCorpus,testCorpus,metric='nonsense')
 	assert excinfo.value.args == ('Unknown metric: nonsense',)
+	
+	# Make sure nothing has been displayed
+	out, err = capfd.readouterr()
+	assert out == ""
+	assert err == ""
 
 def test_evaluate_display(capfd):
 	goldText = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene>. We also studied <disease id="T3">glioblastoma</disease>.'
