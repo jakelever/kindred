@@ -67,5 +67,7 @@ def _downloadFiles(files,downloadDirectory):
 				zip_ref = zipfile.ZipFile(downloadedPath, 'r')
 				zip_ref.extractall(path=downloadDirectory)
 				zip_ref.close()
+
+				os.remove(downloadedPath)
 	
 	#socket.setdefaulttimeout(oldTimeout)
