@@ -75,8 +75,8 @@ class Parser:
 			return False
 
 	def _setupConnection(self):
-		if not checkCoreNLPDownload():
-			raise RuntimeError("Cannot access local CoreNLP at http://localhost:9000 and cannot find CoreNLP files to launch subprocess. Please download using kindred.downloadCoreNLP() if subprocess should be used")
+		#if not checkCoreNLPDownload():
+		#	raise RuntimeError("Cannot access local CoreNLP at http://localhost:9000 and cannot find CoreNLP files to launch subprocess. Please download using kindred.downloadCoreNLP() if subprocess should be used")
 
 		initializeCoreNLP(language=self.language)
 		self.nlp = StanfordCoreNLP(self.corenlp_url)

@@ -5,6 +5,8 @@ import shutil
 import pytest
 import pytest_socket
 
+
+
 def test_corenlpFail():
 	if kindred.Dependencies.testCoreNLPConnection():
 		kindred.Dependencies.killCoreNLP()
@@ -16,7 +18,30 @@ def test_corenlpFail():
 
 	with pytest.raises(RuntimeError) as excinfo:
 		kindred.Dependencies.initializeCoreNLP()
-	assert excinfo.value.args == ("Could not find the Stanford CoreNLP files. Use kindred.downloadCoreNLP() first",)
+	assert excinfo.value.args == ("Unable to find local server so trying to initialize CoreNLP instance. Could not find the Stanford CoreNLP files. Use kindred.downloadCoreNLP() first if subprocess should be used.",)
+
+
+def test_corenlpOld():
+	if kindred.Dependencies.testCoreNLPConnection():
+		kindred.Dependencies.killCoreNLP()
+	if os.path.isdir(kindred.Dependencies.downloadDirectory):
+		shutil.rmtree(kindred.Dependencies.downloadDirectory)
+
+	fakeCoreNLPDirectory = os.path.join(kindred.Dependencies.downloadDirectory,'stanford-corenlp-full-1970-01-01')
+	os.makedirs(fakeCoreNLPDirectory)
+	assert os.path.isdir(fakeCoreNLPDirectory)
+
+	assert kindred.Dependencies.hasOldCoreNLP() == True
+	
+	text = 'You need to turn in your homework by next week'
+	corpus = kindred.Corpus(text)
+	
+	parser = kindred.Parser()
+
+	with pytest.raises(RuntimeError) as excinfo:
+		parser.parse(corpus)
+
+	assert excinfo.value.args == ("Kindred needs a newer version of CoreNLP. Please use kindred.downloadCoreNLP() to upgrade to the latest version (and clear out the old version)",)
 
 def test_parseFailWithNoCoreNLP():
 	if kindred.Dependencies.testCoreNLPConnection():
@@ -34,7 +59,7 @@ def test_parseFailWithNoCoreNLP():
 
 	with pytest.raises(RuntimeError) as excinfo:
 		parser.parse(corpus)
-	assert excinfo.value.args == ("Cannot access local CoreNLP at http://localhost:9000 and cannot find CoreNLP files to launch subprocess. Please download using kindred.downloadCoreNLP() if subprocess should be used",)
+	assert excinfo.value.args == ("Unable to find local server so trying to initialize CoreNLP instance. Could not find the Stanford CoreNLP files. Use kindred.downloadCoreNLP() first if subprocess should be used.",)
 
 def test_corenlpDownloadFail():
 	if kindred.Dependencies.testCoreNLPConnection():
@@ -58,7 +83,8 @@ def test_corenlpDownloadFail_corruptExistingFile():
 		shutil.rmtree(kindred.Dependencies.downloadDirectory)
 
 	# Create a corrupt file that will fail a SHA256 test
-	corenlpDownloadPath = os.path.join(kindred.Dependencies.downloadDirectory,'stanford-corenlp-full-2017-06-09.zip')
+	archiveName = kindred.Dependencies.currentCoreNLPInfo['archive']
+	corenlpDownloadPath = os.path.join(kindred.Dependencies.downloadDirectory,archiveName)
 	os.mkdir(kindred.Dependencies.downloadDirectory)
 	with open(corenlpDownloadPath,'w') as f:
 		f.write("\n".join(map(str,range(100))))
@@ -80,6 +106,13 @@ def test_corenlpDownload():
 	
 	assert kindred.Dependencies.checkCoreNLPDownload() == False
 	assert kindred.Dependencies.testCoreNLPConnection() == False
+	
+	# We'll make this trickier.
+	fakeCoreNLPDirectory = os.path.join(kindred.Dependencies.downloadDirectory,'stanford-corenlp-full-1970-01-01')
+	os.makedirs(fakeCoreNLPDirectory)
+	assert os.path.isdir(fakeCoreNLPDirectory)
+
+	assert kindred.Dependencies.hasOldCoreNLP() == True
 
 	kindred.Dependencies.downloadCoreNLP()
 
@@ -88,6 +121,7 @@ def test_corenlpDownload():
 
 	kindred.Dependencies.initializeCoreNLP()
 	assert kindred.Dependencies.testCoreNLPConnection() == True
+	assert kindred.Dependencies.hasOldCoreNLP() == False
 
 def test_corenlpDownloadTwice():
 	kindred.Dependencies.downloadCoreNLP()
