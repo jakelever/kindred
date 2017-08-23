@@ -5,6 +5,8 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
+VERSION='1.1.0'
+
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
@@ -15,7 +17,7 @@ with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
 	requirements = f.readlines()
 
 setup(name='kindred',
-	version='1.1.0',
+	version=VERSION,
 	description='A relation extraction toolkit for biomedical text mining',
 	long_description=long_description,
 	classifiers=[
