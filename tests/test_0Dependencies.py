@@ -76,28 +76,6 @@ def test_corenlpDownloadFail():
 	pytest_socket.enable_socket()
 	assert excinfo.value.args == ("A test tried to use socket.socket.",)
 
-def test_corenlpDownloadFail_corruptExistingFile():
-	if kindred.Dependencies.testCoreNLPConnection():
-		kindred.Dependencies.killCoreNLP()
-	if os.path.isdir(kindred.Dependencies.downloadDirectory):
-		shutil.rmtree(kindred.Dependencies.downloadDirectory)
-
-	# Create a corrupt file that will fail a SHA256 test
-	archiveName = kindred.Dependencies.currentCoreNLPInfo['archive']
-	corenlpDownloadPath = os.path.join(kindred.Dependencies.downloadDirectory,archiveName)
-	os.mkdir(kindred.Dependencies.downloadDirectory)
-	with open(corenlpDownloadPath,'w') as f:
-		f.write("\n".join(map(str,range(100))))
-	
-	assert kindred.Dependencies.checkCoreNLPDownload() == False
-	assert kindred.Dependencies.testCoreNLPConnection() == False
-
-	pytest_socket.disable_socket()
-	with pytest.raises(RuntimeError) as excinfo:
-		kindred.Dependencies.downloadCoreNLP()
-	pytest_socket.enable_socket()
-	assert excinfo.value.args == ("A test tried to use socket.socket.",)
-
 def test_corenlpDownload():
 	if kindred.Dependencies.testCoreNLPConnection():
 		kindred.Dependencies.killCoreNLP()
@@ -192,5 +170,3 @@ def test_initializeTwice():
 
 	assert kindred.Dependencies.checkCoreNLPDownload() == True
 
-if __name__ == '__main__':
-	test_corenlpFail()
