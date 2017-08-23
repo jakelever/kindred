@@ -158,6 +158,21 @@ Frequently Asked Questions
 
 At the moment, no. Kindred will only use the first annotation of a relation.
 
+Release Notes
+-------------
+
+Version 1.1.0
+~~~~~~~~~~~~~
+- Upgraded to new version of Stanford CoreNLP (3.8.0) and added code to manage upgrade
+- Changed dependency parsing to use standard CoreNLP dep parser (instead of constituency with a conversion).
+- Changed evaluation function to not output specific details by default
+- You can now parse with every language in CoreNLP (arabic,chinese,english,french,german,spanish)
+- Improved error display for CoreNLP failures
+
+Version 1.0.0
+~~~~~~~~~~~~~
+- Original release (corresponding to original paper)
+
 Citing
 ------
 
