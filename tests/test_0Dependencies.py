@@ -87,7 +87,11 @@ def test_corenlpDownload():
 	
 	# We'll make this trickier.
 	fakeCoreNLPDirectory = os.path.join(kindred.Dependencies.downloadDirectory,'stanford-corenlp-full-1970-01-01')
+	fakeCoreNLPArchive = os.path.join(kindred.Dependencies.downloadDirectory,'stanford-corenlp-full-1970-01-01.zip')
 	os.makedirs(fakeCoreNLPDirectory)
+	with open(fakeCoreNLPArchive,'w') as f:
+		f.write("\n".join(map(str,range(100))))
+	assert os.path.isfile(fakeCoreNLPArchive)
 	assert os.path.isdir(fakeCoreNLPDirectory)
 
 	assert kindred.Dependencies.hasOldCoreNLP() == True
@@ -100,6 +104,9 @@ def test_corenlpDownload():
 	kindred.Dependencies.initializeCoreNLP()
 	assert kindred.Dependencies.testCoreNLPConnection() == True
 	assert kindred.Dependencies.hasOldCoreNLP() == False
+	
+	assert not os.path.isfile(fakeCoreNLPArchive)
+	assert not os.path.isdir(fakeCoreNLPDirectory)
 
 def test_corenlpDownloadTwice():
 	kindred.Dependencies.downloadCoreNLP()
