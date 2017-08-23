@@ -108,7 +108,7 @@ def coreNLPLanguageFileExists(language):
 
 	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
 	expectedBasename = getCoreNLPLanguageFileInfo(language)[1]
-	expectedFullname = os.path.join(kindredDir,expectedBasename)
+	expectedFullname = os.path.join(corenlpDir,expectedBasename)
 
 	return os.path.isfile(expectedFullname)
 
