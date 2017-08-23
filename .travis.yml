@@ -25,6 +25,9 @@ install:
   - pip install pytest coverage pytest-timeout pytest_socket
   - pip install python-coveralls
   - pip install --upgrade coverage
+# Just check that the current install is happy
+  - pip install kindred
+  - pip uninstall kindred
   - pip install .
 #  - python -c "import kindred; kindred.downloadCoreNLP()" # not used as initial dependencies tests will run this
 # command to run tests
