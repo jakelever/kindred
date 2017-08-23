@@ -39,7 +39,7 @@ def checkCoreNLPDownload():
 	return not corenlpDir is None
 
 def hasOldCoreNLP():
-	for root, dirs, files in os.walk(path):
+	for root, dirs, files in os.walk(downloadDirectory):
 		for dirName in dirs:
 			if dirName.startswith('stanford-corenlp') and not dirName == currentCoreNLPInfo['directory']:
 				return True
