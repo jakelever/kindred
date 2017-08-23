@@ -33,7 +33,7 @@ def _downloadFile(url,filename,timeout=180):
 			downloadedSize += (len(chunk) / float(1024*1024))
 
 			currentDateTime = time.strftime("%Y/%m/%d %H:%M:%S")
-			print("%s : Downloaded %.1f MB" % (currentDateTime,downloadedSize))
+			#print("%s : Downloaded %.1f MB" % (currentDateTime,downloadedSize))
 			
 
 def _downloadFiles(files,downloadDirectory):
