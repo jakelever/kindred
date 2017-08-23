@@ -62,8 +62,7 @@ class Parser:
 			raise RuntimeError("CoreNLP currently running does not match the language (%s) requested by the parser. Please stop this CoreNLP instance and either launch the appropriate one or let Kindred launch one." % self.language)
 
 	def _testConnection(self):
-		if self.nlp is None:
-			return False
+		assert not self.nlp is None
 	
 		try:
 			parsed = self.nlp.annotate("This is a test", properties={'annotators': self.annotators,'outputFormat': 'json'})
