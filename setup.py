@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-VERSION='1.1.1'
+VERSION='1.1.2'
 
 here = path.abspath(path.dirname(__file__))
 
@@ -13,8 +13,8 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 	long_description = f.read()
 
-with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
-	requirements = f.readlines()
+#with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
+#	requirements = f.readlines()
 
 setup(name='kindred',
 	version=VERSION,
@@ -44,7 +44,7 @@ setup(name='kindred',
 	author_email='jake.lever@gmail.com',
 	license='MIT',
 	packages=['kindred'],
-	install_requires=requirements,
+	install_requires=['scikit-learn','numpy','scipy','intervaltree','networkx','pycorenlp','lxml','future','bioc','pytest_socket','six','sphinx==1.5.5'],
 	include_package_data=True,
 	zip_safe=False,
 	test_suite='nose.collector',
