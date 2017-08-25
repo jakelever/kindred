@@ -1,1 +1,3 @@
 include README.rst
+include requirements.txt
+include kindred/bionlpst_files.txt
