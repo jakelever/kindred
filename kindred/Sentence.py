@@ -34,6 +34,8 @@ class Sentence:
 			assert len(entityWithLocation) == 2
 			assert isinstance(entityWithLocation[0],kindred.Entity)
 			assert isinstance(entityWithLocation[1],list)
+			for l in entityWithLocation[1]:
+				assert l >= 0 and l < len(tokens), "Entity location must be an index of one of the tokens"
 			
 		# Check the format of the Dependencies
 		dependencyErrorMsg = "Each dependency is expected to be a tuple of (tokenindex1,tokenindex2,dependency_type). Token index can be -1 to indicate an incoming edge."
@@ -128,6 +130,25 @@ class Sentence:
 			nodes.update(path)
 
 		return nodes,allEdges
+
+	def addEntityWithLocation(self,entity,location):
+		"""
+		Add an entity with location to the sentence
+
+		:param entity: Entity to add to sentence
+		:param location: Location of entity in sentence (tuple of start and end token indices)
+		:type entity: kindred.Entity
+		:type location: list of tuples
+		"""
+		assert isinstance(entity,kindred.Entity)
+		assert isinstance(location,list)
+		assert len(location) > 0
+		for l in location:
+			assert l >= 0 and l < len(self.tokens), "Entity location must be an index of one of the tokens"
+		self.entitiesWithLocations.append((entity,location))
+		
+		self.entityIDToType = { e.entityID:e.entityType for e,_ in self.entitiesWithLocations }
+		self.entityIDToLoc = { e.entityID:loc for e,loc in self.entitiesWithLocations }
 
 	def getEntityIDs(self):
 		"""

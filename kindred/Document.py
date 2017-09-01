@@ -82,6 +82,16 @@ class Document:
 
 		return u"<Document %s %s %s>"  % (self.text,str(self.entities),str(self.relations))
 	
+	def addEntity(self,entity):
+		"""
+		Add an entity to this document
+		
+		:param entity: Entity to add
+		:type entity: kindred.Entity
+		"""
+
+		self.entities.append(entity)
+
 	def addRelation(self,relation):
 		"""
 		Add a relation to this document

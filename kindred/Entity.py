@@ -7,7 +7,7 @@ class Entity:
 	
 	_nextInternalID = 1
 
-	def __init__(self,entityType,text,position,sourceEntityID=None):
+	def __init__(self,entityType,text,position,sourceEntityID=None,externalID=None):
 		"""
 		Constructor for Entity class
 		
@@ -15,10 +15,12 @@ class Entity:
 		:param text: Text of the entity
 		:param position: Position within the text passage at which point entity appears. Entity may be non-contigious
 		:param sourceEntityID: Entity ID used in source document
+		:param externalID: ID associated with external ontology (e.g. Hugo Gene ID)
 		:type entityType: str
 		:type text: str
 		:type position: list of tuples of two integers
 		:type sourceEntityID: str
+		:type externalID: str
 		"""
 	
 		isinstance(entityType, six.string_types), "entityType must be a string"
@@ -34,6 +36,7 @@ class Entity:
 	
 		self.entityType = entityType
 		self.sourceEntityID = sourceEntityID
+		self.externalID = externalID
 		self.text = text
 		self.position = position
 		
@@ -41,7 +44,7 @@ class Entity:
 		Entity._nextInternalID += 1
 		
 	def __str__(self):
-		out = "<Entity %s:'%s' id=%d sourceid=%s %s>" % (self.entityType,self.text,self.entityID,str(self.sourceEntityID),str(self.position))
+		out = "<Entity %s:'%s' id=%d sourceid=%s externalid=%s %s>" % (self.entityType,self.text,self.entityID,str(self.sourceEntityID),str(self.externalID),str(self.position))
 		return out
 		
 	def __repr__(self):
