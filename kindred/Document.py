@@ -6,7 +6,7 @@ class Document:
 	Span of text with associated tagged entities and relations between entities.
 	"""
 	
-	def __init__(self,text,entities=None,relations=None,relationsUseSourceIDs=True,sourceFilename=None):
+	def __init__(self,text,entities=None,relations=None,relationsUseSourceIDs=True,sourceFilename=None,sourceIDs={}):
 		"""
 		Constructor for a Document that can take text using the SimpleTag XML format, or a set of Entities and Relations with associated text.
 		
@@ -25,6 +25,7 @@ class Document:
 		loadFromSimpleTag = (entities is None)
 
 		self.sourceFilename = sourceFilename
+		self.sourceIDs = sourceIDs
 
 		if loadFromSimpleTag:
 			dataToCopy = kindred.loadFunctions.parseSimpleTag(text)
