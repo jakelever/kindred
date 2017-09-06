@@ -45,7 +45,7 @@ class Entity:
 		
 	def __str__(self):
 		if self.externalID is None:
-			out = "<Entity %s:'%s' id=%d sourceid=%s %s>" % (self.entityType,self.text,self.entityID,str(self.sourceEntityID),,str(self.position))
+			out = "<Entity %s:'%s' id=%d sourceid=%s %s>" % (self.entityType,self.text,self.entityID,str(self.sourceEntityID),str(self.position))
 		else:
 			out = "<Entity %s:'%s' id=%d sourceid=%s externalid=%s %s>" % (self.entityType,self.text,self.entityID,str(self.sourceEntityID),str(self.externalID),str(self.position))
 		return out
