@@ -9,7 +9,7 @@ class Sentence:
 	Set of tokens for a sentence after parsing
 	"""
 	
-	def __init__(self, tokens, dependencies, entitiesWithLocations, sourceFilename=None):
+	def __init__(self, text, tokens, dependencies, entitiesWithLocations, sourceFilename=None):
 		"""
 		Constructor for Sentence class
 		
@@ -22,6 +22,8 @@ class Sentence:
 		:type entitiesWithLocations: list of tuples
 		:type sourceFilename: str
 		"""
+
+		assert isinstance(text, six.string_types)
 
 		assert isinstance(tokens, list)
 		for token in tokens:
@@ -49,6 +51,7 @@ class Sentence:
 			assert dependency[0] >= -1 and dependency[0] < len(tokens), dependencyErrorMsg
 			assert dependency[1] >= -1 and dependency[1] < len(tokens), dependencyErrorMsg
 		
+		self.text = text
 		self.tokens = tokens
 		self.entitiesWithLocations = entitiesWithLocations
 		self.sourceFilename = sourceFilename

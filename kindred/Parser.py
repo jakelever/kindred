@@ -118,6 +118,10 @@ class Parser:
 					token = kindred.Token(t["word"],t["lemma"],t["pos"],t["characterOffsetBegin"],t["characterOffsetEnd"])
 					tokens.append(token)
 
+				sentenceStart = tokens[0].startPos
+				sentenceEnd = tokens[-1].endPos
+				sentenceTxt = d.text[sentenceStart:sentenceEnd]
+
 				dependencies = []
 				for de in sentence["enhancedPlusPlusDependencies"]:
 				#for de in sentence["collapsed-ccprocessed-dependencies"]:
@@ -143,7 +147,7 @@ class Parser:
 					entityWithLocation = (e, entityLocs)
 					entitiesWithLocations.append(entityWithLocation)
 					
-				sentence = kindred.Sentence(tokens, dependencies, entitiesWithLocations, d.getSourceFilename())
+				sentence = kindred.Sentence(sentenceTxt, tokens, dependencies, entitiesWithLocations, d.getSourceFilename())
 				d.addSentence(sentence)
 
 		corpus.parsed = True
