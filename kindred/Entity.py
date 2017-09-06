@@ -44,7 +44,10 @@ class Entity:
 		Entity._nextInternalID += 1
 		
 	def __str__(self):
-		out = "<Entity %s:'%s' id=%d sourceid=%s externalid=%s %s>" % (self.entityType,self.text,self.entityID,str(self.sourceEntityID),str(self.externalID),str(self.position))
+		if self.externalID is None:
+			out = "<Entity %s:'%s' id=%d sourceid=%s %s>" % (self.entityType,self.text,self.entityID,str(self.sourceEntityID),,str(self.position))
+		else:
+			out = "<Entity %s:'%s' id=%d sourceid=%s externalid=%s %s>" % (self.entityType,self.text,self.entityID,str(self.sourceEntityID),str(self.externalID),str(self.position))
 		return out
 		
 	def __repr__(self):
