@@ -6,7 +6,7 @@ import kindred
 import json
 from intervaltree import IntervalTree
 from collections import defaultdict
-from kindred.Dependencies import initializeCoreNLP,checkCoreNLPDownload
+from kindred.Dependencies import initializeCoreNLP,checkCoreNLPDownload,claimCoreNLPUsage
 
 def shortenDepName(depName):
 	acceptedSubNames = set(['acl:relcl','cc:preconj','compound:prt','det:predet','nmod:npmod','nmod:poss','nmod:tmod'])
@@ -63,7 +63,9 @@ class Parser:
 
 	def _testConnection(self):
 		assert not self.nlp is None
-	
+		
+		claimCoreNLPUsage()
+
 		try:
 			parsed = self.nlp.annotate("This is a test", properties={'annotators': self.annotators,'outputFormat': 'json'})
 			

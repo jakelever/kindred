@@ -11,19 +11,31 @@ import requests
 import pytest_socket
 import sys
 import shutil
+import fasteners
 
 homeDirectory = os.path.expanduser('~')
 downloadDirectory = os.path.join(homeDirectory,'.kindred')
 	
-corenlpProcess = None
-
 currentCoreNLPInfo = {'url':'http://nlp.stanford.edu/software/stanford-corenlp-full-2017-06-09.zip','archive':'stanford-corenlp-full-2017-06-09.zip','directory':'stanford-corenlp-full-2017-06-09','sha256':'7fb27a0e8dd39c1a90e4155c8f27cd829956e8b8ec6df76b321c04b1fe887961'}
 
 def killCoreNLP():
-	global corenlpProcess
-	if not corenlpProcess is None:
-		corenlpProcess.kill()
-		corenlpProcess = None
+	trackingDir = os.path.join(downloadDirectory,'tracking')
+	kindredPIDsFileLock = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid.locks')
+	kindredPIDsFile = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid')
+	with fasteners.InterProcessLock(kindredPIDsFileLock):
+		with open(kindredPIDsFile) as inF:
+			pids = [ int(line.strip() for line in inF ]
+		pids = set(pids)
+		pids.remove(os.getpid())
+		pids = sorted(list(pids))
+		with open(kindredPIDsFile,'w') as outF:
+			outF.write("\n".join(map(str(pids))) + "\n")
+
+		if len(pids) == 0:		
+			corenlpPIDFile = os.path.join(trackingDir,socket.gethostname()+'.corenlp.pid')
+			with open(corenlpPIDFile) as f:
+				corenlpPID = int(f.read().strip())
+			os.kill(corenlpPID, signal.SIGTERM)
 
 def checkCoreNLPDownload():
 	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
@@ -129,6 +141,18 @@ def testCoreNLPConnection():
 	except pytest_socket.SocketBlockedError:
 		return False
 
+def claimCoreNLPUsage():
+	trackingDir = os.path.join(downloadDirectory,'tracking')
+	kindredPIDsFileLock = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid.locks')
+	kindredPIDsFile = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid')
+	with fasteners.InterProcessLock(kindredPIDsFileLock):
+		with open(kindredPIDsFile) as inF:
+			pids = [ int(line.strip() for line in inF ]
+		pids = set(pids)
+		pids.add(os.getpid())
+		pids = sorted(list(pids))
+		with open(kindredPIDsFile,'w') as outF:
+			outF.write("\n".join(map(str(pids))) + "\n")
 
 
 def initializeCoreNLP(language='english'):
@@ -138,8 +162,6 @@ def initializeCoreNLP(language='english'):
 	:param language: The language that the CoreNLP instance should use (english/arabic/chinese/french/german/spanish).
 	:type language: str
 	"""
-	global corenlpProcess
-
 	acceptedLanguages = ['english','arabic','chinese','french','german','spanish']
 	assert language in acceptedLanguages
 
@@ -163,24 +185,39 @@ def initializeCoreNLP(language='english'):
 	else:
 		command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -serverProperties StanfordCoreNLP-%s.properties -port 9000 -timeout 150000 -quiet true' % language
 
-	os.chdir(corenlpDir)
+	downloadDirectoryLock = os.path.join(downloadDirectory,'lock')
 
-	corenlpProcess = subprocess.Popen(shlex.split(command), stdout=open('/dev/null', 'w'), stderr=subprocess.STDOUT, cwd=corenlpDir, preexec_fn=os.setpgrp)
+	trackingDir = os.path.join(downloadDirectory,'tracking')
+	with fasteners.InterProcessLock(downloadDirectoryLock):
+		if os.path.isdir(trackingDir):
+			os.makedirs(trackingDir)
 
-	atexit.register(killCoreNLP)
-
-	maxTries = 10
-
-	connectionSuccess = False
-	for tries in range(maxTries):
+	startLock = os.path.join(trackingDir,socket.gethostname()+'.start.lock')
+	corenlpPIDFile = os.path.join(trackingDir,socket.gethostname()+'.corenlp.pid')
+	with fasteners.InterProcessLock(startLock):
 		if testCoreNLPConnection():
-			connectionSuccess = True
-			break
-		time.sleep(5)
+			return
 
-	if not connectionSuccess:
-		killCoreNLP()
-		raise RuntimeError("Unable to connect to launched CoreNLP subprocess")
+		os.chdir(corenlpDir)
 
-	time.sleep(1)
-		
+		corenlpProcess = subprocess.Popen(shlex.split(command), stdout=open('/dev/null', 'w'), stderr=subprocess.STDOUT, cwd=corenlpDir, preexec_fn=os.setpgrp)
+		with open(corenlpPIDFile,'w') as f:
+			f.write("%d\n" % corenlpProcess.pid)
+
+		atexit.register(killCoreNLP)
+
+		maxTries = 10
+
+		connectionSuccess = False
+		for tries in range(maxTries):
+			if testCoreNLPConnection():
+				connectionSuccess = True
+				break
+			time.sleep(5)
+
+		if not connectionSuccess:
+			killCoreNLP()
+			raise RuntimeError("Unable to connect to launched CoreNLP subprocess")
+
+		time.sleep(1)
+			

@@ -10,3 +10,4 @@ bioc
 pytest_socket
 six
 sphinx==1.5.5
+fasteners
