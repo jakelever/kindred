@@ -9,6 +9,15 @@ def test_entity_str():
 	assert str(e1) == expected1
 	assert str(e2) == expected2
 
+def test_entity_str_withExternalID():
+	e1 = kindred.Entity(entityType="drug",text="Erlotinib",position=[(0,9)],sourceEntityID=None, externalID="id:1234")
+	e2 = kindred.Entity(entityType="drug",text="Erlotinib",position=[(0,9)],sourceEntityID="T16", externalID="id:9876")
+
+	expected1 = "<Entity drug:'Erlotinib' id=%d sourceid=None externalid=id:1234 [(0, 9)]>" % e1.entityID
+	expected2 = "<Entity drug:'Erlotinib' id=%d sourceid=T16 externalid=id:9876 [(0, 9)]>" % e2.entityID
+	assert str(e1) == expected1
+	assert str(e2) == expected2
+
 
 def test_entity_repr():
 	e1 = kindred.Entity(entityType="drug",text="Erlotinib",position=[(0,9)],sourceEntityID=None)
