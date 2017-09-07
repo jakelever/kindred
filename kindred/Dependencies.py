@@ -20,27 +20,29 @@ downloadDirectory = os.path.join(homeDirectory,'.kindred')
 	
 currentCoreNLPInfo = {'url':'http://nlp.stanford.edu/software/stanford-corenlp-full-2017-06-09.zip','archive':'stanford-corenlp-full-2017-06-09.zip','directory':'stanford-corenlp-full-2017-06-09','sha256':'7fb27a0e8dd39c1a90e4155c8f27cd829956e8b8ec6df76b321c04b1fe887961'}
 
+@atexit.register
 def killCoreNLP():
 	trackingDir = os.path.join(downloadDirectory,'tracking')
 	kindredPIDsFileLock = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid.locks')
 	kindredPIDsFile = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid')
 	with fasteners.InterProcessLock(kindredPIDsFileLock):
-		with open(kindredPIDsFile) as inF:
-			pids = [ int(line.strip()) for line in inF if line ]
-		pids = set(pids)
-		pids.remove(os.getpid())
-		pids = sorted(list(pids))
-		with open(kindredPIDsFile,'w') as outF:
-			outF.write("\n".join(map(str,pids)) + "\n")
+		if os.path.isfile(kindredPIDsFile):
+			with open(kindredPIDsFile) as inF:
+				pids = [ int(line.strip()) for line in inF if line ]
+			pids = set(pids)
+			pids.remove(os.getpid())
+			pids = sorted(list(pids))
+			with open(kindredPIDsFile,'w') as outF:
+				outF.write("\n".join(map(str,pids)) + "\n")
 
-		if len(pids) == 0:
-			os.remove(kindredPIDsFile)
-			corenlpPIDFile = os.path.join(trackingDir,socket.gethostname()+'.corenlp.pid')
-			if os.path.isfile(corenlpPIDFile):
-				with open(corenlpPIDFile) as f:
-					corenlpPID = int(f.read().strip())
-				os.remove(corenlpPIDFile)
-				os.kill(corenlpPID, signal.SIGTERM)
+			if len(pids) == 0:
+				os.remove(kindredPIDsFile)
+				corenlpPIDFile = os.path.join(trackingDir,socket.gethostname()+'.corenlp.pid')
+				if os.path.isfile(corenlpPIDFile):
+					with open(corenlpPIDFile) as f:
+						corenlpPID = int(f.read().strip())
+					os.remove(corenlpPIDFile)
+					os.kill(corenlpPID, signal.SIGTERM)
 
 def checkCoreNLPDownload():
 	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
@@ -147,6 +149,7 @@ def testCoreNLPConnection():
 		return False
 
 def claimCoreNLPUsage():
+	print "CLAIMING"
 	trackingDir = os.path.join(downloadDirectory,'tracking')
 	kindredPIDsFileLock = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid.locks')
 	kindredPIDsFile = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid')
@@ -162,9 +165,6 @@ def claimCoreNLPUsage():
 		pids = sorted(list(pids))
 		with open(kindredPIDsFile,'w') as outF:
 			outF.write("\n".join(map(str,pids)) + "\n")
-		
-	atexit.register(killCoreNLP)
-
 
 def initializeCoreNLP(language='english'):
 	"""
