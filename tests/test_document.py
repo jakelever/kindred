@@ -69,3 +69,13 @@ def test_document_init_withRel():
 	expected = "<Document Cancer is caused by mutations in ABCDE1. [<Entity disease:'Cancer' id=%d sourceid=T1 [(0, 6)]>, <Entity gene:'ABCDE1' id=%d sourceid=T2 [(33, 39)]>] [<Relation causes [%d, %d] ['subj', 'obj']>]>" % (e1.entityID,e2.entityID,e2.entityID,e1.entityID)
 	assert str(doc) == expected
 
+def test_document_addEntity():
+	text = "Cancer is caused by mutations in ABCDE1."
+
+	doc = kindred.Document(text,[])
+
+	e1 = kindred.Entity('disease','Cancer',[(0,6)],'T1')
+	doc.addEntity(e1)
+
+	expected = "<Document Cancer is caused by mutations in ABCDE1. [<Entity disease:'Cancer' id=%d sourceid=T1 [(0, 6)]>] []>" % (e1.entityID)
+	assert str(doc) == expected
