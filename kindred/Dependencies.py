@@ -13,6 +13,7 @@ import sys
 import shutil
 import fasteners
 import socket
+import signal
 
 homeDirectory = os.path.expanduser('~')
 downloadDirectory = os.path.join(homeDirectory,'.kindred')
@@ -25,17 +26,18 @@ def killCoreNLP():
 	kindredPIDsFile = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid')
 	with fasteners.InterProcessLock(kindredPIDsFileLock):
 		with open(kindredPIDsFile) as inF:
-			pids = [ int(line.strip()) for line in inF ]
+			pids = [ int(line.strip()) for line in inF if line ]
 		pids = set(pids)
 		pids.remove(os.getpid())
 		pids = sorted(list(pids))
 		with open(kindredPIDsFile,'w') as outF:
 			outF.write("\n".join(map(str,pids)) + "\n")
 
-		if len(pids) == 0:		
+		if len(pids) == 0:
 			corenlpPIDFile = os.path.join(trackingDir,socket.gethostname()+'.corenlp.pid')
 			with open(corenlpPIDFile) as f:
 				corenlpPID = int(f.read().strip())
+			os.remove(kindredPIDsFile)
 			os.kill(corenlpPID, signal.SIGTERM)
 
 def checkCoreNLPDownload():
@@ -149,7 +151,7 @@ def claimCoreNLPUsage():
 	with fasteners.InterProcessLock(kindredPIDsFileLock):
 		if os.path.isfile(kindredPIDsFile):
 			with open(kindredPIDsFile) as inF:
-				pids = [ int(line.strip()) for line in inF ]
+				pids = [ int(line.strip()) for line in inF if line ]
 			pids = set(pids)
 		else:
 			pids = set()
