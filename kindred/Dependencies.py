@@ -36,7 +36,7 @@ def killCoreNLP():
 		if len(pids) == 0:
 			os.remove(kindredPIDsFile)
 			corenlpPIDFile = os.path.join(trackingDir,socket.gethostname()+'.corenlp.pid')
-			if os.path.isfile(corenlpPIDFile)
+			if os.path.isfile(corenlpPIDFile):
 				with open(corenlpPIDFile) as f:
 					corenlpPID = int(f.read().strip())
 				os.remove(corenlpPIDFile)
@@ -198,7 +198,7 @@ def initializeCoreNLP(language='english'):
 
 	trackingDir = os.path.join(downloadDirectory,'tracking')
 	with fasteners.InterProcessLock(downloadDirectoryLock):
-		if os.path.isdir(trackingDir):
+		if not os.path.isdir(trackingDir):
 			os.makedirs(trackingDir)
 
 	startLock = os.path.join(trackingDir,socket.gethostname()+'.start.lock')
