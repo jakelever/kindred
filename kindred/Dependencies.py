@@ -34,11 +34,13 @@ def killCoreNLP():
 			outF.write("\n".join(map(str,pids)) + "\n")
 
 		if len(pids) == 0:
-			corenlpPIDFile = os.path.join(trackingDir,socket.gethostname()+'.corenlp.pid')
-			with open(corenlpPIDFile) as f:
-				corenlpPID = int(f.read().strip())
 			os.remove(kindredPIDsFile)
-			os.kill(corenlpPID, signal.SIGTERM)
+			corenlpPIDFile = os.path.join(trackingDir,socket.gethostname()+'.corenlp.pid')
+			if os.path.isfile(corenlpPIDFile)
+				with open(corenlpPIDFile) as f:
+					corenlpPID = int(f.read().strip())
+				os.remove(corenlpPIDFile)
+				os.kill(corenlpPID, signal.SIGTERM)
 
 def checkCoreNLPDownload():
 	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
