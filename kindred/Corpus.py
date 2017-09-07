@@ -153,7 +153,7 @@ class Corpus:
 		assert isinstance(folds,int)
 		assert folds > 0
 
-		indices = range(len(self.documents))
+		indices = list(range(len(self.documents)))
 		random.shuffle(indices)
 
 		chunkSize = int(len(self.documents)/float(folds))
