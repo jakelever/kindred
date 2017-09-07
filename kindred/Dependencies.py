@@ -153,6 +153,8 @@ def claimCoreNLPUsage():
 		pids = sorted(list(pids))
 		with open(kindredPIDsFile,'w') as outF:
 			outF.write("\n".join(map(str(pids))) + "\n")
+		
+	atexit.register(killCoreNLP)
 
 
 def initializeCoreNLP(language='english'):
@@ -164,8 +166,6 @@ def initializeCoreNLP(language='english'):
 	"""
 	acceptedLanguages = ['english','arabic','chinese','french','german','spanish']
 	assert language in acceptedLanguages
-
-
 
 	if testCoreNLPConnection():
 		return
@@ -198,13 +198,17 @@ def initializeCoreNLP(language='english'):
 		if testCoreNLPConnection():
 			return
 
+		kindredPIDsFileLock = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid.locks')
+		kindredPIDsFile = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid')
+		with fasteners.InterProcessLock(kindredPIDsFileLock):
+			with open(kindredPIDsFile,'w') as outF:
+				outF.write("%d\n" % os.getpid())
+
 		os.chdir(corenlpDir)
 
 		corenlpProcess = subprocess.Popen(shlex.split(command), stdout=open('/dev/null', 'w'), stderr=subprocess.STDOUT, cwd=corenlpDir, preexec_fn=os.setpgrp)
 		with open(corenlpPIDFile,'w') as f:
 			f.write("%d\n" % corenlpProcess.pid)
-
-		atexit.register(killCoreNLP)
 
 		maxTries = 10
 
