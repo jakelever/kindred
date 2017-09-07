@@ -60,3 +60,19 @@ def test_sentence_str(capfd):
 	s = kindred.Sentence(text,tokens,dependencies=[(2,3,'a'),(3,5,'b'),(4,5,'c')],entitiesWithLocations=entitiesWithLocations)
 
 	assert s.__repr__() == "lots of mutations cause dangerous cancer"
+
+def test_sentence_addEntityWithLocations(capfd):
+	text = 'lots of mutations cause dangerous cancer'
+	tokens = [ kindred.Token(w,None,None,0,0) for w in text.split() ]
+
+	s = kindred.Sentence(text,tokens,dependencies=[(2,3,'a'),(3,5,'b'),(4,5,'c')],entitiesWithLocations=[])
+
+	e1 = kindred.Entity('thingA','mutations',[(0,1)])
+	e2 = kindred.Entity('thingB','cancer',[(0,1)])
+
+	s.addEntityWithLocation(e1,[2])
+	s.addEntityWithLocation(e2,[5])
+
+	assert s.getEntityType(e1.entityID) == 'thingA'
+	assert s.getEntityType(e2.entityID) == 'thingB'
+
