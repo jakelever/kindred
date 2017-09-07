@@ -12,6 +12,7 @@ import pytest_socket
 import sys
 import shutil
 import fasteners
+import socket
 
 homeDirectory = os.path.expanduser('~')
 downloadDirectory = os.path.join(homeDirectory,'.kindred')
@@ -29,7 +30,7 @@ def killCoreNLP():
 		pids.remove(os.getpid())
 		pids = sorted(list(pids))
 		with open(kindredPIDsFile,'w') as outF:
-			outF.write("\n".join(map(str(pids))) + "\n")
+			outF.write("\n".join(map(str,pids)) + "\n")
 
 		if len(pids) == 0:		
 			corenlpPIDFile = os.path.join(trackingDir,socket.gethostname()+'.corenlp.pid')
@@ -146,13 +147,17 @@ def claimCoreNLPUsage():
 	kindredPIDsFileLock = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid.locks')
 	kindredPIDsFile = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid')
 	with fasteners.InterProcessLock(kindredPIDsFileLock):
-		with open(kindredPIDsFile) as inF:
-			pids = [ int(line.strip()) for line in inF ]
-		pids = set(pids)
+		if os.path.isfile(kindredPIDsFile):
+			with open(kindredPIDsFile) as inF:
+				pids = [ int(line.strip()) for line in inF ]
+			pids = set(pids)
+		else:
+			pids = set()
+
 		pids.add(os.getpid())
 		pids = sorted(list(pids))
 		with open(kindredPIDsFile,'w') as outF:
-			outF.write("\n".join(map(str(pids))) + "\n")
+			outF.write("\n".join(map(str,pids)) + "\n")
 		
 	atexit.register(killCoreNLP)
 
