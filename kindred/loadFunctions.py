@@ -376,7 +376,6 @@ def loadDocs(dataFormat,path=None,ignoreEntities=[]):
 	:rtype: list of kindred.Document
 	"""
 	assert dataFormat == 'bioc'
-	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
 
 	if dataFormat == 'bioc':
 		assert not path is None
@@ -437,7 +436,7 @@ def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRe
 			corpus.addDocument(doc)
 		elif dataFormat == 'bioc' and filename.endswith('.bioc.xml'):
 			absPath = os.path.join(directory, filename)
-			docs = loadDocs(dataFormat,path=absPath,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
+			docs = loadDocs(dataFormat,path=absPath,ignoreEntities=ignoreEntities)
 			for doc in docs:
 				corpus.addDocument(doc)
 			
