@@ -16,23 +16,14 @@ homeDirectory = os.path.expanduser('~')
 downloadDirectory = os.path.join(homeDirectory,'.kindred')
 	
 corenlpProcess = None
-stdoutFile = None
-stderrFile = None
 
 currentCoreNLPInfo = {'url':'http://nlp.stanford.edu/software/stanford-corenlp-full-2017-06-09.zip','archive':'stanford-corenlp-full-2017-06-09.zip','directory':'stanford-corenlp-full-2017-06-09','sha256':'7fb27a0e8dd39c1a90e4155c8f27cd829956e8b8ec6df76b321c04b1fe887961'}
 
 def killCoreNLP():
 	global corenlpProcess
-	global stdoutFile
-	global stderrFile
 	if not corenlpProcess is None:
 		corenlpProcess.kill()
-		stdoutFile.close()
-		stderrFile.close()
-
 		corenlpProcess = None
-		stdoutFile = None
-		stderrFile = None
 
 def checkCoreNLPDownload():
 	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
@@ -148,8 +139,6 @@ def initializeCoreNLP(language='english'):
 	:type language: str
 	"""
 	global corenlpProcess
-	global stdoutFile
-	global stderrFile
 
 	acceptedLanguages = ['english','arabic','chinese','french','german','spanish']
 	assert language in acceptedLanguages
@@ -170,16 +159,13 @@ def initializeCoreNLP(language='english'):
 		raise RuntimeError("Could not find the Stanford CoreNLP model files for language: %s. Use kindred.downloadCoreNLPLanguage('%s') first." % (language,language))
 
 	if language == 'english':
-		command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 150000'
+		command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 150000 -quiet true'
 	else:
-		command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -serverProperties StanfordCoreNLP-%s.properties -port 9000 -timeout 150000' % language
+		command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -serverProperties StanfordCoreNLP-%s.properties -port 9000 -timeout 150000 -quiet true' % language
 
 	os.chdir(corenlpDir)
 
-	stdoutFile = tempfile.NamedTemporaryFile(delete=True)
-	stderrFile = tempfile.NamedTemporaryFile(delete=True)
-
-	corenlpProcess = subprocess.Popen(shlex.split(command), stdout=stdoutFile, stderr=stderrFile, cwd=corenlpDir)#, shell=True)
+	corenlpProcess = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=corenlpDir)
 
 	atexit.register(killCoreNLP)
 
