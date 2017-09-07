@@ -98,6 +98,12 @@ class RelationClassifier:
 		self.candidateBuilder = CandidateBuilder()
 		self.candidateBuilder.fit_transform(corpus)
 		
+		candidateRelations = corpus.getCandidateRelations()
+		candidateClasses = corpus.getCandidateClasses()
+		
+		if len(candidateRelations) == 0:
+			raise RuntimeError("No candidate relations found in corpus for training")
+
 		self.relTypeToValidEntityTypes = defaultdict(set)
 		
 		for d in corpus.documents:
@@ -123,8 +129,7 @@ class RelationClassifier:
 
 		#tmpClassData = [ (1 in candidateClassGroup) for candidateClassGroup in candidateClasses ]
 
-		candidateRelations = corpus.getCandidateRelations()
-		candidateClasses = corpus.getCandidateClasses()
+
 
 		#useSingleClassifier = False
 		if self.useSingleClassifier:

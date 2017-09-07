@@ -1,4 +1,5 @@
 import kindred
+import pytest
 
 from kindred.datageneration import generateData,generateTestData
 
@@ -15,6 +16,33 @@ def test_simpleRelationClassifier():
 	
 	f1score = kindred.evaluate(testCorpusGold, predictionCorpus, metric='f1score')
 	assert f1score == 1.0
+
+def test_simpleRelationClassifier_emptyTestCorpus():
+	trainCorpus, testCorpus = generateTestData(positiveCount=100,negativeCount=100)
+
+	for doc in testCorpus.documents:
+		doc.entities = []
+		doc.relations = []
+
+	classifier = kindred.RelationClassifier()
+	classifier.train(trainCorpus)
+	
+	classifier.predict(testCorpus)
+
+	assert len(testCorpus.getRelations()) == 0
+
+def test_simpleRelationClassifier_emptyTrainCorpus():
+	trainCorpus, testCorpus = generateTestData(positiveCount=100,negativeCount=100)
+
+	for doc in trainCorpus.documents:
+		doc.entities = []
+		doc.relations = []
+
+	classifier = kindred.RelationClassifier()
+
+	with pytest.raises(RuntimeError) as excinfo:
+		classifier.train(trainCorpus)
+	assert excinfo.value.args == ('No candidate relations found in corpus for training',)
 
 def test_simpleMultiClassRelationClassifier():
 	trainCorpus, testCorpusGold = generateTestData(positiveCount=100,negativeCount=100)
