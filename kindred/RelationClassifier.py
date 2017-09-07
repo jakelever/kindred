@@ -199,6 +199,10 @@ class RelationClassifier:
 		#saveClasses('test.classes',tmpClassData)
 
 		candidateRelations = corpus.getCandidateRelations()
+
+		# Check if there are any candidate relations to classify in this corpus
+		if len(candidateRelations) == 0:
+			return
 		
 		entityIDsToType = {}
 		for doc in corpus.documents:
