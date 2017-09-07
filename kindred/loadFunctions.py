@@ -318,6 +318,25 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 def loadDoc(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
 	"""
 	Loads a single document from a single file (for JSON or SimpleTag) or set of files (for standoff)
+
+	:param dataFormat: The format of the data to load (standoff/simpletag/json)
+	:param path: Path of the file (for simpletag/json)
+	:param txtPath: Path of the TXT file (for standoff)
+	:param a1Path: Path of the A1 file (for standoff)
+	:param a2Path: Path of the A2 file (for standoff)
+	:param verbose: Whether to give additional output while loading
+	:param ignoreEntities: A list of entities to ignore while loading
+	:param ignoreComplexRelations: Whether to ignore complex relations (relations where one argument is another relations). This must be true as kindred doesn't currently support complex relations
+	:type dataFormat: str
+	:type path: str
+	:type txtPath: str
+	:type a1Path: str
+	:type a2Path: str
+	:type verbose: bool
+	:type ignoreEntities: list of str
+	:type ignoreComplexRelations: bool
+	:return: Loaded document
+	:rtype: kindred.Document
 	"""
 	
 	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
@@ -343,9 +362,18 @@ def loadDoc(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=Fa
 	assert isinstance(doc,kindred.Document)
 	return doc
 
-def loadDocs(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
+def loadDocs(dataFormat,path=None,ignoreEntities=[]):
 	"""
-	Loads a set of documents from a single file (for BioC)
+	Load multiple documents from a single file (currently only BioC)
+
+	:param dataFormat: The format of the data to load (bioc)
+	:param path: Path of the file
+	:param ignoreEntities: A list of entities to ignore while loading
+	:type dataFormat: str
+	:type path: str
+	:type ignoreEntities: list of str
+	:return: Loaded documents
+	:rtype: list of kindred.Document
 	"""
 	assert dataFormat == 'bioc'
 	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"

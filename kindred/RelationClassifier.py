@@ -17,12 +17,16 @@ class RelationClassifier:
 		"""
 		Constructor for the RelationClassifier class
 		
-		:param self: Object instance
 		:param useSingleClassifier: Whether to use a single classifier
 		:param useBuilder: Whether to use the feature builder functionality
 		:param tfidf: Whether to use tfidf for the vectorizer
-		:param features: A list of specific features
+		:param features: A list of specific features. Valid features are "entityTypes","unigramsBetweenEntities","bigrams","dependencyPathEdges","dependencyPathEdgesNearEntities"
 		:param threshold: A specific threshold to use for classification (which will then use a logistic regression classifier)
+		:type useSingleClassifier: bool
+		:type useBuilder: bool
+		:type tfidf: bool
+		:type features: list of str
+		:type threshold: float
 		"""
 		self.isTrained = False
 		self.useSingleClassifier = useSingleClassifier
@@ -41,12 +45,16 @@ class RelationClassifier:
 		"""
 		Builds the set of features that gives best cross-validated F1-score
 		
-		:param self: Object instance
 		:param corpus: Corpus of documents to use for training
 		:param candidateRelations: List of candidate relations to use for training
 		:param classes: Associated numerical classes for training
 		:param tfidf: Whether to use tfidf for the vectorizer
-		:returns: A list of features to use for vectorizer
+		:type corpus: kindred.Corpus
+		:type candidateRelations: list of kindred.Relation
+		:type classes: list of int
+		:type tfidf: bool
+		:return: A list of features to use for vectorizer
+		:rtype: list of str
 		"""
 		
 		vectorizers = {}
@@ -91,7 +99,10 @@ class RelationClassifier:
 
 	def train(self,corpus):
 		"""
-		Does stuff
+		Trains the classifier using this corpus. All relations in the corpus will be used for training.
+
+		:param corpus: Corpus to use for training
+		:type corpus: kindred.Corpus
 		"""
 		assert isinstance(corpus,kindred.Corpus)
 			
@@ -189,6 +200,12 @@ class RelationClassifier:
 		self.isTrained = True
 
 	def predict(self,corpus):
+		"""
+		Use the relation classifier to predict new relations for a corpus. The new relations will be added to the Corpus.
+
+		:param corpus: Corpus to make predictions on
+		:type corpus: kindred.Corpus
+		"""
 		assert self.isTrained, "Classifier must be trained using train() before predictions can be made"
 	
 		assert isinstance(corpus,kindred.Corpus)

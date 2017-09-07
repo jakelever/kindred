@@ -15,11 +15,13 @@ class Document:
 		:param relations: Relations in document
 		:param relationsUseSourceIDs: description
 		:param sourceFilename: description
+		:param sourceIDs: IDs associated with the source (e.g. PMID)
 		:type text: type description
 		:type entities: type description
 		:type relations: type description
 		:type relationsUseSourceIDs: type description
 		:type sourceFilename: type description
+		:type sourceIDs: dict
 		"""
 
 		loadFromSimpleTag = (entities is None)

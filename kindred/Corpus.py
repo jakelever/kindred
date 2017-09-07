@@ -146,7 +146,7 @@ class Corpus:
 		Method for splitting up the corpus multiple times and is used for an n-fold cross validation approach (as a generator). Each iteration, the training and test set for that fold are provided.
 
 		:param folds: Number of folds to create
-		:type trainFraction: int
+		:type folds: int
 		:return: Tuple of training and test corpus (for iterations=folds)
 		:rtype: (kindred.Corpus,kindred.Corpus)
 		"""

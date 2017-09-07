@@ -12,11 +12,13 @@ class Sentence:
 	def __init__(self, text, tokens, dependencies, entitiesWithLocations, sourceFilename=None):
 		"""
 		Constructor for Sentence class
-		
+	
+		:param text: Text of the sentence
 		:param tokens: List of tokens in sentence
 		:param dependencies: List of dependencies from dependency path. Should be a list of tuples with form (tokenindex1,tokenindex2,dependency_type)
 		:param entitiesWithLocations: List of entities associated with tokens. Should be a list of tuples with form (kindred.Entity, list of tokenindices)"
 		:param sourceFilename: Filename of the source document
+		:type text: str
 		:type tokens: list of kindred.Token
 		:type dependencies: list of tuples
 		:type entitiesWithLocations: list of tuples
