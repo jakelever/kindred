@@ -165,7 +165,7 @@ def initializeCoreNLP(language='english'):
 
 	os.chdir(corenlpDir)
 
-	corenlpProcess = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=corenlpDir)
+	corenlpProcess = subprocess.Popen(shlex.split(command), stdout=open('/dev/null', 'w'), stderr=subprocess.STDOUT, cwd=corenlpDir, preexec_fn=os.setpgrp)
 
 	atexit.register(killCoreNLP)
 
