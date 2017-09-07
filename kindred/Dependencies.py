@@ -24,7 +24,7 @@ def killCoreNLP():
 	kindredPIDsFile = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid')
 	with fasteners.InterProcessLock(kindredPIDsFileLock):
 		with open(kindredPIDsFile) as inF:
-			pids = [ int(line.strip() for line in inF ]
+			pids = [ int(line.strip()) for line in inF ]
 		pids = set(pids)
 		pids.remove(os.getpid())
 		pids = sorted(list(pids))
@@ -147,7 +147,7 @@ def claimCoreNLPUsage():
 	kindredPIDsFile = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid')
 	with fasteners.InterProcessLock(kindredPIDsFileLock):
 		with open(kindredPIDsFile) as inF:
-			pids = [ int(line.strip() for line in inF ]
+			pids = [ int(line.strip()) for line in inF ]
 		pids = set(pids)
 		pids.add(os.getpid())
 		pids = sorted(list(pids))
