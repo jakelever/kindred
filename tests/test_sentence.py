@@ -57,19 +57,6 @@ def test_sentence_str(capfd):
 
 	entitiesWithLocations = [ (e1,[2]), (e2,[5]) ]
 
-	s = kindred.Sentence(tokens,dependencies=[(2,3,'a'),(3,5,'b'),(4,5,'c')],entitiesWithLocations=entitiesWithLocations)
-
-	assert str(s) == "lots of mutations cause dangerous cancer"
-
-def test_sentence_str(capfd):
-	text = 'lots of mutations cause dangerous cancer'
-	tokens = [ kindred.Token(w,None,None,0,0) for w in text.split() ]
-
-	e1 = kindred.Entity('thingA','mutations',[(0,1)])
-	e2 = kindred.Entity('thingB','cancer',[(0,1)])
-
-	entitiesWithLocations = [ (e1,[2]), (e2,[5]) ]
-
 	s = kindred.Sentence(text,tokens,dependencies=[(2,3,'a'),(3,5,'b'),(4,5,'c')],entitiesWithLocations=entitiesWithLocations)
 
 	assert s.__repr__() == "lots of mutations cause dangerous cancer"
