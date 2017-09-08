@@ -20,6 +20,26 @@ downloadDirectory = os.path.join(homeDirectory,'.kindred')
 	
 currentCoreNLPInfo = {'url':'http://nlp.stanford.edu/software/stanford-corenlp-full-2017-06-09.zip','archive':'stanford-corenlp-full-2017-06-09.zip','directory':'stanford-corenlp-full-2017-06-09','sha256':'7fb27a0e8dd39c1a90e4155c8f27cd829956e8b8ec6df76b321c04b1fe887961'}
 
+def check_pid(pid):        
+	""" Check For the existence of a unix pid. """
+	try:
+		os.kill(pid, 0)
+	except OSError:
+		return False
+	else:
+		return True
+
+def killProcess(pid):
+	for i in range(30):
+		if not check_pid(pid):
+			break
+		os.kill(pid, signal.SIGTERM)
+		if not check_pid(pid):
+			break
+		time.sleep(1)
+	if check_pid(pid):
+		raise RuntimeError("Unable to kill process (pid=%d)" % pid)
+
 @atexit.register
 def killCoreNLP():
 	trackingDir = os.path.join(downloadDirectory,'tracking')
@@ -34,7 +54,6 @@ def killCoreNLP():
 			pids = sorted(list(pids))
 			with open(kindredPIDsFile,'w') as outF:
 				outF.write("\n".join(map(str,pids)) + "\n")
-
 			if len(pids) == 0:
 				os.remove(kindredPIDsFile)
 				corenlpPIDFile = os.path.join(trackingDir,socket.gethostname()+'.corenlp.pid')
@@ -43,6 +62,7 @@ def killCoreNLP():
 						corenlpPID = int(f.read().strip())
 					os.remove(corenlpPIDFile)
 					os.kill(corenlpPID, signal.SIGTERM)
+					time.sleep(3)
 
 def checkCoreNLPDownload():
 	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
@@ -149,7 +169,6 @@ def testCoreNLPConnection():
 		return False
 
 def claimCoreNLPUsage():
-	print "CLAIMING"
 	trackingDir = os.path.join(downloadDirectory,'tracking')
 	kindredPIDsFileLock = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid.locks')
 	kindredPIDsFile = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid')
