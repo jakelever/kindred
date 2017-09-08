@@ -121,6 +121,8 @@ def test_corenlpKill():
 	if not kindred.Dependencies.testCoreNLPConnection():
 		kindred.Dependencies.initializeCoreNLP()
 
+	assert kindred.Dependencies.testCoreNLPConnection() == True
+
 	kindred.Dependencies.killCoreNLP()
 
 	assert kindred.Dependencies.testCoreNLPConnection() == False
