@@ -439,7 +439,10 @@ def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRe
 			docs = loadDocs(dataFormat,path=absPath,ignoreEntities=ignoreEntities)
 			for doc in docs:
 				corpus.addDocument(doc)
-			
+	
+	if len(corpus.documents) == 0:
+		raise RuntimeError("No documents loaded from directory (%s). Are you sure this directory contains the corpus (format: %s)" % (directory,dataFormat))
+
 	return corpus
 			
 			
