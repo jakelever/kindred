@@ -232,8 +232,6 @@ def initializeCoreNLP(language='english'):
 			with open(kindredPIDsFile,'w') as outF:
 				outF.write("%d\n" % os.getpid())
 
-		os.chdir(corenlpDir)
-
 		corenlpProcess = subprocess.Popen(shlex.split(command), stdout=open('/dev/null', 'w'), stderr=subprocess.STDOUT, cwd=corenlpDir, preexec_fn=os.setpgrp)
 		with open(corenlpPIDFile,'w') as f:
 			f.write("%d\n" % corenlpProcess.pid)
