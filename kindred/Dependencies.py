@@ -14,6 +14,7 @@ import shutil
 import fasteners
 import socket
 import signal
+import re
 
 homeDirectory = os.path.expanduser('~')
 downloadDirectory = os.path.join(homeDirectory,'.kindred')
@@ -185,6 +186,17 @@ def claimCoreNLPUsage():
 		with open(kindredPIDsFile,'w') as outF:
 			outF.write("\n".join(map(str,pids)) + "\n")
 
+def checkAtLeastJava8Installed():
+	versionInfo = str(subprocess.check_output(["java", "-version"], stderr=subprocess.STDOUT))
+	regex = re.compile(r'1\.\d+\.\d+')
+	versionMatches = re.findall(regex,versionInfo)
+	assert len(versionMatches) > 0, 'Could not find Java version number from java -version command'
+	first = versionMatches[0]
+
+	versionNumbers = list(map(int,first.split('.')))
+
+	assert versionNumbers[1] >= 8, "Java 8 must be installed"
+
 def initializeCoreNLP(language='english'):
 	"""
 	Launch a local instance of Stanford CoreNLP (assuming the files have already been downloaded)
@@ -212,6 +224,8 @@ def initializeCoreNLP(language='english'):
 		command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 150000 -quiet true'
 	else:
 		command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -serverProperties StanfordCoreNLP-%s.properties -port 9000 -timeout 150000 -quiet true' % language
+
+	checkAtLeastJava8Installed()
 
 	downloadDirectoryLock = os.path.join(downloadDirectory,'lock')
 
