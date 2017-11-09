@@ -3,10 +3,9 @@
 from kindred.pycorenlp import StanfordCoreNLP
 
 import kindred
-import json
 from intervaltree import IntervalTree
 from collections import defaultdict
-from kindred.Dependencies import initializeCoreNLP,checkCoreNLPDownload,getCoreNLPPort
+from kindred.Dependencies import initializeCoreNLP,getCoreNLPPort
 
 def shortenDepName(depName):
 	acceptedSubNames = set(['acl:relcl','cc:preconj','compound:prt','det:predet','nmod:npmod','nmod:poss','nmod:tmod'])

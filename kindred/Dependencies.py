@@ -6,13 +6,10 @@ import subprocess
 import shlex
 import time
 import atexit
-import tempfile
 import requests
 import pytest_socket
 import sys
 import shutil
-import fasteners
-import socket
 import signal
 import re
 import random
