@@ -13,88 +13,32 @@ class RelationClassifier:
 	"""
 	Manages binary classifier(s) for relation classification.
 	"""
-	def __init__(self,useSingleClassifier=True,useBuilder=False,tfidf=True,features=None,threshold=None):
+	def __init__(self,classifierType='SVM',tfidf=True,features=None,threshold=None):
 		"""
 		Constructor for the RelationClassifier class
 		
-		:param useSingleClassifier: Whether to use a single classifier
-		:param useBuilder: Whether to use the feature builder functionality
+		:param classifierType: Which classifier to use (must be 'SVM' or 'LogisticRegression')
 		:param tfidf: Whether to use tfidf for the vectorizer
 		:param features: A list of specific features. Valid features are "entityTypes","unigramsBetweenEntities","bigrams","dependencyPathEdges","dependencyPathEdgesNearEntities"
 		:param threshold: A specific threshold to use for classification (which will then use a logistic regression classifier)
-		:type useSingleClassifier: bool
-		:type useBuilder: bool
+		:type classifierType: str
 		:type tfidf: bool
 		:type features: list of str
 		:type threshold: float
 		"""
+		assert classifierType in ['SVM','LogisticRegression'], "classifierType must be 'SVM' or 'LogisticRegression'"
+		assert classifierType == 'LogisticRegression' or threshold is None, "Threshold can only be used when classifierType is 'LogisticRegression'"
+
 		self.isTrained = False
-		self.useSingleClassifier = useSingleClassifier
-		self.useBuilder = useBuilder
+		self.classifierType = classifierType
 		self.tfidf = tfidf
 
-		self.defaultFeatures = ["entityTypes","unigramsBetweenEntities","bigrams","dependencyPathEdges","dependencyPathEdgesNearEntities"]
+		self.chosenFeatures = ["entityTypes","unigramsBetweenEntities","bigrams","dependencyPathEdges","dependencyPathEdgesNearEntities"]
 		if not features is None:
 			assert isinstance(features,list)
-			self.defaultFeatures = features
+			self.chosenFeatures = features
 			
 		self.threshold = threshold
-
-	def buildFeatureSet(self,corpus,candidateRelations,classes,tfidf):
-		"""
-		Builds the set of features that gives best cross-validated F1-score
-		
-		:param corpus: Corpus of documents to use for training
-		:param candidateRelations: List of candidate relations to use for training
-		:param classes: Associated numerical classes for training
-		:param tfidf: Whether to use tfidf for the vectorizer
-		:type corpus: kindred.Corpus
-		:type candidateRelations: list of kindred.Relation
-		:type classes: list of int
-		:type tfidf: bool
-		:return: A list of features to use for vectorizer
-		:rtype: list of str
-		"""
-		
-		vectorizers = {}
-		trainVectors = {}
-
-		featureChoice = ["entityTypes","unigramsBetweenEntities","bigrams","dependencyPathEdges","dependencyPathEdgesNearEntities"]
-		for feature in featureChoice:
-			vectorizers[feature] = Vectorizer(featureChoice=[feature],tfidf=tfidf)
-			trainVectors[feature] = vectorizers[feature].fit_transform(corpus)
-
-		chosenFeatures = []
-		prevScore,prevMatrix = -1.0, None
-		while True:
-			bestScore, bestFeature, bestMatrix = -1.0, None, None
-			for feature in featureChoice:
-				if prevMatrix is None:
-					matrix = trainVectors[feature]
-				else:
-					matrix = hstack([prevMatrix,trainVectors[feature]])
-
-				clf = svm.LinearSVC(class_weight='balanced')
-				
-				scores = cross_val_score(clf, matrix, classes, cv=5, scoring='f1_macro')
-				score = scores.mean()
-
-				if score > bestScore:
-					bestScore = score
-					bestFeature = feature
-					bestMatrix = matrix
-
-			if bestScore > prevScore:
-				# We see improvement
-				featureChoice.remove(bestFeature)
-				chosenFeatures.append(bestFeature)
-				prevScore = bestScore
-				prevMatrix = bestMatrix
-			else:
-				# No improvement made
-				break
-
-		return chosenFeatures
 
 	def train(self,corpus):
 		"""
@@ -133,50 +77,21 @@ class RelationClassifier:
 		allClasses = list(range(1,relationtypeCount+1))
 		self.allClasses = allClasses
 	
-		if self.useSingleClassifier:
-			simplifiedClasses = []
-			# TODO: Try sparse matrix rep
-			for candidateRelation,candidateClassGroup in zip(candidateRelations,candidateClasses):
-				simplifiedClasses.append(candidateClassGroup[0])
+		simplifiedClasses = []
+		# TODO: Try sparse matrix rep
+		for candidateRelation,candidateClassGroup in zip(candidateRelations,candidateClasses):
+			simplifiedClasses.append(candidateClassGroup[0])
+
+		self.vectorizer = Vectorizer(featureChoice=self.chosenFeatures,tfidf=self.tfidf)
+		trainVectors = self.vectorizer.fit_transform(corpus)
 	
-			if self.useBuilder:
-				chosenFeatures = self.buildFeatureSet(corpus,candidateRelations,simplifiedClasses,self.tfidf)
-			else:
-				chosenFeatures = self.defaultFeatures
-
-			self.vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=self.tfidf)
-			trainVectors = self.vectorizer.fit_transform(corpus)
-		
-			assert trainVectors.shape[0] == len(candidateClasses)
-		
-			if self.threshold is None:
-				self.clf = svm.LinearSVC(class_weight='balanced',random_state=1)
-			else:
-				self.clf = kindred.LogisticRegressionWithThreshold(self.threshold)
-			self.clf.fit(trainVectors,simplifiedClasses)
+		assert trainVectors.shape[0] == len(candidateClasses)
+	
+		if self.threshold is None:
+			self.clf = svm.LinearSVC(class_weight='balanced',random_state=1)
 		else:
-			# TODO: Should we take into account the argument count when grouping classifiers?
-
-			if not self.useBuilder:
-				chosenFeatures = self.defaultFeatures
-
-				self.vectorizer = Vectorizer(featureChoice=chosenFeatures,tfidf=self.tfidf)
-				tmpMatrix = self.vectorizer.fit_transform(corpus)
-			self.clfs = {}
-			self.vectorizers = {}
-			for c in self.allClasses:
-				tmpClassData = [ (c in candidateClassGroup) for candidateClassGroup in candidateClasses ]
-
-				if self.useBuilder:
-					chosenFeatures = self.buildFeatureSet(corpus,candidateRelations,tmpClassData,self.tfidf)
-					self.vectorizers[c] = Vectorizer(featureChoice=chosenFeatures,tfidf=self.tfidf)
-					tmpMatrix = self.vectorizers[c].fit_transform(corpus)
-
-				if self.threshold is None:
-					self.clfs[c] = svm.LinearSVC(class_weight='balanced',random_state=1)
-				else:
-					self.clfs[c] = kindred.LogisticRegressionWithThreshold(self.threshold)
-				self.clfs[c].fit(tmpMatrix,tmpClassData)
+			self.clf = kindred.LogisticRegressionWithThreshold(self.threshold)
+		self.clf.fit(trainVectors,simplifiedClasses)
 		
 		self.isTrained = True
 
@@ -205,45 +120,21 @@ class RelationClassifier:
 				entityIDsToType[e.entityID] = e.entityType
 		
 		predictedRelations = []
-		
-		if self.useSingleClassifier:
-			tmpMatrix = self.vectorizer.transform(corpus)
+		tmpMatrix = self.vectorizer.transform(corpus)
 
-			predictedClasses = self.clf.predict(tmpMatrix)
-			for predictedClass,candidateRelation in zip(predictedClasses,candidateRelations):
-				if predictedClass != 0:
-					relKey = self.classToRelType[predictedClass]
-					relType = relKey[0]
-					argNames = relKey[1:]
-					
-					candidateRelationEntityTypes = tuple( [ entityIDsToType[eID] for eID in candidateRelation.entityIDs ] )
-					if not tuple(candidateRelationEntityTypes) in self.relTypeToValidEntityTypes[relKey]:
-						continue
+		predictedClasses = self.clf.predict(tmpMatrix)
+		for predictedClass,candidateRelation in zip(predictedClasses,candidateRelations):
+			if predictedClass != 0:
+				relKey = self.classToRelType[predictedClass]
+				relType = relKey[0]
+				argNames = relKey[1:]
+				
+				candidateRelationEntityTypes = tuple( [ entityIDsToType[eID] for eID in candidateRelation.entityIDs ] )
+				if not tuple(candidateRelationEntityTypes) in self.relTypeToValidEntityTypes[relKey]:
+					continue
 
-					predictedRelation = kindred.Relation(relType,candidateRelation.entityIDs,argNames=argNames)
-					predictedRelations.append(predictedRelation)
-		else:
-			if not self.useBuilder:
-				tmpMatrix = self.vectorizer.transform(corpus)
-
-			for c in self.allClasses:
-
-				if self.useBuilder:
-					tmpMatrix = self.vectorizers[c].transform(corpus)
-
-				predicted = self.clfs[c].predict(tmpMatrix)
-				for p,candidateRelation in zip(predicted,candidateRelations):
-					if p != 0:
-						relKey = self.classToRelType[p]
-						relType = relKey[0]
-						argNames = relKey[1:]
-						
-						candidateRelationEntityTypes = tuple( [ entityIDsToType[eID] for eID in candidateRelation.entityIDs ] )
-						if not tuple(candidateRelationEntityTypes) in self.relTypeToValidEntityTypes[relKey]:
-							continue
-						
-						predictedRelation = kindred.Relation(relType,candidateRelation.entityIDs,argNames=argNames)
-						predictedRelations.append(predictedRelation)
+				predictedRelation = kindred.Relation(relType,candidateRelation.entityIDs,argNames=argNames)
+				predictedRelations.append(predictedRelation)
 		
 		# Add the predicted relations into the corpus
 		entitiesToDoc = {}
