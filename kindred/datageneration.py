@@ -61,7 +61,6 @@ def generateData(positiveCount=100,negativeCount=100,relTypes=1):
 		
 		text = text.replace('ID1',str(entityID))
 		text = text.replace('ID2',str(entityID+1))
-		#relations = [ kindred.Relation('treats',[entityID,entityID+1]) ]
 
 		relName = customChoice(relNames)
 		text += '<relation type="%s" subj="%d" obj="%d" />' % (relName,entityID,entityID+1)

@@ -22,11 +22,6 @@ def evaluate(goldCorpus,testCorpus,metric='f1score',display=False):
 
 	TPs,FPs,FNs = Counter(),Counter(),Counter()
 	
-	#goldTuples = [ ]
-	#for doc in goldCorpus.documents:
-	#	relTuples = [ (r.relationType,tuple(r.entityIDs)) for r in doc.getRelations() ]
-	#	goldTuples += relTuples
-		
 	goldTuples = [ (r.relationType,tuple(r.entityIDs)) for r in goldCorpus.getRelations() ]
 	testTuples = [ (r.relationType,tuple(r.entityIDs)) for r in testCorpus.getRelations() ]
 
@@ -67,8 +62,6 @@ def evaluate(goldCorpus,testCorpus,metric='f1score',display=False):
 		print("-"*50)
 		print(formatString % ("All",TP,FP,FN,precision,recall,f1score))
 
-
-	
 	if metric == 'f1score':
 		return f1score
 	elif metric == 'precision':

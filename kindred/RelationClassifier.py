@@ -39,7 +39,6 @@ class RelationClassifier:
 			self.defaultFeatures = features
 			
 		self.threshold = threshold
-		#self.defaultFeatures = ["entityTypes","dependencyPathEdges"]
 
 	def buildFeatureSet(self,corpus,candidateRelations,classes,tfidf):
 		"""
@@ -134,24 +133,11 @@ class RelationClassifier:
 		allClasses = list(range(1,relationtypeCount+1))
 		self.allClasses = allClasses
 	
-		#options = ["ngrams","selectedngrams","bigrams","ngramsPOS","selectedngramsPOS","ngramsOfDependencyPath","bigramsOfDependencyPath","entityTypes","lemmas","selectedlemmas","dependencyPathEdges","dependencyPathEdgesNearEntities","splitAcrossSentences","skipgrams_2","skipgrams_3","skipgrams_4","skipgrams_5","skipgrams_6","skipgrams_7","skipgrams_8","skipgrams_9","skipgrams_10","unigramsBetweenEntities","bigrams_betweenEntities"]
-
-		# We'll just get the vectors for the entityTypes
-
-		#tmpClassData = [ (1 in candidateClassGroup) for candidateClassGroup in candidateClasses ]
-
-
-
-		#useSingleClassifier = False
 		if self.useSingleClassifier:
-			#chosenFeatures = ["entityTypes","dependencyPathEdges","unigramsBetweenEntities","bigrams_betweenEntities","bigramsOfDependencyPath"]
-
 			simplifiedClasses = []
 			# TODO: Try sparse matrix rep
 			for candidateRelation,candidateClassGroup in zip(candidateRelations,candidateClasses):
-				#assert len(candidateClassGroup) == 1, "Cannot handle multiple relations with same set of entities " + str(candidateRelation)
 				simplifiedClasses.append(candidateClassGroup[0])
-			#assert False
 	
 			if self.useBuilder:
 				chosenFeatures = self.buildFeatureSet(corpus,candidateRelations,simplifiedClasses,self.tfidf)
@@ -186,15 +172,10 @@ class RelationClassifier:
 					self.vectorizers[c] = Vectorizer(featureChoice=chosenFeatures,tfidf=self.tfidf)
 					tmpMatrix = self.vectorizers[c].fit_transform(corpus)
 
-				#save_sparse_csr('train.matrix',trainVectors.tocsr())
-				#saveClasses('train.classes',tmpClassData)
-
 				if self.threshold is None:
 					self.clfs[c] = svm.LinearSVC(class_weight='balanced',random_state=1)
 				else:
 					self.clfs[c] = kindred.LogisticRegressionWithThreshold(self.threshold)
-				#self.clfs[c] = AdaBoostClassifier(n_estimators=2)
-				#self.clfs[c].fit(trainVectors,tmpClassData)
 				self.clfs[c].fit(tmpMatrix,tmpClassData)
 		
 		self.isTrained = True
@@ -212,14 +193,6 @@ class RelationClassifier:
 			
 		self.candidateBuilder.transform(corpus)
 
-		#if False:
-		#	testVectors = self.vectorizer.transform(candidateRelations)
-		#	tmpClassData = [ (1 in candidateClassGroup) for candidateClassGroup in testClasses ]
-		
-		
-		#save_sparse_csr('test.matrix',testVectors.tocsr())
-		#saveClasses('test.classes',tmpClassData)
-
 		candidateRelations = corpus.getCandidateRelations()
 
 		# Check if there are any candidate relations to classify in this corpus
@@ -236,7 +209,6 @@ class RelationClassifier:
 		if self.useSingleClassifier:
 			tmpMatrix = self.vectorizer.transform(corpus)
 
-			#predictedClasses = self.clfs[c].predict(testVectors)
 			predictedClasses = self.clf.predict(tmpMatrix)
 			for predictedClass,candidateRelation in zip(predictedClasses,candidateRelations):
 				if predictedClass != 0:
@@ -259,7 +231,6 @@ class RelationClassifier:
 				if self.useBuilder:
 					tmpMatrix = self.vectorizers[c].transform(corpus)
 
-				#predictedClasses = self.clfs[c].predict(testVectors)
 				predicted = self.clfs[c].predict(tmpMatrix)
 				for p,candidateRelation in zip(predicted,candidateRelations):
 					if p != 0:

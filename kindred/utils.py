@@ -29,17 +29,9 @@ def _downloadFile(url,filename,timeout=180):
 		for chunk in request.iter_content(1024 * 1024):
 			# Write the chunk to the file
 			fh.write(chunk)
-			# Optionally we can check here if the download is taking too long
-			downloadedSize += (len(chunk) / float(1024*1024))
-
-			currentDateTime = time.strftime("%Y/%m/%d %H:%M:%S")
-			#print("%s : Downloaded %.1f MB" % (currentDateTime,downloadedSize))
 			
 
 def _downloadFiles(files,downloadDirectory):
-	#oldTimeout = socket.getdefaulttimeout()
-	#ssl.SSLSocket.settimeout(180)
-
 	if not os.path.isdir(downloadDirectory):
 		os.mkdir(downloadDirectory)
 
@@ -52,7 +44,6 @@ def _downloadFiles(files,downloadDirectory):
 				os.remove(downloadedPath)
 
 		if not os.path.isfile(downloadedPath):
-			#wget.download(url,out=downloadedPath,bar=None)
 			try:
 				_downloadFile(url,downloadedPath)
 			except Exception as e:
@@ -70,4 +61,3 @@ def _downloadFiles(files,downloadDirectory):
 
 				os.remove(downloadedPath)
 	
-	#socket.setdefaulttimeout(oldTimeout)

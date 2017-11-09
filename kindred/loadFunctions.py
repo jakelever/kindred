@@ -51,11 +51,9 @@ def loadRelation(line,ignoreComplexRelations=True):
 	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
 
 	split = line.strip().split('\t')
-	#relationID = split[0]
 	eventInfo = split[1]
 	typeSpacePos = eventInfo.index(' ')
 	
-
 	eventNameSplit = eventInfo[:typeSpacePos].split(':')
 	assert len(eventNameSplit) == 1, "Cannot load trigger events"
 	relationType = eventNameSplit[0]
@@ -152,7 +150,6 @@ def parseJSON(data,ignoreEntities=[]):
 				entities.append(entity)
 	if 'relations' in data:
 		for r in data['relations']:
-			#relationID = r['id']
 			obj = r['obj']
 			relationType = r['pred']
 			subj = r['subj']
@@ -162,15 +159,7 @@ def parseJSON(data,ignoreEntities=[]):
 			
 			relation = kindred.Relation(relationType=relationType,entityIDs=entityIDs,argNames=argNames)
 			relations.append(relation)
-	#if 'modifications' in data:
-	#	for m in data['modifications']:
-	#		id = m['id']
-	#		obj = m['obj']
-	#		pred = m['pred']
-	#		modification = (pred,obj)
-	#		modifications[id] = modification
-
-	#print "keys:", list(data.keys())
+	
 	expected = ['denotations','divid','modifications','namespaces','project','relations','sourcedb','sourceid','target','text','tracks']
 	extraFields = [ k for k in data.keys() if not k in expected]
 	assert len(extraFields) == 0, "Found additional unexpected fields (%s) in JSON" % (",".join(extraFields))
@@ -228,7 +217,6 @@ def mergeEntitiesWithMatchingIDs(unmergedEntities):
 	for e in unmergedEntities:
 		assert isinstance(e, kindred.Entity)
 		if e.sourceEntityID in entityDict:
-			#position = e.position
 			entityDict[e.sourceEntityID].text += " " + e.text
 			entityDict[e.sourceEntityID].position += e.position
 		else:
@@ -294,7 +282,6 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 				
 			for r in passage.relations:
 				assert isinstance(r,bioc.BioCRelation)
-				#relationID = r.id
 				relationType = r.infons['type']
 				
 				arguments = []
@@ -345,7 +332,6 @@ def loadDoc(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=Fa
 	if dataFormat == 'standoff':
 		assert not txtPath is None
 		assert not a1Path is None
-		#assert not a2Path is None
 
 		doc = loadDataFromSTFormat(txtPath,a1Path,a2Path,verbose=verbose,ignoreEntities=ignoreEntities)
 	elif dataFormat == 'simpletag':
