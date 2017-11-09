@@ -15,11 +15,15 @@ import fasteners
 import socket
 import signal
 import re
+import random
 
 homeDirectory = os.path.expanduser('~')
 downloadDirectory = os.path.join(homeDirectory,'.kindred')
 	
 currentCoreNLPInfo = {'url':'http://nlp.stanford.edu/software/stanford-corenlp-full-2017-06-09.zip','archive':'stanford-corenlp-full-2017-06-09.zip','directory':'stanford-corenlp-full-2017-06-09','sha256':'7fb27a0e8dd39c1a90e4155c8f27cd829956e8b8ec6df76b321c04b1fe887961'}
+
+corenlpProcess = None
+corenlpPort = None
 
 def check_pid(pid):        
 	""" Check For the existence of a unix pid. """
@@ -41,29 +45,16 @@ def killProcess(pid):
 	if check_pid(pid):
 		raise RuntimeError("Unable to kill process (pid=%d)" % pid)
 
+def getCoreNLPPort():
+	global corenlpPort
+	return corenlpPort
+
 @atexit.register
 def killCoreNLP():
-	trackingDir = os.path.join(downloadDirectory,'tracking')
-	kindredPIDsFileLock = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid.locks')
-	kindredPIDsFile = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid')
-	with fasteners.InterProcessLock(kindredPIDsFileLock):
-		if os.path.isfile(kindredPIDsFile):
-			with open(kindredPIDsFile) as inF:
-				pids = [ int(line.strip()) for line in inF if line ]
-			pids = set(pids)
-			pids.remove(os.getpid())
-			pids = sorted(list(pids))
-			with open(kindredPIDsFile,'w') as outF:
-				outF.write("\n".join(map(str,pids)) + "\n")
-			if len(pids) == 0:
-				os.remove(kindredPIDsFile)
-				corenlpPIDFile = os.path.join(trackingDir,socket.gethostname()+'.corenlp.pid')
-				if os.path.isfile(corenlpPIDFile):
-					with open(corenlpPIDFile) as f:
-						corenlpPID = int(f.read().strip())
-					os.remove(corenlpPIDFile)
-					os.kill(corenlpPID, signal.SIGTERM)
-					time.sleep(3)
+	global corenlpProcess
+	if not corenlpProcess is None:
+		corenlpProcess.kill()
+	time.sleep(3)
 
 def checkCoreNLPDownload():
 	corenlpDir = kindred.utils._findDir(currentCoreNLPInfo['directory'],downloadDirectory)
@@ -161,30 +152,17 @@ def downloadCoreNLPLanguage(language):
 
 
 def testCoreNLPConnection():
+	global corenlpPort
+	if corenlpPort is None:
+		return False
+
 	try:
-		requests.get('http://localhost:9000')
+		requests.get('http://localhost:%d' % corenlpPort)
 		return True
 	except requests.exceptions.ConnectionError:
 		return False
 	except pytest_socket.SocketBlockedError:
 		return False
-
-def claimCoreNLPUsage():
-	trackingDir = os.path.join(downloadDirectory,'tracking')
-	kindredPIDsFileLock = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid.locks')
-	kindredPIDsFile = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid')
-	with fasteners.InterProcessLock(kindredPIDsFileLock):
-		if os.path.isfile(kindredPIDsFile):
-			with open(kindredPIDsFile) as inF:
-				pids = [ int(line.strip()) for line in inF if line ]
-			pids = set(pids)
-		else:
-			pids = set()
-
-		pids.add(os.getpid())
-		pids = sorted(list(pids))
-		with open(kindredPIDsFile,'w') as outF:
-			outF.write("\n".join(map(str,pids)) + "\n")
 
 def checkAtLeastJava8Installed():
 	versionInfo = str(subprocess.check_output(["java", "-version"], stderr=subprocess.STDOUT))
@@ -198,6 +176,7 @@ def checkAtLeastJava8Installed():
 	assert versionNumbers[1] >= 8, "Java 8 must be installed"
 
 def initializeCoreNLP(language='english'):
+	global corenlpProcess, corenlpPort
 	"""
 	Launch a local instance of Stanford CoreNLP (assuming the files have already been downloaded)
 
@@ -221,47 +200,36 @@ def initializeCoreNLP(language='english'):
 		raise RuntimeError("Could not find the Stanford CoreNLP model files for language: %s. Use kindred.downloadCoreNLPLanguage('%s') first." % (language,language))
 
 	if language == 'english':
-		command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 150000 -quiet true'
+		command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -timeout 150000 -quiet true'
 	else:
-		command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -serverProperties StanfordCoreNLP-%s.properties -port 9000 -timeout 150000 -quiet true' % language
+		command='java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -serverProperties StanfordCoreNLP-%s.properties -timeout 150000 -quiet true' % language
 
 	checkAtLeastJava8Installed()
 
-	downloadDirectoryLock = os.path.join(downloadDirectory,'lock')
-
-	trackingDir = os.path.join(downloadDirectory,'tracking')
-	with fasteners.InterProcessLock(downloadDirectoryLock):
-		if not os.path.isdir(trackingDir):
-			os.makedirs(trackingDir)
-
-	startLock = os.path.join(trackingDir,socket.gethostname()+'.start.lock')
-	corenlpPIDFile = os.path.join(trackingDir,socket.gethostname()+'.corenlp.pid')
-	with fasteners.InterProcessLock(startLock):
+	portCount = 5
+	portSelections = [ random.randint(9000,20000) for _ in range(portCount) ]
+	connectionSuccess = False
+	for port in portSelections:
 		if testCoreNLPConnection():
 			return
 
-		kindredPIDsFileLock = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid.locks')
-		kindredPIDsFile = os.path.join(trackingDir,socket.gethostname()+'.kindred.pid')
-		with fasteners.InterProcessLock(kindredPIDsFileLock):
-			with open(kindredPIDsFile,'w') as outF:
-				outF.write("%d\n" % os.getpid())
-
-		corenlpProcess = subprocess.Popen(shlex.split(command), stdout=open('/dev/null', 'w'), stderr=subprocess.STDOUT, cwd=corenlpDir, preexec_fn=os.setpgrp)
-		with open(corenlpPIDFile,'w') as f:
-			f.write("%d\n" % corenlpProcess.pid)
+		commandWithPort = "%s -port %d" % (command,port)
+		corenlpPort = port
+		corenlpProcess = subprocess.Popen(shlex.split(commandWithPort), stdout=open('/dev/null', 'w'), stderr=subprocess.STDOUT, cwd=corenlpDir, preexec_fn=os.setpgrp)
 
 		maxTries = 10
-
-		connectionSuccess = False
 		for tries in range(maxTries):
 			if testCoreNLPConnection():
 				connectionSuccess = True
 				break
 			time.sleep(5)
 
-		if not connectionSuccess:
+		if connectionSuccess:
+			break
+		else:
 			killCoreNLP()
-			raise RuntimeError("Unable to connect to launched CoreNLP subprocess")
 
 		time.sleep(1)
-			
+	
+	if not connectionSuccess:
+		raise RuntimeError("Unable to connect to launched CoreNLP subprocess")

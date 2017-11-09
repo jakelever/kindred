@@ -1,10 +1,11 @@
 import pytest
 from kindred.pycorenlp import StanfordCoreNLP
-from kindred.Dependencies import initializeCoreNLP
+from kindred.Dependencies import initializeCoreNLP,getCoreNLPPort
 
 def test_corenlpOutputError():
 	initializeCoreNLP()
-	nlp = StanfordCoreNLP('http://localhost:9000')
+	port = getCoreNLPPort()
+	nlp = StanfordCoreNLP('http://localhost:%d' % port)
 	#text = 'My friend will pay.'
 	#text = 'Mein Freund wird bezahlen.'
 	text = u"The quick brown fox jumped over the lazy dog"

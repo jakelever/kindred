@@ -6,7 +6,7 @@ import kindred
 import json
 from intervaltree import IntervalTree
 from collections import defaultdict
-from kindred.Dependencies import initializeCoreNLP,checkCoreNLPDownload,claimCoreNLPUsage
+from kindred.Dependencies import initializeCoreNLP,checkCoreNLPDownload,getCoreNLPPort
 
 def shortenDepName(depName):
 	acceptedSubNames = set(['acl:relcl','cc:preconj','compound:prt','det:predet','nmod:npmod','nmod:poss','nmod:tmod'])
@@ -20,7 +20,7 @@ class Parser:
 	Runs CoreNLP on corpus to get sentences and associated tokens
 	"""
 	
-	def __init__(self,corenlp_url='http://localhost:9000',useConstituencyParserOnly=False,language='english'):
+	def __init__(self,corenlp_url=None,useConstituencyParserOnly=False,language='english'):
 		"""
 		Create a Parser object that will use CoreNLP for parsing
 		
@@ -64,8 +64,6 @@ class Parser:
 	def _testConnection(self):
 		assert not self.nlp is None
 		
-		claimCoreNLPUsage()
-
 		try:
 			parsed = self.nlp.annotate("This is a test", properties={'annotators': self.annotators,'outputFormat': 'json'})
 			
@@ -76,11 +74,12 @@ class Parser:
 			return False
 
 	def _setupConnection(self):
-		#if not checkCoreNLPDownload():
-		#	raise RuntimeError("Cannot access local CoreNLP at http://localhost:9000 and cannot find CoreNLP files to launch subprocess. Please download using kindred.downloadCoreNLP() if subprocess should be used")
-
-		initializeCoreNLP(language=self.language)
-		self.nlp = StanfordCoreNLP(self.corenlp_url)
+		if self.corenlp_url is None:
+			initializeCoreNLP(language=self.language)
+			port = getCoreNLPPort()
+			self.nlp = StanfordCoreNLP("http://localhost:%d" % port)
+		else:
+			self.nlp = StanfordCoreNLP(self.corenlp_url)
 			
 		assert self._testConnection() == True
 
@@ -113,10 +112,8 @@ class Parser:
 			parsed = self.nlp.annotate(d.getText(), properties={'annotators': self.annotators,'outputFormat': 'json'})
 
 			for sentence in parsed["sentences"]:
-				#assert False
 				tokens = []
 				for t in sentence["tokens"]:
-					#kindred.Token(token,pos,lemma,start,end)
 					token = kindred.Token(t["word"],t["lemma"],t["pos"],t["characterOffsetBegin"],t["characterOffsetEnd"])
 					tokens.append(token)
 
@@ -126,13 +123,10 @@ class Parser:
 
 				dependencies = []
 				for de in sentence["enhancedPlusPlusDependencies"]:
-				#for de in sentence["collapsed-ccprocessed-dependencies"]:
-					#depName = de["dep"].split(":")[0]
 					depName = shortenDepName(de["dep"])
-					#if depName == 'nmod:in_addition_to':
-					#	assert False
 					dep = (de["governor"]-1,de["dependent"]-1,depName)
 					dependencies.append(dep)
+
 				# TODO: Should I filter this more or just leave it for simplicity
 					
 				entityIDsToTokenLocs = defaultdict(list)
