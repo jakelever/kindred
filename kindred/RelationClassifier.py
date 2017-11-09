@@ -1,9 +1,7 @@
 
 from sklearn import svm
+from sklearn.linear_model import LogisticRegression
 from collections import defaultdict
-
-from sklearn.model_selection import cross_val_score
-from scipy.sparse import hstack
 
 import kindred
 from kindred.CandidateBuilder import CandidateBuilder
@@ -86,11 +84,15 @@ class RelationClassifier:
 		trainVectors = self.vectorizer.fit_transform(corpus)
 	
 		assert trainVectors.shape[0] == len(candidateClasses)
-	
-		if self.threshold is None:
+
+		self.clf = None
+		if self.classifierType == 'SVM':
 			self.clf = svm.LinearSVC(class_weight='balanced',random_state=1)
-		else:
+		elif self.classifierType == 'LogisticRegression' and self.threshold is None:
+			self.clf = LogisticRegression(class_weight='balanced',random_state=1)
+		elif self.classifierType == 'LogisticRegression' and not self.threshold is None:
 			self.clf = kindred.LogisticRegressionWithThreshold(self.threshold)
+
 		self.clf.fit(trainVectors,simplifiedClasses)
 		
 		self.isTrained = True
