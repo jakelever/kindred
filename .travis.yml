@@ -35,7 +35,7 @@ script:
   - java -version
   - coverage --version
   - python --version
-  - coverage run --branch -m pytest -v && coverage report -m
+  - coverage run --branch -m pytest -v --durations=0 && coverage report -m
 after_success:
   - coveralls
 env:
