@@ -257,6 +257,7 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 			assert isinstance(passage,bioc.BioCPassage)
 			
 			text = passage.text
+			offset = passage.offset
 			entities = []
 			relations = []
 			
@@ -271,7 +272,7 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 				
 				for l in a.locations:
 					assert isinstance(l,bioc.BioCLocation)
-					startPos = int(native(l.offset))
+					startPos = int(native(l.offset)) - offset
 					endPos = startPos + int(native(l.length))
 					position.append((startPos,endPos))
 					segments.append(text[startPos:endPos])
