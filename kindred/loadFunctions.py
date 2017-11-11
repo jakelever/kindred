@@ -257,7 +257,7 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 			assert isinstance(passage,bioc.BioCPassage)
 			
 			text = passage.text
-			offset = passage.offset
+			offset = int(native(passage.offset))
 			entities = []
 			relations = []
 			
