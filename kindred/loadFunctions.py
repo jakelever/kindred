@@ -243,63 +243,66 @@ def parseSimpleTag(text,ignoreEntities=[]):
 	combinedData = kindred.Document(text,entities=entities,relations=relations)
 	return combinedData
 
+def convertBiocDocToKindredDocs(document):
+	assert isinstance(document,bioc.BioCDocument)
+	kindredDocs = []
+	for passage in document.passages:
+		assert isinstance(passage,bioc.BioCPassage)
+		
+		text = passage.text
+		offset = int(native(passage.offset))
+		entities = []
+		relations = []
+		
+		for a in passage.annotations:
+			assert isinstance(a,bioc.BioCAnnotation)
+			
+			entityType = a.infons['type']
+			sourceEntityID = a.id
+			
+			position = []
+			segments = []
+			
+			for l in a.locations:
+				assert isinstance(l,bioc.BioCLocation)
+				startPos = int(native(l.offset)) - offset
+				endPos = startPos + int(native(l.length))
+				position.append((startPos,endPos))
+				segments.append(text[startPos:endPos])
+			
+			entityText = " ".join(segments)
+			e = kindred.Entity(entityType,entityText,position,sourceEntityID)
+			entities.append(e)
+			
+		for r in passage.relations:
+			assert isinstance(r,bioc.BioCRelation)
+			relationType = r.infons['type']
+			
+			arguments = []
+			for n in r.nodes:
+				assert isinstance(n,bioc.BioCNode)
+				arguments.append((n.role,n.refid))
+			arguments = sorted(arguments)
+				
+			entityIDs = [ entityID for argName,entityID in arguments]
+			argNames = [ argName for argName,entityID in arguments]
+			
+			r = kindred.Relation(relationType=relationType,entityIDs=entityIDs,argNames=argNames)
+			relations.append(r)
+		
+		relData = kindred.Document(text,entities=entities,relations=relations,sourceIDs={"pmid":document.id})
+		kindredDocs.append(relData)
+
+	return kindredDocs
+
 def loadDataFromBioC(filename,ignoreEntities=[]):
 	with open(filename, 'r') as fp:
 		collection = bioc.load(fp)
-	
-	parsed = []
-	
 	assert isinstance(collection,bioc.BioCCollection)
 	
+	parsed = []
 	for document in collection.documents:
-		assert isinstance(document,bioc.BioCDocument)
-		for passage in document.passages:
-			assert isinstance(passage,bioc.BioCPassage)
-			
-			text = passage.text
-			offset = int(native(passage.offset))
-			entities = []
-			relations = []
-			
-			for a in passage.annotations:
-				assert isinstance(a,bioc.BioCAnnotation)
-				
-				entityType = a.infons['type']
-				sourceEntityID = a.id
-				
-				position = []
-				segments = []
-				
-				for l in a.locations:
-					assert isinstance(l,bioc.BioCLocation)
-					startPos = int(native(l.offset)) - offset
-					endPos = startPos + int(native(l.length))
-					position.append((startPos,endPos))
-					segments.append(text[startPos:endPos])
-				
-				entityText = " ".join(segments)
-				e = kindred.Entity(entityType,entityText,position,sourceEntityID)
-				entities.append(e)
-				
-			for r in passage.relations:
-				assert isinstance(r,bioc.BioCRelation)
-				relationType = r.infons['type']
-				
-				arguments = []
-				for n in r.nodes:
-					assert isinstance(n,bioc.BioCNode)
-					arguments.append((n.role,n.refid))
-				arguments = sorted(arguments)
-					
-				entityIDs = [ entityID for argName,entityID in arguments]
-				argNames = [ argName for argName,entityID in arguments]
-				
-				r = kindred.Relation(relationType=relationType,entityIDs=entityIDs,argNames=argNames)
-				relations.append(r)
-				
-			relData = kindred.Document(text,entities=entities,relations=relations)
-			parsed.append(relData)
-			
+		parsed += convertBiocDocToKindredDocs(document)
 	return parsed
 	
 	
