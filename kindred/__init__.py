@@ -15,7 +15,7 @@ from kindred.RelationClassifier import RelationClassifier
 from kindred.LogisticRegressionWithThreshold import LogisticRegressionWithThreshold
 
 # General functions
-from kindred.loadFunctions import loadDoc,loadDocs,loadDir
+from kindred.loadFunctions import loadDoc,loadDocs,loadDir,iterLoadDataFromBioc
 from kindred.saveFunctions import save
 from kindred.evalFunctions import evaluate
 

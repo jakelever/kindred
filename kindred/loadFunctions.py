@@ -304,6 +304,30 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 	for document in collection.documents:
 		parsed += convertBiocDocToKindredDocs(document)
 	return parsed
+
+def iterLoadDataFromBioc(filename,corpusSizeCutoff=500):
+	"""
+	Iteratively load documents from a BioC file. This will a generator that provides kindred.Corpus objects that are subsets of the entire BioC file. This should be used to lower the memory requirements (so that the entire file doesn't need to be loaded into memory at one time).
+
+	:param filename: Path of the Bioc file
+	:param maxCorpusSize: Approximate maximum number of documents to be in each corpus subset
+	:type filename: str
+	:type maxCorpusSize: int
+	:returns: Subsets of the BioC file
+	:rtype: A kindred.Corpus generator
+	"""
+	corpus = kindred.Corpus()
+	with bioc.iterparse(filename) as parser:
+		for document in parser:
+			if len(corpus.documents) >= corpusSizeCutoff:
+				yield corpus
+				corpus = kindred.Corpus()
+			kindredDocs = convertBiocDocToKindredDocs(document)
+			for kindredDoc in kindredDocs:
+				corpus.addDocument(kindredDoc)
+
+	if len(corpus.documents) > 0:
+	 	yield corpus
 	
 	
 def loadDoc(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
