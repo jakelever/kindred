@@ -310,10 +310,10 @@ def iterLoadDataFromBioc(filename,corpusSizeCutoff=500):
 	Iteratively load documents from a BioC file. This will a generator that provides kindred.Corpus objects that are subsets of the entire BioC file. This should be used to lower the memory requirements (so that the entire file doesn't need to be loaded into memory at one time).
 
 	:param filename: Path of the Bioc file
-	:param maxCorpusSize: Approximate maximum number of documents to be in each corpus subset
+	:param corpusSizeCutoff: Approximate maximum number of documents to be in each corpus subset
 	:type filename: str
-	:type maxCorpusSize: int
-	:returns: Subsets of the BioC file
+	:type corpusSizeCutoff: int
+	:return: Subsets of the BioC file
 	:rtype: A kindred.Corpus generator
 	"""
 	corpus = kindred.Corpus()
