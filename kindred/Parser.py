@@ -1,18 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from kindred.pycorenlp import StanfordCoreNLP
-
+import spacy
 import kindred
 from intervaltree import IntervalTree
 from collections import defaultdict
-from kindred.Dependencies import initializeCoreNLP,getCoreNLPPort
-
-def shortenDepName(depName):
-	acceptedSubNames = set(['acl:relcl','cc:preconj','compound:prt','det:predet','nmod:npmod','nmod:poss','nmod:tmod'])
-	if depName in acceptedSubNames:
-		return depName
-	else:
-	 	return depName.split(":")[0]
 
 class Parser:
 	"""
@@ -36,51 +27,37 @@ class Parser:
 
 		self.corenlp_url = corenlp_url
 
-		if useConstituencyParserOnly:
-			self.annotators = 'ssplit,tokenize,pos,lemma,parse'
-		else:
-			self.annotators = 'ssplit,tokenize,pos,lemma,depparse'
-
-		self.nlp = StanfordCoreNLP(self.corenlp_url)
 		self.language = language
 
-	def _languageTest(self):
-		testData = {}
-		testData['arabic'] = {'text':u"أي ساعة؟ وقت العشاء.",'expectedPOS':[[u'NOUN', u'NN', u'PUNC'], [u'NN', u'DTNN', u'PUNC']]}
-		testData['chinese'] = {'text':u"這種食物很好吃你最喜歡什麼？",'expectedPOS':[[u'NN', u'NN', u'AD', u'VA', u'PN', u'AD', u'VV', u'NN', u'PU']]}
-		testData['english'] = {'text':'Of all the things I miss my mind the most. Colourless green ideas sleep furiously','expectedPOS':[[u'IN', u'PDT', u'DT', u'NNS', u'PRP', u'VBP', u'PRP$', u'NN', u'DT', u'JJS', u'.'], [u'JJ', u'JJ', u'NNS', u'VBP', u'RB']]}
-		testData['french'] = {'text':"Ceci n'est pas une pipe. Ceci n'est pas une lune",'expectedPOS':[[u'PRO', u'ADV', u'V', u'ADV', u'DET', u'NC', u'PUNC'], [u'PRO', u'ADV', u'V', u'ADV', u'DET', u'NC']]}
-		testData['german'] = {'text':u"Kümmere Dich nicht um ungelegte Eier. Morgenstund hat Gold im Mund.",'expectedPOS':[[u'ADJA', u'PPER', u'PTKNEG', u'APPR', u'ADJA', u'NN', u'$.'], [u'NE', u'VAFIN', u'NN', u'APPRART', u'NN', u'$.']]}
-		testData['spanish'] = {'text':u"Si adelante no vas, altrasarás. Despues de los años mil, Torna el agua a su carril.",'expectedPOS':[[u'cs', u'rg', u'rn', u'vmip000', u'fc', u'rg', u'fp'], [u'rg', u'sp000', u'da0000', u'nc0p000', u'z0', u'fc', u'np00000', u'da0000', u'nc0s000', u'sp000', u'dp0000', u'nc0s000', u'fp']]}
+		self.nlp = spacy.load('en', disable=['ner'])
 
-		assert self.language in testData, "Cannot test language %s as no test data exists" % self.language
+	def _sentencesGenerator(self,text):
+		parsed = self.nlp(text)
+		sentence = None
+		for token in parsed:
+			if sentence is None or token.is_sent_start:
+				if not sentence is None:
+					yield sentence
+				sentence = []
+			sentence.append(token)
 
-		parsed = self.nlp.annotate(testData[self.language]['text'], properties={'annotators': 'ssplit,tokenize,pos','outputFormat': 'json'})
-		partsOfSpeech = [ [ token['pos'] for token in sentence['tokens'] ] for sentence in parsed['sentences'] ]
-		if partsOfSpeech != testData[self.language]['expectedPOS']:
-			raise RuntimeError("CoreNLP currently running does not match the language (%s) requested by the parser. Please stop this CoreNLP instance and either launch the appropriate one or let Kindred launch one." % self.language)
+		if not sentence is None and len(sentence) > 0:
+			yield sentence
 
-	def _testConnection(self):
-		assert not self.nlp is None
-		
-		try:
-			parsed = self.nlp.annotate("This is a test", properties={'annotators': self.annotators,'outputFormat': 'json'})
-			
-			assert not parsed is None
+	def sentenceSplit(docTokens):
+		result = []
+		sentence = []
+		#for token in parsed:
+		for token in docTokens:
+			if token.is_sent_start:
+				result.append(sentence)
+				sentence = []
+			sentence.append(token)
 
-			return True
-		except:
-			return False
+		if len(sentence) > 0:
+			result.append(sentence)
 
-	def _setupConnection(self):
-		if self.corenlp_url is None:
-			initializeCoreNLP(language=self.language)
-			port = getCoreNLPPort()
-			self.nlp = StanfordCoreNLP("http://localhost:%d" % port)
-		else:
-			self.nlp = StanfordCoreNLP(self.corenlp_url)
-			
-		assert self._testConnection() == True
+		return sentenceSplit
 
 	def parse(self,corpus):
 		"""
@@ -92,12 +69,8 @@ class Parser:
 
 		assert isinstance(corpus,kindred.Corpus)
 
-		if self._testConnection() == False:
-			self._setupConnection()
-
-		self._languageTest()
-		
 		for d in corpus.documents:
+		#for doctokens in self.nlp.pipe( d.text for d in corpus.documents, batch_size=2, n_threads=1):
 			entityIDsToEntities = d.getEntityIDsToEntities()
 		
 			denotationTree = IntervalTree()
@@ -108,22 +81,21 @@ class Parser:
 				for a,b in e.position:
 					denotationTree[a:b] = e.entityID
 				
-			parsed = self.nlp.annotate(d.getText(), properties={'annotators': self.annotators,'outputFormat': 'json'})
-
-			for sentence in parsed["sentences"]:
+			for sentence in self._sentencesGenerator(d.text):
 				tokens = []
-				for t in sentence["tokens"]:
-					token = kindred.Token(t["word"],t["lemma"],t["pos"],t["characterOffsetBegin"],t["characterOffsetEnd"])
+				for t in sentence:
+					token = kindred.Token(t.text,t.lemma_,t.pos_,t.idx,t.idx+len(t.text))
 					tokens.append(token)
 
 				sentenceStart = tokens[0].startPos
 				sentenceEnd = tokens[-1].endPos
 				sentenceTxt = d.text[sentenceStart:sentenceEnd]
 
+				indexOffset = sentence[0].i
 				dependencies = []
-				for de in sentence["enhancedPlusPlusDependencies"]:
-					depName = shortenDepName(de["dep"])
-					dep = (de["governor"]-1,de["dependent"]-1,depName)
+				for t in sentence:
+					depName = t.dep_
+					dep = (t.head.i-indexOffset,t.i-indexOffset,depName)
 					dependencies.append(dep)
 
 				# TODO: Should I filter this more or just leave it for simplicity
