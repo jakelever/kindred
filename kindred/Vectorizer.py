@@ -1,5 +1,5 @@
 
-from collections import Counter,OrderedDict
+from collections import Counter
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from scipy.sparse import hstack
@@ -124,7 +124,7 @@ class Vectorizer:
 		validFeatures = self.featureInfo.keys()
 
 		if featureChoice is None:
-			self.chosenFeatures = validFeatures
+			self.chosenFeatures = ['entityTypes','unigramsBetweenEntities','bigrams','dependencyPathEdges','dependencyPathEdgesNearEntities']
 		else:
 			assert isinstance(featureChoice,list)
 			for f in featureChoice:
@@ -138,7 +138,7 @@ class Vectorizer:
 		self.tfidfTransformers = {}
 
 	def _registerFunctions(self):
-		self.featureInfo = OrderedDict()
+		self.featureInfo = {}
 		self.featureInfo['entityTypes'] = {'func':_doEntityTypes,'never_tfidf':True}
 		self.featureInfo['unigramsBetweenEntities'] = {'func':_doUnigramsBetweenEntities,'never_tfidf':False}
 		self.featureInfo['bigrams'] = {'func':_doBigrams,'never_tfidf':False}
