@@ -22,16 +22,3 @@ from kindred.evalFunctions import evaluate
 # Data sources
 from kindred import bionlpst, pubannotation, pubtator, utils
 
-# Installing
-from kindred.Dependencies import downloadCoreNLP,downloadCoreNLPLanguage
-
-
-
-		
-
-		
-	
-
-
-
-
