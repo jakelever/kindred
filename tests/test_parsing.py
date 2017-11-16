@@ -74,7 +74,7 @@ def test_parsing_dependencyGraph():
 	assert len(sentence.entitiesWithLocations) == 0
 	
 	assert isinstance(sentence.dependencies,list)
-	expectedDependencies = [(-1, 1, u'ROOT'), (1, 0, u'nsubj'), (3, 0, u'nsubj'), (3, 2, u'mark'), (1, 3, u'xcomp'), (3, 4, u'compound:prt'), (6, 5, u'nmod:poss'), (3, 6, u'dobj'), (9, 7, u'case'), (9, 8, u'amod'), (3, 9, u'nmod')]
+	expectedDependencies = [(1, 0, u'nsubj'), (1, 1, u'ROOT'), (3, 2, u'aux'), (1, 3, u'xcomp'), (3, 4, u'prt'), (6, 5, u'poss'), (3, 6, u'dobj'), (3, 7, u'prep'), (9, 8, u'amod'), (7, 9, u'pobj')]
 	assert sentence.dependencies == expectedDependencies
 	
 def test_twoSentenceParse():
@@ -171,34 +171,7 @@ def test_unicodeParse():
 	assert isinstance(sentence.dependencies,list)
 	assert len(sentence.dependencies) > 0
 
-def test_depparse_default():
-	text = 'A drug failed clinical trials for a disease.'
-	corpus = kindred.Corpus(text)
-	parser = kindred.Parser(useConstituencyParserOnly=False)
-	parser.parse(corpus)
-	assert len(corpus.documents) == 1
-	doc = corpus.documents[0]
-	assert len(doc.sentences) == 1
-	sentence = doc.sentences[0]
-
-	expectedDeps = [(-1, 2, u'ROOT'), (1, 0, u'det'), (2, 1, u'nsubj'), (4, 3, u'amod'), (2, 4, u'dobj'), (7, 5, u'case'), (7, 6, u'det'), (4, 7, u'nmod'), (2, 8, u'punct')]
-	assert sentence.dependencies == expectedDeps
-
-def test_depparse_ConstituencyParser():
-	text = 'A drug failed clinical trials for a disease.'
-	corpus = kindred.Corpus(text)
-	parser = kindred.Parser(useConstituencyParserOnly=True)
-	parser.parse(corpus)
-	assert len(corpus.documents) == 1
-	doc = corpus.documents[0]
-	assert len(doc.sentences) == 1
-	sentence = doc.sentences[0]
-
-	# Note that this output is very slightly different from the default behaviour
-	expectedDeps = [(-1, 2, u'ROOT'), (1, 0, u'det'), (2, 1, u'nsubj'), (4, 3, u'amod'), (2, 4, u'dobj'), (7, 5, u'case'), (7, 6, u'det'), (2, 7, u'nmod'), (2, 8, u'punct')]
-	assert sentence.dependencies == expectedDeps
-
-
 if __name__ == '__main__':
-	test_largeSentence()
+	#test_largeSentence()
+	test_parsing_dependencyGraph()
 	

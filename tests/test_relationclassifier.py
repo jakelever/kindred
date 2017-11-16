@@ -74,7 +74,7 @@ def test_singleClassifier():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.538
+	assert round(f1score,3) == 0.519
 
 def test_noTFIDF():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
@@ -88,7 +88,7 @@ def test_noTFIDF():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.558
+	assert round(f1score,3) == 0.538
 
 def test_logisticregression():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
@@ -102,7 +102,7 @@ def test_logisticregression():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.519
+	assert round(f1score,3) == 0.558
 
 def test_logisticregression_threshold():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
@@ -116,7 +116,7 @@ def test_logisticregression_threshold():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.519
+	assert round(f1score,3) == 0.558
 
 def test_singleFeature_entityTypes():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
@@ -144,7 +144,7 @@ def test_filterByEntityTypes_validTypes():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.5
+	assert round(f1score,3) == 0.481
 
 def test_filterByEntityTypes_invalidTypes():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)

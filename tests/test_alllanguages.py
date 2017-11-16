@@ -1,175 +1,88 @@
 # -*- coding: utf-8 -*-
 
 import kindred
-from kindred.pycorenlp import StanfordCoreNLP
 import json
 import os
 import pytest
 
-from kindred.Dependencies import initializeCoreNLP
-import kindred.Dependencies
-
 def getTestData(language):
-	acceptedLanguages = ['arabic','chinese','english','french','german','spanish']
-	assert language in acceptedLanguages
+	acceptedLanguages = ['en','de','es','pt','fr','it','nl']
+	assert language in acceptedLanguages, "Language for parser (%s) not in accepted languages: %s" % (language,str(acceptedLanguages))
 
-	if language == 'arabic':
-		twoSentences = u"أنا أحب اللون الأزرق. كيف حالك؟"
-		expected = {}
-		expected['word'] = [[u'\u0627\u0646\u0627', u'\u0627\u062d\u0628', u'\u0627\u0644\u0644\u0648\u0646', u'\u0627\u0644\u0627\u0632\u0631\u0642', u'.'], [u'\u0643\u064a\u0641', u'\u062d\u0627\u0644', u'\u0643', u'?']]
-		expected['lemma'] = [[u'\u0627\u0646\u0627', u'\u0627\u062d\u0628', u'\u0627\u0644\u0644\u0648\u0646', u'\u0627\u0644\u0627\u0632\u0631\u0642', u'.'], [u'\u0643\u064a\u0641', u'\u062d\u0627\u0644', u'\u0643', u'?']]
-		expected['partofspeech'] = [[u'PRP', u'VBP', u'DTNN', u'DTJJ', u'PUNC'], [u'WRB', u'NN', u'PRP$', u'PUNC']]
-		expected['startPos'] = [[0, 4, 8, 14, 20], [22, 26, 29, 30]]
-		expected['endPos'] = [[3, 7, 13, 20, 21], [25, 29, 30, 31]]
-		expected['dependencies'] = [[(-1, 1, u'ROOT'), (1, 0, u'nsubj'), (3, 2, u'compound'), (1, 3, u'dobj'), (1, 4, u'punct')], [(-1, 0, u'ROOT'), (2, 1, u'compound'), (0, 2, u'dep'), (2, 3, u'punct')]]
-
-	elif language == 'chinese':
-		twoSentences = u"我喜歡走路。他看電視。"
-		expected = {}
-		expected['word'] = [[u'\u6211\u559c\u6b61', u'\u8d70\u8def', u'\u3002'], [u'\u4ed6', u'\u770b', u'\u96fb\u8996', u'\u3002']]
-		expected['lemma'] = [[u'\u6211\u559c\u6b61', u'\u8d70\u8def', u'\u3002'], [u'\u4ed6', u'\u770b', u'\u96fb\u8996', u'\u3002']]
-		expected['partofspeech'] = [[u'NN', u'VV', u'PU'], [u'PN', u'VV', u'NN', u'PU']]
-		expected['startPos'] = [[0, 3, 5], [6, 7, 8, 10]]
-		expected['endPos'] = [[3, 5, 6], [7, 8, 10, 11]]
-		expected['dependencies'] = [[(-1, 1, u'ROOT'), (1, 0, u'nsubj'), (1, 2, u'punct')], [(-1, 1, u'ROOT'), (1, 0, u'nsubj'), (1, 2, u'dobj'), (1, 3, u'punct')]]
-
-	elif language == 'english':
+	if language == 'en':
 		twoSentences = "Who controls the past controls the future. Who controls the present controls the past."
 		expected = {}
 		expected['word'] = [[u'Who', u'controls', u'the', u'past', u'controls', u'the', u'future', u'.'], [u'Who', u'controls', u'the', u'present', u'controls', u'the', u'past', u'.']]
 		expected['lemma'] = [[u'who', u'control', u'the', u'past', u'control', u'the', u'future', u'.'], [u'who', u'control', u'the', u'present', u'control', u'the', u'past', u'.']]
-		expected['partofspeech'] = [[u'WP', u'VBZ', u'DT', u'JJ', u'NNS', u'DT', u'NN', u'.'], [u'WP', u'VBZ', u'DT', u'JJ', u'NNS', u'DT', u'NN', u'.']]
+		expected['partofspeech'] = [[u'NOUN', u'VERB', u'DET', u'NOUN', u'VERB', u'DET', u'NOUN', u'PUNCT'], [u'NOUN', u'VERB', u'DET', u'ADJ', u'VERB', u'DET', u'NOUN', u'PUNCT']]
 		expected['startPos'] = [[0, 4, 13, 17, 22, 31, 35, 41], [43, 47, 56, 60, 68, 77, 81, 85]]
 		expected['endPos'] = [[3, 12, 16, 21, 30, 34, 41, 42], [46, 55, 59, 67, 76, 80, 85, 86]]
-		expected['dependencies'] = [[(-1, 1, u'ROOT'), (1, 0, u'nsubj'), (4, 2, u'det'), (4, 3, u'amod'), (1, 4, u'dobj'), (6, 5, u'det'), (4, 6, u'dep'), (1, 7, u'punct')], [(-1, 1, u'ROOT'), (1, 0, u'nsubj'), (4, 2, u'det'), (4, 3, u'amod'), (1, 4, u'dobj'), (6, 5, u'det'), (1, 6, u'nmod:tmod'), (1, 7, u'punct')]]
+		expected['dependencies'] = [[(1, 0, u'nsubj'), (4, 1, u'csubj'), (3, 2, u'det'), (1, 3, u'dobj'), (4, 4, u'ROOT'), (6, 5, u'det'), (4, 6, u'dobj'), (4, 7, u'punct')], [(1, 0, u'nsubj'), (1, 1, u'ROOT'), (3, 2, u'det'), (4, 3, u'amod'), (1, 4, u'dobj'), (6, 5, u'det'), (4, 6, u'dobj'), (1, 7, u'punct')]]
 
-	elif language == 'french':
+	elif language == 'fr':
 		twoSentences = u"À mauvais ouvrier point de bon outil. Donnant donnant."
 		expected = {}
 		expected['word'] = [[u'\xc0', u'mauvais', u'ouvrier', u'point', u'de', u'bon', u'outil', u'.'], [u'Donnant', u'donnant', u'.']]
-		expected['lemma'] = [[u'\xe0', u'mauvais', u'ouvrier', u'point', u'de', u'bon', u'outil', u'.'], [u'donnant', u'donnant', u'.']]
-		expected['partofspeech'] = [[u'P', u'ADJ', u'NC', u'N', u'P', u'ADJ', u'NC', u'PUNC'], [u'VPR', u'VPR', u'PUNC']]
+		expected['lemma'] = [[u'\xe0', u'mauvais', u'ouvrier', u'poindre', u'de', u'bon', u'outil', u'.'], [u'donnant', u'donner', u'.']]
+		expected['partofspeech'] = [[u'ADP', u'NOUN', u'ADJ', u'NOUN', u'ADP', u'ADJ', u'NOUN', u'PUNCT'], [u'VERB', u'VERB', u'PUNCT']]
 		expected['startPos'] = [[0, 2, 10, 18, 24, 27, 31, 36], [38, 46, 53]]
 		expected['endPos'] = [[1, 9, 17, 23, 26, 30, 36, 37], [45, 53, 54]]
-		expected['dependencies'] = [[(-1, 3, u'ROOT'), (2, 0, u'case'), (2, 1, u'amod'), (3, 2, u'nmod'), (6, 4, u'case'), (6, 5, u'amod'), (3, 6, u'nmod'), (3, 7, u'punct')], [(-1, 0, u'ROOT'), (0, 1, u'xcomp'), (0, 2, u'punct')]]
-	elif language == 'german':
+		expected['dependencies'] = [[(1, 0, u'case'), (1, 1, u'ROOT'), (1, 2, u'amod'), (1, 3, u'amod'), (6, 4, u'case'), (6, 5, u'amod'), (1, 6, u'nmod'), (1, 7, u'punct')], [(0, 0, u'ROOT'), (0, 1, u'acl'), (0, 2, u'punct')]]
+
+	elif language == 'de':
 		twoSentences = u"Aller Anfang ist schwer. Des Teufels liebstes Möbelstück ist die lange Bank."
 		expected = {}
 		expected['word'] = [[u'Aller', u'Anfang', u'ist', u'schwer', u'.'], [u'Des', u'Teufels', u'liebstes', u'M\xf6belst\xfcck', u'ist', u'die', u'lange', u'Bank', u'.']]
-		expected['lemma'] = [[u'aller', u'anfang', u'ist', u'schwer', u'.'], [u'des', u'teufels', u'liebstes', u'm\xf6belst\xfcck', u'ist', u'die', u'lange', u'bank', u'.']]
-		expected['partofspeech'] = [[u'PIDAT', u'NN', u'VAFIN', u'ADJD', u'$.'], [u'ART', u'NN', u'ADJA', u'NN', u'VAFIN', u'ART', u'ADJA', u'NN', u'$.']]
+		expected['lemma'] = [[u'aller', u'anfang', u'sein', u'schwer', u'.'], [u'des', u'Teufel', u'lieb', u'm\xf6belst\xfcck', u'sein', u'der', u'lang', u'bank', u'.']]
+		expected['partofspeech'] = [[u'DET', u'NOUN', u'AUX', u'ADJ', u'PUNCT'], [u'DET', u'NOUN', u'ADJ', u'NOUN', u'AUX', u'DET', u'ADJ', u'NOUN', u'PUNCT']]
 		expected['startPos'] = [[0, 6, 13, 17, 23], [25, 29, 37, 46, 57, 61, 65, 71, 75]]
 		expected['endPos'] = [[5, 12, 16, 23, 24], [28, 36, 45, 56, 60, 64, 70, 75, 76]]
-		expected['dependencies'] = [[(-1, 3, u'ROOT'), (1, 0, u'det'), (3, 1, u'nmod'), (3, 2, u'cop'), (3, 4, u'punct')], [(-1, 7, u'ROOT'), (3, 0, u'det'), (3, 1, u'amod'), (3, 2, u'amod'), (7, 3, u'nsubj'), (7, 4, u'cop'), (7, 5, u'det'), (7, 6, u'amod'), (7, 8, u'punct')]]
+		expected['dependencies'] = [[(1, 0, u'nk'), (2, 1, u'sb'), (2, 2, u'ROOT'), (2, 3, u'pd'), (2, 4, u'punct')], [(1, 0, u'nk'), (3, 1, u'ag'), (3, 2, u'nk'), (4, 3, u'pd'), (4, 4, u'ROOT'), (7, 5, u'nk'), (7, 6, u'nk'), (4, 7, u'pd'), (4, 8, u'punct')]]
 
-	elif language == 'spanish':
+	elif language == 'es':
 		twoSentences = u"A la ocasión la pintan calva. ¡Médico, cúrate a ti mismo!"
 		expected = {}
-		expected['word'] = [[u'A', u'la', u'ocasi\xf3n', u'la', u'pintan', u'calva', u'.'], [u'\xa1', u'M\xe9dico', u',', u'cura', u'te', u'a', u'ti', u'mismo', u'!']]
-		expected['lemma'] = [[u'a', u'la', u'ocasi\xf3n', u'la', u'pintan', u'calva', u'.'], [u'\xa1', u'm\xe9dico', u',', u'cura', u'te', u'a', u'ti', u'mismo', u'!']]
-		expected['partofspeech'] = [[u'sp000', u'da0000', u'nc0s000', u'da0000', u'nc0s000', u'nc0s000', u'fp'], [u'faa', u'np00000', u'fc', u'nc0s000', u'pp000000', u'sp000', u'pp000000', u'pi000000', u'fat']]
-		expected['startPos'] = [[0, 2, 5, 13, 16, 23, 28], [30, 31, 37, 39, 43, 46, 48, 51, 56]]
-		expected['endPos'] = [[1, 4, 12, 15, 22, 28, 29], [31, 37, 38, 43, 45, 47, 50, 56, 57]]
-		expected['dependencies'] = [[(-1, 2, u'ROOT'), (2, 0, u'case'), (2, 1, u'det'), (4, 3, u'det'), (2, 4, u'nsubj'), (4, 5, u'amod'), (2, 6, u'punct')], [(-1, 1, u'ROOT'), (1, 0, u'punct'), (1, 2, u'punct'), (1, 3, u'appos'), (3, 4, u'iobj'), (6, 5, u'case'), (3, 6, u'nmod'), (6, 7, u'amod'), (1, 8, u'punct')]]
+		expected['word'] = [[u'A', u'la', u'ocasi\xf3n', u'la', u'pintan', u'calva', u'.'], [u'\xa1', u'M\xe9dico', u',', u'c\xfarate', u'a', u'ti', u'mismo', u'!']]
+		expected['lemma'] = [[u'a', u'lo', u'ocasi\xf3n', u'lo', u'pintar', u'calvo', u'.'], [u'\xa1', u'm\xe9dico', u',', u'c\xfarate', u'a', u'ti', u'mismo', u'!']]
+		expected['partofspeech'] = [[u'ADP', u'DET', u'NOUN', u'DET', u'VERB', u'NOUN', u'PUNCT'], [u'PUNCT', u'PROPN', u'PUNCT', u'VERB', u'ADP', u'PRON', u'PRON', u'PUNCT']]
+		expected['startPos'] = [[0, 2, 5, 13, 16, 23, 28], [30, 31, 37, 39, 46, 48, 51, 56]]
+		expected['endPos'] = [[1, 4, 12, 15, 22, 28, 29], [31, 37, 38, 45, 47, 50, 56, 57]]
+		expected['dependencies'] = [[(2, 0, u'case'), (2, 1, u'det'), (4, 2, u'iobj'), (4, 3, u'obj'), (4, 4, u'ROOT'), (4, 5, u'nsubj'), (4, 6, u'punct')], [(1, 0, u'punct'), (1, 1, u'ROOT'), (3, 2, u'punct'), (1, 3, u'appos'), (5, 4, u'case'), (3, 5, u'obj'), (5, 6, u'amod'), (1, 7, u'punct')]]
+
+	elif language == 'it':
+		twoSentences = u"Ogni cosa si compra a prezzo. Ride bene chi ride ultimo."
+		expected = {}
+		expected['word'] = [[u'Ogni', u'cosa', u'si', u'compra', u'a', u'prezzo', u'.'], [u'Ride', u'bene', u'chi', u'ride', u'ultimo', u'.']]
+		expected['lemma'] = [[u'ogni', u'cosa', u'si', u'comprare', u'a', u'prezzo', u'.'], [u'ride', u'bene', u'chi', u'ridere', u'ultimare', u'.']]
+		expected['partofspeech'] = [[u'DET', u'NOUN', u'PRON', u'VERB', u'ADP', u'NOUN', u'PUNCT'], [u'VERB', u'ADV', u'PRON', u'VERB', u'ADJ', u'PUNCT']]
+		expected['startPos'] = [[0, 5, 10, 13, 20, 22, 28], [30, 35, 40, 44, 49, 55]]
+		expected['endPos'] = [[4, 9, 12, 19, 21, 28, 29], [34, 39, 43, 48, 55, 56]]
+		expected['dependencies'] = [[(1, 0, u'det'), (3, 1, u'obj'), (3, 2, u'expl'), (3, 3, u'ROOT'), (5, 4, u'case'), (3, 5, u'obl'), (3, 6, u'punct')], [(0, 0, u'ROOT'), (0, 1, u'advmod'), (0, 2, u'nsubj'), (2, 3, u'acl:relcl'), (3, 4, u'amod'), (0, 5, u'punct')]]
+
+	elif language == 'pt':
+		twoSentences = u"A caridade começa em casa. A experiência é mãe da ciência."
+		expected = {}
+		expected['word'] = [[u'A', u'caridade', u'come\xe7a', u'em', u'casa', u'.'], [u'A', u'experi\xeancia', u'\xe9', u'm\xe3e', u'da', u'ci\xeancia', u'.']]
+		expected['lemma'] = [[u'a', u'caridade', u'comedir', u'em', u'casar', u'.'], [u'a', u'experi\xeancia', u'ser', u'm\xe3e', u'da', u'ci\xeancia', u'.']]
+		expected['partofspeech'] = [[u'DET', u'NOUN', u'VERB', u'ADP', u'NOUN', u'PUNCT'], [u'DET', u'NOUN', u'VERB', u'NOUN', u'ADP', u'NOUN', u'PUNCT']]
+		expected['startPos'] = [[0, 2, 11, 18, 21, 25], [27, 29, 41, 43, 47, 50, 57]]
+		expected['endPos'] = [[1, 10, 17, 20, 25, 26], [28, 40, 42, 46, 49, 57, 58]]
+		expected['dependencies'] = [[(1, 0, u'det'), (2, 1, u'nsubj'), (2, 2, u'ROOT'), (4, 3, u'case'), (2, 4, u'obl'), (2, 5, u'punct')], [(1, 0, u'det'), (3, 1, u'nsubj'), (3, 2, u'cop'), (3, 3, u'ROOT'), (5, 4, u'case'), (3, 5, u'nmod'), (3, 6, u'punct')]]
+
+	elif language == 'nl':
+		twoSentences = u"Zoals het klokje thuis tikt, tikt het nergens. Boontje komt om zijn loontje."
+		expected = {}
+		expected['word'] = [[u'Zoals', u'het', u'klokje', u'thuis', u'tikt', u',', u'tikt', u'het', u'nergens', u'.'], [u'Boontje', u'komt', u'om', u'zijn', u'loontje', u'.']]
+		expected['lemma'] = [[u'zoals', u'het', u'klokje', u'thuis', u'tikt', u',', u'tikt', u'het', u'nergens', u'.'], [u'boontje', u'komt', u'om', u'zijn', u'loontje', u'.']]
+		expected['partofspeech'] = [[u'CONJ', u'DET', u'NOUN', u'ADV', u'VERB', u'PUNCT', u'VERB', u'PRON', u'ADV', u'PUNCT'], [u'NOUN', u'VERB', u'ADP', u'PRON', u'NOUN', u'PUNCT']]
+		expected['startPos'] = [[0, 6, 10, 17, 23, 27, 29, 34, 38, 45], [47, 55, 60, 63, 68, 75]]
+		expected['endPos'] = [[5, 9, 16, 22, 27, 28, 33, 37, 45, 46], [54, 59, 62, 67, 75, 76]]
+		expected['dependencies'] = [[(4, 0, u'mark'), (2, 1, u'det'), (4, 2, u'nsubj'), (4, 3, u'advmod'), (6, 4, u'advcl'), (6, 5, u'punct'), (6, 6, u'ROOT'), (6, 7, u'nsubj'), (6, 8, u'advmod'), (6, 9, u'punct')], [(1, 0, u'nsubj'), (1, 1, u'ROOT'), (4, 2, u'case'), (4, 3, u'nmod'), (1, 4, u'obj'), (1, 5, u'punct')]]
 
 	return twoSentences,expected
 
-def quickCheck():
-	initializeCoreNLP('chinese')
-	nlp = StanfordCoreNLP('http://localhost:9000')
-	#text = 'My friend will pay.'
-	#text = 'Mein Freund wird bezahlen.'
-	text = u"我喜歡走路。他看電視。"
-	annotators = 'tokenize,ssplit,pos'
-	output = nlp.annotate(text,properties={'annotators': annotators,'outputFormat': 'json'})
-	print(json.dumps(output,indent=2))
-
-def deleteLanguageFiles(language):
-	acceptedLanguages = ['arabic','chinese','french','german','spanish']
-	assert language in acceptedLanguages
-
-	kindredDir = kindred.Dependencies.downloadDirectory
-	coreNLPDir = os.path.join(kindredDir,'stanford-corenlp-full-2017-06-09')
-	modelFile = os.path.join(coreNLPDir,'stanford-%s-corenlp-2017-06-09-models.jar' % language)
-
-	if os.path.isfile(modelFile):
-		os.remove(modelFile)
-
-def test_parseWithoutDownload_arabic():
-	language = 'arabic'
-	deleteLanguageFiles(language)
-
-	with pytest.raises(RuntimeError) as excinfo:
-		runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=False)
-	assert excinfo.value.args == ("Could not find the Stanford CoreNLP model files for language: %s. Use kindred.downloadCoreNLPLanguage('%s') first." % (language,language),)
-
-def test_parseWithoutDownload_chinese():
-	language = 'chinese'
-	deleteLanguageFiles(language)
-
-	with pytest.raises(RuntimeError) as excinfo:
-		runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=False)
-	assert excinfo.value.args == ("Could not find the Stanford CoreNLP model files for language: %s. Use kindred.downloadCoreNLPLanguage('%s') first." % (language,language),)
-
-def test_parseWithoutDownload_french():
-	language = 'french'
-	deleteLanguageFiles(language)
-
-	with pytest.raises(RuntimeError) as excinfo:
-		runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=False)
-	assert excinfo.value.args == ("Could not find the Stanford CoreNLP model files for language: %s. Use kindred.downloadCoreNLPLanguage('%s') first." % (language,language),)
-
-def test_parseWithoutDownload_german():
-	language = 'german'
-	deleteLanguageFiles(language)
-
-	with pytest.raises(RuntimeError) as excinfo:
-		runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=False)
-	assert excinfo.value.args == ("Could not find the Stanford CoreNLP model files for language: %s. Use kindred.downloadCoreNLPLanguage('%s') first." % (language,language),)
-
-def test_parseWithoutDownload_spanish():
-	language = 'spanish'
-	deleteLanguageFiles(language)
-
-	with pytest.raises(RuntimeError) as excinfo:
-		runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=False)
-	assert excinfo.value.args == ("Could not find the Stanford CoreNLP model files for language: %s. Use kindred.downloadCoreNLPLanguage('%s') first." % (language,language),)
-
-def test_downloadArabic():
-	kindred.downloadCoreNLPLanguage('arabic')
-
-def test_downloadChinese():
-	kindred.downloadCoreNLPLanguage('chinese')
-
-def test_downloadFrench():
-	kindred.downloadCoreNLPLanguage('french')
-
-def test_downloadGerman():
-	kindred.downloadCoreNLPLanguage('german')
-
-def test_downloadSpanish():
-	kindred.downloadCoreNLPLanguage('spanish')
-
-def test_languageMismatch():
-	runningLanguage,desiredLanguage = 'german','spanish'
-
-	kindred.downloadCoreNLPLanguage(runningLanguage)
-	kindred.Dependencies.initializeCoreNLP(runningLanguage)
-	with pytest.raises(RuntimeError) as excinfo:
-		runLanguageTest(language=desiredLanguage,killCoreNLPIfNeeded=False,doDownloadIfNeeded=True)
-	expectedMessage = "CoreNLP currently running does not match the language (%s) requested by the parser. Please stop this CoreNLP instance and either launch the appropriate one or let Kindred launch one." % desiredLanguage
-	assert excinfo.value.args == (expectedMessage,)
-	
-	kindred.Dependencies.killCoreNLP()
-
 def runLanguageTest(language,killCoreNLPIfNeeded,doDownloadIfNeeded):
 	twoSentences,expected = getTestData(language)
-
-	if killCoreNLPIfNeeded and kindred.Dependencies.testCoreNLPConnection():
-		kindred.Dependencies.killCoreNLP()
-
-	if doDownloadIfNeeded:
-		kindred.downloadCoreNLPLanguage(language)
 
 	parser = kindred.Parser(language=language)
 	corpus = kindred.Corpus(twoSentences)
@@ -178,58 +91,65 @@ def runLanguageTest(language,killCoreNLPIfNeeded,doDownloadIfNeeded):
 	doc = corpus.documents[0]
 	assert len(doc.sentences) == 2
 
+
 	letPass = False
 
 	word = [ [ t.word for t in sentence.tokens ] for sentence in doc.sentences ]
-	assert letPass or word == expected['word']
-
 	lemma = [ [ t.lemma for t in sentence.tokens ] for sentence in doc.sentences ]
-	assert letPass or lemma == expected['lemma']
-	
 	partofspeech = [ [ t.partofspeech for t in sentence.tokens ] for sentence in doc.sentences ]
-	assert letPass or partofspeech == expected['partofspeech']
-
 	startPos = [ [ t.startPos for t in sentence.tokens ] for sentence in doc.sentences ]
-	assert letPass or startPos == expected['startPos']
-
 	endPos = [ [ t.endPos for t in sentence.tokens ] for sentence in doc.sentences ]
-	assert letPass or endPos == expected['endPos']
-
 	dependencies = [ sentence.dependencies for sentence in doc.sentences ]
+
+	print("expected['word'] = %s" % str(word))
+	print("expected['lemma'] = %s" % str(lemma))
+	print("expected['partofspeech'] = %s" % str(partofspeech))
+	print("expected['startPos'] = %s" % str(startPos))
+	print("expected['endPos'] = %s" % str(endPos))
+	print("expected['dependencies'] = %s" % str(dependencies))
+	
+	assert letPass or word == expected['word']
+	assert letPass or lemma == expected['lemma']
+	assert letPass or partofspeech == expected['partofspeech']
+	assert letPass or startPos == expected['startPos']
+	assert letPass or endPos == expected['endPos']
 	assert letPass or dependencies == expected['dependencies']
 
-	kindred.Dependencies.killCoreNLP()
 
 
-
-
-def test_arabic():
-	language = 'arabic'
-	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
-
-def test_chinese():
-	language = 'chinese'
-	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
 
 def test_english():
-	language = 'english'
+	language = 'en'
 	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=False)
 
 def test_french():
-	language = 'french'
+	language = 'fr'
 	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
 
 def test_german():
-	language = 'german'
+	language = 'de'
 	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
 	
 def test_spanish():
-	language = 'spanish'
+	language = 'es'
+	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
+	
+def test_portuguese():
+	language = 'pt'
+	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
+
+def test_italian():
+	language = 'it'
+	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
+
+def test_dutch():
+	language = 'nl'
 	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
 	
 
 
 if __name__ == '__main__':
-	#quickCheck()
-	test_chinese()
+	test_portuguese()
+	test_italian()
+	test_dutch()
 
