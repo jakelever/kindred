@@ -33,10 +33,9 @@ You can install "kindred" via `pip`_ from `PyPI`_::
 
    $ pip install kindred
 
-Kindred relies on the Stanford CoreNLP toolkit for parsing. By default it will attempt to connect to a local server (localhost:9000). If you want Kindred to download the CoreNLP files and run it as a subprocess when a server can't be found, use the following command:
+As of v2, Kindred relies on the `Spacy`_ toolkit for parsing. After installing kindred (which also installs spacy), you will need to install a Spacy language model. For instance, the command below installs the english command.::
 
->>> import kindred
->>> kindred.downloadCoreNLP()
+   $ python -m spacy download en 
 
 Usage
 -----
@@ -46,6 +45,7 @@ Full documentation can be found at `readthedocs`_.
 BioNLP Shared Task Example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+>>> import kindred
 >>> trainCorpus = kindred.bionlpst.load('2016-BB3-event-train')
 >>> devCorpus = kindred.bionlpst.load('2016-BB3-event-dev')
 >>> predictionCorpus = devCorpus.clone()
@@ -85,3 +85,4 @@ If you encounter any problems, please `file an issue`_ along with a detailed des
 .. _`pip`: https://pypi.python.org/pypi/pip/
 .. _`PyPI`: https://pypi.python.org/pypi
 .. _`readthedocs`: http://kindred.readthedocs.io/
+.. _`Spacy`: https://spacy.io

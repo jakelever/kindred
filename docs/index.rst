@@ -35,20 +35,14 @@ Once it is installed, Kindred can be imported in Python with:
 
 >>> import kindred
 
-Running Stanford CoreNLP
+Installing a Spacy language model
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Stanford CoreNLP framework is an important dependency of Kindred. All other dependencies of Kindred are managed by the pip/setup.py install. Stanford CoreNLP can be run as a local server and Kindred will connect to it for all parsing needs. 
+As of v2, Kindred uses the Spacy python package for parsing. A language model needs to be installed for the corresponding language using a command similar to below.
 
-If you don't have a CoreNLP server running and would like Kindred to take care of it, use the command below. This will download the required CoreNLP distribution and launch a subprocess as needed by Kindred. This subprocess will be killed when Kindred stops.
+.. code:: bash
 
->>> import kindred
->>> kindred.downloadCoreNLP()
-
-If you already have a Stanford CoreNLP server running, you will need to give the Parser class the relevant address.
-
->>> import kindred
->>> parser = kindred.Parser(URL_WITH_PORT_HERE)
+   python -m spacy download en
 
 Getting Started
 ---------------
@@ -160,6 +154,12 @@ At the moment, no. Kindred will only use the first annotation of a relation.
 
 Release Notes
 -------------
+
+Version 2.0.0
+-------------
+- Large overhaul to replace CoreNLP with Spacy package for easier integration and installation
+- Simplified relation classifier functionality by removing feature building and multiclassifier options
+- Add functionality for streaming BioC files
 
 Version 1.1.0
 ~~~~~~~~~~~~~
