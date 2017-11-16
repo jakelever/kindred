@@ -1,9 +1,9 @@
+spacy
 scikit-learn
 numpy
 scipy
 intervaltree
 networkx
-pycorenlp
 lxml
 future
 bioc
