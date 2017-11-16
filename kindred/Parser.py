@@ -58,7 +58,8 @@ class Parser:
 				entityTypeLookup[e.entityID] = e.entityType
 			
 				for a,b in e.position:
-					denotationTree[a:b] = e.entityID
+					if b > a:
+						denotationTree[a:b] = e.entityID
 				
 			for sentence in self._sentencesGenerator(d.text):
 				tokens = []
