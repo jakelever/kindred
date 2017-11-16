@@ -81,7 +81,7 @@ def getTestData(language):
 
 	return twoSentences,expected
 
-def runLanguageTest(language,killCoreNLPIfNeeded,doDownloadIfNeeded):
+def runLanguageTest(language):
 	twoSentences,expected = getTestData(language)
 
 	parser = kindred.Parser(language=language)
@@ -120,31 +120,31 @@ def runLanguageTest(language,killCoreNLPIfNeeded,doDownloadIfNeeded):
 
 def test_english():
 	language = 'en'
-	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=False)
+	runLanguageTest(language=language)
 
 def test_french():
 	language = 'fr'
-	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
+	runLanguageTest(language=language)
 
 def test_german():
 	language = 'de'
-	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
+	runLanguageTest(language=language)
 	
 def test_spanish():
 	language = 'es'
-	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
+	runLanguageTest(language=language)
 	
 def test_portuguese():
 	language = 'pt'
-	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
+	runLanguageTest(language=language)
 
 def test_italian():
 	language = 'it'
-	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
+	runLanguageTest(language=language)
 
 def test_dutch():
 	language = 'nl'
-	runLanguageTest(language=language,killCoreNLPIfNeeded=True,doDownloadIfNeeded=True)
+	runLanguageTest(language=language)
 	
 
 
