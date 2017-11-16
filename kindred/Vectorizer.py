@@ -199,6 +199,7 @@ class Vectorizer:
 		:rtype: scipy.sparse.csr.csr_matrix
 		"""
 		assert self.fitted == False
+		assert len(corpus.getCandidateRelations()) > 0, "No candidate relations found in corpus"
 		self.fitted = True
 		return self._vectorize(corpus,True)
 	
@@ -212,6 +213,7 @@ class Vectorizer:
 		:rtype: scipy.sparse.csr.csr_matrix
 		"""
 		assert self.fitted == True
+		assert len(corpus.getCandidateRelations()) > 0, "No candidate relations found in corpus"
 		return self._vectorize(corpus,False)
 		
 		
