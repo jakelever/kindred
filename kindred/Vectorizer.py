@@ -156,7 +156,8 @@ class Vectorizer:
 		assert self.fitted == True, "Must have fit data first"
 		featureNames = []
 		for feature in self.chosenFeatures:
-			featureNames += self.dictVectorizers[feature].get_feature_names()
+			if feature in self.dictVectorizers:
+				featureNames += self.dictVectorizers[feature].get_feature_names()
 		return featureNames
 		
 
@@ -171,20 +172,23 @@ class Vectorizer:
 			featureFunction = self.featureInfo[feature]['func']
 			never_tfidf = self.featureInfo[feature]['never_tfidf']
 			data = featureFunction(corpus)
+			notEmpty = any( len(d)>0 for d in data )
 			if fit:
-				self.dictVectorizers[feature] = DictVectorizer()
-				if self.tfidf and not never_tfidf:
-					self.tfidfTransformers[feature] = TfidfTransformer()
-					intermediate = self.dictVectorizers[feature].fit_transform(data)
-					matrices.append(self.tfidfTransformers[feature].fit_transform(intermediate))
-				else:
-					matrices.append(self.dictVectorizers[feature].fit_transform(data))
+				if notEmpty:
+					self.dictVectorizers[feature] = DictVectorizer()
+					if self.tfidf and not never_tfidf:
+						self.tfidfTransformers[feature] = TfidfTransformer()
+						intermediate = self.dictVectorizers[feature].fit_transform(data)
+						matrices.append(self.tfidfTransformers[feature].fit_transform(intermediate))
+					else:
+						matrices.append(self.dictVectorizers[feature].fit_transform(data))
 			else:
-				if self.tfidf and not never_tfidf:
-					intermediate = self.dictVectorizers[feature].transform(data)
-					matrices.append(self.tfidfTransformers[feature].transform(intermediate))
-				else:
-					matrices.append(self.dictVectorizers[feature].transform(data))
+				if feature in self.dictVectorizers:
+					if self.tfidf and not never_tfidf:
+						intermediate = self.dictVectorizers[feature].transform(data)
+						matrices.append(self.tfidfTransformers[feature].transform(intermediate))
+					else:
+						matrices.append(self.dictVectorizers[feature].transform(data))
 
 		mergedMatrix = hstack(matrices)
 		return mergedMatrix
