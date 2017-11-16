@@ -38,21 +38,6 @@ class Parser:
 		if not sentence is None and len(sentence) > 0:
 			yield sentence
 
-	def _sentenceSplit(docTokens):
-		result = []
-		sentence = []
-		#for token in parsed:
-		for token in docTokens:
-			if token.is_sent_start:
-				result.append(sentence)
-				sentence = []
-			sentence.append(token)
-
-		if len(sentence) > 0:
-			result.append(sentence)
-
-		return sentenceSplit
-
 	def parse(self,corpus):
 		"""
 		Parse the corpus. Each document will be split into sentences which are then tokenized and parsed for their dependency graph. All parsed information is stored within the corpus object.
