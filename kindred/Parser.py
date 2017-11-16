@@ -10,26 +10,20 @@ class Parser:
 	Runs CoreNLP on corpus to get sentences and associated tokens
 	"""
 	
-	def __init__(self,corenlp_url=None,useConstituencyParserOnly=False,language='english'):
+	def __init__(self,language='en'):
 		"""
-		Create a Parser object that will use CoreNLP for parsing
+		Create a Parser object that will use Spacy for parsing. It uses Spacy and offers all the same languages that Spacy offers. Check out: https://spacy.io/usage/models. Note that the language model needs to be downloaded first (e.g. python -m spacy download en)
 		
-		:param corenlp_url: URL of the CoreNLP instance
-		:param useConstituencyParserOnly: Use CoreNLP's constituency parser (with a conversion) for the depenency parse information, and not the CoreNLP dependency parser. This is slower
-		:param language: Language to parse (english/arabic/chinese/french/german/spanish). The parser will check that the current CoreNLP is using the matching language. If no CoreNLP instance is running, it will launch one with the correct language.
-		:type corenlp_url: str
-		:type useConstituencyParserOnly: bool
+		:param language: Language to parse (en/de/es/pt/fr/it/nl)
 		:type language: str
 		"""
 
-		acceptedLanguages = ['arabic','chinese','english','french','german','spanish']
-		assert language in acceptedLanguages
-
-		self.corenlp_url = corenlp_url
+		acceptedLanguages = ['en','de','es','pt','fr','it','nl']
+		assert language in acceptedLanguages, "Language for parser (%s) not in accepted languages: %s" % (language,str(acceptedLanguages))
 
 		self.language = language
 
-		self.nlp = spacy.load('en', disable=['ner'])
+		self.nlp = spacy.load(language, disable=['ner'])
 
 	def _sentencesGenerator(self,text):
 		parsed = self.nlp(text)
@@ -44,7 +38,7 @@ class Parser:
 		if not sentence is None and len(sentence) > 0:
 			yield sentence
 
-	def sentenceSplit(docTokens):
+	def _sentenceSplit(docTokens):
 		result = []
 		sentence = []
 		#for token in parsed:
