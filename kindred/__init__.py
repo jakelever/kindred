@@ -22,3 +22,6 @@ from kindred.evalFunctions import evaluate
 # Data sources
 from kindred import bionlpst, pubannotation, pubtator, utils
 
+from kindred.defunctFileWarning import checkForDefunctKindredFiles
+
+checkForDefunctKindredFiles()
