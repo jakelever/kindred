@@ -1,4 +1,4 @@
-spacy
+spacy>=2.0.3
 scikit-learn
 numpy
 scipy
