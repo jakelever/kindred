@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import spacy
+
 import kindred
 from intervaltree import IntervalTree
 from collections import defaultdict
@@ -17,6 +17,9 @@ class Parser:
 		:param language: Language to parse (en/de/es/pt/fr/it/nl)
 		:type language: str
 		"""
+
+		# We only load spacy if a Parser is created (to allow ReadTheDocs to build the documentation easily)
+		import spacy
 
 		acceptedLanguages = ['en','de','es','pt','fr','it','nl']
 		assert language in acceptedLanguages, "Language for parser (%s) not in accepted languages: %s" % (language,str(acceptedLanguages))
