@@ -8,11 +8,23 @@ class CandidateBuilder:
 	"""
 	Generates set of all possible relations in corpus.
 	"""
-	def __init__(self):
+	def __init__(self,acceptedEntityPairs=None):
 		"""
 		Constructor
+
+		:param acceptedEntityPairs: Pairs of entities that candidate relations must match. None will match all candidate relations.
+		:type acceptedEntityPairs: list of tuples
 		"""
 		self.fitted = False
+
+		assert acceptedEntityPairs is None or isinstance(acceptedEntityPairs,list)
+		if acceptedEntityPairs is None:
+			self.acceptedEntityPairs = None
+		else:
+			for acceptedEntityPair in acceptedEntityPairs:
+				assert isinstance(acceptedEntityPair,tuple)
+				assert len(acceptedEntityPair) == 2
+			self.acceptedEntityPairs = set(acceptedEntityPairs)
 
 	def fit_transform(self,corpus):
 		"""
@@ -81,8 +93,14 @@ class CandidateBuilder:
 					relKey = tuple(entitiesInRelation)
 					if relKey in existingRelations:
 						candidateClass = existingRelations[relKey]
-					
-					sentence.addCandidateRelation(candidateRelation,candidateClass)
+
+					includeCandidate = True
+					if not self.acceptedEntityPairs is None:
+						typesInRelation = tuple([ sentence.getEntityType(eID) for eID in entitiesInRelation ])
+						includeCandidate = (typesInRelation in self.acceptedEntityPairs)
+
+					if includeCandidate:
+						sentence.addCandidateRelation(candidateRelation,candidateClass)
 
 				sentence.candidateRelationsProcessed = True
 					

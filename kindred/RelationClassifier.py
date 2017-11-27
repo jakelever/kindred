@@ -11,7 +11,7 @@ class RelationClassifier:
 	"""
 	Manages binary classifier(s) for relation classification.
 	"""
-	def __init__(self,classifierType='SVM',tfidf=True,features=None,threshold=None):
+	def __init__(self,classifierType='SVM',tfidf=True,features=None,threshold=None,acceptedEntityPairs=None):
 		"""
 		Constructor for the RelationClassifier class
 		
@@ -19,10 +19,12 @@ class RelationClassifier:
 		:param tfidf: Whether to use tfidf for the vectorizer
 		:param features: A list of specific features. Valid features are "entityTypes","unigramsBetweenEntities","bigrams","dependencyPathEdges","dependencyPathEdgesNearEntities"
 		:param threshold: A specific threshold to use for classification (which will then use a logistic regression classifier)
+		:param acceptedEntityPairs: Pairs of entities that relations must match. None will match allow relations of any entity types.
 		:type classifierType: str
 		:type tfidf: bool
 		:type features: list of str
 		:type threshold: float
+		:type acceptedEntityPairs: list of tuples
 		"""
 		assert classifierType in ['SVM','LogisticRegression'], "classifierType must be 'SVM' or 'LogisticRegression'"
 		assert classifierType == 'LogisticRegression' or threshold is None, "Threshold can only be used when classifierType is 'LogisticRegression'"
@@ -30,6 +32,7 @@ class RelationClassifier:
 		self.isTrained = False
 		self.classifierType = classifierType
 		self.tfidf = tfidf
+		self.acceptedEntityPairs = acceptedEntityPairs
 
 		self.chosenFeatures = ["entityTypes","unigramsBetweenEntities","bigrams","dependencyPathEdges","dependencyPathEdgesNearEntities"]
 		if not features is None:
@@ -47,7 +50,7 @@ class RelationClassifier:
 		"""
 		assert isinstance(corpus,kindred.Corpus)
 			
-		self.candidateBuilder = CandidateBuilder()
+		self.candidateBuilder = CandidateBuilder(acceptedEntityPairs=self.acceptedEntityPairs)
 		self.candidateBuilder.fit_transform(corpus)
 		
 		candidateRelations = corpus.getCandidateRelations()
