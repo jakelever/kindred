@@ -141,9 +141,9 @@ class Sentence:
 		Add an entity with location to the sentence
 
 		:param entity: Entity to add to sentence
-		:param location: Location of entity in sentence (tuple of start and end token indices)
+		:param location: Location of entity in sentence (list of indices of tokens)
 		:type entity: kindred.Entity
-		:type location: list of tuples
+		:type location: list of ints
 		"""
 		assert isinstance(entity,kindred.Entity)
 		assert isinstance(location,list)
