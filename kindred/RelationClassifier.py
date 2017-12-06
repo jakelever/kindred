@@ -49,9 +49,10 @@ class RelationClassifier:
 		:type corpus: kindred.Corpus
 		"""
 		assert isinstance(corpus,kindred.Corpus)
-			
-		self.candidateBuilder = CandidateBuilder(acceptedEntityPairs=self.acceptedEntityPairs)
-		self.candidateBuilder.fit_transform(corpus)
+
+		if not corpus.candidatesFound:
+			self.candidateBuilder = CandidateBuilder(acceptedEntityPairs=self.acceptedEntityPairs)
+			self.candidateBuilder.fit_transform(corpus)
 		
 		candidateRelations = corpus.getCandidateRelations()
 		candidateClasses = corpus.getCandidateClasses()
@@ -111,7 +112,8 @@ class RelationClassifier:
 	
 		assert isinstance(corpus,kindred.Corpus)
 			
-		self.candidateBuilder.transform(corpus)
+		if not corpus.candidatesFound:
+			self.candidateBuilder.transform(corpus)
 
 		candidateRelations = corpus.getCandidateRelations()
 

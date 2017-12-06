@@ -18,7 +18,9 @@ class Corpus:
 		if not text is None:
 			doc = kindred.Document(text)
 			self.addDocument(doc)
+
 		self.parsed = False
+		self.candidatesFound = False
 
 		self.relationTypes = None
 

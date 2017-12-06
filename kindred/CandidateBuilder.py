@@ -36,6 +36,7 @@ class CandidateBuilder:
 
 		assert self.fitted == False, "CandidateBuilder has already been fit to corpus"
 		assert isinstance(corpus,kindred.Corpus)
+		assert corpus.candidatesFound == False, "Candidates already exist in corpus."
 
 		if not corpus.parsed:
 			parser = kindred.Parser()
@@ -67,6 +68,7 @@ class CandidateBuilder:
 		"""
 		assert self.fitted == True, "CandidateBuilder must be fit to corpus first"
 		assert isinstance(corpus,kindred.Corpus)
+		assert corpus.candidatesFound == False, "Candidates already exist in corpus."
 
 		if not corpus.parsed:
 			parser = kindred.Parser()
@@ -105,4 +107,5 @@ class CandidateBuilder:
 				sentence.candidateRelationsProcessed = True
 					
 		corpus.addRelationTypes(self.relTypes)
+		corpus.candidatesFound = True
 
