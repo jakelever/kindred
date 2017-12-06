@@ -292,6 +292,7 @@ def convertBiocDocToKindredDocs(document):
 		
 		metadata = dict(document.infons)
 		metadata.update(passage.infons)
+		metadata['id'] = document.id
 		relData = kindred.Document(text,entities=entities,relations=relations,metadata=metadata)
 		kindredDocs.append(relData)
 
