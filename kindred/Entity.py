@@ -23,8 +23,9 @@ class Entity:
 		:type externalID: str
 		"""
 	
-		isinstance(entityType, six.string_types), "entityType must be a string"
-		isinstance(text, six.string_types), "text must be a string"
+		assert isinstance(entityType, six.string_types), "entityType must be a string"
+		assert isinstance(text, six.string_types), "text must be a string"
+		assert externalID is None or isinstance(externalID, six.string_types), "externalID must be a string or None"
 
 		posErrorMsg = "Entity position must be list of tuples (startPos,endPos)"
 		assert isinstance(position,list), posErrorMsg
