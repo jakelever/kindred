@@ -67,7 +67,7 @@ def generateData(positiveCount=100,negativeCount=100,relTypes=1):
 		
 		entityID += 2
 		
-		converted = kindred.Document(text)
+		converted = kindred.Document(text,loadFromSimpleTag=True)
 		corpus.addDocument(converted)
 		
 	halfNegativeCount = int(negativeCount/2.0)
@@ -84,7 +84,7 @@ def generateData(positiveCount=100,negativeCount=100,relTypes=1):
 		
 			combinedText = "%s %s" % (combinedText,text)
 		
-		converted = kindred.Document(combinedText)
+		converted = kindred.Document(combinedText,loadFromSimpleTag=True)
 		corpus.addDocument(converted)
 		
 	return corpus

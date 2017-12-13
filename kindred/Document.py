@@ -6,7 +6,7 @@ class Document:
 	Span of text with associated tagged entities and relations between entities.
 	"""
 	
-	def __init__(self,text,entities=None,relations=None,relationsUseSourceIDs=True,sourceFilename=None,metadata={}):
+	def __init__(self,text,entities=None,relations=None,relationsUseSourceIDs=True,sourceFilename=None,metadata={},loadFromSimpleTag=False):
 		"""
 		Constructor for a Document that can take text using the SimpleTag XML format, or a set of Entities and Relations with associated text.
 		
@@ -16,20 +16,22 @@ class Document:
 		:param relationsUseSourceIDs: description
 		:param sourceFilename: description
 		:param metadata: IDs and other information associated with the source (e.g. PMID)
+		:param loadFromSimpleTag: Assumes the text parameter is in the SimpleTag format and will extract entities and relations accordingly
 		:type text: type description
 		:type entities: type description
 		:type relations: type description
 		:type relationsUseSourceIDs: type description
 		:type sourceFilename: type description
 		:type metadata: dict
+		:type loadFromSimpleTag: bool
 		"""
-
-		loadFromSimpleTag = (entities is None)
 
 		self.sourceFilename = sourceFilename
 		self.metadata = metadata
 
 		if loadFromSimpleTag:
+			assert entities is None and relations is None, 'Entities and relations will be extracted from SimpleTag. They cannot also be passed in as parameters'
+
 			dataToCopy = kindred.loadFunctions.parseSimpleTag(text)
 			self.text = dataToCopy.getText()
 			self.entities = dataToCopy.getEntities()
@@ -37,10 +39,13 @@ class Document:
 		else:
 			self.text = text
 			
-			assert isinstance(entities,list)
-			for e in entities:
-				assert isinstance(e,kindred.Entity)
-			self.entities = entities
+			if entities is None:
+				self.entities = []
+			else:
+				assert isinstance(entities,list)
+				for e in entities:
+					assert isinstance(e,kindred.Entity)
+				self.entities = entities
 			
 			if relations is None:
 				self.relations = []
