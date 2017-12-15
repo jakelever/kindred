@@ -6,17 +6,19 @@ class Corpus:
 	Collection of text documents.
 	"""
 	
-	def __init__(self,text=None):
+	def __init__(self,text=None,loadFromSimpleTag=False):
 		"""
 		Constructor
 		
 		:param text: Optional SimpleTag text to initalize a single document
+		:param loadFromSimpleTag: If text is provided, whether the text parameter is in the SimpleTag format and will extract entities and relations accordingly
 		:type text: String (with SimpleTag format XML)
+		:param loadFromSimpleTag: bool
 		"""
 
 		self.documents = []
 		if not text is None:
-			doc = kindred.Document(text)
+			doc = kindred.Document(text,loadFromSimpleTag=loadFromSimpleTag)
 			self.addDocument(doc)
 
 		self.parsed = False

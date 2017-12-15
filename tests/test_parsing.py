@@ -18,7 +18,7 @@ def assertEntityWithLocation(entityWithLocation,expectedType,expectedLocs,expect
 
 def test_simpleSentenceParse():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">lung</cancer> and unknown <cancer id="2">cancers</cancer>'
-	corpus = kindred.Corpus(text)
+	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 	
 	parser = kindred.Parser()
 	parser.parse(corpus)
@@ -49,7 +49,7 @@ def test_simpleSentenceParse():
 	
 def test_parsing_dependencyGraph():
 	text = 'You need to turn in your homework by next week'
-	corpus = kindred.Corpus(text)
+	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 	
 	parser = kindred.Parser()
 	parser.parse(corpus)
@@ -79,7 +79,7 @@ def test_parsing_dependencyGraph():
 	
 def test_twoSentenceParse():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer>. <drug id="3">Aspirin</drug> is the main cause of <disease id="4">boneitis</disease>.'
-	corpus = kindred.Corpus(text)
+	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 	
 	parser = kindred.Parser()
 	parser.parse(corpus)
@@ -130,7 +130,7 @@ def test_largeSentence():
 	repeatCount = 500
 	singleSentence = 'Erlotinib is a common treatment for lung and unknown cancers.'
 	text = " ".join( [ singleSentence for _ in range(repeatCount) ] )
-	corpus = kindred.Corpus(text)
+	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 	
 	parser = kindred.Parser()
 	parser.parse(corpus)
@@ -142,7 +142,7 @@ def test_largeSentence():
 
 def test_unicodeParse():
 	text = u"<drug id='1'>Erlotinib</drug> is a common treatment for NF-κB positive <cancer id='2'>lung</cancer> and unknown <cancer id='2'>cancers</cancer>"
-	corpus = kindred.Corpus(text)
+	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 	
 	parser = kindred.Parser()
 	parser.parse(corpus)

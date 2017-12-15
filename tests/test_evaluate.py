@@ -9,7 +9,7 @@ def test_evaluate(capfd):
 	goldText += '<relation type="typeB" subj="T2" obj="T1" />'
 	goldText += '<relation type="typeC" subj="T2" obj="T1" />'
 
-	goldCorpus = kindred.Corpus(goldText)
+	goldCorpus = kindred.Corpus(goldText,loadFromSimpleTag=True)
 	
 	testCorpus = goldCorpus.clone()
 	testDoc = testCorpus.documents[0]
@@ -49,7 +49,7 @@ def test_evaluate_display(capfd):
 	goldText += '<relation type="typeB" subj="T2" obj="T1" />'
 	goldText += '<relation type="typeC" subj="T2" obj="T1" />'
 
-	goldCorpus = kindred.Corpus(goldText)
+	goldCorpus = kindred.Corpus(goldText,loadFromSimpleTag=True)
 	
 	testCorpus = goldCorpus.clone()
 	testDoc = testCorpus.documents[0]
