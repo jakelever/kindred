@@ -4,7 +4,7 @@ from collections import Counter
 def test_corpus_split():
 	mainCorpus = kindred.Corpus()
 	for i in range(100):
-		doc = kindred.Document(text=str(i),entities=[])
+		doc = kindred.Document(text=str(i))
 		mainCorpus.addDocument(doc)
 	
 	corpusA,corpusB = mainCorpus.split(0.75)
@@ -28,7 +28,7 @@ def test_corpus_nfold_split():
 	mainCorpus = kindred.Corpus()
 	docCount = 100
 	for i in range(docCount):
-		doc = kindred.Document(text=str(i),entities=[])
+		doc = kindred.Document(text=str(i))
 		mainCorpus.addDocument(doc)
 	
 	corpusA,corpusB = mainCorpus.split(0.75)

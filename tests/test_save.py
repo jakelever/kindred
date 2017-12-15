@@ -14,7 +14,7 @@ def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEnti
 def test_saveStandoffFile_fromSimpleTag():
 	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
 	corpus = kindred.Corpus()
-	doc = kindred.Document(text)
+	doc = kindred.Document(text,loadFromSimpleTag=True)
 	corpus.addDocument(doc)
 
 	tempDir = tempfile.mkdtemp()
@@ -149,7 +149,7 @@ def test_saveStandoffFile_SeparateSentences():
 	texts = ['The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />','<disease id="T1">Li-Fraumeni</disease> was caused by mutations in <gene id="T2">P53</gene><relation type="causes" subj="T2" obj="T1" />']
 	corpus = kindred.Corpus()
 	for t in texts:
-		doc = kindred.Document(t)
+		doc = kindred.Document(t,loadFromSimpleTag=True)
 		corpus.addDocument(doc)
 
 	tempDir = tempfile.mkdtemp()
@@ -187,7 +187,7 @@ def test_saveStandoffFile_PredictedRelations():
 	texts = ['The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />','<disease id="T1">Li-Fraumeni</disease> was caused by mutations in <gene id="T2">P53</gene><relation type="causes" subj="T2" obj="T1" />']
 	corpus = kindred.Corpus()
 	for t in texts:
-		doc = kindred.Document(t)
+		doc = kindred.Document(t,loadFromSimpleTag=True)
 		corpus.addDocument(doc)
 	
 	predictedRelations = []

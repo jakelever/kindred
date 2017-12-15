@@ -6,7 +6,7 @@ def test_simpleRelationCandidates():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer>. <drug id="3">Aspirin</drug> is the main cause of <disease id="4">boneitis</disease>. <relation type="treats" subj="1" obj="2" />'
 
 	corpus = kindred.Corpus()
-	doc = kindred.Document(text)
+	doc = kindred.Document(text,loadFromSimpleTag=True)
 	corpus.addDocument(doc)
 	
 	candidateBuilder = kindred.CandidateBuilder()

@@ -10,7 +10,7 @@ def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEnti
 def test_convertTaggedText():
 	#text = 'The <drug><disease>Erlotinib</disease></drug> is a common treatment for <cancer>NSCLC</cancer> patients'
 	text = "<drug>Erlotinib</drug> is a common treatment for <cancer>NSCLC</cancer>"
-	converted = kindred.Document(text)
+	converted = kindred.Document(text,loadFromSimpleTag=True)
 	
 	assert isinstance(converted,kindred.Document)
 	entities = converted.getEntities()
@@ -29,7 +29,7 @@ def test_convertTaggedText():
 def test_convertTaggedTextWithSplitEntities():
 	#text = 'The <drug><disease>Erlotinib</disease></drug> is a common treatment for <cancer>NSCLC</cancer> patients'
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">lung</cancer> and unknown <cancer id="2">cancers</cancer>'
-	converted = kindred.Document(text)
+	converted = kindred.Document(text,loadFromSimpleTag=True)
 	
 	assert isinstance(converted,kindred.Document)
 	entities = converted.getEntities()
@@ -47,7 +47,7 @@ def test_convertTaggedTextWithSplitEntities():
 def test_convertedTaggedTextWithRelations():
 	text = '<drug id="5">Erlotinib</drug> is a common treatment for <cancer id="6">NSCLC</cancer><relation type="treats" subj="5" obj="6" />'
 
-	converted = kindred.Document(text)
+	converted = kindred.Document(text,loadFromSimpleTag=True)
 	assert isinstance(converted,kindred.Document)
 
 	entities = converted.getEntities()
