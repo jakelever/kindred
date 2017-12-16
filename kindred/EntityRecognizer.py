@@ -184,8 +184,6 @@ class EntityRecognizer:
 		self.detectAcronyms = detectAcronyms
 		self.mergeTerms = mergeTerms
 
-		import spacy
-		self.nlp = spacy.load('en')
 		
 	def _processWords(self, words):
 		locs,terms,termtypesAndids = getTermIDsAndLocations(words,self.lookup)
@@ -344,6 +342,9 @@ class EntityRecognizer:
 		 	assert isinstance(filename,six.string_types), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
 		 	assert os.path.isfile(filename), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
 
+		import spacy
+		nlp = spacy.load('en')
+
 		lookup = defaultdict(set)
 		for entityType,filename in entityTypesWithFilenames.items():
 			with codecs.open(filename,'r','utf-8') as f:
@@ -351,7 +352,7 @@ class EntityRecognizer:
 				for line in f:
 					termid,terms = line.strip().split('\t')
 					for term in terms.split('|'):
-						tupleterm = tuple([ token.text.lower() for token in self.nlp(term) ])
+						tupleterm = tuple([ token.text.lower() for token in nlp(term) ])
 						tempLookup[tupleterm].add(termid)
 
 			for tupleterm,idlist in tempLookup.items():
