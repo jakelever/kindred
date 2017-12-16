@@ -4,6 +4,7 @@
 import kindred
 from intervaltree import IntervalTree
 from collections import defaultdict
+import six
 
 class Parser:
 	"""
@@ -29,6 +30,9 @@ class Parser:
 		self.nlp = spacy.load(language, disable=['ner'])
 
 	def _sentencesGenerator(self,text):
+		if six.PY2 and isinstance(text,str):
+			text = unicode(text)
+
 		parsed = self.nlp(text)
 		sentence = None
 		for token in parsed:
