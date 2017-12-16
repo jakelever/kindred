@@ -171,6 +171,18 @@ def test_unicodeParse():
 	assert isinstance(sentence.dependencies,list)
 	assert len(sentence.dependencies) > 0
 
+def test_notunicode():
+	singleSentence = 'Erlotinib is a common treatment for lung and unknown cancers.'
+	corpus = kindred.Corpus(singleSentence)
+	
+	parser = kindred.Parser()
+	parser.parse(corpus)
+	
+	assert len(corpus.documents) == 1
+	doc = corpus.documents[0]
+	assert isinstance(doc.sentences,list)
+	assert len(doc.sentences) == 1
+
 if __name__ == '__main__':
 	#test_largeSentence()
 	test_parsing_dependencyGraph()
