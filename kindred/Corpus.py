@@ -13,7 +13,7 @@ class Corpus:
 		:param text: Optional SimpleTag text to initalize a single document
 		:param loadFromSimpleTag: If text is provided, whether the text parameter is in the SimpleTag format and will extract entities and relations accordingly
 		:type text: String (with SimpleTag format XML)
-		:param loadFromSimpleTag: bool
+		:type loadFromSimpleTag: bool
 		"""
 
 		self.documents = []
