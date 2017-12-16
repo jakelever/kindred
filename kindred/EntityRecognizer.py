@@ -8,11 +8,8 @@ import time
 import re
 import string
 from collections import defaultdict,Counter
-import spacy
 import json
 import six
-
-nlp = spacy.load('en')
 
 def acronymMatch(words,pos,currentAcronym,atStart,subpos=None):
 	if len(currentAcronym) == 0:
@@ -186,6 +183,9 @@ class EntityRecognizer:
 		self.detectMicroRNA = detectMicroRNA
 		self.detectAcronyms = detectAcronyms
 		self.mergeTerms = mergeTerms
+
+		import spacy
+		self.nlp = spacy.load('en')
 		
 	def _processWords(self, words):
 		locs,terms,termtypesAndids = getTermIDsAndLocations(words,self.lookup)
@@ -351,7 +351,7 @@ class EntityRecognizer:
 				for line in f:
 					termid,terms = line.strip().split('\t')
 					for term in terms.split('|'):
-						tupleterm = tuple([ token.text.lower() for token in nlp(term) ])
+						tupleterm = tuple([ token.text.lower() for token in self.nlp(term) ])
 						tempLookup[tupleterm].add(termid)
 
 			for tupleterm,idlist in tempLookup.items():
