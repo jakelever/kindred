@@ -10,6 +10,8 @@ class Parser:
 	"""
 	Runs Spacy on corpus to get sentences and associated tokens
 	"""
+
+	languageModels = {}
 	
 	def __init__(self,language='en'):
 		"""
@@ -27,7 +29,10 @@ class Parser:
 
 		self.language = language
 
-		self.nlp = spacy.load(language, disable=['ner'])
+		if not language in Parser.languageModels:
+			Parser.languageModels[language] = spacy.load(language, disable=['ner'])
+
+		self.nlp = Parser.languageModels[language]
 
 	def _sentencesGenerator(self,text):
 		if six.PY2 and isinstance(text,str):
