@@ -10,6 +10,7 @@ import string
 from collections import defaultdict,Counter
 import spacy
 import json
+import six
 
 nlp = spacy.load('en')
 
@@ -148,304 +149,213 @@ def getTermIDsAndLocations(np, lookupDict):
 def startsWithButNotAll(s,search):
 	return s.startswith(search) and len(s) > len(search)
 
-def processWords(words, lookup, detectFusionGenes=True, detectMicroRNA=True, detectAcronyms=True, mergeTerms=True):
-	locs,terms,termtypesAndids = getTermIDsAndLocations(words,lookup)
 
-	if detectFusionGenes:
-		fusionLocs,fusionTerms,fusionTermtypesAndids = fusionGeneDetection(words,lookup)
-	
-		for floc,fterm,ftermtypesAndid in zip(fusionLocs,fusionTerms,fusionTermtypesAndids):
-			if not floc in locs:
-				locs.append(floc)
-				terms.append(fterm)
-				termtypesAndids.append(ftermtypesAndid)
+class EntityRecognizer:
+	def __init__(self,lookup,detectFusionGenes=False,detectMicroRNA=False,detectAcronyms=False,mergeTerms=False):
+		"""
+		Create an EntityRecognizer and provide the lookup table for terms and additional flags for what to identify in text
 
-	if detectMicroRNA:
-		for i,w in enumerate(words):
-			lw = w.lower()
-			if startsWithButNotAll(lw,"mir-") or startsWithButNotAll(lw,"hsa-mir-") or startsWithButNotAll(lw,"microrna-") or (startsWithButNotAll(lw,"mir") and lw[3] in string.digits):
-				potentialLocs = (i,i+1)
-				if not potentialLocs in locs:
-					termtypesAndids.append([('gene','mirna|'+w)])
-					terms.append((w,))
-					locs.append((i,i+1))
+		:param lookup: A dictionary of terms (tuple of parsed words) to a list of (entityType,externalID).
+		:param detectFusionGenes: Whether to try to identify fusion gene terms (e.g. BCR-ABL1). Lookup must contain terms of type 'gene'
+		:param detectMicroRNA: Whether to identify microRNA terms (added as 'gene' entities)
+		:param detectAcronyms: Whether to try to identify acronyms and merge things intelligently
+		:param mergeTerms: Whether to merge neighbouring terms that refer to the same external entity (e.g. HER2/neu as one term instead of two)
+		:type lookup: dict
+		:type detectFusionGenes: bool
+		:type detectMicroRNA: bool
+		:type detectAcronyms: bool
+		:type mergeTerms: bool
+		"""
 
+		assert isinstance(lookup,dict)
+		for termsmatch,typeAndIDs in lookup.items():
+			assert isinstance(termsmatch,tuple), "Lookup key must be a tuple of strings"
+			assert isinstance(typeAndIDs,list), "Lookup value must be a list of (entityType,externalID)"
+			assert len(typeAndIDs)>0, "Lookup value must be a list of (entityType,externalID)"
+			for typeAndID in typeAndIDs:
+				assert isinstance(typeAndID,tuple),"Lookup value must be a list of (entityType,externalID)"
+				assert len(typeAndID)==2, "Lookup value must be a list of (entityType,externalID)"
 
-	filtered = zip(locs,terms,termtypesAndids)
-	filtered = sorted(filtered)
+		assert isinstance(detectFusionGenes,bool)
+		assert isinstance(detectMicroRNA,bool)
+		assert isinstance(detectAcronyms,bool)
+		assert isinstance(mergeTerms,bool)
 
-	if mergeTerms:
-		# We'll attempt to merge terms (i.e. if a gene is referred to using two acronyms together)
-		# Example: Hepatocellular carcinoma (HCC) or HER2/ Neu or INK4B P15
-		locsToRemove = set()
-		for i in range(len(filtered)-1):
-			(startA,endA),termsA,termTypesAndIDsA = filtered[i]
-			(startB,endB),termsB,termTypesAndIDsB = filtered[i+1]
-			
-			# Check that the terms are beside each other or separated by a /,- or (
-			if startB == endA or (startB == (endA+1) and words[endA] in ['/','-','(',')']):
-				idsA,idsB = set(),set()
+		self.lookup = lookup
+		self.detectFusionGenes = detectFusionGenes
+		self.detectMicroRNA = detectMicroRNA
+		self.detectAcronyms = detectAcronyms
+		self.mergeTerms = mergeTerms
+		
+	def _processWords(self, words):
+		locs,terms,termtypesAndids = getTermIDsAndLocations(words,self.lookup)
 
-				for termType, termIDs in termTypesAndIDsA:
-					for termID in termIDs.split(';'):
-						idsA.add((termType,termID))
-				for termType, termID in termTypesAndIDsB:
-					for termID in termIDs.split(';'):
-						idsB.add((termType,termID))
+		if self.detectFusionGenes:
+			fusionLocs,fusionTerms,fusionTermtypesAndids = fusionGeneDetection(words,self.lookup)
+		
+			for floc,fterm,ftermtypesAndid in zip(fusionLocs,fusionTerms,fusionTermtypesAndids):
+				if not floc in locs:
+					locs.append(floc)
+					terms.append(fterm)
+					termtypesAndids.append(ftermtypesAndid)
 
-				idsIntersection = idsA.intersection(idsB)
-
-				# Detect if the either term is in brackets e.g. HER2 (ERBB2)
-				firstTermInBrackets,secondTermInBrackets = False,False
-				if startB == (endA+1) and endB < len(words) and words[endA] == '(' and words[endB] == ')':
-					secondTermInBrackets = True
-				if startB == (endA+1) and startA > 0 and words[startA-1] == '(' and words[endA] == ')':
-					firstTermInBrackets = True
-
-				# The two terms share IDs so we're going to merge them
-				idsShared = (len(idsIntersection) > 0)
-
-				if idsShared:
-					groupedByType = defaultdict(list)
-					for termType,termID in idsIntersection:
-						groupedByType[termType].append(termID)
-
-					locsToRemove.add((startA,endA))
-					locsToRemove.add((startB,endB))
-
-					if secondTermInBrackets:
-						thisLocs = (startA,endB+1)
-						thisTerms = tuple(words[startA:endB+1])
-					elif firstTermInBrackets:
-						thisLocs = (startA-1,endB)
-						thisTerms = tuple(words[startA-1:endB])
-					else:
-						thisLocs = (startA,endB)
-						thisTerms = tuple(words[startA:endB])
+		if self.detectMicroRNA:
+			for i,w in enumerate(words):
+				lw = w.lower()
+				if startsWithButNotAll(lw,"mir-") or startsWithButNotAll(lw,"hsa-mir-") or startsWithButNotAll(lw,"microrna-") or (startsWithButNotAll(lw,"mir") and lw[3] in string.digits):
+					potentialLocs = (i,i+1)
+					if not potentialLocs in locs:
+						termtypesAndids.append([('gene','mirna|'+w)])
+						terms.append((w,))
+						locs.append((i,i+1))
 
 
-					thisTermTypesAndIDs = [ (termType,";".join(sorted(termIDs))) for termType,termIDs in groupedByType.items() ]
-
-					filtered.append((thisLocs,thisTerms,thisTermTypesAndIDs))
-
-		# Now we have to remove the terms marked for deletion in the previous section
-		filtered = [ (locs,terms,termtypesAndids) for locs,terms,termtypesAndids in filtered if not locs in locsToRemove]
+		filtered = zip(locs,terms,termtypesAndids)
 		filtered = sorted(filtered)
 
-	if detectAcronyms:
-		# And we'll check to see if there are any obvious acronyms
-		locsToRemove = set()
-		acronyms = acronymDetection(words)
-		for (wordsStart,wordsEnd,acronymLoc) in acronyms:
-			wordIsTerm = (wordsStart,wordsEnd) in locs
-			acronymIsTerm = (acronymLoc,acronymLoc+1) in locs
-			
-			if wordIsTerm and acronymIsTerm:
-				# Remove the acronym
-				locsToRemove.add((acronymLoc,acronymLoc+1))
-			elif acronymIsTerm:
-				# Remove any terms that contain part of the spelt out word
-				newLocsToRemove = [ (i,j) for i in range(wordsStart,wordsEnd) for j in range(i,wordsEnd+1) ]
-				locsToRemove.update(newLocsToRemove)
-			
+		if self.mergeTerms:
+			# We'll attempt to merge terms (i.e. if a gene is referred to using two acronyms together)
+			# Example: Hepatocellular carcinoma (HCC) or HER2/ Neu or INK4B P15
+			locsToRemove = set()
+			for i in range(len(filtered)-1):
+				(startA,endA),termsA,termTypesAndIDsA = filtered[i]
+				(startB,endB),termsB,termTypesAndIDsB = filtered[i+1]
+				
+				# Check that the terms are beside each other or separated by a /,- or (
+				if startB == endA or (startB == (endA+1) and words[endA] in ['/','-','(',')']):
+					idsA,idsB = set(),set()
 
-		# Now we have to remove the terms marked for deletion in the previous section
-		filtered = [ (locs,terms,termtypesAndids) for locs,terms,termtypesAndids in filtered if not locs in locsToRemove]
-		filtered = sorted(filtered)
+					for termType, termIDs in termTypesAndIDsA:
+						for termID in termIDs.split(';'):
+							idsA.add((termType,termID))
+					for termType, termID in termTypesAndIDsB:
+						for termID in termIDs.split(';'):
+							idsB.add((termType,termID))
 
-	return filtered
+					idsIntersection = idsA.intersection(idsB)
+
+					# Detect if the either term is in brackets e.g. HER2 (ERBB2)
+					firstTermInBrackets,secondTermInBrackets = False,False
+					if startB == (endA+1) and endB < len(words) and words[endA] == '(' and words[endB] == ')':
+						secondTermInBrackets = True
+					if startB == (endA+1) and startA > 0 and words[startA-1] == '(' and words[endA] == ')':
+						firstTermInBrackets = True
+
+					# The two terms share IDs so we're going to merge them
+					idsShared = (len(idsIntersection) > 0)
+
+					if idsShared:
+						groupedByType = defaultdict(list)
+						for termType,termID in idsIntersection:
+							groupedByType[termType].append(termID)
+
+						locsToRemove.add((startA,endA))
+						locsToRemove.add((startB,endB))
+
+						if secondTermInBrackets:
+							thisLocs = (startA,endB+1)
+							thisTerms = tuple(words[startA:endB+1])
+						elif firstTermInBrackets:
+							thisLocs = (startA-1,endB)
+							thisTerms = tuple(words[startA-1:endB])
+						else:
+							thisLocs = (startA,endB)
+							thisTerms = tuple(words[startA:endB])
 
 
-def loadWordlists(entityTypesWithFilenames):
-	lookup = defaultdict(set)
-	for entityType,filename in entityTypesWithFilenames.items():
-		with codecs.open(filename,'r','utf-8') as f:
-			tempLookup = defaultdict(set)
-			for line in f:
-				termid,terms = line.strip().split('\t')
-				for term in terms.split('|'):
-					#tupleterm = tuple(term.split())
-					tupleterm = tuple([ token.text.lower() for token in nlp(term) ])
-					#lookup[tupleterm].add((entityType,termid))
-					tempLookup[tupleterm].add(termid)
+						thisTermTypesAndIDs = [ (termType,";".join(sorted(termIDs))) for termType,termIDs in groupedByType.items() ]
 
-		for tupleterm,idlist in tempLookup.items():
-			lookup[tupleterm].add( (entityType,";".join(sorted(list(idlist)))) )
+						filtered.append((thisLocs,thisTerms,thisTermTypesAndIDs))
 
-	#lookup = { k:sorted(list(kset)) for k,kset in lookup.items() }
+			# Now we have to remove the terms marked for deletion in the previous section
+			filtered = [ (locs,terms,termtypesAndids) for locs,terms,termtypesAndids in filtered if not locs in locsToRemove]
+			filtered = sorted(filtered)
 
-	return lookup
+		if self.detectAcronyms:
+			# And we'll check to see if there are any obvious acronyms
+			locsToRemove = set()
+			acronyms = acronymDetection(words)
+			for (wordsStart,wordsEnd,acronymLoc) in acronyms:
+				wordIsTerm = (wordsStart,wordsEnd) in locs
+				acronymIsTerm = (acronymLoc,acronymLoc+1) in locs
+				
+				if wordIsTerm and acronymIsTerm:
+					# Remove the acronym
+					locsToRemove.add((acronymLoc,acronymLoc+1))
+				elif acronymIsTerm:
+					# Remove any terms that contain part of the spelt out word
+					newLocsToRemove = [ (i,j) for i in range(wordsStart,wordsEnd) for j in range(i,wordsEnd+1) ]
+					locsToRemove.update(newLocsToRemove)
+				
 
-def now():
-	return time.strftime("%Y-%m-%d %H:%M:%S")
+			# Now we have to remove the terms marked for deletion in the previous section
+			filtered = [ (locs,terms,termtypesAndids) for locs,terms,termtypesAndids in filtered if not locs in locsToRemove]
+			filtered = sorted(filtered)
 
-def getStandardizedTerm(text,externalID,IDToTerm):
-	standardizedTerms = [ IDToTerm[eid] for eid in externalID.split(';') ]
-	standardizedTerms = sorted(list(set(standardizedTerms)))
+		return filtered
 
-	standardizedTermsLower = [ st.lower() for st in standardizedTerms ]
-	textLower = text.lower()
+	def annotate(self,corpus):
+		"""
+		Annotate a parsed corpus with the wordlist lookup and other entity types
 
-	if textLower in standardizedTermsLower:
-		index = standardizedTermsLower.index(textLower)
-		standardizedTerm = standardizedTerms[index]
-	else:
-		standardizedTerm = ";".join(standardizedTerms)
-	return standardizedTerm
+		:param corpus: Corpus to annotate
+		:type corpus: kindred.Corpus
+		"""
 
-def standardizeMIRName(externalID):
-	assert externalID.startswith('mirna|'), "Unexpected ID: %s" % externalID
-	standardName = externalID[4:]
-
-	search = re.search('mirna\|\D*(?P<id>\d+[A-Za-z]*)',externalID)
-	if search:
-		mirID = search.groupdict()['id']
-		if not mirID is None:
-			standardName = "miR-%s" % mirID
-
-	return standardName
-
-def cancermine(sentenceFile,modelFilenames,filterTerms,wordlistPickle,genes,cancerTypes,outData):
-	print("%s : start" % now())
-
-	models = {}
-	assert isinstance(modelFilenames,list)
-	for modelFilename in modelFilenames:
-		with open(modelFilename,'rb') as f:
-			models[modelFilename] = pickle.load(f)
-
-	IDToTerm = {}
-	with codecs.open(genes,'r','utf-8') as f:
-		for line in f:
-			geneid,singleterm,_ = line.strip().split('\t')
-			IDToTerm[geneid] = singleterm
-
-	with codecs.open(cancerTypes,'r','utf-8') as f:
-		for line in f:
-			cancerid,singleterm,_ = line.strip().split('\t')
-			IDToTerm[cancerid] = singleterm
-
-	with codecs.open(filterTerms,'r','utf-8') as f:
-		filterTerms = [ line.strip().lower() for line in f ]
-
-	with open(wordlistPickle,'rb') as f:
-		termLookup = pickle.load(f)
-	#termLookup = loadWordlists({'gene':genes,'cancer':cancerTypes})
-	
-	# Truncate the output file
-	with codecs.open(outData,'w','utf-8') as outF:
-		pass
-
-	timers = Counter()
-
-	print("%s : loading..." % now())
-	with open(sentenceFile) as f:
-		sentenceData = json.load(f)
-	corpus = kindred.Corpus()
-	for sentence in sentenceData:
-		metadata = dict(sentence)
-		del metadata["sentence"]
-		doc = kindred.Document(sentence["sentence"],metadata=metadata)
-		corpus.addDocument(doc)
-
-	print("%s : loaded..." % now())
-	parser = kindred.Parser()
-
-	startTime = time.time()
-	parser.parse(corpus)
-	timers['parser'] += time.time() - startTime
-	print("%s : parsed" % now())
-
-	startTime = time.time()
-	for doc in corpus.documents:
-		#print(doc.sourceIDs)
-		sys.stdout.flush()
-		for sentence in doc.sentences:
-			words = [ t.word for t in sentence.tokens ]
-
-			extractedTermData = processWords(words,termLookup)
-			
-			for locs,terms,termtypesAndids in extractedTermData:
-				#text = " ".join(terms)
-				startToken = locs[0]
-				endToken = locs[1]
-				startPos = sentence.tokens[startToken].startPos
-				endPos = sentence.tokens[endToken-1].endPos
-				text = doc.text[startPos:endPos]
-				loc = list(range(startToken,endToken))
-				for entityType,externalID in termtypesAndids:
-					e = kindred.Entity(entityType,text,[(startPos,endPos)],externalID=externalID)
-					doc.addEntity(e)
-					sentence.addEntityWithLocation(e,loc)
-	timers['entitiesAdded'] += time.time() - startTime
-
-	print("%s : entities added" % now())
-
-	with codecs.open(outData,'a','utf-8') as outF:
-		startTime = time.time()
-		for modelname,model in models.items():
-			model.predict(corpus)
-		timers['predicted'] += time.time() - startTime
-
-		print("%s : predicted" % now())
-
-		startTime = time.time()
+		assert corpus.parsed == True, "Corpus must already be parsed before entity recognition"
 
 		for doc in corpus.documents:
-			if len(doc.relations) == 0:
-				continue
-
-			eID_to_sentence = {}
 			for sentence in doc.sentences:
-				for eID in sentence.getEntityIDs():
-					eID_to_sentence[eID] = sentence
-			eID_to_entity = doc.getEntityIDsToEntities()
+				words = [ t.word for t in sentence.tokens ]
 
-			for relation in doc.relations:
-				sentence = eID_to_sentence[relation.entityIDs[0]]
-				sentenceTextLower = sentence.text.lower()
+				extractedTermData = self._processWords(words)
+				
+				for locs,terms,termtypesAndids in extractedTermData:
+					#text = " ".join(terms)
+					startToken = locs[0]
+					endToken = locs[1]
+					startPos = sentence.tokens[startToken].startPos
+					endPos = sentence.tokens[endToken-1].endPos
+					text = doc.text[startPos:endPos]
+					loc = list(range(startToken,endToken))
+					for entityType,externalID in termtypesAndids:
+						e = kindred.Entity(entityType,text,[(startPos,endPos)],externalID=externalID)
+						doc.addEntity(e)
+						sentence.addEntityWithLocation(e,loc)
 
-				hasFilterTerm = any( filterTerm in sentenceTextLower for filterTerm in filterTerms )
-				if not hasFilterTerm:
-					continue
-				#words = [ t.word for t in sentence.tokens ]
-				#text = " ".join(words)
+	@staticmethod
+	def loadWordlists(entityTypesWithFilenames):
+		"""
+		Load a wordlist from multiple files. Each filename should be a two column tab-delimited file with the first column being a unique ID and the second column containing all the terms separated by '|'.
 
-				relType = relation.relationType
-				entityData = []
-				for eID in relation.entityIDs:
-					entity = eID_to_entity[eID]
-					entityData.append(entity.externalID)
-					entityData.append(entity.text)
+		As each term is parsed, this can take a long time. It is recommended to run this one time and save the output as a Python pickle file and load in.
 
+		:param entityTypesWithFilenames: List of tuples of (entityType,filename)
+		:type entityTypesWithFilenames: list
+		:return: Dictionary of lookup values
+		:rtype: the return type description
+		"""
+		assert isinstance(entityTypesWithFilenames,list), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
+		for entityTypeWithFilename in entityTypesWithFilenames:
+		 	assert isinstance(entityTypeWithFilename,tuple), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
+		 	assert len(entityTypeWithFilename)==2, 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
+		 	entityType,filename = entityTypeWithFilename
+		 	assert isinstance(entityType,six.string_types), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
+		 	assert isinstance(filename,six.string_types), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
+		 	assert os.path.isfile(filename), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
 
-					if entity.externalID.startswith('combo'):
-						externalIDsplit = entity.externalID.split('|')
-						standardizedTerms = [ getStandardizedTerm("",st.replace('&',';'),IDToTerm) for st in externalIDsplit[1:] ]
-						standardizedTerm = "|".join(standardizedTerms)
-					elif entity.externalID.startswith('mirna|'):
-						standardizedTerm = standardizeMIRName(entity.externalID)
-					else:
-						standardizedTerm = getStandardizedTerm(entity.text,entity.externalID,IDToTerm)
+		lookup = defaultdict(set)
+		for entityType,filename in entityTypesWithFilenames.items():
+			with codecs.open(filename,'r','utf-8') as f:
+				tempLookup = defaultdict(set)
+				for line in f:
+					termid,terms = line.strip().split('\t')
+					for term in terms.split('|'):
+						tupleterm = tuple([ token.text.lower() for token in nlp(term) ])
+						tempLookup[tupleterm].add(termid)
 
-					entityData.append(standardizedTerm)
+			for tupleterm,idlist in tempLookup.items():
+				lookup[tupleterm].add( (entityType,";".join(sorted(list(idlist)))) )
 
-
-				if doc.metadata["pmid"]:
-					m = doc.metadata
-					outData = [m["pmid"],m['title'],m["journal"],m["year"],m['section'],relType] + entityData + [sentence.text]
-					outLine = "\t".join(outData)
-					outF.write(outLine+"\n")
-
-		timers['output'] += time.time() - startTime
-
-		print("%s : output" % now())
-
-	sys.stdout.flush()
-
-	print("%s : done" % now())
-	
-	for section,sectiontime in timers.items():
-		print("%s\t%f" % (section,sectiontime))
-
+		return lookup
 

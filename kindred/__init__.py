@@ -13,6 +13,7 @@ from kindred.CandidateBuilder import CandidateBuilder
 from kindred.Vectorizer import Vectorizer
 from kindred.RelationClassifier import RelationClassifier
 from kindred.LogisticRegressionWithThreshold import LogisticRegressionWithThreshold
+from kindred.EntityRecognizer import EntityRecognizer
 
 # General functions
 from kindred.loadFunctions import loadDoc,loadDocs,loadDir,iterLoadDataFromBioc
