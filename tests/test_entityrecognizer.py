@@ -413,7 +413,7 @@ def test_entityrecognizer_acronyms_acronymHasCorrectID_hyphen():
 
 def test_loadwordlist():
 	scriptDir = os.path.dirname(__file__)
-	wordlistPath = os.path.join(scriptDir,'data','wordlist.txt')
+	wordlistPath = os.path.join(scriptDir,'data','terms.wordlist')
 
 	lookup = kindred.EntityRecognizer.loadWordlists([('thing',wordlistPath)])
 
