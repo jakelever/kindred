@@ -1,16 +1,26 @@
 import kindred
+import os
+from collections import defaultdict
 
 def makeTestLookup():
 	lookup = {}
+	lookup[('epidermal','growth','factor','receptor')] = [('gene','HGNC:3236'),('dummy','ID:1234')]
+	#lookup[('epidermal','growth','factor','receptor')] = [('gene','HGNC:3236')]
 	lookup[('egfr',)] = [('gene','HGNC:3236')]
+
 	lookup[('erbb2',)] = [('gene','HGNC:2064')]
 	lookup[('fgfr3',)] = [('gene','HGNC:3690')]
 	lookup[('tacc3',)] = [('gene','HGNC:11524')]
+
 	lookup[('her2',)] = [('gene','HGNC:2064')]
 	lookup[('neu',)] = [('gene','HGNC:2064')]
-	#DOID:3908       non-small cell lung carcinoma
+
 	lookup[('non','-','small','cell','lung','carcinoma')] = [('cancer','DOID:3908')]
 	lookup[('nsclc',)] = [('cancer','DOID:3908')]
+	lookup[('dlbcl',)] = [('cancer','DOID:0050745')]
+	lookup[('lymphoma',)] = [('cancer','DOID:0060058')]
+
+	lookup[('never','ending','umbrella')] = [('movie','IMDB:9999')]
 
 	return lookup
 
@@ -243,7 +253,7 @@ def test_entityrecognizer_merge_brackets_OFF():
 	assert entity2.text == 'NSCLC'
 	assert entity2.position == [(50,55)]
 
-def test_entityrecognizer_merge_brackets_1():
+def test_entityrecognizer_merge_brackets_right():
 	lookup = makeTestLookup()
 
 	text = 'This paper studies non-small cell lung carcinoma (NSCLC).'
@@ -265,6 +275,155 @@ def test_entityrecognizer_merge_brackets_1():
 	assert entity.text == 'non-small cell lung carcinoma (NSCLC)'
 	assert entity.position == [(19,56)]
 
+def test_entityrecognizer_merge_brackets_left():
+	lookup = makeTestLookup()
+
+	text = 'This paper studies (NSCLC) non-small cell lung carcinoma.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,mergeTerms=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'cancer'
+	assert entity.externalID == 'DOID:3908'
+	assert entity.text == '(NSCLC) non-small cell lung carcinoma'
+	assert entity.position == [(19,56)]
+
+def test_entityrecognizer_merge_nobrackets():
+	lookup = makeTestLookup()
+
+	text = 'HER2 neu is a gene.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,mergeTerms=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'gene'
+	assert entity.externalID == 'HGNC:2064'
+	assert entity.text == 'HER2 neu'
+	assert entity.position == [(0,8)]
+
+def test_entityrecognizer_acronyms_OFF():
+	lookup = makeTestLookup()
+
+	text = 'The Never Ending Umbrella (NEU) is a true classic.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 2
+	entity1,entity2 = doc.entities
+	
+	assert entity1.entityType == 'movie'
+	assert entity1.externalID == 'IMDB:9999'
+	assert entity1.text == 'Never Ending Umbrella'
+	assert entity1.position == [(4,25)]
+
+	assert entity2.entityType == 'gene'
+	assert entity2.externalID == 'HGNC:2064'
+	assert entity2.text == 'NEU'
+	assert entity2.position == [(27,30)]
+
+def test_entityrecognizer_acronyms_bothHaveIDs():
+	lookup = makeTestLookup()
+
+	text = 'The Never Ending Umbrella (NEU) is a true classic.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,detectAcronyms=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'movie'
+	assert entity.externalID == 'IMDB:9999'
+	assert entity.text == 'Never Ending Umbrella'
+	assert entity.position == [(4,25)]
+
+def test_entityrecognizer_acronyms_acronymHasCorrectID():
+	lookup = makeTestLookup()
+
+	text = 'Diffuse large b cell lymphoma (DLBCL) is a challenging research topic.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,detectAcronyms=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'cancer'
+	assert entity.externalID == 'DOID:0050745'
+	assert entity.text == 'DLBCL'
+	assert entity.position == [(31,36)]
+
+def test_entityrecognizer_acronyms_acronymHasCorrectID_hyphen():
+	lookup = makeTestLookup()
+
+	text = 'Diffuse large b-cell lymphoma (DLBCL) is a challenging research topic.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,detectAcronyms=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'cancer'
+	assert entity.externalID == 'DOID:0050745'
+	assert entity.text == 'DLBCL'
+	assert entity.position == [(31,36)]
+
+def test_loadwordlist():
+	scriptDir = os.path.dirname(__file__)
+	wordlistPath = os.path.join(scriptDir,'data','wordlist.txt')
+
+	lookup = kindred.EntityRecognizer.loadWordlists([('thing',wordlistPath)])
+
+	expectedDefaultDict = defaultdict(set)
+	data = {(u'term', u'term', u'term'): set([('thing', u'ID5')]), (u'term5',): set([('thing', u'ID4')]), (u'term4',): set([('thing', u'ID3')]), (u'term3',): set([('thing', u'ID3')]), (u'term2',): set([('thing', u'ID2')]), (u'term1',): set([('thing', u'ID1;ID4')]), (u'term-64',): set([('thing', u'ID5')])}
+	expectedDefaultDict.update(data)
+
+	assert lookup == expectedDefaultDict
+
 
 if __name__ == '__main__':
-	test_entityrecognizer_fusion_2()
+	test_loadwordlist()

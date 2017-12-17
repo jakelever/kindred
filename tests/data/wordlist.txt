@@ -1,0 +1,5 @@
+ID1	term1
+ID2	term2
+ID3	term3|term4
+ID4	term1|term5
+ID5	term-64|term term term
