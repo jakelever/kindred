@@ -176,19 +176,19 @@ def startsWithButNotAll(s,search):
 
 
 class EntityRecognizer:
-	def __init__(self,lookup,detectFusionGenes=False,detectMicroRNA=False,detectAcronyms=False,mergeTerms=False):
+	def __init__(self,lookup,detectFusionGenes=False,detectMicroRNA=False,acronymDetectionForAmbiguity=False,mergeTerms=False):
 		"""
 		Create an EntityRecognizer and provide the lookup table for terms and additional flags for what to identify in text
 
 		:param lookup: A dictionary of terms (tuple of parsed words) to a list of (entityType,externalID).
 		:param detectFusionGenes: Whether to try to identify fusion gene terms (e.g. BCR-ABL1). Lookup must contain terms of type 'gene'
 		:param detectMicroRNA: Whether to identify microRNA terms (added as 'gene' entities)
-		:param detectAcronyms: Whether to try to identify acronyms and merge things intelligently
+		:param acronymDetectionForAmbiguity: Whether to try to identify acronyms and use this to deal with ambiguity (by removing incorrect matches to acronyms or the longer terms)
 		:param mergeTerms: Whether to merge neighbouring terms that refer to the same external entity (e.g. HER2/neu as one term instead of two)
 		:type lookup: dict
 		:type detectFusionGenes: bool
 		:type detectMicroRNA: bool
-		:type detectAcronyms: bool
+		:type acronymDetectionForAmbiguity: bool
 		:type mergeTerms: bool
 		"""
 
@@ -203,13 +203,13 @@ class EntityRecognizer:
 
 		assert isinstance(detectFusionGenes,bool)
 		assert isinstance(detectMicroRNA,bool)
-		assert isinstance(detectAcronyms,bool)
+		assert isinstance(acronymDetectionForAmbiguity,bool)
 		assert isinstance(mergeTerms,bool)
 
 		self.lookup = lookup
 		self.detectFusionGenes = detectFusionGenes
 		self.detectMicroRNA = detectMicroRNA
-		self.detectAcronyms = detectAcronyms
+		self.acronymDetectionForAmbiguity = acronymDetectionForAmbiguity
 		self.mergeTerms = mergeTerms
 
 		
@@ -304,7 +304,7 @@ class EntityRecognizer:
 			filtered = [ (locs,terms,termtypesAndids) for locs,terms,termtypesAndids in filtered if not locs in locsToRemove]
 			filtered = sorted(filtered)
 
-		if self.detectAcronyms:
+		if self.acronymDetectionForAmbiguity:
 			# And we'll check to see if there are any obvious acronyms
 			locsToRemove = set()
 			acronyms = acronymDetection(words)

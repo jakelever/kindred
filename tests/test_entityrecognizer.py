@@ -407,7 +407,7 @@ def test_entityrecognizer_acronyms_bothHaveIDs():
 	parser = kindred.Parser()
 	parser.parse(corpus)
 
-	ner = kindred.EntityRecognizer(lookup,detectAcronyms=True)
+	ner = kindred.EntityRecognizer(lookup,acronymDetectionForAmbiguity=True)
 	ner.annotate(corpus)
 
 	doc = corpus.documents[0]
@@ -429,7 +429,7 @@ def test_entityrecognizer_acronyms_bothHaveIDs_plural():
 	parser = kindred.Parser()
 	parser.parse(corpus)
 
-	ner = kindred.EntityRecognizer(lookup,detectAcronyms=True)
+	ner = kindred.EntityRecognizer(lookup,acronymDetectionForAmbiguity=True)
 	ner.annotate(corpus)
 
 	doc = corpus.documents[0]
@@ -451,7 +451,7 @@ def test_entityrecognizer_acronyms_acronymHasCorrectID():
 	parser = kindred.Parser()
 	parser.parse(corpus)
 
-	ner = kindred.EntityRecognizer(lookup,detectAcronyms=True)
+	ner = kindred.EntityRecognizer(lookup,acronymDetectionForAmbiguity=True)
 	ner.annotate(corpus)
 
 	doc = corpus.documents[0]
@@ -473,7 +473,7 @@ def test_entityrecognizer_acronyms_acronymHasCorrectID_hyphen():
 	parser = kindred.Parser()
 	parser.parse(corpus)
 
-	ner = kindred.EntityRecognizer(lookup,detectAcronyms=True)
+	ner = kindred.EntityRecognizer(lookup,acronymDetectionForAmbiguity=True)
 	ner.annotate(corpus)
 
 	doc = corpus.documents[0]
