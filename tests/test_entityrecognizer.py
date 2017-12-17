@@ -13,6 +13,7 @@ def makeTestLookup():
 
 	lookup[('her2',)] = [('gene','HGNC:2064')]
 	lookup[('neu',)] = [('gene','HGNC:2064')]
+	lookup[('neus',)] = [('gene','HGNC:????')]
 
 	lookup[('non','-','small','cell','lung','carcinoma')] = [('cancer','DOID:3908')]
 	lookup[('nsclc',)] = [('cancer','DOID:3908')]
@@ -20,6 +21,7 @@ def makeTestLookup():
 	lookup[('lymphoma',)] = [('cancer','DOID:0060058')]
 
 	lookup[('never','ending','umbrella')] = [('movie','IMDB:9999')]
+	lookup[('never','ending','umbrellas')] = [('movie','IMDB:9999')]
 
 	return lookup
 
@@ -225,6 +227,56 @@ def test_entityrecognizer_fusion_2():
 	assert entity.text == 'HER2-neu'
 	assert entity.position == [(0,8)]
 
+def test_entityrecognizer_fusion_3():
+	lookup = makeTestLookup()
+
+	text = 'EGFR-lymphoma is not anything.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,detectFusionGenes=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	print(doc.entities)
+	assert len(doc.entities) == 2
+	entity1,entity2 = doc.entities
+	
+	assert entity1.entityType == 'gene'
+	assert entity1.externalID == 'HGNC:3236'
+	assert entity1.text == 'EGFR'
+	assert entity1.position == [(0,4)]
+
+	assert entity2.entityType == 'cancer'
+	assert entity2.externalID == 'DOID:0060058'
+	assert entity2.text == 'lymphoma'
+	assert entity2.position == [(5,13)]
+
+def test_entityrecognizer_fusion_4():
+	lookup = makeTestLookup()
+
+	text = 'EGFR-banana is not anything.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,detectFusionGenes=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'gene'
+	assert entity.externalID == 'HGNC:3236'
+	assert entity.text == 'EGFR'
+	assert entity.position == [(0,4)]
+
 def test_entityrecognizer_merge_brackets_OFF():
 	lookup = makeTestLookup()
 
@@ -367,6 +419,28 @@ def test_entityrecognizer_acronyms_bothHaveIDs():
 	assert entity.text == 'Never Ending Umbrella'
 	assert entity.position == [(4,25)]
 
+def test_entityrecognizer_acronyms_bothHaveIDs_plural():
+	lookup = makeTestLookup()
+
+	text = 'The Never Ending Umbrellas (NEUs) are true classics.'
+
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,detectAcronyms=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'movie'
+	assert entity.externalID == 'IMDB:9999'
+	assert entity.text == 'Never Ending Umbrellas'
+	assert entity.position == [(4,26)]
+
 def test_entityrecognizer_acronyms_acronymHasCorrectID():
 	lookup = makeTestLookup()
 
@@ -423,4 +497,4 @@ def test_loadwordlist():
 
 
 if __name__ == '__main__':
-	test_loadwordlist()
+	test_entityrecognizer_fusion_3()
