@@ -72,27 +72,6 @@ def acronymDetection(words):
 				acronyms.append((start,end,acronymLoc))
 	return acronyms
 
-def findCandidateFusions(words):
-	candidateFusions = []
-	currentCandidate = []
-	insideFusion = False
-	fusionSplits = ['-','/']
-	for i in range(len(words)-1):
-		if words[i+1] in fusionSplits:
-			insideFusion = True
-		elif insideFusion and not (words[i] in fusionSplits or words[i-1] in fusionSplits):
-			insideFusion = False
-			candidateFusions.append(currentCandidate)
-			currentCandidate = []
-
-		if insideFusion:
-			currentCandidate.append(i)
-
-	if len(currentCandidate) > 0:
-		candidateFusions.append(currentCandidate)
-
-	return candidateFusions
-	
 def mergeWordsForFusionDetection(words):
 	prevWord = ""
 	mergedWords = []
