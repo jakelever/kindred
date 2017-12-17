@@ -10,6 +10,7 @@ import string
 from collections import defaultdict,Counter
 import json
 import six
+import os
 
 def acronymMatch(words,pos,currentAcronym,atStart,subpos=None):
 	if len(currentAcronym) == 0:
@@ -33,6 +34,10 @@ def acronymMatch(words,pos,currentAcronym,atStart,subpos=None):
 			
 		if curLetter == curWord[0]:
 			moves.append( (words,pos-1,currentAcronym[:-1],False) )
+
+		if curWord == '-':
+			moves.append( (words,pos-1,currentAcronym,False) )
+			
 
 	if len(wordSplit) > 1:
 		if subpos is None:
@@ -382,7 +387,7 @@ class EntityRecognizer:
 		:param entityTypesWithFilenames: List of tuples of (entityType,filename)
 		:type entityTypesWithFilenames: list
 		:return: Dictionary of lookup values
-		:rtype: the return type description
+		:rtype: defaultdict
 		"""
 		assert isinstance(entityTypesWithFilenames,list), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
 		for entityTypeWithFilename in entityTypesWithFilenames:
@@ -397,7 +402,7 @@ class EntityRecognizer:
 		nlp = spacy.load('en')
 
 		lookup = defaultdict(set)
-		for entityType,filename in entityTypesWithFilenames.items():
+		for entityType,filename in entityTypesWithFilenames:
 			with codecs.open(filename,'r','utf-8') as f:
 				tempLookup = defaultdict(set)
 				for line in f:
