@@ -67,12 +67,56 @@ def acronymDetection(words):
 				acronyms.append((start,end,acronymLoc))
 	return acronyms
 
+def findCandidateFusions(words):
+	candidateFusions = []
+	currentCandidate = []
+	insideFusion = False
+	fusionSplits = ['-','/']
+	for i in range(len(words)-1):
+		if words[i+1] in fusionSplits:
+			insideFusion = True
+		elif insideFusion and not (words[i] in fusionSplits or words[i-1] in fusionSplits):
+			insideFusion = False
+			candidateFusions.append(currentCandidate)
+			currentCandidate = []
+
+		if insideFusion:
+			currentCandidate.append(i)
+
+	if len(currentCandidate) > 0:
+		candidateFusions.append(currentCandidate)
+
+	return candidateFusions
+	
+def mergeWordsForFusionDetection(words):
+	prevWord = ""
+	mergedWords = []
+	start = 0
+	mergeChars = ['-','/']
+	for i,w in enumerate(words):
+		if w in mergeChars:
+			prevWord += w
+		elif len(prevWord) > 0 and prevWord[-1] in mergeChars:
+			prevWord += w
+		else:
+			if prevWord:
+				mergedWords.append((start,i-1,prevWord))
+			prevWord = w
+			start = i
+
+	if prevWord:
+		mergedWords.append((start,i-1,prevWord))
+
+	return mergedWords
+
 def fusionGeneDetection(words, lookupDict):
 	termtypesAndids,terms,locs = [],[],[]
 	origWords = list(words)
 	words = [ w.lower() for w in words ]
 
-	for i,word in enumerate(words):
+	mergedWords = mergeWordsForFusionDetection(words)
+
+	for start,end,word in mergedWords:
 		split = re.split("[-/]",word)
 		fusionCount = len(split)
 		if fusionCount == 1:
@@ -112,8 +156,8 @@ def fusionGeneDetection(words, lookupDict):
 			#geneTxt = ",".join(map(str,geneIDs))
 			geneIDs = [ geneID.replace(';','&') for geneID in geneIDs ]
 			termtypesAndids.append([('gene','|'.join(geneIDs))])
-			terms.append(tuple(origWords[i:i+1]))
-			locs.append((i,i+1))
+			terms.append(tuple(origWords[start:end+1]))
+			locs.append((start,end+1))
 			
 	return locs,terms,termtypesAndids
 
@@ -188,15 +232,6 @@ class EntityRecognizer:
 	def _processWords(self, words):
 		locs,terms,termtypesAndids = getTermIDsAndLocations(words,self.lookup)
 
-		if self.detectFusionGenes:
-			fusionLocs,fusionTerms,fusionTermtypesAndids = fusionGeneDetection(words,self.lookup)
-		
-			for floc,fterm,ftermtypesAndid in zip(fusionLocs,fusionTerms,fusionTermtypesAndids):
-				if not floc in locs:
-					locs.append(floc)
-					terms.append(fterm)
-					termtypesAndids.append(ftermtypesAndid)
-
 		if self.detectMicroRNA:
 			for i,w in enumerate(words):
 				lw = w.lower()
@@ -207,8 +242,24 @@ class EntityRecognizer:
 						terms.append((w,))
 						locs.append((i,i+1))
 
+		toRemove = []
+		if self.detectFusionGenes:
+			fusionLocs,fusionTerms,fusionTermtypesAndids = fusionGeneDetection(words,self.lookup)
+	
+			for floc,fterm,ftermtypesAndid in zip(fusionLocs,fusionTerms,fusionTermtypesAndids):
+				if not floc in locs:
+					# Check for which entities to remove that are inside this fusion term
+					fstart,fend = floc
+					for tstart,tend in locs:
+						if fstart <= tstart and tend <= fend:
+							toRemove.append((tstart,tend))
+
+					locs.append(floc)
+					terms.append(fterm)
+					termtypesAndids.append(ftermtypesAndid)
 
 		filtered = zip(locs,terms,termtypesAndids)
+		filtered = [ (l,t,ti) for l,t,ti in filtered if not l in toRemove ]
 		filtered = sorted(filtered)
 
 		if self.mergeTerms:
