@@ -387,7 +387,7 @@ class EntityRecognizer:
 		:param entityTypesWithFilenames: List of tuples of (entityType,filename)
 		:type entityTypesWithFilenames: list
 		:return: Dictionary of lookup values
-		:rtype: defaultdict
+		:rtype: dict
 		"""
 		assert isinstance(entityTypesWithFilenames,list), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
 		for entityTypeWithFilename in entityTypesWithFilenames:
@@ -414,5 +414,5 @@ class EntityRecognizer:
 			for tupleterm,idlist in tempLookup.items():
 				lookup[tupleterm].add( (entityType,";".join(sorted(list(idlist)))) )
 
-		return lookup
+		return dict(lookup)
 

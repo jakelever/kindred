@@ -1,6 +1,5 @@
 import kindred
 import os
-from collections import defaultdict
 
 def makeTestLookup():
 	lookup = {}
@@ -418,11 +417,9 @@ def test_loadwordlist():
 
 	lookup = kindred.EntityRecognizer.loadWordlists([('thing',wordlistPath)])
 
-	expectedDefaultDict = defaultdict(set)
-	data = {(u'term', u'term', u'term'): set([('thing', u'ID5')]), (u'term5',): set([('thing', u'ID4')]), (u'term4',): set([('thing', u'ID3')]), (u'term3',): set([('thing', u'ID3')]), (u'term2',): set([('thing', u'ID2')]), (u'term1',): set([('thing', u'ID1;ID4')]), (u'term-64',): set([('thing', u'ID5')])}
-	expectedDefaultDict.update(data)
+	expected = {(u'term', u'term', u'term'): set([('thing', u'ID5')]), (u'term5',): set([('thing', u'ID4')]), (u'term4',): set([('thing', u'ID3')]), (u'term3',): set([('thing', u'ID3')]), (u'term2',): set([('thing', u'ID2')]), (u'term1',): set([('thing', u'ID1;ID4')]), (u'term-64',): set([('thing', u'ID5')])}
 
-	assert lookup == expectedDefaultDict
+	assert lookup == expected
 
 
 if __name__ == '__main__':
