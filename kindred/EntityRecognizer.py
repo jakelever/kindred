@@ -207,7 +207,7 @@ class EntityRecognizer:
 		assert isinstance(lookup,dict)
 		for termsmatch,typeAndIDs in lookup.items():
 			assert isinstance(termsmatch,tuple), "Lookup key must be a tuple of strings"
-			assert isinstance(typeAndIDs,list), "Lookup value must be a list of (entityType,externalID)"
+			assert isinstance(typeAndIDs,set), "Lookup value must be a list of (entityType,externalID)"
 			assert len(typeAndIDs)>0, "Lookup value must be a list of (entityType,externalID)"
 			for typeAndID in typeAndIDs:
 				assert isinstance(typeAndID,tuple),"Lookup value must be a list of (entityType,externalID)"

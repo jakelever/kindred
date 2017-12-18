@@ -23,7 +23,11 @@ def makeTestLookup():
 	lookup[('never','ending','umbrella')] = [('movie','IMDB:9999')]
 	lookup[('never','ending','umbrellas')] = [('movie','IMDB:9999')]
 
-	return lookup
+	lookupSets = {}
+	for termid,idlist in lookup.items():
+		lookupSets[termid] = set(idlist)
+
+	return lookupSets
 
 def test_entityrecognizer_basic():
 	lookup = makeTestLookup()
