@@ -47,6 +47,10 @@ def test_entityrecognizer_basic():
 	assert entity.text == 'EGFR'
 	assert entity.position == [(0,4)]
 
+	assert len(doc.sentences) == 1
+	sentence = doc.sentences[0]
+	assert sentence.entitiesWithLocations == [(entity,[0])]
+
 def test_entityrecognizer_microRNA_mirOFF():
 	lookup = makeTestLookup()
 
