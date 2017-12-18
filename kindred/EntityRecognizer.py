@@ -174,9 +174,15 @@ def getTermIDsAndLocations(np, lookupDict):
 def startsWithButNotAll(s,search):
 	return s.startswith(search) and len(s) > len(search)
 
+def cleanupVariant(variant):
+	variant = variant.upper().replace('P.','')
+	aminoAcidInfo = [('ALA','A'),('ARG','R'),('ASN','N'),('ASP','D'),('CYS','C'),('GLU','E'),('GLN','Q'),('GLY','G'),('HIS','H'),('ILE','I'),('LEU','L'),('LYS','K'),('MET','M'),('PHE','F'),('PRO','P'),('SER','S'),('THR','T'),('TRP','W'),('TYR','Y'),('VAL','V')]
+	for longA,shortA in aminoAcidInfo:
+		variant = variant.replace(longA,shortA)
+	return variant
 
 class EntityRecognizer:
-	def __init__(self,lookup,detectFusionGenes=False,detectMicroRNA=False,acronymDetectionForAmbiguity=False,mergeTerms=False):
+	def __init__(self,lookup,detectFusionGenes=False,detectMicroRNA=False,acronymDetectionForAmbiguity=False,mergeTerms=False,detectVariants=False,variantStopwords=[],detectPolymorphisms=False):
 		"""
 		Create an EntityRecognizer and provide the lookup table for terms and additional flags for what to identify in text
 
@@ -185,11 +191,17 @@ class EntityRecognizer:
 		:param detectMicroRNA: Whether to identify microRNA terms (added as 'gene' entities)
 		:param acronymDetectionForAmbiguity: Whether to try to identify acronyms and use this to deal with ambiguity (by removing incorrect matches to acronyms or the longer terms)
 		:param mergeTerms: Whether to merge neighbouring terms that refer to the same external entity (e.g. HER2/neu as one term instead of two)
+		:param detectVariants: Whether to identify a variant (e.g. V600E) and create an entity of type 'Mutation'
+		:param variantStopwords: Variant terms to be ignored (e.g. S100P) if detectVariants is used
+		:param detectPolymorphisms: Whether to identify a SNP (using a dbSNP ID) and create an entity of type 'Mutation'
 		:type lookup: dict
 		:type detectFusionGenes: bool
 		:type detectMicroRNA: bool
 		:type acronymDetectionForAmbiguity: bool
 		:type mergeTerms: bool
+		:type detectVariants: bool
+		:type variantStopwords: list
+		:type detectPolymorphisms: bool
 		"""
 
 		assert isinstance(lookup,dict)
@@ -205,16 +217,53 @@ class EntityRecognizer:
 		assert isinstance(detectMicroRNA,bool)
 		assert isinstance(acronymDetectionForAmbiguity,bool)
 		assert isinstance(mergeTerms,bool)
+		assert isinstance(detectVariants,bool)
+		assert isinstance(detectPolymorphisms,bool)
+		
+		assert isinstance(variantStopwords,list)
+		for variantStopword in variantStopwords:
+			assert isinstance(variantStopword,six.string_types), "variantStopwords should be a list of strings"
 
 		self.lookup = lookup
 		self.detectFusionGenes = detectFusionGenes
 		self.detectMicroRNA = detectMicroRNA
 		self.acronymDetectionForAmbiguity = acronymDetectionForAmbiguity
 		self.mergeTerms = mergeTerms
+		self.detectVariants = detectVariants
+		self.variantStopwords = set(variantStopwords)
+		self.detectPolymorphisms = detectPolymorphisms
 
 		
 	def _processWords(self, words):
 		locs,terms,termtypesAndids = getTermIDsAndLocations(words,self.lookup)
+
+		if self.detectVariants:
+			#snvRegex = r'^[A-Z][0-9]+[A-Z]$'
+			variantRegex1 = r'^[ACDEFGHIKLMNPQRSTVWY][1-9][0-9]*[ACDEFGHIKLMNPQRSTVWY]$'
+			variantRegex2 = r'^(p\.)?((Ala)|(Arg)|(Asn)|(Asp)|(Cys)|(Glu)|(Gln)|(Gly)|(His)|(Ile)|(Leu)|(Lys)|(Met)|(Phe)|(Pro)|(Ser)|(Thr)|(Trp)|(Tyr)|(Val))[1-9][0-9]*((Ala)|(Arg)|(Asn)|(Asp)|(Cys)|(Glu)|(Gln)|(Gly)|(His)|(Ile)|(Leu)|(Lys)|(Met)|(Phe)|(Pro)|(Ser)|(Thr)|(Trp)|(Tyr)|(Val))$'
+
+			filteredWords = [ w for w in words if not w in self.variantStopwords ]
+			snvMatches1 = [ not (re.match(variantRegex1,w) is None) for w in filteredWords ]
+			snvMatches2 = [ not (re.match(variantRegex2,w,re.IGNORECASE) is None) for w in filteredWords ]
+
+			snvMatches = [ (match1 or match2) for match1,match2 in zip(snvMatches1,snvMatches2) ]
+			for i,(w,snvMatch) in enumerate(zip(words,snvMatches)):
+				if snvMatch:
+					cleaned = cleanupVariant(w)
+					termtypesAndids.append([('mutation',"snv|%s"%cleaned)])
+					terms.append((w,))
+					locs.append((i,i+1))
+
+		if self.detectPolymorphisms:
+			polymorphismRegex1 = r'^rs[1-9][0-9]*$'
+
+			polyMatches = [ not (re.match(polymorphismRegex1,w) is None) for w in words ]
+
+			for i,(w,polyMatch) in enumerate(zip(words,polyMatches)):
+				if polyMatch:
+					termtypesAndids.append([('mutation','snp|%s'%w)])
+					terms.append((w,))
+					locs.append((i,i+1))
 
 		if self.detectMicroRNA:
 			for i,w in enumerate(words):

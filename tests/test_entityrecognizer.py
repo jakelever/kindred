@@ -485,6 +485,92 @@ def test_entityrecognizer_acronyms_acronymHasCorrectID_hyphen():
 	assert entity.text == 'DLBCL'
 	assert entity.position == [(31,36)]
 
+def test_entityrecognizer_variant_1():
+	lookup = {}
+
+	text = 'The V600E variant is well studied.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,detectVariants=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	print(doc.entities)
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'mutation'
+	assert entity.externalID == 'snv|V600E'
+	assert entity.text == 'V600E'
+	assert entity.position == [(4,9)]
+
+def test_entityrecognizer_variant_2():
+	lookup = {}
+
+	text = 'The BRAF p.Val600Glu variant is well studied.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,detectVariants=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	print(doc.entities)
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'mutation'
+	assert entity.externalID == 'snv|V600E'
+	assert entity.text == 'Val600Glu'
+	assert entity.position == [(11,20)]
+
+def test_entityrecognizer_variant_stopwords():
+	lookup = {}
+
+	text = 'The V600E variant is well studied.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,detectVariants=True,variantStopwords=['V600E'])
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	print(doc.entities)
+	assert len(doc.entities) == 0
+
+def test_entityrecognizer_polymorphism():
+	lookup = {}
+
+	text = 'The rs12345 variant is well studied.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,detectPolymorphisms=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	print(doc.entities)
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'mutation'
+	assert entity.externalID == 'snp|rs12345'
+	assert entity.text == 'rs12345'
+	assert entity.position == [(4,11)]
+
 def test_loadwordlist():
 	scriptDir = os.path.dirname(__file__)
 	wordlistPath = os.path.join(scriptDir,'data','terms.wordlist')
