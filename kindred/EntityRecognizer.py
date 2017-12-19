@@ -435,7 +435,7 @@ class EntityRecognizer:
 		import spacy
 		nlp = spacy.load('en')
 
-		requiredColumns = max(idColumn,termsColumn)
+		requiredColumns = max(idColumn,termsColumn)+1
 
 		lookup = defaultdict(set)
 		for entityType,filename in entityTypesWithFilenames.items():
@@ -443,7 +443,7 @@ class EntityRecognizer:
 				tempLookup = defaultdict(set)
 				for lineno,line in enumerate(f):
 					split = line.strip().split(columnSeparator)
-					assert len(split) >= (requiredColumns-1), 'Line %d contains only %d columns when %d are required' % (lineno,len(split),requiredColumns)
+					assert len(split) >= requiredColumns, 'Line %d contains only %d columns when %d are required' % (lineno+1,len(split),requiredColumns)
 					termid,terms = split[idColumn],split[termsColumn]
 					for term in terms.split(termSeparator):
 						tupleterm = tuple([ token.text.strip().lower() for token in nlp(term) ])
