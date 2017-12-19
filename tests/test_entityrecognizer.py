@@ -583,7 +583,7 @@ def test_loadwordlist():
 	scriptDir = os.path.dirname(__file__)
 	wordlistPath = os.path.join(scriptDir,'data','terms.wordlist')
 
-	lookup = kindred.EntityRecognizer.loadWordlists([('thing',wordlistPath)])
+	lookup = kindred.EntityRecognizer.loadWordlists({'thing':wordlistPath})
 
 	expected = {(u'term', u'term', u'term'): set([('thing', u'ID5')]), (u'term5',): set([('thing', u'ID4')]), (u'term4',): set([('thing', u'ID3')]), (u'term3',): set([('thing', u'ID3')]), (u'term2',): set([('thing', u'ID2')]), (u'term1',): set([('thing', u'ID1;ID4')]), (u'term-64',): set([('thing', u'ID5')])}
 

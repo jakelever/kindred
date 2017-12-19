@@ -403,35 +403,35 @@ class EntityRecognizer:
 	@staticmethod
 	def loadWordlists(entityTypesWithFilenames):
 		"""
-		Load a wordlist from multiple files. Each filename should be a two column tab-delimited file with the first column being a unique ID and the second column containing all the terms separated by '|'.
+		Load a wordlist from multiple files. Each file should be a two column tab-delimited file with the first column being a unique ID and the second column containing all the terms separated by '|'.
 
 		As each term is parsed, this can take a long time. It is recommended to run this one time and save the output as a Python pickle file and load in.
 
-		:param entityTypesWithFilenames: List of tuples of (entityType,filename)
-		:type entityTypesWithFilenames: list
+		:param entityTypesWithFilenames: Dictionary of entityType => filename
+		:type entityTypesWithFilenames: dict
 		:return: Dictionary of lookup values
 		:rtype: dict
 		"""
-		assert isinstance(entityTypesWithFilenames,list), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
-		for entityTypeWithFilename in entityTypesWithFilenames:
-		 	assert isinstance(entityTypeWithFilename,tuple), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
-		 	assert len(entityTypeWithFilename)==2, 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
-		 	entityType,filename = entityTypeWithFilename
-		 	assert isinstance(entityType,six.string_types), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
-		 	assert isinstance(filename,six.string_types), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
-		 	assert os.path.isfile(filename), 'entityTypesWithFilenames should be a list of tuples (entityType,filename)'
+		errorMsg = 'entityTypesWithFilenames should be a dictionary with pairs of {entityType: filename} where both are strings and the filename points to a file that exists'
+		assert isinstance(entityTypesWithFilenames,dict), errorMsg
+		for entityType,filename in entityTypesWithFilenames.items():
+		 	assert isinstance(entityType,six.string_types), errorMsg
+		 	assert isinstance(filename,six.string_types), errorMsg
+		 	assert os.path.isfile(filename), errorMsg
 
 		import spacy
 		nlp = spacy.load('en')
 
 		lookup = defaultdict(set)
-		for entityType,filename in entityTypesWithFilenames:
+		for entityType,filename in entityTypesWithFilenames.items():
 			with codecs.open(filename,'r','utf-8') as f:
 				tempLookup = defaultdict(set)
 				for line in f:
-					termid,terms = line.strip().split('\t')
+					split = line.strip().split('\t')
+					assert len(split) == 2, "The wordlist file must be tab-delimited with two columns. THe first column is the unique ID and the second column containing all the terms separated by '|'"
+					termid,terms = split
 					for term in terms.split('|'):
-						tupleterm = tuple([ token.text.lower() for token in nlp(term) ])
+						tupleterm = tuple([ token.text.strip().lower() for token in nlp(term) ])
 						tempLookup[tupleterm].add(termid)
 
 			for tupleterm,idlist in tempLookup.items():
