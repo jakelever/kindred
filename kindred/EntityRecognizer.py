@@ -23,8 +23,6 @@ def acronymMatch(words,pos,currentAcronym,atStart,subpos=None):
 	wordSplit = curWord.split('-')
 	curLetter = currentAcronym[-1]
 	
-	#print curWord,curLetter
-	
 	moves = []
 	
 	if subpos is None:
@@ -55,8 +53,6 @@ def acronymMatch(words,pos,currentAcronym,atStart,subpos=None):
 	return possibleStarts
 
 def acronymDetection(words):
-	#print words
-	#sys.exit(0)
 	LRBs = [i for i, x in enumerate(words) if x == u'(']
 	RRBs = [i for i, x in enumerate(words) if x == u')']
 	acronyms = []
@@ -65,7 +61,6 @@ def acronymDetection(words):
 			acronymLoc = i+1
 			possibleAcronym = words[acronymLoc]
 			possibleStarts = acronymMatch(words,i-1,possibleAcronym.lower(),True)
-			#print possibleStarts
 			if len(possibleStarts) > 0:
 				start = min(possibleStarts)
 				end = i
