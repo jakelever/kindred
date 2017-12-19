@@ -401,15 +401,15 @@ class EntityRecognizer:
 						sentence.addEntityWithLocation(e,loc)
 
 	@staticmethod
-	def loadWordlists(entityTypesWithFilenames, idColumn=1, termsColumn=2, columnSeparator='\t', termSeparator='|'):
+	def loadWordlists(entityTypesWithFilenames, idColumn=0, termsColumn=1, columnSeparator='\t', termSeparator='|'):
 		"""
 		Load a wordlist from multiple files. By default, each file should be a tab-delimited file with the first column is the ID and the second column containing all the terms separated by '|'. This can be modified by the parameters.
 
 		As each term is parsed, this can take a long time. It is recommended to run this one time and save the output as a Python pickle file and load in.
 
 		:param entityTypesWithFilenames: Dictionary of entityType => filename
-		:param idColumn: The column containing the ID for the term
-		:param termsColumn: The column containing the list of terms
+		:param idColumn: The column containing the ID for the term (starts from 0)
+		:param termsColumn: The column containing the list of terms (starts from 0)
 		:param columnSeparator: The column separator for the file (default is a tab)
 		:param termSeparator: The separator for the list of terms (default is a '|')
 		:type entityTypesWithFilenames: dict
@@ -444,7 +444,7 @@ class EntityRecognizer:
 				for lineno,line in enumerate(f):
 					split = line.strip().split(columnSeparator)
 					assert len(split) >= (requiredColumns-1), 'Line %d contains only %d columns when %d are required' % (lineno,len(split),requiredColumns)
-					termid,terms = split
+					termid,terms = split[idColumn],split[termsColumn]
 					for term in terms.split(termSeparator):
 						tupleterm = tuple([ token.text.strip().lower() for token in nlp(term) ])
 						tempLookup[tupleterm].add(termid)
