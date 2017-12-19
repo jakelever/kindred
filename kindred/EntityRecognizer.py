@@ -401,14 +401,22 @@ class EntityRecognizer:
 						sentence.addEntityWithLocation(e,loc)
 
 	@staticmethod
-	def loadWordlists(entityTypesWithFilenames):
+	def loadWordlists(entityTypesWithFilenames, idColumn=1, termsColumn=2, columnSeparator='\t', termSeparator='|'):
 		"""
-		Load a wordlist from multiple files. Each file should be a two column tab-delimited file with the first column being a unique ID and the second column containing all the terms separated by '|'.
+		Load a wordlist from multiple files. By default, each file should be a tab-delimited file with the first column is the ID and the second column containing all the terms separated by '|'. This can be modified by the parameters.
 
 		As each term is parsed, this can take a long time. It is recommended to run this one time and save the output as a Python pickle file and load in.
 
 		:param entityTypesWithFilenames: Dictionary of entityType => filename
+		:param idColumn: The column containing the ID for the term
+		:param termsColumn: The column containing the list of terms
+		:param columnSeparator: The column separator for the file (default is a tab)
+		:param termSeparator: The separator for the list of terms (default is a '|')
 		:type entityTypesWithFilenames: dict
+		:type idColumn: int
+		:type termsColumn: int
+		:type columnSeparator: str
+		:type termSeparator: str
 		:return: Dictionary of lookup values
 		:rtype: dict
 		"""
@@ -419,18 +427,25 @@ class EntityRecognizer:
 		 	assert isinstance(filename,six.string_types), errorMsg
 		 	assert os.path.isfile(filename), errorMsg
 
+		assert isinstance(idColumn,int)
+		assert isinstance(termsColumn,int)
+		assert isinstance(columnSeparator,str)
+		assert isinstance(termSeparator,str)
+
 		import spacy
 		nlp = spacy.load('en')
+
+		requiredColumns = max(idColumn,termsColumn)
 
 		lookup = defaultdict(set)
 		for entityType,filename in entityTypesWithFilenames.items():
 			with codecs.open(filename,'r','utf-8') as f:
 				tempLookup = defaultdict(set)
-				for line in f:
-					split = line.strip().split('\t')
-					assert len(split) == 2, "The wordlist file must be tab-delimited with two columns. THe first column is the unique ID and the second column containing all the terms separated by '|'"
+				for lineno,line in enumerate(f):
+					split = line.strip().split(columnSeparator)
+					assert len(split) >= (requiredColumns-1), 'Line %d contains only %d columns when %d are required' % (lineno,len(split),requiredColumns)
 					termid,terms = split
-					for term in terms.split('|'):
+					for term in terms.split(termSeparator):
 						tupleterm = tuple([ token.text.strip().lower() for token in nlp(term) ])
 						tempLookup[tupleterm].add(termid)
 
