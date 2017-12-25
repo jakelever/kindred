@@ -84,7 +84,7 @@ def mergeWordsForFusionDetection(words):
 			start = i
 
 	if prevWord:
-		mergedWords.append((start,i-1,prevWord))
+		mergedWords.append((start,len(words)-1,prevWord))
 
 	return mergedWords
 
@@ -137,7 +137,7 @@ def fusionGeneDetection(words, lookupDict):
 			termtypesAndids.append([('gene','|'.join(geneIDs))])
 			terms.append(tuple(origWords[start:end+1]))
 			locs.append((start,end+1))
-			
+		
 	return locs,terms,termtypesAndids
 
 def getTermIDsAndLocations(np, lookupDict):
