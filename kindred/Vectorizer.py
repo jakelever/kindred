@@ -3,6 +3,7 @@ from collections import Counter
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from scipy.sparse import hstack
+import itertools
 
 import kindred
 
@@ -24,19 +25,25 @@ def _doUnigramsBetweenEntities(corpus):
 		for sentence in doc.sentences:
 			for cr,_ in sentence.candidateRelationsWithClasses:
 				dataForThisCR = Counter()
+				entityCount = len(cr.entityIDs)
+				for i,j in itertools.combinations(range(entityCount),2):
+					#assert len(cr.entityIDs) == 2
+					pos1 = sentence.entityIDToLoc[cr.entityIDs[i]]
+					pos2 = sentence.entityIDToLoc[cr.entityIDs[j]]
+					
+					if max(pos1) < min(pos2):
+						startPos,endPos = max(pos1)+1,min(pos2)
+					else:
+						startPos,endPos = max(pos2)+1,min(pos1)
 
-				assert len(cr.entityIDs) == 2
-				pos1 = sentence.entityIDToLoc[cr.entityIDs[0]]
-				pos2 = sentence.entityIDToLoc[cr.entityIDs[1]]
-				
-				if max(pos1) < min(pos2):
-					startPos,endPos = max(pos1)+1,min(pos2)
-				else:
-					startPos,endPos = max(pos2)+1,min(pos1)
+					tokenData = [ sentence.tokens[i].word.lower() for i in range(startPos,endPos) ]
 
-				tokenData = [ sentence.tokens[i].word.lower() for i in range(startPos,endPos) ]
-				for t in tokenData:
-					dataForThisCR[u"ngrams_betweenentities_%s" % t] += 1
+					basename = u"ngrams_betweenentities"
+					if entityCount > 2:
+						basename = u"ngrams_betweenentities_%d_%d" % (i,j)
+
+					for t in tokenData:
+						dataForThisCR[u"%s_%s" % (basename,t)] += 1
 				data.append(dataForThisCR)
 
 	return data
@@ -46,17 +53,24 @@ def _doDependencyPathEdges(corpus):
 	for doc in corpus.documents:
 		for sentence in doc.sentences:
 			for cr,_ in sentence.candidateRelationsWithClasses:
+				
+				entityCount = len(cr.entityIDs)
 				dataForThisCR = Counter()
+				for i,j in itertools.combinations(range(entityCount),2):
 
-				assert len(cr.entityIDs) == 2
-				pos1 = sentence.entityIDToLoc[cr.entityIDs[0]]
-				pos2 = sentence.entityIDToLoc[cr.entityIDs[1]]
+				
+					pos1 = sentence.entityIDToLoc[cr.entityIDs[i]]
+					pos2 = sentence.entityIDToLoc[cr.entityIDs[j]]
 
-				combinedPos = pos1 + pos2
+					combinedPos = pos1 + pos2
+					
+					basename = u"dependencypathelements"
+					if entityCount > 2:
+						basename = u"dependencypathelements_%d_%d" % (i,j)
 
-				nodes,edges = sentence.extractMinSubgraphContainingNodes(combinedPos)
-				for a,b,dependencyType in edges:
-					dataForThisCR[u"dependencypathelements_%s" % dependencyType] += 1
+					nodes,edges = sentence.extractMinSubgraphContainingNodes(combinedPos)
+					for a,b,dependencyType in edges:
+						dataForThisCR[u"%s_%s" % (basename,dependencyType)] += 1
 				data.append(dataForThisCR)
 
 	return data

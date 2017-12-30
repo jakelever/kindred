@@ -11,7 +11,7 @@ class RelationClassifier:
 	"""
 	Manages binary classifier(s) for relation classification.
 	"""
-	def __init__(self,classifierType='SVM',tfidf=True,features=None,threshold=None,acceptedEntityPairs=None):
+	def __init__(self,classifierType='SVM',tfidf=True,features=None,threshold=None,entityCount=2,acceptedEntityTypes=None):
 		"""
 		Constructor for the RelationClassifier class
 		
@@ -19,20 +19,29 @@ class RelationClassifier:
 		:param tfidf: Whether to use tfidf for the vectorizer
 		:param features: A list of specific features. Valid features are "entityTypes","unigramsBetweenEntities","bigrams","dependencyPathEdges","dependencyPathEdgesNearEntities"
 		:param threshold: A specific threshold to use for classification (which will then use a logistic regression classifier)
-		:param acceptedEntityPairs: Pairs of entities that relations must match. None will match allow relations of any entity types.
+		:param entityCount: Number of entities in each relation (default=2). Passed to the CandidateBuilder (if needed)
+		:param acceptedEntityTypes: Tuples of entity types that relations must match. None will match allow relations of any entity types. Passed to the CandidateBuilder (if needed)
 		:type classifierType: str
 		:type tfidf: bool
 		:type features: list of str
 		:type threshold: float
-		:type acceptedEntityPairs: list of tuples
+		:type entityCount: int
+		:type acceptedEntityTypes: list of tuples
 		"""
 		assert classifierType in ['SVM','LogisticRegression'], "classifierType must be 'SVM' or 'LogisticRegression'"
 		assert classifierType == 'LogisticRegression' or threshold is None, "Threshold can only be used when classifierType is 'LogisticRegression'"
 
+		assert isinstance(tfidf,bool)
+		assert threshold is None or isinstance(threshold,float)
+		assert isinstance(entityCount,int)
+		assert acceptedEntityTypes is None or isinstance(acceptedEntityTypes,list)
+
 		self.isTrained = False
 		self.classifierType = classifierType
 		self.tfidf = tfidf
-		self.acceptedEntityPairs = acceptedEntityPairs
+
+		self.entityCount = entityCount
+		self.acceptedEntityTypes = acceptedEntityTypes
 
 		self.chosenFeatures = ["entityTypes","unigramsBetweenEntities","bigrams","dependencyPathEdges","dependencyPathEdgesNearEntities"]
 		if not features is None:
@@ -51,14 +60,18 @@ class RelationClassifier:
 		assert isinstance(corpus,kindred.Corpus)
 
 		if not corpus.candidatesFound:
-			self.candidateBuilder = CandidateBuilder(acceptedEntityPairs=self.acceptedEntityPairs)
+			self.candidateBuilder = CandidateBuilder(entityCount=self.entityCount,acceptedEntityTypes=self.acceptedEntityTypes)
 			self.candidateBuilder.fit_transform(corpus)
 		
 		candidateRelations = corpus.getCandidateRelations()
 		candidateClasses = corpus.getCandidateClasses()
 		
 		if len(candidateRelations) == 0:
-			raise RuntimeError("No candidate relations found in corpus for training")
+			raise RuntimeError("No candidate relations found in corpus for training. Does the corpus contain text and entity annotations with at least one sentence containing %d entities." % (self.entityCount))
+
+		entityCountsInRelations = [ len(r.entityIDs) for r in corpus.getRelations() ]
+		entityCountsInRelations = sorted(list(set(entityCountsInRelations)))
+		assert self.entityCount in entityCountsInRelations, "Relation classifier is expecting to train on relations with %d entities (entityCount=%d). But the known relations in the corpus contain relations with the following entity counts: %s. Perhaps the entityCount parameter should be changed or there is a problem with the training corpus." % (self.entityCount,self.entityCount,str(entityCountsInRelations))
 
 		self.relTypeToValidEntityTypes = defaultdict(set)
 		
@@ -88,6 +101,12 @@ class RelationClassifier:
 		trainVectors = self.vectorizer.fit_transform(corpus)
 	
 		assert trainVectors.shape[0] == len(candidateClasses)
+
+		negCount = len( [ c for c in simplifiedClasses if c == 0 ] )
+		posCount = len( [ c for c in simplifiedClasses if c != 0 ] )
+
+		assert negCount > 0, "Must have at least one negative candidate relation in set for training"
+		assert posCount > 0, "Must have at least one positive candidate relation in set for training"
 
 		self.clf = None
 		if self.classifierType == 'SVM':

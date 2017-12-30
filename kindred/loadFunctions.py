@@ -198,6 +198,9 @@ def parseSimpleTag_helper(node,currentPosition=0,ignoreEntities=[]):
 				entityType = s.tagName
 				sourceEntityID = s.getAttribute('id')
 				position = [(currentPosition+len(text),currentPosition+len(text)+len(insideText))]
+
+				assert len(insideText) > 0, "Name (text inside tags) is empty for entity of type %s" % entityType
+
 				if not entityType in ignoreEntities:
 					e = kindred.Entity(entityType,insideText,position,sourceEntityID=sourceEntityID)
 					entities.append(e)

@@ -17,6 +17,30 @@ def test_simpleRelationClassifier():
 	f1score = kindred.evaluate(testCorpusGold, predictionCorpus, metric='f1score')
 	assert f1score == 1.0
 
+def test_simpleRelationClassifier_triple():
+	trainCorpus, testCorpusGold = generateTestData(entityCount=3,positiveCount=100,negativeCount=100)
+
+	trainRelations = trainCorpus.getRelations()
+	assert len(trainRelations) == 50
+	for r in trainRelations:
+		assert len(r.entityIDs) == 3
+
+	predictionCorpus = testCorpusGold.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = kindred.RelationClassifier(entityCount=3)
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+
+	predictedRelations = predictionCorpus.getRelations()
+	assert len(predictedRelations) == 50
+	for r in predictedRelations:
+		assert len(r.entityIDs) == 3
+	
+	f1score = kindred.evaluate(testCorpusGold, predictionCorpus, metric='f1score')
+	assert f1score == 1.0
+
 def test_simpleRelationClassifier_emptyTestCorpus():
 	trainCorpus, testCorpus = generateTestData(positiveCount=100,negativeCount=100)
 
@@ -42,7 +66,7 @@ def test_simpleRelationClassifier_emptyTrainCorpus():
 
 	with pytest.raises(RuntimeError) as excinfo:
 		classifier.train(trainCorpus)
-	assert excinfo.value.args == ('No candidate relations found in corpus for training',)
+	assert excinfo.value.args == ('No candidate relations found in corpus for training. Does the corpus contain text and entity annotations with at least one sentence containing 2 entities.',)
 
 def _SeeDevmini():
 	trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
@@ -75,6 +99,30 @@ def test_singleClassifier():
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
 	assert round(f1score,3) == 0.519
+
+def test_singleClassifier_triple():
+	trainCorpus, devCorpus = generateTestData(entityCount=3,positiveCount=100,negativeCount=100,relTypes=2)
+
+	trainRelations = trainCorpus.getRelations()
+	assert len(trainRelations) == 50
+	for r in trainRelations:
+		assert len(r.entityIDs) == 3
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = kindred.RelationClassifier(entityCount=3)
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	predictedRelations = predictionCorpus.getRelations()
+	assert len(predictedRelations) == 50
+	for r in predictedRelations:
+		assert len(r.entityIDs) == 3
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.54
 
 def test_noTFIDF():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)

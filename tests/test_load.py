@@ -27,6 +27,24 @@ def test_loadStandoffFile():
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
 	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
+def test_loadStandoffFile_Triple():
+	scriptDir = os.path.dirname(__file__)
+	txtPath = os.path.join(scriptDir,'data_triple','example.txt')
+	a1Path = os.path.join(scriptDir,'data_triple','example.a1')
+	a2Path = os.path.join(scriptDir,'data_triple','example.a2')
+
+	data = kindred.loadDoc(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
+	
+	assert isinstance(data,kindred.Document)
+	entities = data.getEntities()
+	relations = data.getRelations()
+
+	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+
+	assertEntity(entities[0],expectedType='drug',expectedText='Erlotinib',expectedPos=[(0,9)],expectedSourceEntityID="T1")
+	assertEntity(entities[1],expectedType='gene',expectedText='EGFR',expectedPos=[(13,17)],expectedSourceEntityID="T2")
+	assertEntity(entities[2],expectedType='disease',expectedText='NSCLC',expectedPos=[(49,54)],expectedSourceEntityID="T3")
+	assert relations == [kindred.Relation('druginfo',[sourceEntityIDsToEntityIDs["T3"],sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['disease','drug','gene'])], "(%s) not as expected" % relations
 
 def test_loadSimpleTagFile():
 	scriptDir = os.path.dirname(__file__)

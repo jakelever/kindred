@@ -8,23 +8,29 @@ class CandidateBuilder:
 	"""
 	Generates set of all possible relations in corpus.
 	"""
-	def __init__(self,acceptedEntityPairs=None):
+	def __init__(self,entityCount=2,acceptedEntityTypes=None):
 		"""
 		Constructor
 
-		:param acceptedEntityPairs: Pairs of entities that candidate relations must match. None will match all candidate relations.
-		:type acceptedEntityPairs: list of tuples
+		:param entityCount: Number of entities in each relation (default=2)
+		:param acceptedEntityTypes: Tuples of entities that candidate relations must match. Each entity should be the same length as entityCount. None will match all candidate relations.
+		:type entityCount: int
+		:type acceptedEntityTypes: list of tuples
 		"""
 		self.fitted = False
 
-		assert acceptedEntityPairs is None or isinstance(acceptedEntityPairs,list)
-		if acceptedEntityPairs is None:
-			self.acceptedEntityPairs = None
+		assert isinstance(entityCount,int)
+		assert entityCount >= 2
+		self.entityCount = entityCount
+
+		assert acceptedEntityTypes is None or isinstance(acceptedEntityTypes,list)
+		if acceptedEntityTypes is None:
+			self.acceptedEntityTypes = None
 		else:
-			for acceptedEntityPair in acceptedEntityPairs:
-				assert isinstance(acceptedEntityPair,tuple)
-				assert len(acceptedEntityPair) == 2
-			self.acceptedEntityPairs = set(acceptedEntityPairs)
+			for acceptedEntityType in acceptedEntityTypes:
+				assert isinstance(acceptedEntityType,tuple)
+				assert len(acceptedEntityType) == entityCount
+			self.acceptedEntityTypes = set(acceptedEntityTypes)
 
 	def fit_transform(self,corpus):
 		"""
@@ -89,7 +95,7 @@ class CandidateBuilder:
 			for sentence in doc.sentences:
 				entitiesInSentence = sentence.getEntityIDs()
 							
-				for entitiesInRelation in itertools.permutations(entitiesInSentence,2):
+				for entitiesInRelation in itertools.permutations(entitiesInSentence, self.entityCount):
 					candidateRelation = kindred.Relation(entityIDs=list(entitiesInRelation))
 					candidateClass = [0]
 					relKey = tuple(entitiesInRelation)
@@ -97,9 +103,9 @@ class CandidateBuilder:
 						candidateClass = existingRelations[relKey]
 
 					includeCandidate = True
-					if not self.acceptedEntityPairs is None:
+					if not self.acceptedEntityTypes is None:
 						typesInRelation = tuple([ sentence.getEntityType(eID) for eID in entitiesInRelation ])
-						includeCandidate = (typesInRelation in self.acceptedEntityPairs)
+						includeCandidate = (typesInRelation in self.acceptedEntityTypes)
 
 					if includeCandidate:
 						sentence.addCandidateRelation(candidateRelation,candidateClass)

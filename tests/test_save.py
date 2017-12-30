@@ -22,6 +22,7 @@ def test_saveStandoffFile_fromSimpleTag():
 	kindred.save(corpus,'standoff',tempDir)
 
 	loadedCorpus = kindred.loadDir('standoff',tempDir)
+	shutil.rmtree(tempDir)
 
 	assert isinstance(loadedCorpus,kindred.Corpus)
 	assert len(loadedCorpus.documents) == 1
@@ -37,8 +38,34 @@ def test_saveStandoffFile_fromSimpleTag():
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
 	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
+def test_saveStandoffFile_fromSimpleTag_triple():
+	text = '<drug id="T1">Erlotinib</drug>, a <gene id="T2">EGFR</gene> inhibitor is commonly used for <disease id="T3">NSCLC</disease> patients. <relation type="druginfo" drug="T1" gene="T2" disease="T3" />'
+	corpus = kindred.Corpus()
+	doc = kindred.Document(text,loadFromSimpleTag=True)
+	corpus.addDocument(doc)
+
+	tempDir = tempfile.mkdtemp()
+
+	kindred.save(corpus,'standoff',tempDir)
+
+	loadedCorpus = kindred.loadDir('standoff',tempDir)
 	shutil.rmtree(tempDir)
 
+	assert isinstance(loadedCorpus,kindred.Corpus)
+	assert len(loadedCorpus.documents) == 1
+	loadedDoc = loadedCorpus.documents[0]
+	
+	assert isinstance(loadedDoc,kindred.Document)
+	entities = loadedDoc.getEntities()
+	relations = loadedDoc.getRelations()
+
+	sourceEntityIDsToEntityIDs = loadedDoc.getSourceEntityIDsToEntityIDs()
+
+	assertEntity(entities[0],expectedType='drug',expectedText='Erlotinib',expectedPos=[(0,9)],expectedSourceEntityID="T1")
+	assertEntity(entities[1],expectedType='gene',expectedText='EGFR',expectedPos=[(13,17)],expectedSourceEntityID="T2")
+	assertEntity(entities[2],expectedType='disease',expectedText='NSCLC',expectedPos=[(49,54)],expectedSourceEntityID="T3")
+	assert relations == [kindred.Relation('druginfo',[sourceEntityIDsToEntityIDs["T3"],sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['disease','drug','gene'])], "(%s) not as expected" % relations
+	
 def test_saveStandoffFile():
 	text = "The colorectal cancer was caused by mutations in APC"
 	e1 = kindred.Entity(entityType="disease",text="colorectal cancer",position=[(4, 21)],sourceEntityID="T1")
@@ -53,6 +80,7 @@ def test_saveStandoffFile():
 	kindred.save(corpus,'standoff',tempDir)
 
 	loadedCorpus = kindred.loadDir('standoff',tempDir)
+	shutil.rmtree(tempDir)
 
 	assert isinstance(loadedCorpus,kindred.Corpus)
 	assert len(loadedCorpus.documents) == 1
@@ -67,8 +95,6 @@ def test_saveStandoffFile():
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
 	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
-	
-	shutil.rmtree(tempDir)
 	
 def test_saveStandoffFile_noArgNames():
 	text = "The colorectal cancer was caused by mutations in APC"
