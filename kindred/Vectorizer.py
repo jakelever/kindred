@@ -26,10 +26,10 @@ def _doUnigramsBetweenEntities(corpus):
 			for cr,_ in sentence.candidateRelationsWithClasses:
 				dataForThisCR = Counter()
 				entityCount = len(cr.entityIDs)
-				for i,j in itertools.combinations(range(entityCount),2):
+				for e1,e2 in itertools.combinations(range(entityCount),2):
 					#assert len(cr.entityIDs) == 2
-					pos1 = sentence.entityIDToLoc[cr.entityIDs[i]]
-					pos2 = sentence.entityIDToLoc[cr.entityIDs[j]]
+					pos1 = sentence.entityIDToLoc[cr.entityIDs[e1]]
+					pos2 = sentence.entityIDToLoc[cr.entityIDs[e2]]
 					
 					if max(pos1) < min(pos2):
 						startPos,endPos = max(pos1)+1,min(pos2)
@@ -40,7 +40,7 @@ def _doUnigramsBetweenEntities(corpus):
 
 					basename = u"ngrams_betweenentities"
 					if entityCount > 2:
-						basename = u"ngrams_betweenentities_%d_%d" % (i,j)
+						basename = u"ngrams_betweenentities_%d_%d" % (e1,e2)
 
 					for t in tokenData:
 						dataForThisCR[u"%s_%s" % (basename,t)] += 1
@@ -56,17 +56,17 @@ def _doDependencyPathEdges(corpus):
 				
 				entityCount = len(cr.entityIDs)
 				dataForThisCR = Counter()
-				for i,j in itertools.combinations(range(entityCount),2):
+				for e1,e2 in itertools.combinations(range(entityCount),2):
 
 				
-					pos1 = sentence.entityIDToLoc[cr.entityIDs[i]]
-					pos2 = sentence.entityIDToLoc[cr.entityIDs[j]]
+					pos1 = sentence.entityIDToLoc[cr.entityIDs[e1]]
+					pos2 = sentence.entityIDToLoc[cr.entityIDs[e2]]
 
 					combinedPos = pos1 + pos2
 					
 					basename = u"dependencypathelements"
 					if entityCount > 2:
-						basename = u"dependencypathelements_%d_%d" % (i,j)
+						basename = u"dependencypathelements_%d_%d" % (e1,e2)
 
 					nodes,edges = sentence.extractMinSubgraphContainingNodes(combinedPos)
 					for a,b,dependencyType in edges:
