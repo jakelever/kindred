@@ -245,9 +245,11 @@ class EntityRecognizer:
 			for i,(w,snvMatch) in enumerate(zip(words,snvMatches)):
 				if snvMatch:
 					cleaned = cleanupVariant(w)
-					termtypesAndids.append([('mutation',"snv|%s"%cleaned)])
-					terms.append((w,))
-					locs.append((i,i+1))
+					potentialLocs = (i,i+1)
+					if not potentialLocs in locs:
+						termtypesAndids.append([('mutation',"snv|%s"%cleaned)])
+						terms.append((w,))
+						locs.append(potentialLocs)
 
 		if self.detectPolymorphisms:
 			polymorphismRegex1 = r'^rs[1-9][0-9]*$'
@@ -256,9 +258,11 @@ class EntityRecognizer:
 
 			for i,(w,polyMatch) in enumerate(zip(words,polyMatches)):
 				if polyMatch:
-					termtypesAndids.append([('mutation','snp|%s'%w)])
-					terms.append((w,))
-					locs.append((i,i+1))
+					potentialLocs = (i,i+1)
+					if not potentialLocs in locs:
+						termtypesAndids.append([('mutation','snp|%s'%w)])
+						terms.append((w,))
+						locs.append(potentialLocs)
 
 		if self.detectMicroRNA:
 			for i,w in enumerate(words):
