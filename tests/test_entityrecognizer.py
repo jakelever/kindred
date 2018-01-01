@@ -511,8 +511,8 @@ def test_entityrecognizer_variant_1():
 	assert len(doc.entities) == 1
 	entity = doc.entities[0]
 	
-	assert entity.entityType == 'mutation'
-	assert entity.externalID == 'snv|V600E'
+	assert entity.entityType == 'omicevent'
+	assert entity.externalID == 'substitution|V600E'
 	assert entity.text == 'V600E'
 	assert entity.position == [(4,9)]
 
@@ -534,8 +534,8 @@ def test_entityrecognizer_variant_2():
 	assert len(doc.entities) == 1
 	entity = doc.entities[0]
 	
-	assert entity.entityType == 'mutation'
-	assert entity.externalID == 'snv|V600E'
+	assert entity.entityType == 'omicevent'
+	assert entity.externalID == 'substitution|V600E'
 	assert entity.text == 'Val600Glu'
 	assert entity.position == [(11,20)]
 
@@ -574,8 +574,8 @@ def test_entityrecognizer_polymorphism():
 	assert len(doc.entities) == 1
 	entity = doc.entities[0]
 	
-	assert entity.entityType == 'mutation'
-	assert entity.externalID == 'snp|rs12345'
+	assert entity.entityType == 'omicevent'
+	assert entity.externalID == 'dbsnp|rs12345'
 	assert entity.text == 'rs12345'
 	assert entity.position == [(4,11)]
 
