@@ -63,6 +63,8 @@ class RelationClassifier:
 			self.candidateBuilder = CandidateBuilder(entityCount=self.entityCount,acceptedEntityTypes=self.acceptedEntityTypes)
 			self.candidateBuilder.fit_transform(corpus)
 		
+		assert self.entityCount == corpus.candidatesRelationsEntityCount, "Candidate relations found in corpus (%d) do not match the number of entities expected by relation classifier (%d)" % (corpus.candidatesRelationsEntityCount,self.entityCount)
+
 		candidateRelations = corpus.getCandidateRelations()
 		candidateClasses = corpus.getCandidateClasses()
 		
@@ -133,6 +135,8 @@ class RelationClassifier:
 			
 		if not corpus.candidatesFound:
 			self.candidateBuilder.transform(corpus)
+
+		assert self.entityCount == corpus.candidatesRelationsEntityCount, "Candidate relations found in corpus (%d) do not match the number of entities expected by relation classifier (%d)" % (corpus.candidatesRelationsEntityCount,self.entityCount)
 
 		candidateRelations = corpus.getCandidateRelations()
 

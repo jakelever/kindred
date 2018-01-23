@@ -114,4 +114,5 @@ class CandidateBuilder:
 					
 		corpus.addRelationTypes(self.relTypes)
 		corpus.candidatesFound = True
+		corpus.candidatesRelationsEntityCount = self.entityCount
 
