@@ -402,7 +402,6 @@ class EntityRecognizer:
 					loc = list(range(startToken,endToken))
 					for entityType,externalID in termtypesAndids:
 						e = kindred.Entity(entityType,text,[(startPos,endPos)],externalID=externalID)
-						print(e)
 						doc.addEntity(e)
 						sentence.addEntityWithLocation(e,loc)
 
