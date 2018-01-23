@@ -103,7 +103,7 @@ def fusionGeneDetection(words, lookupDict):
 			
 		allGenes = True
 		
-		geneIDs = ['combo']
+		geneIDs = []
 		lookupIDCounter = Counter()
 		for s in split:
 			key = (s,)
@@ -129,12 +129,13 @@ def fusionGeneDetection(words, lookupDict):
 		# e.g. HER2/neu
 		completeLookupIDs = [ id for id,count in lookupIDCounter.items() if count == fusionCount ]
 		if len(completeLookupIDs) > 0:
-			geneIDs = completeLookupIDs
-	
-		if allGenes:
+			termtypesAndids.append([('gene',';'.join(completeLookupIDs))])
+			terms.append(tuple(origWords[start:end+1]))
+			locs.append((start,end+1))
+		elif allGenes: # All the terms look like genes (and different genes), so we're going to mark this as a fusion (or combo)
 			#geneTxt = ",".join(map(str,geneIDs))
 			geneIDs = [ geneID.replace(';','&') for geneID in geneIDs ]
-			termtypesAndids.append([('gene','|'.join(geneIDs))])
+			termtypesAndids.append([('gene','combo|' + '|'.join(geneIDs))])
 			terms.append(tuple(origWords[start:end+1]))
 			locs.append((start,end+1))
 		
@@ -401,6 +402,7 @@ class EntityRecognizer:
 					loc = list(range(startToken,endToken))
 					for entityType,externalID in termtypesAndids:
 						e = kindred.Entity(entityType,text,[(startPos,endPos)],externalID=externalID)
+						print(e)
 						doc.addEntity(e)
 						sentence.addEntityWithLocation(e,loc)
 
