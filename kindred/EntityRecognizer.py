@@ -178,7 +178,7 @@ def cleanupVariant(variant):
 	return variant
 
 class EntityRecognizer:
-	def __init__(self,lookup,detectFusionGenes=False,detectMicroRNA=False,acronymDetectionForAmbiguity=False,mergeTerms=False,detectVariants=False,variantStopwords=[],detectPolymorphisms=False):
+	def __init__(self,lookup,detectFusionGenes=False,detectMicroRNA=False,acronymDetectionForAmbiguity=False,mergeTerms=False,detectVariants=False,variantStopwords=[],detectPolymorphisms=False,removePathways=False):
 		"""
 		Create an EntityRecognizer and provide the lookup table for terms and additional flags for what to identify in text
 
@@ -190,6 +190,7 @@ class EntityRecognizer:
 		:param detectVariants: Whether to identify a variant (e.g. V600E) and create an entity of type 'Mutation'
 		:param variantStopwords: Variant terms to be ignored (e.g. S100P) if detectVariants is used
 		:param detectPolymorphisms: Whether to identify a SNP (using a dbSNP ID) and create an entity of type 'Mutation'
+		:param removePathways: Remove genes that are actually naming a signalling pathway (e.g. MTOR pathway)
 		:type lookup: dict
 		:type detectFusionGenes: bool
 		:type detectMicroRNA: bool
@@ -198,6 +199,7 @@ class EntityRecognizer:
 		:type detectVariants: bool
 		:type variantStopwords: list
 		:type detectPolymorphisms: bool
+		:type removePathways: bool
 		"""
 
 		assert isinstance(lookup,dict)
@@ -228,6 +230,7 @@ class EntityRecognizer:
 		self.detectVariants = detectVariants
 		self.variantStopwords = set(variantStopwords)
 		self.detectPolymorphisms = detectPolymorphisms
+		self.removePathways = removePathways
 
 		
 	def _processWords(self, words):
@@ -374,6 +377,19 @@ class EntityRecognizer:
 			filtered = [ (locs,terms,termtypesAndids) for locs,terms,termtypesAndids in filtered if not locs in locsToRemove]
 			filtered = sorted(filtered)
 
+		if self.removePathways:
+			forbiddenPathwayWords = set(['pathway','pathways','signaling','signalling','cascade'])
+			filtered2 = []
+			for locs,terms,termtypesAndids in filtered:
+				nextTokenIndex = locs[1]
+				nextTokenIsForbiddenWord = nextTokenIndex < len(words) and words[nextTokenIndex].lower() in forbiddenPathwayWords
+				if nextTokenIsForbiddenWord:
+					termtypesAndids = [ (termtype,termid) for termtype,termid in termtypesAndids if not termtype == 'gene' ]
+				if len(termtypesAndids) > 0:
+					filtered2.append((locs,terms,termtypesAndids))
+
+			filtered = filtered2
+		
 		return filtered
 
 	def annotate(self,corpus):
