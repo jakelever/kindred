@@ -65,6 +65,19 @@ PubTator Example
 
 >>> corpus = kindred.pubtator.load([19894120,19894121])
 
+Citing
+------
+It would be wonderful if you could cite the `associated paper`_ for this package if used in any academic research.
+
+.. code-block:: bibtex
+
+   @article{lever2017painless,
+      title={Painless {R}elation {E}xtraction with {K}indred},
+      author={Lever, Jake and Jones, Steven},
+      journal={BioNLP 2017},
+      pages={176--183},
+      year={2017}
+   }
 
 Contributing
 ------------
@@ -86,3 +99,4 @@ If you encounter any problems, please `file an issue`_ along with a detailed des
 .. _`PyPI`: https://pypi.python.org/pypi
 .. _`readthedocs`: http://kindred.readthedocs.io/
 .. _`Spacy`: https://spacy.io
+.. _`associated paper`: http://aclweb.org/anthology/W17-2322
