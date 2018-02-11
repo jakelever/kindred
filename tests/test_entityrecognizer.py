@@ -579,6 +579,96 @@ def test_entityrecognizer_polymorphism():
 	assert entity.text == 'rs12345'
 	assert entity.position == [(4,11)]
 
+def test_entityrecognizer_removepathways_off():
+	lookup = makeTestLookup()
+
+	text = 'EGFR signalling is involved in lung cancer'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,removePathways=False)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'gene'
+	assert entity.externalID == 'HGNC:3236'
+	assert entity.text == 'EGFR'
+	assert entity.position == [(0,4)]
+
+	assert len(doc.sentences) == 1
+	sentence = doc.sentences[0]
+	assert sentence.entitiesWithLocations == [(entity,[0])]
+
+def test_entityrecognizer_removepathways_1():
+	lookup = makeTestLookup()
+
+	text = 'EGFR signalling is involved in lung cancer'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,removePathways=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 0
+
+def test_entityrecognizer_removepathways_2():
+	lookup = makeTestLookup()
+
+	text = 'EGFR signaling is involved in lung cancer'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,removePathways=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 0
+
+def test_entityrecognizer_removepathways_3():
+	lookup = makeTestLookup()
+
+	text = 'EGFR pathway is involved in lung cancer'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,removePathways=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 0
+
+def test_entityrecognizer_removepathways_4():
+	lookup = makeTestLookup()
+
+	text = 'EGFR cascade is involved in lung cancer'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,removePathways=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 0
+
 def test_loadwordlist():
 	scriptDir = os.path.dirname(__file__)
 	wordlistPath = os.path.join(scriptDir,'data','terms.wordlist')
