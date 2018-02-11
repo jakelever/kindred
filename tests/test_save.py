@@ -13,9 +13,7 @@ def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEnti
 	
 def test_saveStandoffFile_fromSimpleTag():
 	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
-	corpus = kindred.Corpus()
-	doc = kindred.Document(text,loadFromSimpleTag=True)
-	corpus.addDocument(doc)
+	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 
 	tempDir = tempfile.mkdtemp()
 
@@ -40,9 +38,7 @@ def test_saveStandoffFile_fromSimpleTag():
 	
 def test_saveBiocFile_fromSimpleTag():
 	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
-	corpus = kindred.Corpus()
-	doc = kindred.Document(text,loadFromSimpleTag=True)
-	corpus.addDocument(doc)
+	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 
 	tempDir = tempfile.mkdtemp()
 
@@ -67,9 +63,7 @@ def test_saveBiocFile_fromSimpleTag():
 
 def test_saveStandoffFile_fromSimpleTag_triple():
 	text = '<drug id="T1">Erlotinib</drug>, a <gene id="T2">EGFR</gene> inhibitor is commonly used for <disease id="T3">NSCLC</disease> patients. <relation type="druginfo" drug="T1" gene="T2" disease="T3" />'
-	corpus = kindred.Corpus()
-	doc = kindred.Document(text,loadFromSimpleTag=True)
-	corpus.addDocument(doc)
+	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 
 	tempDir = tempfile.mkdtemp()
 
