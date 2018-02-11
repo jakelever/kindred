@@ -16,3 +16,7 @@ downloaded/
 
 # Unit test / coverage reports
 .coverage
+
+.pytest_cache/
+
+mypy3/
