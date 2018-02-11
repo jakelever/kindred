@@ -261,12 +261,7 @@ def test_iterLoadBiocFile():
 	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 	docsToCreate = 100
 
-
-	#tempDir = tempfile.mkdtemp()
-	tempDir = 'temp'
-	if os.path.isdir(tempDir):
-		shutil.rmtree(tempDir)
-	os.makedirs(tempDir)
+	tempDir = tempfile.mkdtemp()
 
 	singleDoc = corpus.documents[0]
 	corpus.documents = [ singleDoc for _ in range(docsToCreate) ]
@@ -293,6 +288,7 @@ def test_iterLoadBiocFile():
 			assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 
 	assert totalDocCount == docsToCreate
+	shutil.rmtree(tempDir)
 
 
 if __name__ == '__main__':

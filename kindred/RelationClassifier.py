@@ -59,14 +59,15 @@ class RelationClassifier:
 		"""
 		assert isinstance(corpus,kindred.Corpus)
 
-		if not corpus.candidatesFound:
+		# Check if the corresponding n-ary candidate relations are already processed
+		candidateRelationsFound = (self.entityCount in corpus.candidateRelationsEntityCounts)
+		if not candidateRelationsFound:
 			self.candidateBuilder = CandidateBuilder(entityCount=self.entityCount,acceptedEntityTypes=self.acceptedEntityTypes)
 			self.candidateBuilder.fit_transform(corpus)
+		assert self.entityCount in corpus.candidateRelationsEntityCounts
 		
-		assert self.entityCount == corpus.candidatesRelationsEntityCount, "Candidate relations found in corpus (%d) do not match the number of entities expected by relation classifier (%d)" % (corpus.candidatesRelationsEntityCount,self.entityCount)
-
-		candidateRelations = corpus.getCandidateRelations()
-		candidateClasses = corpus.getCandidateClasses()
+		candidateRelations = corpus.getCandidateRelations(self.entityCount)
+		candidateClasses = corpus.getCandidateClasses(self.entityCount)
 		
 		if len(candidateRelations) == 0:
 			raise RuntimeError("No candidate relations found in corpus for training. Does the corpus contain text and entity annotations with at least one sentence containing %d entities." % (self.entityCount))
@@ -99,7 +100,7 @@ class RelationClassifier:
 		for candidateRelation,candidateClassGroup in zip(candidateRelations,candidateClasses):
 			simplifiedClasses.append(candidateClassGroup[0])
 
-		self.vectorizer = Vectorizer(featureChoice=self.chosenFeatures,tfidf=self.tfidf)
+		self.vectorizer = Vectorizer(entityCount=self.entityCount,featureChoice=self.chosenFeatures,tfidf=self.tfidf)
 		trainVectors = self.vectorizer.fit_transform(corpus)
 	
 		assert trainVectors.shape[0] == len(candidateClasses)
@@ -132,13 +133,14 @@ class RelationClassifier:
 		assert self.isTrained, "Classifier must be trained using train() before predictions can be made"
 	
 		assert isinstance(corpus,kindred.Corpus)
-			
-		if not corpus.candidatesFound:
+		
+		# Check if the corresponding n-ary candidate relations are already processed
+		candidateRelationsFound = (self.entityCount in corpus.candidateRelationsEntityCounts)
+		if not candidateRelationsFound:
 			self.candidateBuilder.transform(corpus)
+		assert self.entityCount in corpus.candidateRelationsEntityCounts
 
-		assert self.entityCount == corpus.candidatesRelationsEntityCount, "Candidate relations found in corpus (%d) do not match the number of entities expected by relation classifier (%d)" % (corpus.candidatesRelationsEntityCount,self.entityCount)
-
-		candidateRelations = corpus.getCandidateRelations()
+		candidateRelations = corpus.getCandidateRelations(self.entityCount)
 
 		# Check if there are any candidate relations to classify in this corpus
 		if len(candidateRelations) == 0:

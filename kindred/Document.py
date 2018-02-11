@@ -132,10 +132,12 @@ class Document:
 		cloned = Document(self.text,entities=self.entities,relations=self.relations,relationsUseSourceIDs=False,sourceFilename=self.sourceFilename)
 		return cloned
 
-	def getCandidateClasses(self):
+	def getCandidateClasses(self,entityCount):
 		"""
-		Get all the classes (i.e. indices of relation types) for all the candidate relations in this document.
+		Get all the classes (i.e. indices of relation types) for all the candidate relations (of a given n-ary) in this document.
 		
+		:param entityCount: Number of entities (n-ary) in candidate relations
+		:type entityCount: int
 		:return: List of indices (corresponding to the relation types) for each candidate relation. 0 means no relation type
 		:rtype: List of integers
 		"""
@@ -143,14 +145,16 @@ class Document:
 		assert not self.sentences is None, "Document must be parsed and CandidateBuilder use to get candidate relations first"
 		classes = []
 		for sentence in self.sentences:
-			assert sentence.candidateRelationsProcessed == True, "CandidateBuilder use to get candidate relations first"
-			classes += [ relationtypeClass for relation,relationtypeClass in sentence.candidateRelationsWithClasses ]
+			assert entityCount in sentence.candidateRelationsEntityCounts, "CandidateBuilder use to get candidate relations first"
+			classes += [ relationtypeClass for relation,relationtypeClass in sentence.candidateRelationsWithClasses[entityCount] ]
 		return classes
 	
-	def getCandidateRelations(self):
+	def getCandidateRelations(self,entityCount):
 		"""
-		Get all the candidate relations in this corpus.
+		Get all the candidate relations (of a given n-ary) in this corpus.
 		
+		:param entityCount: Number of entities (n-ary) in candidate relations
+		:type entityCount: int
 		:return: List of candidate relations
 		:rtype: List of kindred.Relation
 		"""
@@ -158,8 +162,8 @@ class Document:
 		assert not self.sentences is None, "Document must be parsed and CandidateBuilder use to get candidate relations first"
 		relations = []
 		for sentence in self.sentences:
-			assert sentence.candidateRelationsProcessed == True, "CandidateBuilder use to get candidate relations first"
-			relations += [ relation for relation,relationtypeClass in sentence.candidateRelationsWithClasses ]
+			assert entityCount in sentence.candidateRelationsEntityCounts, "CandidateBuilder use to get candidate relations first"
+			relations += [ relation for relation,relationtypeClass in sentence.candidateRelationsWithClasses[entityCount] ]
 		return relations
 		
 	def getEntities(self):

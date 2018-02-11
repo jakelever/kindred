@@ -7,10 +7,10 @@ import itertools
 
 import kindred
 
-def _doEntityTypes(corpus):
+def _doEntityTypes(corpus,entityCount):
 	entityMapping = corpus.getEntityMapping()
 	data = []
-	for cr in corpus.getCandidateRelations():
+	for cr in corpus.getCandidateRelations(entityCount):
 		tokenInfo = {}
 		for argI,eID in enumerate(cr.entityIDs):
 			eType = entityMapping[eID].entityType
@@ -19,11 +19,11 @@ def _doEntityTypes(corpus):
 		data.append(tokenInfo)
 	return data
 
-def _doUnigramsBetweenEntities(corpus):
+def _doUnigramsBetweenEntities(corpus,entityCount):
 	data = []	
 	for doc in corpus.documents:
 		for sentence in doc.sentences:
-			for cr,_ in sentence.candidateRelationsWithClasses:
+			for cr,_ in sentence.candidateRelationsWithClasses[entityCount]:
 				dataForThisCR = Counter()
 				entityCount = len(cr.entityIDs)
 				for e1,e2 in itertools.combinations(range(entityCount),2):
@@ -48,11 +48,11 @@ def _doUnigramsBetweenEntities(corpus):
 
 	return data
 
-def _doDependencyPathEdges(corpus):
+def _doDependencyPathEdges(corpus,entityCount):
 	data = []	
 	for doc in corpus.documents:
 		for sentence in doc.sentences:
-			for cr,_ in sentence.candidateRelationsWithClasses:
+			for cr,_ in sentence.candidateRelationsWithClasses[entityCount]:
 				
 				entityCount = len(cr.entityIDs)
 				dataForThisCR = Counter()
@@ -75,11 +75,11 @@ def _doDependencyPathEdges(corpus):
 
 	return data
 
-def _doDependencyPathEdgesNearEntities(corpus):
+def _doDependencyPathEdgesNearEntities(corpus,entityCount):
 	data = []	
 	for doc in corpus.documents:
 		for sentence in doc.sentences:
-			for cr,_ in sentence.candidateRelationsWithClasses:
+			for cr,_ in sentence.candidateRelationsWithClasses[entityCount]:
 				dataForThisCR = Counter()
 
 				allEntityLocs = []
@@ -98,11 +98,11 @@ def _doDependencyPathEdgesNearEntities(corpus):
 
 	return data
 
-def _doBigrams(corpus):
+def _doBigrams(corpus,entityCount):
 	data = []	
 	for doc in corpus.documents:
 		for sentence in doc.sentences:
-			for cr,_ in sentence.candidateRelationsWithClasses:
+			for cr,_ in sentence.candidateRelationsWithClasses[entityCount]:
 				dataForThisCR = Counter()
 
 				for _ in cr.entityIDs:
@@ -122,17 +122,22 @@ class Vectorizer:
 	Vectorizes set of candidate relations into scipy sparse matrix.
 	"""
 	
-	def __init__(self,featureChoice=None,tfidf=True):
+	def __init__(self,entityCount=2,featureChoice=None,tfidf=True):
 		"""
 		Constructor for vectorizer class with options for what features to use and whether to normalize using TFIDF
 		
+		:param entityCount: Number of entities in candidate relations to vectorize
 		:param featureChoice: List of features (can be one or a set of the following: 'entityTypes', 'unigramsBetweenEntities', 'bigrams', 'dependencyPathEdges', 'dependencyPathEdgesNearEntities'). Set as None to use all of them. 
 		:param tfidf: Whether to normalize n-gram based features using term frequency-inverse document frequency
+		:type entityCount: int
 		:type featureChoice: list of str
 		:type tfidf: bool
 		"""
 		
 		self.fitted = False
+
+		assert isinstance(entityCount, int)
+		self.entityCount = entityCount
 		
 		self._registerFunctions()
 		validFeatures = self.featureInfo.keys()
@@ -185,7 +190,7 @@ class Vectorizer:
 			assert feature in self.featureInfo.keys()
 			featureFunction = self.featureInfo[feature]['func']
 			never_tfidf = self.featureInfo[feature]['never_tfidf']
-			data = featureFunction(corpus)
+			data = featureFunction(corpus,self.entityCount)
 			notEmpty = any( len(d)>0 for d in data )
 			if fit:
 				if notEmpty:
@@ -217,7 +222,7 @@ class Vectorizer:
 		:rtype: scipy.sparse.csr.csr_matrix
 		"""
 		assert self.fitted == False
-		assert len(corpus.getCandidateRelations()) > 0, "No candidate relations found in corpus"
+		assert len(corpus.getCandidateRelations(self.entityCount)) > 0, "No candidate (%d-ary) relations found in corpus" % self.entityCount
 		self.fitted = True
 		return self._vectorize(corpus,True)
 	
@@ -231,7 +236,7 @@ class Vectorizer:
 		:rtype: scipy.sparse.csr.csr_matrix
 		"""
 		assert self.fitted == True
-		assert len(corpus.getCandidateRelations()) > 0, "No candidate relations found in corpus"
+		assert len(corpus.getCandidateRelations(self.entityCount)) > 0, "No candidate (%d-ary) relations found in corpus" % self.entityCount
 		return self._vectorize(corpus,False)
 		
 		

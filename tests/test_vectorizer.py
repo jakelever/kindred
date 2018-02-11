@@ -36,7 +36,7 @@ def test_simpleVectorizer_triple():
 	candidateBuilder.fit_transform(corpus)
 	
 	# We'll just get the vectors for the entityTypes
-	vectorizer = kindred.Vectorizer(featureChoice=["entityTypes"])
+	vectorizer = kindred.Vectorizer(entityCount=3,featureChoice=["entityTypes"])
 	vectors = vectorizer.fit_transform(corpus)
 
 	assert vectors.shape == (6,9)
@@ -58,8 +58,6 @@ def test_vectorizer_defaults():
 	candidateBuilder = kindred.CandidateBuilder()
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
-
-	candidates = corpus1.getCandidateRelations()
 
 	vectorizer = kindred.Vectorizer()
 	
@@ -94,8 +92,6 @@ def test_vectorizer_entityTypes():
 	candidateBuilder = kindred.CandidateBuilder()
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
-
-	candidates = corpus1.getCandidateRelations()
 
 	chosenFeatures = ["entityTypes"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
@@ -252,8 +248,6 @@ def test_vectorizer_entityTypes_noTFIDF():
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
 
-	candidates = corpus1.getCandidateRelations()
-
 	chosenFeatures = ["entityTypes"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=False)
 	
@@ -409,9 +403,7 @@ def test_vectorizer_defaults_triple():
 	candidateBuilder.fit_transform(corpus1)
 	candidateBuilder.transform(corpus2)
 
-	candidates = corpus1.getCandidateRelations()
-
-	vectorizer = kindred.Vectorizer()
+	vectorizer = kindred.Vectorizer(entityCount=3)
 	
 	matrix1 = vectorizer.fit_transform(corpus1)
 	matrix2 = vectorizer.transform(corpus2)

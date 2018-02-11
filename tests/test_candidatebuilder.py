@@ -11,8 +11,8 @@ def test_candidatebuilder_simple():
 	candidateBuilder.fit_transform(corpus)
 	
 	assert corpus.relationTypes == [('treats', 'obj', 'subj')]
-	candidateRelations = corpus.getCandidateRelations()
-	candidateClasses = corpus.getCandidateClasses()
+	candidateRelations = corpus.getCandidateRelations(2)
+	candidateClasses = corpus.getCandidateClasses(2)
 
 	assert candidateClasses == [[0], [1], [0], [0]]
 	assert len(candidateRelations) == 4
@@ -33,8 +33,8 @@ def test_candidatebuilder_acceptedEntityTypes():
 	candidateBuilder.fit_transform(corpus)
 	
 	assert corpus.relationTypes == [('treats', 'obj', 'subj')]
-	candidateRelations = corpus.getCandidateRelations()
-	candidateClasses = corpus.getCandidateClasses()
+	candidateRelations = corpus.getCandidateRelations(2)
+	candidateClasses = corpus.getCandidateClasses(2)
 
 	print(candidateRelations)
 	assert candidateClasses == [[1], [0]]
@@ -54,8 +54,8 @@ def test_candidatebuilder_triple():
 	candidateBuilder.fit_transform(corpus)
 	
 	assert corpus.relationTypes == [('druginfo', 'disease', 'drug', 'gene')]
-	candidateRelations = corpus.getCandidateRelations()
-	candidateClasses = corpus.getCandidateClasses()
+	candidateRelations = corpus.getCandidateRelations(3)
+	candidateClasses = corpus.getCandidateClasses(3)
 
 	assert candidateClasses == [[0], [0], [1], [0], [0], [0]]
 	assert len(candidateRelations) == 6

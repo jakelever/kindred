@@ -3,6 +3,7 @@ import networkx as nx
 import itertools
 import sys
 import six
+from collections import defaultdict
 
 class Sentence:
 	"""
@@ -63,8 +64,8 @@ class Sentence:
 		self.entityIDToType = { e.entityID:e.entityType for e,_ in self.entitiesWithLocations }
 		self.entityIDToLoc = { e.entityID:loc for e,loc in self.entitiesWithLocations }
 
-		self.candidateRelationsWithClasses = []
-		self.candidateRelationsProcessed = False
+		self.candidateRelationsWithClasses = defaultdict(list)
+		self.candidateRelationsEntityCounts = set()
 	
 	def __str__(self):
 		tokenWords = [ t.word for t in self.tokens ]
@@ -83,7 +84,9 @@ class Sentence:
 		:type relationtypeClass: int
 		"""
 
-		self.candidateRelationsWithClasses.append((relation,relationtypeClass))
+		entityCount = len(relation.entityIDs)
+
+		self.candidateRelationsWithClasses[entityCount].append((relation,relationtypeClass))
 
 	def extractMinSubgraphContainingNodes(self, minSet):
 		"""
