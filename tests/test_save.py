@@ -38,6 +38,33 @@ def test_saveStandoffFile_fromSimpleTag():
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
 	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
+def test_saveBiocFile_fromSimpleTag():
+	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
+	corpus = kindred.Corpus()
+	doc = kindred.Document(text,loadFromSimpleTag=True)
+	corpus.addDocument(doc)
+
+	tempDir = tempfile.mkdtemp()
+
+	kindred.save(corpus,'bioc',tempDir)
+
+	loadedCorpus = kindred.loadDir('bioc',tempDir)
+	shutil.rmtree(tempDir)
+
+	assert isinstance(loadedCorpus,kindred.Corpus)
+	assert len(loadedCorpus.documents) == 1
+	loadedDoc = loadedCorpus.documents[0]
+	
+	assert isinstance(loadedDoc,kindred.Document)
+	entities = loadedDoc.getEntities()
+	relations = loadedDoc.getRelations()
+
+	sourceEntityIDsToEntityIDs = loadedDoc.getSourceEntityIDsToEntityIDs()
+
+	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+
 def test_saveStandoffFile_fromSimpleTag_triple():
 	text = '<drug id="T1">Erlotinib</drug>, a <gene id="T2">EGFR</gene> inhibitor is commonly used for <disease id="T3">NSCLC</disease> patients. <relation type="druginfo" drug="T1" gene="T2" disease="T3" />'
 	corpus = kindred.Corpus()
