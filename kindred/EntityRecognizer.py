@@ -251,7 +251,7 @@ class EntityRecognizer:
 					cleaned = cleanupVariant(w)
 					potentialLocs = (i,i+1)
 					if not potentialLocs in locs:
-						termtypesAndids.append([('omicevent',"substitution|%s"%cleaned)])
+						termtypesAndids.append([('variant',"substitution|%s"%cleaned)])
 						terms.append((w,))
 						locs.append(potentialLocs)
 
@@ -264,7 +264,7 @@ class EntityRecognizer:
 				if polyMatch:
 					potentialLocs = (i,i+1)
 					if not potentialLocs in locs:
-						termtypesAndids.append([('omicevent','dbsnp|%s'%w)])
+						termtypesAndids.append([('variant','dbsnp|%s'%w)])
 						terms.append((w,))
 						locs.append(potentialLocs)
 
