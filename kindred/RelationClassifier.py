@@ -157,12 +157,9 @@ class RelationClassifier:
 		# Check if the classifier has a predictwithprob method
 		potentialMethod = getattr(self.clf, "predictwithprobs", None)
 		if callable(potentialMethod):
-			print("CALLABLE")
 			predictedClasses,predictedProbs = self.clf.predictwithprobs(tmpMatrix)
 		else:
-			print("NOT CALLABLE")
 			predictedClasses = self.clf.predict(tmpMatrix)
-			#predictedClassesWithProbs = [ (c,None) for c in predictedClasses ]
 			predictedProbs = [ None for _ in predictedClasses ]
 
 		for predictedClass,predictedProb,candidateRelation in zip(predictedClasses,predictedProbs,candidateRelations):
