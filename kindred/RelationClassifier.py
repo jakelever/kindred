@@ -154,8 +154,18 @@ class RelationClassifier:
 		predictedRelations = []
 		tmpMatrix = self.vectorizer.transform(corpus)
 
-		predictedClasses = self.clf.predict(tmpMatrix)
-		for predictedClass,candidateRelation in zip(predictedClasses,candidateRelations):
+		# Check if the classifier has a predictwithprob method
+		potentialMethod = getattr(self.clf, "predictwithprobs", None)
+		if callable(potentialMethod):
+			print("CALLABLE")
+			predictedClasses,predictedProbs = self.clf.predictwithprobs(tmpMatrix)
+		else:
+			print("NOT CALLABLE")
+			predictedClasses = self.clf.predict(tmpMatrix)
+			#predictedClassesWithProbs = [ (c,None) for c in predictedClasses ]
+			predictedProbs = [ None for _ in predictedClasses ]
+
+		for predictedClass,predictedProb,candidateRelation in zip(predictedClasses,predictedProbs,candidateRelations):
 			if predictedClass != 0:
 				relKey = self.classToRelType[predictedClass]
 				relType = relKey[0]
@@ -165,7 +175,7 @@ class RelationClassifier:
 				if not tuple(candidateRelationEntityTypes) in self.relTypeToValidEntityTypes[relKey]:
 					continue
 
-				predictedRelation = kindred.Relation(relType,candidateRelation.entityIDs,argNames=argNames)
+				predictedRelation = kindred.Relation(relType,candidateRelation.entityIDs,argNames=argNames,probability=predictedProb)
 				predictedRelations.append(predictedRelation)
 		
 		# Add the predicted relations into the corpus

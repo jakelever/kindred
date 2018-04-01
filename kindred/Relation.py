@@ -4,16 +4,18 @@ class Relation:
 	Describes relationship between entities (including relation type and argument names if applicable).
 	"""
 	
-	def __init__(self,relationType=None,entityIDs=[],argNames=None):
+	def __init__(self,relationType=None,entityIDs=[],argNames=None,probability=None):
 		"""
 		Constructor for Relation class
 		
 		:param relationType: Type of relation
 		:param entityIDs: List of entities in relation
 		:param argNames: Names of relation argument associated with each entity
+		:param probability: Optional probability for predicted relations
 		:type relationType: str
 		:type entityIDs: list of ints
 		:type argNames: list of str
+		:type probability: float
 		"""
 
 		assert isinstance(entityIDs,list)
@@ -25,6 +27,10 @@ class Relation:
 		else:
 			assert len(argNames) == len(entityIDs)
 			self.argNames = [ str(a) for a in argNames ]
+
+		if not probability is None:
+			assert isinstance(probability, float)
+		self.probability = probability
 	
 	def __eq__(self, other):
 		"""Override the default Equals behavior"""
