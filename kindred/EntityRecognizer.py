@@ -71,7 +71,7 @@ def mergeWordsForFusionDetection(words):
 	prevWord = ""
 	mergedWords = []
 	start = 0
-	mergeChars = ['-','/']
+	mergeChars = ['-','/',':']
 	for i,w in enumerate(words):
 		if w in mergeChars:
 			prevWord += w
@@ -96,7 +96,7 @@ def fusionGeneDetection(words, lookupDict):
 	mergedWords = mergeWordsForFusionDetection(words)
 
 	for start,end,word in mergedWords:
-		split = re.split("[-/]",word)
+		split = re.split("[-/:]",word)
 		fusionCount = len(split)
 		if fusionCount == 1:
 			continue
