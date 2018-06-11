@@ -155,6 +155,11 @@ At the moment, no. Kindred will only use the first annotation of a relation.
 Release Notes
 -------------
 
+Version 2.1.0
+-------------
+- Added EntityRecognizer for basic entity extraction
+- Relations can now be n-ary, not just binary
+
 Version 2.0.0
 -------------
 - Large overhaul to replace CoreNLP with Spacy package for easier integration and installation
