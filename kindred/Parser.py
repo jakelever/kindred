@@ -61,7 +61,6 @@ class Parser:
 		assert isinstance(corpus,kindred.Corpus)
 
 		for d in corpus.documents:
-		#for doctokens in self.nlp.pipe( d.text for d in corpus.documents, batch_size=2, n_threads=1):
 			entityIDsToEntities = d.getEntityIDsToEntities()
 		
 			denotationTree = IntervalTree()
@@ -90,8 +89,6 @@ class Parser:
 					dep = (t.head.i-indexOffset,t.i-indexOffset,depName)
 					dependencies.append(dep)
 
-				# TODO: Should I filter this more or just leave it for simplicity
-					
 				entityIDsToTokenLocs = defaultdict(list)
 				for i,t in enumerate(tokens):
 					entitiesOverlappingWithToken = denotationTree[t.startPos:t.endPos]
@@ -100,13 +97,15 @@ class Parser:
 						entityIDsToTokenLocs[entityID].append(i)
 
 				# Let's gather up the information about the "known" entities in the sentence
-				entitiesWithLocations = []
+				sentenceEntities = []
 				for entityID,entityLocs in sorted(entityIDsToTokenLocs.items()):
-					e = entityIDsToEntities[entityID]
-					entityWithLocation = (e, entityLocs)
-					entitiesWithLocations.append(entityWithLocation)
+					# Get the entity associated with this ID and clone it (as we're going to add extra data to it).
+					oldE = entityIDsToEntities[entityID]
+					e = kindred.Entity(oldE.entityType,oldE.text,oldE.position,oldE.sourceEntityID,oldE.externalID)
+					e.tokenLocs = entityLocs
+					sentenceEntities.append(e)
 					
-				sentence = kindred.Sentence(sentenceTxt, tokens, dependencies, entitiesWithLocations, d.getSourceFilename())
+				sentence = kindred.Sentence(sentenceTxt, tokens, dependencies, sentenceEntities, d.getSourceFilename())
 				d.addSentence(sentence)
 
 		corpus.parsed = True

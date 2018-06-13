@@ -10,19 +10,19 @@ class Sentence:
 	Set of tokens for a sentence after parsing
 	"""
 	
-	def __init__(self, text, tokens, dependencies, entitiesWithLocations, sourceFilename=None):
+	def __init__(self, text, tokens, dependencies, entities, sourceFilename=None):
 		"""
 		Constructor for Sentence class
 	
 		:param text: Text of the sentence
 		:param tokens: List of tokens in sentence
 		:param dependencies: List of dependencies from dependency path. Should be a list of tuples with form (tokenindex1,tokenindex2,dependency_type)
-		:param entitiesWithLocations: List of entities associated with tokens. Should be a list of tuples with form (kindred.Entity, list of tokenindices)"
+		:param entities: List of entities associated with tokens. Should be a list of tuples with form (kindred.Entity, list of tokenindices)"
 		:param sourceFilename: Filename of the source document
 		:type text: str
 		:type tokens: list of kindred.Token
 		:type dependencies: list of tuples
-		:type entitiesWithLocations: list of tuples
+		:type entities: list of kindred.Entity
 		:type sourceFilename: str
 		"""
 
@@ -32,14 +32,12 @@ class Sentence:
 		for token in tokens:
 			assert isinstance(token,kindred.Token)
 		
-		# Check that each entityWithLocation is a tuple of an entity with a location
-		assert isinstance(entitiesWithLocations, list)
-		for entityWithLocation in entitiesWithLocations:
-			assert isinstance(entityWithLocation,tuple)
-			assert len(entityWithLocation) == 2
-			assert isinstance(entityWithLocation[0],kindred.Entity)
-			assert isinstance(entityWithLocation[1],list)
-			for l in entityWithLocation[1]:
+		# Check that each entity has associated token info
+		assert isinstance(entities, list)
+		for entity in entities:
+			assert isinstance(entity,kindred.Entity)
+			assert isinstance(entity.tokenLocs,list)
+			for l in entity.tokenLocs:
 				assert l >= 0 and l < len(tokens), "Entity location must be an index of one of the tokens"
 			
 		# Check the format of the Dependencies
@@ -56,16 +54,12 @@ class Sentence:
 		
 		self.text = text
 		self.tokens = tokens
-		self.entitiesWithLocations = entitiesWithLocations
+		self.entities = entities
 		self.sourceFilename = sourceFilename
 		
 		self.dependencies = dependencies
 		
-		self.entityIDToType = { e.entityID:e.entityType for e,_ in self.entitiesWithLocations }
-		self.entityIDToLoc = { e.entityID:loc for e,loc in self.entitiesWithLocations }
-
-		self.candidateRelationsWithClasses = defaultdict(list)
-		self.candidateRelationsEntityCounts = set()
+		self.entityIDToEntity = { e.entityID:e for e in self.entities }
 	
 	def __str__(self):
 		tokenWords = [ t.word for t in self.tokens ]
@@ -74,20 +68,6 @@ class Sentence:
 	def __repr__(self):
 		return self.__str__()
 	
-	def addCandidateRelation(self, relation, relationtypeClass):
-		"""
-		Adds a candidate relation to a list of candidate relations associated with this sentence
-		
-		:param relation: Candidate relation to add to sentence
-		:param relationtypeClass: Class index for type of candidate relation
-		:type relation: kindred.Relation
-		:type relationtypeClass: int
-		"""
-
-		entityCount = len(relation.entityIDs)
-
-		self.candidateRelationsWithClasses[entityCount].append((relation,relationtypeClass))
-
 	def extractMinSubgraphContainingNodes(self, minSet):
 		"""
 		Find the minimum subgraph of the dependency graph that contains the provided set of nodes. Useful for finding dependency-path like structures
@@ -138,46 +118,4 @@ class Sentence:
 			nodes.update(path)
 
 		return nodes,allEdges
-
-	def addEntityWithLocation(self,entity,location):
-		"""
-		Add an entity with location to the sentence
-
-		:param entity: Entity to add to sentence
-		:param location: Location of entity in sentence (list of indices of tokens)
-		:type entity: kindred.Entity
-		:type location: list of ints
-		"""
-		assert isinstance(entity,kindred.Entity)
-		assert isinstance(location,list)
-		assert len(location) > 0
-		for l in location:
-			assert l >= 0 and l < len(self.tokens), "Entity location must be an index of one of the tokens"
-		self.entitiesWithLocations.append((entity,location))
-		
-		self.entityIDToType = { e.entityID:e.entityType for e,_ in self.entitiesWithLocations }
-		self.entityIDToLoc = { e.entityID:loc for e,loc in self.entitiesWithLocations }
-
-	def getEntityIDs(self):
-		"""
-		Get the list of entity IDs contained within this sentence
-		
-		:return: List of entity IDs
-		:rtype: List of ints
-		"""
-
-		return [ e.entityID for e,_ in self.entitiesWithLocations ]
-		
-	def getEntityType(self,entityID):
-		"""
-		Get the entity type for a particular entity in this sentence given the entity ID
-		
-		:param entityID: Entity ID
-		:type entityID: int
-		:return: The entity type of the corresponding entity
-		:rtype: str
-		"""
-		
-		return self.entityIDToType[entityID]
-
 
