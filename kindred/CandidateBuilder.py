@@ -17,8 +17,6 @@ class CandidateBuilder:
 		:type entityCount: int
 		:type acceptedEntityTypes: list of tuples
 		"""
-		self.fitted = False
-
 		assert isinstance(entityCount,int)
 		assert entityCount >= 2
 		self.entityCount = entityCount
@@ -32,75 +30,32 @@ class CandidateBuilder:
 				assert len(acceptedEntityType) == entityCount
 			self.acceptedEntityTypes = set(acceptedEntityTypes)
 
-	def fit_transform(self,corpus):
+	def build(self,corpus):
 		"""
-		Creates the set of all possible relations that exist within the given corpus and adds these to the corpus under each kindred.Sentence instance. Each relation will be contained within a single sentence. This fitting function should be called the first time in order to initialise the set of known relationship types.
+		Creates the set of all possible relations that exist within the given corpus. Each relation will be contained within a single sentence.
 		
 		:param corpus: Corpus of text with which to build relation candidates
 		:type corpus: kindred.Corpus
+		:returns: List of candidate relations matching entityCount and acceptedEntityTypes
+		:rtype: List of kindred.Relation
 		"""
-
-		assert self.fitted == False, "CandidateBuilder has already been fit to corpus"
 		assert isinstance(corpus,kindred.Corpus)
-		assert not self.entityCount in corpus.candidateRelationsEntityCounts, "Candidates for relations with entityCount=%d already exist in corpus." % self.entityCount
+		assert corpus.parsed, "Corpus must have already been parsed"
 
-		if not corpus.parsed:
-			parser = kindred.Parser()
-			parser.parse(corpus)
-		
-		self.relTypes = set()
-	
+		candidates = []
 		for doc in corpus.documents:
-			knownRelations = doc.getRelations()
-			for r in knownRelations:
-				assert isinstance(r,kindred.Relation)
-			
-			tmpRelTypesAndArgCount = [ tuple([r.relationType] + r.argNames) for r in knownRelations ]
-			self.relTypes.update(tmpRelTypesAndArgCount)
-			
-		self.relTypes = sorted(list(self.relTypes))
-		self.relClasses = { relType:(i+1) for i,relType in enumerate(self.relTypes) }
-			
-		self.fitted = True
-	
-		self.transform(corpus)
-
-	def transform(self,corpus):
-		"""
-		Creates the set of all possible relations that exist within the given corpus and adds these to the corpus under each kindred.Sentence instance. Each relation will be contained within a single sentence.
-		
-		:param corpus: Corpus of text with which to build relation candidates
-		:type corpus: kindred.Corpus
-		"""
-		assert self.fitted == True, "CandidateBuilder must be fit to corpus first"
-		assert isinstance(corpus,kindred.Corpus)
-		assert not self.entityCount in corpus.candidateRelationsEntityCounts, "Candidates for relations with entityCount=%d already exist in corpus." % self.entityCount
-
-		if not corpus.parsed:
-			parser = kindred.Parser()
-			parser.parse(corpus)
-
-		for doc in corpus.documents:
-			existingRelations = defaultdict(list)
+			existingRelationsAndArgNames = defaultdict(lambda : (None,None))
 			for r in doc.getRelations():
 				assert isinstance(r,kindred.Relation)
-				
 				entityIDs = tuple(r.entityIDs)
-				
-				relKey = tuple([r.relationType] + r.argNames)
-				if relKey in self.relClasses:
-					relationClass = self.relClasses[relKey]
-					existingRelations[entityIDs].append(relationClass)
+				existingRelationsAndArgNames[entityIDs] = (r.relationType,r.argNames)
 
 			for sentence in doc.sentences:
 				entitiesInSentence = sentence.getEntityIDs()
 							
 				for entitiesInRelation in itertools.permutations(entitiesInSentence, self.entityCount):
-					candidateRelation = kindred.Relation(entityIDs=list(entitiesInRelation))
-					candidateClass = [0]
-					relKey = tuple(entitiesInRelation)
-					if relKey in existingRelations:
-						candidateClass = existingRelations[relKey]
+					relationType,argNames = existingRelationsAndArgNames[entitiesInRelation] # Is None if relation doesn't exist
+					candidateRelation = kindred.Relation(relationType=relationType,entityIDs=list(entitiesInRelation),argNames=argNames,sentence=sentence)
 
 					includeCandidate = True
 					if not self.acceptedEntityTypes is None:
@@ -108,10 +63,7 @@ class CandidateBuilder:
 						includeCandidate = (typesInRelation in self.acceptedEntityTypes)
 
 					if includeCandidate:
-						sentence.addCandidateRelation(candidateRelation,candidateClass)
+						candidates.append(candidateRelation)
 
-				sentence.candidateRelationsEntityCounts.add(self.entityCount)
-					
-		corpus.addRelationTypes(self.relTypes)
-		corpus.candidateRelationsEntityCounts.add(self.entityCount)
+		return candidates
 

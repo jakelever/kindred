@@ -22,9 +22,6 @@ class Corpus:
 			self.addDocument(doc)
 
 		self.parsed = False
-		self.candidateRelationsEntityCounts = set()
-
-		self.relationTypes = None
 
 	def addDocument(self,doc):
 		"""
@@ -60,36 +57,6 @@ class Corpus:
 		for doc in self.documents:
 			cloned.addDocument(doc.clone())
 		return cloned
-	
-	def getCandidateClasses(self,entityCount):
-		"""
-		Get all the classes (i.e. indices of relation types) for all the candidate relations (of a particular n-ary) in this corpus.
-		
-		:param entityCount: Number of entities (n-ary) in candidate relations
-		:type entityCount: int
-		:return: List of indices (corresponding to the relation types) for each candidate relation. 0 means no relation type
-		:rtype: List of integers
-		"""
-
-		classes = []
-		for doc in self.documents:
-			classes += doc.getCandidateClasses(entityCount)
-		return classes
-		
-	def getCandidateRelations(self,entityCount):
-		"""
-		Get all the candidate relations (of a particular n-ary) in this corpus.
-		
-		:param entityCount: Number of entities (n-ary) in candidate relations
-		:type entityCount: int
-		:return: List of candidate relations
-		:rtype: List of kindred.Relation
-		"""
-
-		relations = []
-		for doc in self.documents:
-			relations += doc.getCandidateRelations(entityCount)
-		return relations
 		
 	def getEntityMapping(self):
 		"""
