@@ -91,5 +91,5 @@ def test_candidatebuilder_triple():
 	assert candidateRelations[5].argNames == None
 
 if __name__ == '__main__':
-	test_simpleRelationCandidates()
+	test_candidatebuilder_acceptedEntityTypes()
 
