@@ -15,7 +15,7 @@ class Parser:
 	
 	def __init__(self,language='en'):
 		"""
-		Create a Parser object that will use Spacy for parsing. It uses Spacy and offers all the same languages that Spacy offers. Check out: https://spacy.io/usage/models. Note that the language model needs to be downloaded first (e.g. python -m spacy download en)
+		Create a Parser object that will use Spacy for parsing. It offers all the same languages that Spacy offers. Check out: https://spacy.io/usage/models. Note that the language model needs to be downloaded first (e.g. python -m spacy download en)
 		
 		:param language: Language to parse (en/de/es/pt/fr/it/nl)
 		:type language: str
@@ -96,16 +96,14 @@ class Parser:
 						entityID = interval.data
 						entityIDsToTokenLocs[entityID].append(i)
 
+				sentence = kindred.Sentence(sentenceTxt, tokens, dependencies, d.getSourceFilename())
+				
 				# Let's gather up the information about the "known" entities in the sentence
-				sentenceEntities = []
 				for entityID,entityLocs in sorted(entityIDsToTokenLocs.items()):
-					# Get the entity associated with this ID and clone it (as we're going to add extra data to it).
-					oldE = entityIDsToEntities[entityID]
-					e = kindred.Entity(oldE.entityType,oldE.text,oldE.position,oldE.sourceEntityID,oldE.externalID)
-					e.tokenLocs = entityLocs
-					sentenceEntities.append(e)
+					# Get the entity associated with this ID
+					e = entityIDsToEntities[entityID]
+					sentence.addEntityAnnotation(e,entityLocs)
 					
-				sentence = kindred.Sentence(sentenceTxt, tokens, dependencies, sentenceEntities, d.getSourceFilename())
 				d.addSentence(sentence)
 
 		corpus.parsed = True

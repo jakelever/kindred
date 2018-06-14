@@ -4,12 +4,17 @@ import os
 import kindred
 from kindred.datageneration import generateData,generateTestData
 
-def assertEntityWithLocation(entity,expectedType,expectedLocs,expectedSourceEntityID):
+def assertEntityWithLocation(entityAnnotation,expectedType,expectedLocs,expectedSourceEntityID):
+	assert isinstance(entityAnnotation,tuple)
+	assert len(entityAnnotation) == 2
+	
+	entity,tokenIndices = entityAnnotation
 	assert isinstance(entity, kindred.Entity)
 
 	assert entity.entityType == expectedType, "(%s) not as expected" % (entity.__str__())
-	assert entity.tokenLocs == expectedLocs, "(%s) not as expected" % (entity.__str__())
 	assert entity.sourceEntityID == expectedSourceEntityID, "(%s) not as expected" % (entity.__str__())
+	
+	assert tokenIndices == expectedLocs, "(%s) not as expected" % (entity.__str__())
 
 def test_simpleSentenceParse():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">lung</cancer> and unknown <cancer id="2">cancers</cancer>'
@@ -34,10 +39,11 @@ def test_simpleSentenceParse():
 		assert len(t.lemma) > 0
 		assert w == t.word
 	
-	assert isinstance(sentence.entities,list)
-	assert len(sentence.entities) == 2
-	assertEntityWithLocation(sentence.entities[0],'drug',[0],'1')
-	assertEntityWithLocation(sentence.entities[1],'cancer',[6,9],'2')
+	assert isinstance(sentence.entityAnnotations,list)
+	assert len(sentence.entityAnnotations) == 2
+	assertEntityWithLocation(sentence.entityAnnotations[0],'drug',[0],'1')
+	assertEntityWithLocation(sentence.entityAnnotations[1],'cancer',[6,9],'2')
+	#assert(sentence.entityAnnotations) == False
 	
 	assert isinstance(sentence.dependencies,list)
 	assert len(sentence.dependencies) > 0
@@ -65,8 +71,8 @@ def test_parsing_dependencyGraph():
 		assert len(t.lemma) > 0
 		assert w == t.word
 	
-	assert isinstance(sentence.entities,list)
-	assert len(sentence.entities) == 0
+	assert isinstance(sentence.entityAnnotations,list)
+	assert len(sentence.entityAnnotations) == 0
 	
 	assert isinstance(sentence.dependencies,list)
 	expectedDependencies = [(1, 0, u'nsubj'), (1, 1, u'ROOT'), (3, 2, u'aux'), (1, 3, u'xcomp'), (3, 4, u'prt'), (6, 5, u'poss'), (3, 6, u'dobj'), (3, 7, u'prep'), (9, 8, u'amod'), (7, 9, u'pobj')]
@@ -91,7 +97,7 @@ def test_twoSentenceParse():
 		for t in sentence.tokens:
 			assert isinstance(t,kindred.Token)
 			assert len(t.lemma) > 0
-		assert isinstance(sentence.entities,list)
+		assert isinstance(sentence.entityAnnotations,list)
 		assert isinstance(sentence.dependencies,list)
 		assert len(sentence.dependencies) > 0
 		
@@ -103,10 +109,10 @@ def test_twoSentenceParse():
 	for w,t in zip(expectedWords,sentence0.tokens):
 		assert w == t.word
 		
-	assert isinstance(sentence0.entities,list)
-	assert len(sentence0.entities) == 2
-	assertEntityWithLocation(sentence0.entities[0],'drug',[0],'1')
-	assertEntityWithLocation(sentence0.entities[1],'cancer',[6],'2')
+	assert isinstance(sentence0.entityAnnotations,list)
+	assert len(sentence0.entityAnnotations) == 2
+	assertEntityWithLocation(sentence0.entityAnnotations[0],'drug',[0],'1')
+	assertEntityWithLocation(sentence0.entityAnnotations[1],'cancer',[6],'2')
 	
 	# Second sentence	
 	expectedWords = "Aspirin is the main cause of boneitis .".split()
@@ -116,10 +122,10 @@ def test_twoSentenceParse():
 	for w,t in zip(expectedWords,sentence1.tokens):
 		assert w == t.word
 		
-	assert isinstance(sentence1.entities,list)
-	assert len(sentence1.entities) == 2
-	assertEntityWithLocation(sentence1.entities[0],'drug',[0],'3')
-	assertEntityWithLocation(sentence1.entities[1],'disease',[6],'4')
+	assert isinstance(sentence1.entityAnnotations,list)
+	assert len(sentence1.entityAnnotations) == 2
+	assertEntityWithLocation(sentence1.entityAnnotations[0],'drug',[0],'3')
+	assertEntityWithLocation(sentence1.entityAnnotations[1],'disease',[6],'4')
 
 def test_largeSentence():
 	repeatCount = 500
@@ -158,10 +164,10 @@ def test_unicodeParse():
 		assert len(t.lemma) > 0
 		assert w == t.word
 	
-	assert isinstance(sentence.entities,list)
-	assert len(sentence.entities) == 2
-	assertEntityWithLocation(sentence.entities[0],'drug',[0],'1')
-	assertEntityWithLocation(sentence.entities[1],'cancer',[8,11],'2')
+	assert isinstance(sentence.entityAnnotations,list)
+	assert len(sentence.entityAnnotations) == 2
+	assertEntityWithLocation(sentence.entityAnnotations[0],'drug',[0],'1')
+	assertEntityWithLocation(sentence.entityAnnotations[1],'cancer',[8,11],'2')
 	
 	assert isinstance(sentence.dependencies,list)
 	assert len(sentence.dependencies) > 0

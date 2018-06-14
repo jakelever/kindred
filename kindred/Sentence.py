@@ -10,19 +10,17 @@ class Sentence:
 	Set of tokens for a sentence after parsing
 	"""
 	
-	def __init__(self, text, tokens, dependencies, entities, sourceFilename=None):
+	def __init__(self, text, tokens, dependencies, sourceFilename=None):
 		"""
 		Constructor for Sentence class
 	
 		:param text: Text of the sentence
 		:param tokens: List of tokens in sentence
 		:param dependencies: List of dependencies from dependency path. Should be a list of tuples with form (tokenindex1,tokenindex2,dependency_type)
-		:param entities: List of entities associated with tokens. Should be a list of tuples with form (kindred.Entity, list of tokenindices)"
 		:param sourceFilename: Filename of the source document
 		:type text: str
 		:type tokens: list of kindred.Token
 		:type dependencies: list of tuples
-		:type entities: list of kindred.Entity
 		:type sourceFilename: str
 		"""
 
@@ -33,12 +31,12 @@ class Sentence:
 			assert isinstance(token,kindred.Token)
 		
 		# Check that each entity has associated token info
-		assert isinstance(entities, list)
-		for entity in entities:
-			assert isinstance(entity,kindred.Entity)
-			assert isinstance(entity.tokenLocs,list)
-			for l in entity.tokenLocs:
-				assert l >= 0 and l < len(tokens), "Entity location must be an index of one of the tokens"
+		#assert isinstance(entities, list)
+		#for entity in entities:
+		#	assert isinstance(entity,kindred.Entity)
+		#	assert isinstance(entity.tokenLocs,list)
+		#	for l in entity.tokenLocs:
+		#		assert l >= 0 and l < len(tokens), "Entity location must be an index of one of the tokens"
 			
 		# Check the format of the Dependencies
 		dependencyErrorMsg = "Each dependency is expected to be a tuple of (tokenindex1,tokenindex2,dependency_type). Token index can be -1 to indicate an incoming edge."
@@ -54,12 +52,34 @@ class Sentence:
 		
 		self.text = text
 		self.tokens = tokens
-		self.entities = entities
 		self.sourceFilename = sourceFilename
 		
 		self.dependencies = dependencies
 		
-		self.entityIDToEntity = { e.entityID:e for e in self.entities }
+		#self.entitiesWithTokenIndices = []
+		#self.entityAnnotations = [ [] for _ in self.tokens ]
+		self.entityAnnotations = []
+		#self.entityIDs = []
+		#self.entityIDToEntity = {}
+		
+	def addEntityAnnotation(self, entity, tokenIndices):
+		"""
+		Add an entity annotation to this sentence. Associated a specific entity with the indices of specific tokens
+		
+		:param entity: Entity to add to sentence
+		:param tokenIndices: List of token indices
+		:type entity: kindred.Entity
+		:type tokenIndices: List of ints
+		"""
+		
+		assert isinstance(entity, kindred.Entity)
+		assert isinstance(tokenIndices,list)
+		for l in tokenIndices:
+			assert l >= 0 and l < len(self.tokens), "Entity location must be an index of one of the tokens"
+			#self.entityAnnotations[l].append(entity)
+		self.entityAnnotations.append( (entity,tokenIndices) )
+		#self.entityIDs = [ e.entityID for e,ti in self.entitiesWithTokenIndices ]
+		#self.entityIDToEntity = { e.entityID:e for e,ti in self.entitiesWithTokenIndices }
 	
 	def __str__(self):
 		tokenWords = [ t.word for t in self.tokens ]

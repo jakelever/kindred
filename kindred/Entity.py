@@ -43,9 +43,6 @@ class Entity:
 		
 		self.entityID = Entity._nextInternalID
 		Entity._nextInternalID += 1
-
-		# Used to store which tokens in a sentence are associated with this entity. Should be None if the entity is related to a document, not a sentence
-		self.tokenLocs = None
 		
 	def __str__(self):
 		if self.externalID is None:
