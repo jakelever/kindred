@@ -7,113 +7,120 @@ import itertools
 
 import kindred
 
-def _doEntityTypes(corpus,entityCount):
-	entityMapping = corpus.getEntityMapping()
+def _doEntityTypes(candidates,entityCount):
 	data = []
-	for cr in corpus.getCandidateRelations(entityCount):
+	for cr in candidates:
+		assert isinstance(cr,kindred.Relation)
+		
+		entityIDToType = { e.entityID:e.entityType for e,_ in cr.sentence.entityAnnotations }
 		tokenInfo = {}
 		for argI,eID in enumerate(cr.entityIDs):
-			eType = entityMapping[eID].entityType
+			eType = entityIDToType[eID]
 			argName = "selectedtokentypes_%d_%s" % (argI,eType)
 			tokenInfo[argName] = 1
 		data.append(tokenInfo)
 	return data
 
-def _doUnigramsBetweenEntities(corpus,entityCount):
+def _doUnigramsBetweenEntities(candidates,entityCount):
 	data = []	
-	for doc in corpus.documents:
-		for sentence in doc.sentences:
-			for cr,_ in sentence.candidateRelationsWithClasses[entityCount]:
-				dataForThisCR = Counter()
-				entityCount = len(cr.entityIDs)
-				for e1,e2 in itertools.combinations(range(entityCount),2):
-					#assert len(cr.entityIDs) == 2
-					pos1 = sentence.entityIDToLoc[cr.entityIDs[e1]]
-					pos2 = sentence.entityIDToLoc[cr.entityIDs[e2]]
-					
-					if max(pos1) < min(pos2):
-						startPos,endPos = max(pos1)+1,min(pos2)
-					else:
-						startPos,endPos = max(pos2)+1,min(pos1)
+	for cr in candidates:
+		assert isinstance(cr,kindred.Relation)
+		
+		sentence = cr.sentence
+		dataForThisCR = Counter()
+		entityCount = len(cr.entityIDs)
+		entityIDToTokenIndices = { e.entityID:tokenIndices for e,tokenIndices in cr.sentence.entityAnnotations }
+		
+		for e1,e2 in itertools.combinations(range(entityCount),2):
+			#assert len(cr.entityIDs) == 2
+			pos1 = entityIDToTokenIndices[cr.entityIDs[e1]]
+			pos2 = entityIDToTokenIndices[cr.entityIDs[e2]]
+			
+			if max(pos1) < min(pos2):
+				startPos,endPos = max(pos1)+1,min(pos2)
+			else:
+				startPos,endPos = max(pos2)+1,min(pos1)
 
-					tokenData = [ sentence.tokens[i].word.lower() for i in range(startPos,endPos) ]
+			tokenData = [ sentence.tokens[i].word.lower() for i in range(startPos,endPos) ]
 
-					basename = u"ngrams_betweenentities"
-					if entityCount > 2:
-						basename = u"ngrams_betweenentities_%d_%d" % (e1,e2)
+			basename = u"ngrams_betweenentities"
+			if entityCount > 2:
+				basename = u"ngrams_betweenentities_%d_%d" % (e1,e2)
 
-					for t in tokenData:
-						dataForThisCR[u"%s_%s" % (basename,t)] += 1
-				data.append(dataForThisCR)
+			for t in tokenData:
+				dataForThisCR[u"%s_%s" % (basename,t)] += 1
+		data.append(dataForThisCR)
 
 	return data
 
-def _doDependencyPathEdges(corpus,entityCount):
+def _doDependencyPathEdges(candidates,entityCount):
 	data = []	
-	for doc in corpus.documents:
-		for sentence in doc.sentences:
-			for cr,_ in sentence.candidateRelationsWithClasses[entityCount]:
-				
-				entityCount = len(cr.entityIDs)
-				dataForThisCR = Counter()
-				for e1,e2 in itertools.combinations(range(entityCount),2):
+	for cr in candidates:
+		assert isinstance(cr,kindred.Relation)
+		sentence = cr.sentence
+		entityIDToTokenIndices = { e.entityID:tokenIndices for e,tokenIndices in cr.sentence.entityAnnotations }
+		
+		entityCount = len(cr.entityIDs)
+		dataForThisCR = Counter()
+		for e1,e2 in itertools.combinations(range(entityCount),2):
+			pos1 = entityIDToTokenIndices[cr.entityIDs[e1]]
+			pos2 = entityIDToTokenIndices[cr.entityIDs[e2]]
 
-				
-					pos1 = sentence.entityIDToLoc[cr.entityIDs[e1]]
-					pos2 = sentence.entityIDToLoc[cr.entityIDs[e2]]
+			combinedPos = pos1 + pos2
+			
+			basename = u"dependencypathelements"
+			if entityCount > 2:
+				basename = u"dependencypathelements_%d_%d" % (e1,e2)
 
-					combinedPos = pos1 + pos2
-					
-					basename = u"dependencypathelements"
-					if entityCount > 2:
-						basename = u"dependencypathelements_%d_%d" % (e1,e2)
-
-					nodes,edges = sentence.extractMinSubgraphContainingNodes(combinedPos)
-					for a,b,dependencyType in edges:
-						dataForThisCR[u"%s_%s" % (basename,dependencyType)] += 1
-				data.append(dataForThisCR)
+			nodes,edges = sentence.extractMinSubgraphContainingNodes(combinedPos)
+			for a,b,dependencyType in edges:
+				dataForThisCR[u"%s_%s" % (basename,dependencyType)] += 1
+		data.append(dataForThisCR)
 
 	return data
 
-def _doDependencyPathEdgesNearEntities(corpus,entityCount):
+def _doDependencyPathEdgesNearEntities(candidates,entityCount):
 	data = []	
-	for doc in corpus.documents:
-		for sentence in doc.sentences:
-			for cr,_ in sentence.candidateRelationsWithClasses[entityCount]:
-				dataForThisCR = Counter()
+	for cr in candidates:
+		assert isinstance(cr,kindred.Relation)
+		sentence = cr.sentence
+		entityIDToTokenIndices = { e.entityID:tokenIndices for e,tokenIndices in cr.sentence.entityAnnotations }
+		
+		dataForThisCR = Counter()
 
-				allEntityLocs = []
-				for eID in cr.entityIDs:
-					allEntityLocs += sentence.entityIDToLoc[eID]
-				
-				nodes,edges = sentence.extractMinSubgraphContainingNodes(allEntityLocs)
-				for i,eID in enumerate(cr.entityIDs):
+		allEntityLocs = []
+		for eID in cr.entityIDs:
+			allEntityLocs += entityIDToTokenIndices[eID]
+		
+		nodes,edges = sentence.extractMinSubgraphContainingNodes(allEntityLocs)
+		for i,eID in enumerate(cr.entityIDs):
+			pos = entityIDToTokenIndices[eID]
 
-					pos = sentence.entityIDToLoc[eID]
-
-					for a,b,dependencyType in edges:
-						if a in pos:
-							dataForThisCR[u"dependencypathnearselectedtoken_%d_%s" % (i,dependencyType)] += 1
-				data.append(dataForThisCR)
+			for a,b,dependencyType in edges:
+				if a in pos:
+					dataForThisCR[u"dependencypathnearselectedtoken_%d_%s" % (i,dependencyType)] += 1
+		data.append(dataForThisCR)
 
 	return data
 
-def _doBigrams(corpus,entityCount):
-	data = []	
-	for doc in corpus.documents:
-		for sentence in doc.sentences:
-			for cr,_ in sentence.candidateRelationsWithClasses[entityCount]:
-				dataForThisCR = Counter()
+def _doBigrams(candidates,entityCount):
+	data = []
+	for cr in candidates:
+		assert isinstance(cr,kindred.Relation)
+		
+		sentence = cr.sentence
+		
+		dataForThisCR = Counter()
 
-				for _ in cr.entityIDs:
+		for _ in cr.entityIDs:
 
-					startPos = 0
-					endPos = len(sentence.tokens)
+			startPos = 0
+			endPos = len(sentence.tokens)
 
-					tokenData = [ (sentence.tokens[i].word.lower(),sentence.tokens[i+1].word.lower()) for i in range(startPos,endPos-1) ]
-					for t in tokenData:
-						dataForThisCR[u"bigrams_%s_%s" % t] += 1
-				data.append(dataForThisCR)
+			tokenData = [ (sentence.tokens[i].word.lower(),sentence.tokens[i+1].word.lower()) for i in range(startPos,endPos-1) ]
+			for t in tokenData:
+				dataForThisCR[u"bigrams_%s_%s" % t] += 1
+		data.append(dataForThisCR)
 
 	return data
 
@@ -179,18 +186,18 @@ class Vectorizer:
 				featureNames += self.dictVectorizers[feature].get_feature_names()
 		return featureNames
 		
-
-
-
-	def _vectorize(self,corpus,fit):
-		assert isinstance(corpus,kindred.Corpus)
+	def _vectorize(self,candidates,fit):
+		assert isinstance(candidates,list)
+		assert len(candidates) > 0
+		for c in candidates:
+			assert isinstance(c,kindred.Relation)
 			
 		matrices = []
 		for feature in self.chosenFeatures:
 			assert feature in self.featureInfo.keys()
 			featureFunction = self.featureInfo[feature]['func']
 			never_tfidf = self.featureInfo[feature]['never_tfidf']
-			data = featureFunction(corpus,self.entityCount)
+			data = featureFunction(candidates,self.entityCount)
 			notEmpty = any( len(d)>0 for d in data )
 			if fit:
 				if notEmpty:
@@ -212,32 +219,38 @@ class Vectorizer:
 		mergedMatrix = hstack(matrices)
 		return mergedMatrix
 			
-	def fit_transform(self,corpus):
+	def fit_transform(self,candidates):
 		"""
-		Fit the vectorizer to a training corpus (using the candidate relations found in the corpus) and vectorize the candidate relations to generate the feature matrix.
+		Fit the vectorizer to a list of candidate relations found in a corpus and vectorize them to generate the feature matrix.
 		
-		:param corpus: Corpus to parse
-		:type corpus: kindred.Corpus
+		:param candidates: Relation candidates to vectorize
+		:type candidates: list of kindred.Relation
 		:return: Feature matrix (# rows = number of candidate relations, # cols = number of features)
 		:rtype: scipy.sparse.csr.csr_matrix
 		"""
 		assert self.fitted == False
-		assert len(corpus.getCandidateRelations(self.entityCount)) > 0, "No candidate (%d-ary) relations found in corpus" % self.entityCount
+		assert isinstance(candidates,list)
+		assert len(candidates) > 0
+		for c in candidates:
+			assert isinstance(c,kindred.Relation)
 		self.fitted = True
-		return self._vectorize(corpus,True)
+		return self._vectorize(candidates,True)
 	
-	def transform(self,corpus):
+	def transform(self,candidates):
 		"""
 		Vectorize the candidate relations to generate the feature matrix. Must already have been fit.
 		
-		:param corpus: Corpus to parse
-		:type corpus: kindred.Corpus
+		:param candidates: Relation candidates to vectorize
+		:type candidates: list of kindred.Relation
 		:return: Feature matrix (# rows = number of candidate relations, # cols = number of features)
 		:rtype: scipy.sparse.csr.csr_matrix
 		"""
 		assert self.fitted == True
-		assert len(corpus.getCandidateRelations(self.entityCount)) > 0, "No candidate (%d-ary) relations found in corpus" % self.entityCount
-		return self._vectorize(corpus,False)
+		assert isinstance(candidates,list)
+		assert len(candidates) > 0
+		for c in candidates:
+			assert isinstance(c,kindred.Relation)
+		return self._vectorize(candidates,False)
 		
 		
 	

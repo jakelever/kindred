@@ -3,17 +3,20 @@ import kindred
 
 from kindred.datageneration import generateData,generateTestData
 	
-def test_simpleVectorizer():
+def test_simpleVectorizer_binary():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer>. <drug id="3">Aspirin</drug> is the main cause of <disease id="4">boneitis</disease> . <relation type="treats" subj="1" obj="2" />'
 
 	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
 	
 	candidateBuilder = kindred.CandidateBuilder()
-	candidateBuilder.fit_transform(corpus)
+	candidateRelations = candidateBuilder.build(corpus)
 	
 	# We'll just get the vectors for the entityTypes
 	vectorizer = kindred.Vectorizer(featureChoice=["entityTypes"])
-	vectors = vectorizer.fit_transform(corpus)
+	vectors = vectorizer.fit_transform(candidateRelations)
 
 	assert vectors.shape == (4,6)
 	
@@ -31,13 +34,16 @@ def test_simpleVectorizer_triple():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer> which targets <gene id="3">EGFR</gene>. <relation type="druginfo" drug="1" disease="2" gene="3" />'
 
 	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
+		
+	parser = kindred.Parser()
+	parser.parse(corpus)
 	
 	candidateBuilder = kindred.CandidateBuilder(entityCount=3)
-	candidateBuilder.fit_transform(corpus)
+	candidateRelations = candidateBuilder.build(corpus)
 	
 	# We'll just get the vectors for the entityTypes
 	vectorizer = kindred.Vectorizer(entityCount=3,featureChoice=["entityTypes"])
-	vectors = vectorizer.fit_transform(corpus)
+	vectors = vectorizer.fit_transform(candidateRelations)
 
 	assert vectors.shape == (6,9)
 	
@@ -55,14 +61,18 @@ def test_vectorizer_defaults():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
+	parser = kindred.Parser()
+	parser.parse(corpus1)
+	parser.parse(corpus2)
+	
 	candidateBuilder = kindred.CandidateBuilder()
-	candidateBuilder.fit_transform(corpus1)
-	candidateBuilder.transform(corpus2)
+	candidateRelations1 = candidateBuilder.build(corpus1)
+	candidateRelations2 = candidateBuilder.build(corpus2)
 
 	vectorizer = kindred.Vectorizer()
 	
-	matrix1 = vectorizer.fit_transform(corpus1)
-	matrix2 = vectorizer.transform(corpus2)
+	matrix1 = vectorizer.fit_transform(candidateRelations1)
+	matrix2 = vectorizer.transform(candidateRelations2)
 
 	assert matrix1.shape == (8,61)
 	assert matrix2.shape == (18,61)
@@ -89,15 +99,19 @@ def test_vectorizer_entityTypes():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
+	parser = kindred.Parser()
+	parser.parse(corpus1)
+	parser.parse(corpus2)
+	
 	candidateBuilder = kindred.CandidateBuilder()
-	candidateBuilder.fit_transform(corpus1)
-	candidateBuilder.transform(corpus2)
-
+	candidateRelations1 = candidateBuilder.build(corpus1)
+	candidateRelations2 = candidateBuilder.build(corpus2)
+	
 	chosenFeatures = ["entityTypes"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
-	matrix1 = vectorizer.fit_transform(corpus1)
-	matrix2 = vectorizer.transform(corpus2)
+	matrix1 = vectorizer.fit_transform(candidateRelations1)
+	matrix2 = vectorizer.transform(candidateRelations2)
 	
 	assert matrix1.shape == (8,6)
 	assert matrix2.shape == (18,6)
@@ -116,16 +130,20 @@ def test_vectorizer_entityTypes():
 def test_vectorizer_unigramsBetweenEntities():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
-
+	
+	parser = kindred.Parser()
+	parser.parse(corpus1)
+	parser.parse(corpus2)
+	
 	candidateBuilder = kindred.CandidateBuilder()
-	candidateBuilder.fit_transform(corpus1)
-	candidateBuilder.transform(corpus2)
+	candidateRelations1 = candidateBuilder.build(corpus1)
+	candidateRelations2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["unigramsBetweenEntities"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
-	matrix1 = vectorizer.fit_transform(corpus1)
-	matrix2 = vectorizer.transform(corpus2)
+	matrix1 = vectorizer.fit_transform(candidateRelations1)
+	matrix2 = vectorizer.transform(candidateRelations2)
 	
 	assert matrix1.shape == (8,16)
 	assert matrix2.shape == (18,16)
@@ -151,15 +169,19 @@ def test_vectorizer_bigrams():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
+	parser = kindred.Parser()
+	parser.parse(corpus1)
+	parser.parse(corpus2)
+	
 	candidateBuilder = kindred.CandidateBuilder()
-	candidateBuilder.fit_transform(corpus1)
-	candidateBuilder.transform(corpus2)
+	candidateRelations1 = candidateBuilder.build(corpus1)
+	candidateRelations2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["bigrams"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
-	matrix1 = vectorizer.fit_transform(corpus1)
-	matrix2 = vectorizer.transform(corpus2)
+	matrix1 = vectorizer.fit_transform(candidateRelations1)
+	matrix2 = vectorizer.transform(candidateRelations2)
 
 	assert matrix1.shape == (8,27)
 	assert matrix2.shape == (18,27)
@@ -186,15 +208,19 @@ def test_vectorizer_dependencyPathEdges():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
+	parser = kindred.Parser()
+	parser.parse(corpus1)
+	parser.parse(corpus2)
+	
 	candidateBuilder = kindred.CandidateBuilder()
-	candidateBuilder.fit_transform(corpus1)
-	candidateBuilder.transform(corpus2)
+	candidateRelations1 = candidateBuilder.build(corpus1)
+	candidateRelations2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["dependencyPathEdges"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
-	matrix1 = vectorizer.fit_transform(corpus1)
-	matrix2 = vectorizer.transform(corpus2)
+	matrix1 = vectorizer.fit_transform(candidateRelations1)
+	matrix2 = vectorizer.transform(candidateRelations2)
 	
 	assert matrix1.shape == (8,6)
 	assert matrix2.shape == (18,6)
@@ -215,15 +241,19 @@ def test_vectorizer_dependencyPathEdgesNearEntities():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
+	parser = kindred.Parser()
+	parser.parse(corpus1)
+	parser.parse(corpus2)
+	
 	candidateBuilder = kindred.CandidateBuilder()
-	candidateBuilder.fit_transform(corpus1)
-	candidateBuilder.transform(corpus2)
+	candidateRelations1 = candidateBuilder.build(corpus1)
+	candidateRelations2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["dependencyPathEdgesNearEntities"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=True)
 	
-	matrix1 = vectorizer.fit_transform(corpus1)
-	matrix2 = vectorizer.transform(corpus2)
+	matrix1 = vectorizer.fit_transform(candidateRelations1)
+	matrix2 = vectorizer.transform(candidateRelations2)
 	
 	assert matrix1.shape == (8,6)
 	assert matrix2.shape == (18,6)
@@ -243,16 +273,20 @@ def test_vectorizer_dependencyPathEdgesNearEntities():
 def test_vectorizer_entityTypes_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
-
+	
+	parser = kindred.Parser()
+	parser.parse(corpus1)
+	parser.parse(corpus2)
+	
 	candidateBuilder = kindred.CandidateBuilder()
-	candidateBuilder.fit_transform(corpus1)
-	candidateBuilder.transform(corpus2)
+	candidateRelations1 = candidateBuilder.build(corpus1)
+	candidateRelations2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["entityTypes"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=False)
 	
-	matrix1 = vectorizer.fit_transform(corpus1)
-	matrix2 = vectorizer.transform(corpus2)
+	matrix1 = vectorizer.fit_transform(candidateRelations1)
+	matrix2 = vectorizer.transform(candidateRelations2)
 	
 	assert matrix1.shape == (8,6)
 	assert matrix2.shape == (18,6)
@@ -272,15 +306,19 @@ def test_vectorizer_unigramsBetweenEntities_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
+	parser = kindred.Parser()
+	parser.parse(corpus1)
+	parser.parse(corpus2)
+	
 	candidateBuilder = kindred.CandidateBuilder()
-	candidateBuilder.fit_transform(corpus1)
-	candidateBuilder.transform(corpus2)
+	candidateRelations1 = candidateBuilder.build(corpus1)
+	candidateRelations2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["unigramsBetweenEntities"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=False)
 	
-	matrix1 = vectorizer.fit_transform(corpus1)
-	matrix2 = vectorizer.transform(corpus2)
+	matrix1 = vectorizer.fit_transform(candidateRelations1)
+	matrix2 = vectorizer.transform(candidateRelations2)
 	
 	assert matrix1.shape == (8,16)
 	assert matrix2.shape == (18,16)
@@ -305,16 +343,20 @@ def test_vectorizer_unigramsBetweenEntities_noTFIDF():
 def test_vectorizer_bigrams_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
-
+	
+	parser = kindred.Parser()
+	parser.parse(corpus1)
+	parser.parse(corpus2)
+	
 	candidateBuilder = kindred.CandidateBuilder()
-	candidateBuilder.fit_transform(corpus1)
-	candidateBuilder.transform(corpus2)
+	candidateRelations1 = candidateBuilder.build(corpus1)
+	candidateRelations2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["bigrams"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=False)
 	
-	matrix1 = vectorizer.fit_transform(corpus1)
-	matrix2 = vectorizer.transform(corpus2)
+	matrix1 = vectorizer.fit_transform(candidateRelations1)
+	matrix2 = vectorizer.transform(candidateRelations2)
 	
 	assert matrix1.shape == (8,27)
 	assert matrix2.shape == (18,27)
@@ -341,15 +383,19 @@ def test_vectorizer_dependencyPathEdges_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
+	parser = kindred.Parser()
+	parser.parse(corpus1)
+	parser.parse(corpus2)
+	
 	candidateBuilder = kindred.CandidateBuilder()
-	candidateBuilder.fit_transform(corpus1)
-	candidateBuilder.transform(corpus2)
+	candidateRelations1 = candidateBuilder.build(corpus1)
+	candidateRelations2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["dependencyPathEdges"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=False)
 	
-	matrix1 = vectorizer.fit_transform(corpus1)
-	matrix2 = vectorizer.transform(corpus2)
+	matrix1 = vectorizer.fit_transform(candidateRelations1)
+	matrix2 = vectorizer.transform(candidateRelations2)
 	
 	assert matrix1.shape == (8,6)
 	assert matrix2.shape == (18,6)
@@ -370,15 +416,19 @@ def test_vectorizer_dependencyPathEdgesNearEntities_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(positiveCount=10,negativeCount=10)
 
+	parser = kindred.Parser()
+	parser.parse(corpus1)
+	parser.parse(corpus2)
+	
 	candidateBuilder = kindred.CandidateBuilder()
-	candidateBuilder.fit_transform(corpus1)
-	candidateBuilder.transform(corpus2)
+	candidateRelations1 = candidateBuilder.build(corpus1)
+	candidateRelations2 = candidateBuilder.build(corpus2)
 
 	chosenFeatures = ["dependencyPathEdgesNearEntities"]
 	vectorizer = kindred.Vectorizer(featureChoice=chosenFeatures,tfidf=False)
 	
-	matrix1 = vectorizer.fit_transform(corpus1)
-	matrix2 = vectorizer.transform(corpus2)
+	matrix1 = vectorizer.fit_transform(candidateRelations1)
+	matrix2 = vectorizer.transform(candidateRelations2)
 	
 	assert matrix1.shape == (8,6)
 	assert matrix2.shape == (18,6)
@@ -399,14 +449,18 @@ def test_vectorizer_defaults_triple():
 	corpus1, _ = generateTestData(entityCount=3,positiveCount=5,negativeCount=5)
 	corpus2, _ = generateTestData(entityCount=3,positiveCount=10,negativeCount=10)
 
+	parser = kindred.Parser()
+	parser.parse(corpus1)
+	parser.parse(corpus2)
+	
 	candidateBuilder = kindred.CandidateBuilder(entityCount=3)
-	candidateBuilder.fit_transform(corpus1)
-	candidateBuilder.transform(corpus2)
+	candidateRelations1 = candidateBuilder.build(corpus1)
+	candidateRelations2 = candidateBuilder.build(corpus2)
 
 	vectorizer = kindred.Vectorizer(entityCount=3)
 	
-	matrix1 = vectorizer.fit_transform(corpus1)
-	matrix2 = vectorizer.transform(corpus2)
+	matrix1 = vectorizer.fit_transform(candidateRelations1)
+	matrix2 = vectorizer.transform(candidateRelations2)
 
 	assert matrix1.shape == (18,104)
 	assert matrix2.shape == (60,104)
