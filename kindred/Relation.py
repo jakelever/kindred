@@ -58,6 +58,6 @@ class Relation:
 
 	def __hash__(self):
 		if self.argNames is None:
-			return hash((self.relationType,tuple(self.entityIDs),probability,sentence))
+			return hash((self.relationType,tuple(self.entityIDs),self.probability,self.sentence))
 		else:
-			return hash((self.relationType,tuple(self.entityIDs),tuple(self.argNames),probability,sentence))
+			return hash((self.relationType,tuple(self.entityIDs),tuple(self.argNames),self.probability,self.sentence))

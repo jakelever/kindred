@@ -10,8 +10,8 @@ def test_relation_hash():
 	assert hash(rel3) == hash(rel4)
 	assert hash(rel1) != hash(rel3)
 
-	assert hash(rel1) == hash((rel1.relationType,tuple(rel1.entityIDs)))
-	assert hash(rel3) == hash((rel3.relationType,tuple(rel3.entityIDs),tuple(rel3.argNames)))
+	assert hash(rel1) == hash((rel1.relationType,tuple(rel1.entityIDs),rel1.probability,rel1.sentence))
+	assert hash(rel3) == hash((rel3.relationType,tuple(rel3.entityIDs),tuple(rel3.argNames),rel3.probability,rel3.sentence))
 
 def test_relation_str():
 	rel1 = kindred.Relation(relationType="causes",entityIDs=[1,2],argNames=None)
