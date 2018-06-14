@@ -419,7 +419,7 @@ class EntityRecognizer:
 					for entityType,externalID in termtypesAndids:
 						e = kindred.Entity(entityType,text,[(startPos,endPos)],externalID=externalID)
 						doc.addEntity(e)
-						sentence.addEntityWithLocation(e,loc)
+						sentence.addEntityAnnotation(e,loc)
 
 	@staticmethod
 	def loadWordlists(entityTypesWithFilenames, idColumn=0, termsColumn=1, columnSeparator='\t', termSeparator='|'):

@@ -53,7 +53,7 @@ def test_entityrecognizer_basic():
 
 	assert len(doc.sentences) == 1
 	sentence = doc.sentences[0]
-	assert sentence.entitiesWithLocations == [(entity,[0])]
+	assert sentence.entityAnnotations == [(entity,[0])]
 
 def test_entityrecognizer_microRNA_mirOFF():
 	lookup = makeTestLookup()
@@ -603,7 +603,7 @@ def test_entityrecognizer_removepathways_off():
 
 	assert len(doc.sentences) == 1
 	sentence = doc.sentences[0]
-	assert sentence.entitiesWithLocations == [(entity,[0])]
+	assert sentence.entityAnnotations == [(entity,[0])]
 
 def test_entityrecognizer_removepathways_1():
 	lookup = makeTestLookup()
