@@ -3,7 +3,7 @@ import pytest
 
 from kindred.datageneration import generateData,generateTestData
 
-def test_simpleRelationClassifier():
+def test_simpleRelationClassifier_binary():
 	trainCorpus, testCorpusGold = generateTestData(positiveCount=100,negativeCount=100)
 
 	predictionCorpus = testCorpusGold.clone()

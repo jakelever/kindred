@@ -59,20 +59,40 @@ class RelationClassifier:
 		"""
 		assert isinstance(corpus,kindred.Corpus)
 
-		# Check if the corresponding n-ary candidate relations are already processed
-		candidateRelationsFound = (self.entityCount in corpus.candidateRelationsEntityCounts)
-		if not candidateRelationsFound:
-			self.candidateBuilder = CandidateBuilder(entityCount=self.entityCount,acceptedEntityTypes=self.acceptedEntityTypes)
-			self.candidateBuilder.fit_transform(corpus)
-		assert self.entityCount in corpus.candidateRelationsEntityCounts
+		if not corpus.parsed:
+			parser = kindred.Parser()
+			parser.parse(corpus)
 		
-		candidateRelations = corpus.getCandidateRelations(self.entityCount)
-		candidateClasses = corpus.getCandidateClasses(self.entityCount)
-		
+		self.candidateBuilder = CandidateBuilder(entityCount=self.entityCount,acceptedEntityTypes=self.acceptedEntityTypes)
+		candidateRelations = self.candidateBuilder.build(corpus)
+
 		if len(candidateRelations) == 0:
 			raise RuntimeError("No candidate relations found in corpus for training. Does the corpus contain text and entity annotations with at least one sentence containing %d entities." % (self.entityCount))
 
-		entityCountsInRelations = [ len(r.entityIDs) for r in corpus.getRelations() ]
+		# Get a unique list of all the relation types
+		relationTypes = sorted(list(set( [ cr.relationType for cr in candidateRelations if cr.relationType != None ] )))
+		
+		candidateRelationKeys = set()
+		for cr in candidateRelations:
+			if not cr.relationType is None:
+				relKey = tuple([cr.relationType] + cr.argNames)
+				candidateRelationKeys.add(relKey)
+		
+		# Create mappings from the class index to a relation type and back again
+		self.classToRelType = [None] + sorted(list(candidateRelationKeys))
+		self.reltypeToClass = { relationType:i for i,relationType in enumerate(self.classToRelType) }
+		
+		#candidateClasses = [ self.reltypeToClass[cr.relationType] for key in candidateRelationKeys ]
+		
+		candidateClasses = []
+		for cr in candidateRelations:
+			if cr.relationType is None:
+				candidateClasses.append(0)
+			else:
+				relKey = tuple([cr.relationType] + cr.argNames)
+				candidateClasses.append(self.reltypeToClass[relKey])
+				
+		entityCountsInRelations = set([ len(r.entityIDs) for r in corpus.getRelations() ])
 		entityCountsInRelations = sorted(list(set(entityCountsInRelations)))
 		assert self.entityCount in entityCountsInRelations, "Relation classifier is expecting to train on relations with %d entities (entityCount=%d). But the known relations in the corpus contain relations with the following entity counts: %s. Perhaps the entityCount parameter should be changed or there is a problem with the training corpus." % (self.entityCount,self.entityCount,str(entityCountsInRelations))
 
@@ -86,27 +106,14 @@ class RelationClassifier:
 				
 				relKey = tuple([r.relationType] + r.argNames)
 				self.relTypeToValidEntityTypes[relKey].add(validEntityTypes)
-			
-				
-		self.classToRelType = { (i+1):relType for i,relType in enumerate(corpus.relationTypes) }
-
-		# Get the set of valid classes
-		relationtypeCount = len(corpus.relationTypes)
-		allClasses = list(range(1,relationtypeCount+1))
-		self.allClasses = allClasses
-	
-		simplifiedClasses = []
-		# TODO: Try sparse matrix rep
-		for candidateRelation,candidateClassGroup in zip(candidateRelations,candidateClasses):
-			simplifiedClasses.append(candidateClassGroup[0])
 
 		self.vectorizer = Vectorizer(entityCount=self.entityCount,featureChoice=self.chosenFeatures,tfidf=self.tfidf)
-		trainVectors = self.vectorizer.fit_transform(corpus)
+		trainVectors = self.vectorizer.fit_transform(candidateRelations)
 	
 		assert trainVectors.shape[0] == len(candidateClasses)
 
-		negCount = len( [ c for c in simplifiedClasses if c == 0 ] )
-		posCount = len( [ c for c in simplifiedClasses if c != 0 ] )
+		negCount = len( [ c for c in candidateClasses if c == 0 ] )
+		posCount = len( [ c for c in candidateClasses if c != 0 ] )
 
 		assert negCount > 0, "Must have at least one negative candidate relation in set for training"
 		assert posCount > 0, "Must have at least one positive candidate relation in set for training"
@@ -119,7 +126,7 @@ class RelationClassifier:
 		elif self.classifierType == 'LogisticRegression' and not self.threshold is None:
 			self.clf = kindred.LogisticRegressionWithThreshold(self.threshold)
 
-		self.clf.fit(trainVectors,simplifiedClasses)
+		self.clf.fit(trainVectors,candidateClasses)
 		
 		self.isTrained = True
 
@@ -134,14 +141,13 @@ class RelationClassifier:
 	
 		assert isinstance(corpus,kindred.Corpus)
 		
-		# Check if the corresponding n-ary candidate relations are already processed
-		candidateRelationsFound = (self.entityCount in corpus.candidateRelationsEntityCounts)
-		if not candidateRelationsFound:
-			self.candidateBuilder.transform(corpus)
-		assert self.entityCount in corpus.candidateRelationsEntityCounts
+		if not corpus.parsed:
+			parser = kindred.Parser()
+			parser.parse(corpus)
+		
+		candidateRelations = self.candidateBuilder.build(corpus)
 
-		candidateRelations = corpus.getCandidateRelations(self.entityCount)
-
+		print(candidateRelations)
 		# Check if there are any candidate relations to classify in this corpus
 		if len(candidateRelations) == 0:
 			return
@@ -152,7 +158,7 @@ class RelationClassifier:
 				entityIDsToType[e.entityID] = e.entityType
 		
 		predictedRelations = []
-		tmpMatrix = self.vectorizer.transform(corpus)
+		tmpMatrix = self.vectorizer.transform(candidateRelations)
 
 		# Check if the classifier has a predictwithprob method
 		potentialMethod = getattr(self.clf, "predictwithprobs", None)
