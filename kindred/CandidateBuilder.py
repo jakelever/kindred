@@ -36,7 +36,7 @@ class CandidateBuilder:
 		
 		:param corpus: Corpus of text with which to build relation candidates
 		:type corpus: kindred.Corpus
-		:returns: List of candidate relations matching entityCount and acceptedEntityTypes
+		:return: List of candidate relations matching entityCount and acceptedEntityTypes
 		:rtype: List of kindred.Relation
 		"""
 		assert isinstance(corpus,kindred.Corpus)
