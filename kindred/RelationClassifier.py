@@ -147,7 +147,6 @@ class RelationClassifier:
 		
 		candidateRelations = self.candidateBuilder.build(corpus)
 
-		print(candidateRelations)
 		# Check if there are any candidate relations to classify in this corpus
 		if len(candidateRelations) == 0:
 			return
