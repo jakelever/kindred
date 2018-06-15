@@ -48,6 +48,7 @@ class CandidateBuilder:
 			for r in doc.getRelations():
 				assert isinstance(r,kindred.Relation)
 				entityIDs = tuple(r.entityIDs)
+				assert not entityIDs in existingRelationsAndArgNames, "Two (or more) relations share the same entities. This is not currently supported"
 				existingRelationsAndArgNames[entityIDs] = (r.relationType,r.argNames)
 
 			for sentence in doc.sentences:
