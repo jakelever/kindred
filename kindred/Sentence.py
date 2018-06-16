@@ -30,14 +30,6 @@ class Sentence:
 		for token in tokens:
 			assert isinstance(token,kindred.Token)
 		
-		# Check that each entity has associated token info
-		#assert isinstance(entities, list)
-		#for entity in entities:
-		#	assert isinstance(entity,kindred.Entity)
-		#	assert isinstance(entity.tokenLocs,list)
-		#	for l in entity.tokenLocs:
-		#		assert l >= 0 and l < len(tokens), "Entity location must be an index of one of the tokens"
-			
 		# Check the format of the Dependencies
 		dependencyErrorMsg = "Each dependency is expected to be a tuple of (tokenindex1,tokenindex2,dependency_type). Token index can be -1 to indicate an incoming edge."
 		assert isinstance(dependencies, list), dependencyErrorMsg
@@ -52,15 +44,10 @@ class Sentence:
 		
 		self.text = text
 		self.tokens = tokens
+		self.dependencies = dependencies
 		self.sourceFilename = sourceFilename
 		
-		self.dependencies = dependencies
-		
-		#self.entitiesWithTokenIndices = []
-		#self.entityAnnotations = [ [] for _ in self.tokens ]
 		self.entityAnnotations = []
-		#self.entityIDs = []
-		#self.entityIDToEntity = {}
 		
 	def addEntityAnnotation(self, entity, tokenIndices):
 		"""
@@ -76,10 +63,7 @@ class Sentence:
 		assert isinstance(tokenIndices,list)
 		for l in tokenIndices:
 			assert l >= 0 and l < len(self.tokens), "Entity location must be an index of one of the tokens"
-			#self.entityAnnotations[l].append(entity)
 		self.entityAnnotations.append( (entity,tokenIndices) )
-		#self.entityIDs = [ e.entityID for e,ti in self.entitiesWithTokenIndices ]
-		#self.entityIDToEntity = { e.entityID:e for e,ti in self.entitiesWithTokenIndices }
 	
 	def __str__(self):
 		tokenWords = [ t.word for t in self.tokens ]
