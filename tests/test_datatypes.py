@@ -62,9 +62,9 @@ def test_convertedTaggedTextWithRelations():
 	#assert isinstance(text,unicode) # Python3 issue here
 	assert text == u"Erlotinib is a common treatment for NSCLC"
 
-	sourceEntityIDsToEntityIDs = converted.getSourceEntityIDsToEntityIDs()	
+	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in converted.entities }
 
-	assert converted.getRelations() == [kindred.Relation('treats',[sourceEntityIDsToEntityIDs['6'],sourceEntityIDsToEntityIDs['5']],['obj','subj'])]
+	assert converted.getRelations() == [kindred.Relation('treats',[sourceEntityIDToEntity['6'],sourceEntityIDToEntity['5']],['obj','subj'])]
 
 if __name__ == '__main__':
 	test_convertedTaggedTextWithRelations()

@@ -246,7 +246,7 @@ def parseSimpleTag(text,ignoreEntities=[]):
 	
 	missingSourceEntityID = [ e.sourceEntityID == '' for e in unmergedEntities ]
 	assert all(missingSourceEntityID) or (not any(missingSourceEntityID)), 'All entities or none (not some) should be given IDs'
-	assert (not any(missingSourceEntityID)) or len(relations) == 0, "Cannot include relations with no-ID entities"
+	assert (not any(missingSourceEntityID)) or len(relationTuples) == 0, "Cannot include relations with no-ID entities"
 	
 	if all(missingSourceEntityID):
 		for i,e in enumerate(unmergedEntities):

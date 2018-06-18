@@ -13,12 +13,12 @@ def test_evaluate(capfd):
 	
 	testCorpus = goldCorpus.clone()
 	testDoc = testCorpus.documents[0]
-	mapping = testDoc.getSourceEntityIDsToEntityIDs()
+	mapping = { entity.sourceEntityID:entity for entity in testDoc.entities }
 	
 	# Remove a relation and add two different ones
 	testDoc.relations = testDoc.relations[:4]
-	testDoc.addRelation(kindred.Relation("typeX",entityIDs=[mapping["T1"],mapping["T2"]]))
-	testDoc.addRelation(kindred.Relation("typeX",entityIDs=[mapping["T1"],mapping["T3"]]))
+	testDoc.addRelation(kindred.Relation("typeX",entities=[mapping["T1"],mapping["T2"]]))
+	testDoc.addRelation(kindred.Relation("typeX",entities=[mapping["T1"],mapping["T3"]]))
 
 	precision = kindred.evaluate(goldCorpus,testCorpus,metric='precision')
 	assert precision == 4.0/6.0
@@ -53,12 +53,12 @@ def test_evaluate_display(capfd):
 	
 	testCorpus = goldCorpus.clone()
 	testDoc = testCorpus.documents[0]
-	mapping = testDoc.getSourceEntityIDsToEntityIDs()
+	mapping = { entity.sourceEntityID:entity for entity in testDoc.entities }
 	
 	# Remove a relation and add two different ones
 	testDoc.relations = testDoc.relations[:4]
-	testDoc.addRelation(kindred.Relation("typeX",entityIDs=[mapping["T1"],mapping["T2"]]))
-	testDoc.addRelation(kindred.Relation("typeX",entityIDs=[mapping["T1"],mapping["T3"]]))
+	testDoc.addRelation(kindred.Relation("typeX",entities=[mapping["T1"],mapping["T2"]]))
+	testDoc.addRelation(kindred.Relation("typeX",entities=[mapping["T1"],mapping["T3"]]))
 
 	_,_,_ = kindred.evaluate(goldCorpus,testCorpus,metric='all',display=True)
 	

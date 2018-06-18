@@ -33,7 +33,7 @@ def test_entity_equals():
 	e2 = kindred.Entity(entityType="drug",text="Erlotinib",position=[(0,9)],sourceEntityID="T16")
 	e3 = kindred.Entity(entityType="drug",text="Erlotinib",position=[(0,9)],sourceEntityID=None)
 	
-	rel1 = kindred.Relation(relationType="causes",entityIDs=[1,2],argNames=None)
+	rel1 = kindred.Relation(relationType="causes",entities=[e1,e2],argNames=None)
 
 	assert e1 == e1
 	assert e1 != e2
