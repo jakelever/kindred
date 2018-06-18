@@ -165,9 +165,9 @@ def parseJSON(data,ignoreEntities=[]):
 			
 			sourceEntityIDs = [obj,subj]
 			argNames = ['obj','subj']
-			entities = [ sourceEntityIDToEntity[sourceEntityID] for sourceEntityID in sourceEntityIDs ]
+			entitiesInRelation = [ sourceEntityIDToEntity[sourceEntityID] for sourceEntityID in sourceEntityIDs ]
 		
-			relation = kindred.Relation(relationType,entities,argNames)
+			relation = kindred.Relation(relationType,entitiesInRelation,argNames)
 			relations.append(relation)
 	
 	expected = ['denotations','divid','modifications','namespaces','project','relations','sourcedb','sourceid','target','text','tracks']
