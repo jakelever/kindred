@@ -22,8 +22,8 @@ def evaluate(goldCorpus,testCorpus,metric='f1score',display=False):
 
 	TPs,FPs,FNs = Counter(),Counter(),Counter()
 	
-	goldTuples = [ (r.relationType,tuple(r.entityIDs)) for r in goldCorpus.getRelations() ]
-	testTuples = [ (r.relationType,tuple(r.entityIDs)) for r in testCorpus.getRelations() ]
+	goldTuples = [ (r.relationType,tuple(r.entities)) for r in goldCorpus.getRelations() ]
+	testTuples = [ (r.relationType,tuple(r.entities)) for r in testCorpus.getRelations() ]
 
 	totalSet = set(goldTuples + testTuples)
 	for relation in totalSet:

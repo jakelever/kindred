@@ -113,7 +113,7 @@ class Document:
 		:rtype: kindred.Document
 		"""
 
-		cloned = Document(self.text,entities=self.entities,relations=self.relations,relationsUseSourceIDs=False,sourceFilename=self.sourceFilename)
+		cloned = Document(self.text,entities=self.entities,relations=self.relations,sourceFilename=self.sourceFilename)
 		return cloned
 
 	def getEntities(self):

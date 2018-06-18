@@ -92,7 +92,7 @@ class RelationClassifier:
 				relKey = tuple([cr.relationType] + cr.argNames)
 				candidateClasses.append(self.reltypeToClass[relKey])
 				
-		entityCountsInRelations = set([ len(r.entityIDs) for r in corpus.getRelations() ])
+		entityCountsInRelations = set([ len(r.entities) for r in corpus.getRelations() ])
 		entityCountsInRelations = sorted(list(set(entityCountsInRelations)))
 		assert self.entityCount in entityCountsInRelations, "Relation classifier is expecting to train on relations with %d entities (entityCount=%d). But the known relations in the corpus contain relations with the following entity counts: %s. Perhaps the entityCount parameter should be changed or there is a problem with the training corpus." % (self.entityCount,self.entityCount,str(entityCountsInRelations))
 
@@ -100,9 +100,7 @@ class RelationClassifier:
 		
 		for d in corpus.documents:
 			for r in d.getRelations():
-				entityIDsToEntities = d.getEntityIDsToEntities()
-				relationEntities = [ entityIDsToEntities[eID] for eID in r.entityIDs ]
-				validEntityTypes = tuple([ e.entityType for e in relationEntities ])
+				validEntityTypes = tuple([ e.entityType for e in r.entities ])
 				
 				relKey = tuple([r.relationType] + r.argNames)
 				self.relTypeToValidEntityTypes[relKey].add(validEntityTypes)
@@ -151,11 +149,6 @@ class RelationClassifier:
 		if len(candidateRelations) == 0:
 			return
 		
-		entityIDsToType = {}
-		for doc in corpus.documents:
-			for e in doc.getEntities():
-				entityIDsToType[e.entityID] = e.entityType
-		
 		predictedRelations = []
 		tmpMatrix = self.vectorizer.transform(candidateRelations)
 
@@ -173,21 +166,21 @@ class RelationClassifier:
 				relType = relKey[0]
 				argNames = relKey[1:]
 				
-				candidateRelationEntityTypes = tuple( [ entityIDsToType[eID] for eID in candidateRelation.entityIDs ] )
+				candidateRelationEntityTypes = tuple( [ e.entityType for e in candidateRelation.entities ] )
 				if not tuple(candidateRelationEntityTypes) in self.relTypeToValidEntityTypes[relKey]:
 					continue
 
-				predictedRelation = kindred.Relation(relType,candidateRelation.entityIDs,argNames=argNames,probability=predictedProb)
+				predictedRelation = kindred.Relation(relType,candidateRelation.entities,argNames=argNames,probability=predictedProb)
 				predictedRelations.append(predictedRelation)
 		
 		# Add the predicted relations into the corpus
 		entitiesToDoc = {}
 		for i,doc in enumerate(corpus.documents):
 			for e in doc.getEntities():
-				entitiesToDoc[e.entityID] = i
+				entitiesToDoc[e] = i
 
 		for predictedRelation in predictedRelations:
-			docIDs = [ entitiesToDoc[eID] for eID in predictedRelation.entityIDs ]
+			docIDs = [ entitiesToDoc[e] for e in predictedRelation.entities ]
 			docIDs = list(set(docIDs))
 			assert len(docIDs) > 0, "Predicted relation contains entities that don't match any documents in corpus"
 			assert len(docIDs) == 1, "Predicted relation contains entities that are spread across documents"

@@ -23,7 +23,7 @@ def test_simpleRelationClassifier_triple():
 	trainRelations = trainCorpus.getRelations()
 	assert len(trainRelations) == 50
 	for r in trainRelations:
-		assert len(r.entityIDs) == 3
+		assert len(r.entities) == 3
 
 	predictionCorpus = testCorpusGold.clone()
 	predictionCorpus.removeRelations()
@@ -36,7 +36,7 @@ def test_simpleRelationClassifier_triple():
 	predictedRelations = predictionCorpus.getRelations()
 	assert len(predictedRelations) == 50
 	for r in predictedRelations:
-		assert len(r.entityIDs) == 3
+		assert len(r.entities) == 3
 	
 	f1score = kindred.evaluate(testCorpusGold, predictionCorpus, metric='f1score')
 	assert f1score == 1.0
@@ -106,7 +106,7 @@ def test_singleClassifier_triple():
 	trainRelations = trainCorpus.getRelations()
 	assert len(trainRelations) == 50
 	for r in trainRelations:
-		assert len(r.entityIDs) == 3
+		assert len(r.entities) == 3
 
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
@@ -119,7 +119,7 @@ def test_singleClassifier_triple():
 	predictedRelations = predictionCorpus.getRelations()
 	assert len(predictedRelations) == 50
 	for r in predictedRelations:
-		assert len(r.entityIDs) == 3
+		assert len(r.entities) == 3
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
 	assert round(f1score,3) == 0.54
