@@ -30,11 +30,11 @@ def test_saveStandoffFile_fromSimpleTag():
 	entities = loadedDoc.getEntities()
 	relations = loadedDoc.getRelations()
 
-	sourceEntityIDsToEntityIDs = loadedDoc.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
 def test_saveBiocFile_fromSimpleTag():
 	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
@@ -55,11 +55,11 @@ def test_saveBiocFile_fromSimpleTag():
 	entities = loadedDoc.getEntities()
 	relations = loadedDoc.getRelations()
 
-	sourceEntityIDsToEntityIDs = loadedDoc.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 
 def test_saveStandoffFile_fromSimpleTag_triple():
 	text = '<drug id="T1">Erlotinib</drug>, a <gene id="T2">EGFR</gene> inhibitor is commonly used for <disease id="T3">NSCLC</disease> patients. <relation type="druginfo" drug="T1" gene="T2" disease="T3" />'
@@ -80,19 +80,19 @@ def test_saveStandoffFile_fromSimpleTag_triple():
 	entities = loadedDoc.getEntities()
 	relations = loadedDoc.getRelations()
 
-	sourceEntityIDsToEntityIDs = loadedDoc.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='drug',expectedText='Erlotinib',expectedPos=[(0,9)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='EGFR',expectedPos=[(13,17)],expectedSourceEntityID="T2")
 	assertEntity(entities[2],expectedType='disease',expectedText='NSCLC',expectedPos=[(49,54)],expectedSourceEntityID="T3")
-	assert relations == [kindred.Relation('druginfo',[sourceEntityIDsToEntityIDs["T3"],sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['disease','drug','gene'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('druginfo',[sourceEntityIDToEntity["T3"],sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['disease','drug','gene'])], "(%s) not as expected" % relations
 	
 def test_saveStandoffFile():
 	text = "The colorectal cancer was caused by mutations in APC"
 	e1 = kindred.Entity(entityType="disease",text="colorectal cancer",position=[(4, 21)],sourceEntityID="T1")
 	e2 = kindred.Entity(entityType="gene",text="APC",position=[(49, 52)],sourceEntityID="T2")
-	rel = kindred.Relation(relationType="causes",entityIDs=[e1.entityID,e2.entityID],argNames=['obj','subj'])
-	doc = kindred.Document(text,[e1,e2],[rel],relationsUseSourceIDs=False)
+	rel = kindred.Relation(relationType="causes",entities=[e1,e2],argNames=['obj','subj'])
+	doc = kindred.Document(text,[e1,e2],[rel])
 	corpus = kindred.Corpus()
 	corpus.addDocument(doc)
 
@@ -111,18 +111,18 @@ def test_saveStandoffFile():
 	entities = loadedDoc.getEntities()
 	relations = loadedDoc.getRelations()
 
-	sourceEntityIDsToEntityIDs = loadedDoc.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
 def test_saveStandoffFile_noArgNames():
 	text = "The colorectal cancer was caused by mutations in APC"
 	e1 = kindred.Entity(entityType="disease",text="colorectal cancer",position=[(4, 21)],sourceEntityID="T1")
 	e2 = kindred.Entity(entityType="gene",text="APC",position=[(49, 52)],sourceEntityID="T2")
-	rel = kindred.Relation(relationType="causes",entityIDs=[e1.entityID,e2.entityID])
-	doc = kindred.Document(text,[e1,e2],[rel],relationsUseSourceIDs=False)
+	rel = kindred.Relation(relationType="causes",entities=[e1,e2])
+	doc = kindred.Document(text,[e1,e2],[rel])
 	corpus = kindred.Corpus()
 	corpus.addDocument(doc)
 
@@ -140,11 +140,11 @@ def test_saveStandoffFile_noArgNames():
 	entities = loadedDoc.getEntities()
 	relations = loadedDoc.getRelations()
 
-	sourceEntityIDsToEntityIDs = loadedDoc.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['arg1','arg2'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['arg1','arg2'])], "(%s) not as expected" % relations
 	
 	shutil.rmtree(tempDir)
 
@@ -181,19 +181,19 @@ def test_saveStandoffFile_SeparateSentences():
 	assert isinstance(data,kindred.Document)
 	entities = data.getEntities()
 	relations = data.getRelations()
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
 	data = loadedCorpus.documents[1]
 	assert isinstance(data,kindred.Document)
 	entities = data.getEntities()
 	relations = data.getRelations()
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 	assertEntity(entities[0],expectedType='disease',expectedText='Li-Fraumeni',expectedPos=[(0,11)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='P53',expectedPos=[(39,42)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
 	shutil.rmtree(tempDir)
 	

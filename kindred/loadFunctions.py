@@ -82,11 +82,11 @@ def loadRelation(line,ignoreComplexRelations=True):
 		return None
 
 	arguments = sorted(arguments)
-	entityIDs = [ entityID for argName,entityID in arguments ]
+	sourceEntityIDs = [ entityID for argName,entityID in arguments ]
 	argNames = [ argName for argName,entityID in arguments ]
 
-	relation = kindred.Relation(relationType, entityIDs, argNames)
-	return relation
+	relationTuple = (relationType,sourceEntityIDs,argNames)
+	return relationTuple
 	
 # TODO: Deal with complex relations more clearly
 def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
@@ -105,7 +105,9 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],i
 			entity = loadEntity(line.strip(), text)
 			if (not entity is None) and (not entity.entityType in ignoreEntities):
 				entities.append(entity)
-			
+		
+	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
+
 	relations = []
 	if os.path.exists(a2File):
 		with codecs.open(a2File, "r", "utf-8") as f:
@@ -114,8 +116,11 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],i
 					continue
 					
 				if line[0] == 'E' or line[0] == 'R':
-					relation = loadRelation(line.strip(),ignoreComplexRelations)
-					if not relation is None:
+					relationTuple = loadRelation(line.strip(),ignoreComplexRelations)
+					if not relationTuple is None:
+						relationType,sourceEntityIDs,argNames = relationTuple
+						entitiesInRelation = [ sourceEntityIDToEntity[sourceEntityID] for sourceEntityID in sourceEntityIDs ]
+						relation = kindred.Relation(relationType,entitiesInRelation,argNames)
 						relations.append(relation)
 				elif verbose:
 					sys.stderr.write("Unable to process line: %s\n" % line.strip())
@@ -124,6 +129,7 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],i
 
 	baseTxtFile = os.path.basename(txtFile)
 	baseFilename = baseTxtFile[0:-4]
+
 	combinedData = kindred.Document(text,entities=entities,relations=relations,sourceFilename=baseFilename)
 			
 	return combinedData
@@ -131,7 +137,7 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],i
 def parseJSON(data,ignoreEntities=[]):
 	entities = []
 	relations = []
-	
+
 	text = data['text']
 	if 'denotations' in data:
 		for d in data['denotations']:
@@ -148,16 +154,20 @@ def parseJSON(data,ignoreEntities=[]):
 			if not entityType in ignoreEntities:
 				entity = kindred.Entity(entityType,entityText,position,sourceEntityID=sourceEntityID)
 				entities.append(entity)
+
+	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
+
 	if 'relations' in data:
 		for r in data['relations']:
 			obj = r['obj']
 			relationType = r['pred']
 			subj = r['subj']
 			
-			entityIDs = [obj,subj]
+			sourceEntityIDs = [obj,subj]
 			argNames = ['obj','subj']
-			
-			relation = kindred.Relation(relationType=relationType,entityIDs=entityIDs,argNames=argNames)
+			entities = [ sourceEntityIDToEntity[sourceEntityID] for sourceEntityID in sourceEntityIDs ]
+		
+			relation = kindred.Relation(relationType,entities,argNames)
 			relations.append(relation)
 	
 	expected = ['denotations','divid','modifications','namespaces','project','relations','sourcedb','sourceid','target','text','tracks']
@@ -286,6 +296,8 @@ def convertBiocDocToKindredDocs(document):
 			entityText = " ".join(segments)
 			e = kindred.Entity(entityType,entityText,position,sourceEntityID)
 			entities.append(e)
+
+		sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 			
 		for r in passage.relations:
 			assert isinstance(r,bioc.BioCRelation)
@@ -297,10 +309,11 @@ def convertBiocDocToKindredDocs(document):
 				arguments.append((n.role,n.refid))
 			arguments = sorted(arguments)
 				
-			entityIDs = [ entityID for argName,entityID in arguments]
+			sourceEntityIDs = [ entityID for argName,entityID in arguments]
 			argNames = [ argName for argName,entityID in arguments]
+			entities = [ sourceEntityIDToEntity[sourceEntityID] for sourceEntityID in sourceEntityIDs ]
 			
-			r = kindred.Relation(relationType=relationType,entityIDs=entityIDs,argNames=argNames)
+			r = kindred.Relation(relationType,entities,argNames)
 			relations.append(r)
 		
 		metadata = dict(document.infons)

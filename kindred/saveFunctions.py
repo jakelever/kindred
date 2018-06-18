@@ -50,13 +50,13 @@ def convertKindredCorpusToBioCCollection(corpus):
 			biocR = bioc.BioCRelation()
 			biocR.infons = {'type':r.relationType}
 			
-			entityIDs = r.entityIDs
+			entitiesInRelation = r.entities
 			argNames = r.argNames
 			if argNames is None:
-				argNames = [ "arg%d" % i for i,_ in enumerate(entityIDs) ]
+				argNames = [ "arg%d" % i for i,_ in enumerate(entitiesInRelation) ]
 
-			for argName,entityID in zip(argNames,entityIDs):
-				node = bioc.BioCNode(role=argName, refid=kindredID2BiocID[entityID])
+			for argName,entity in zip(argNames,entitiesInRelation):
+				node = bioc.BioCNode(role=argName, refid=kindredID2BiocID[entity.entityID])
 				biocR.nodes.append(node)
 
 			passage.relations.append(biocR)
@@ -76,13 +76,12 @@ def saveDocToSTFormat(data,txtPath,a1Path,a2Path):
 			line = "%s\t%s %s\t%s" % (e.sourceEntityID,e.entityType,positions,e.text)
 			a1File.write(line+"\n")
 			
-		entityIDsToSourceEntityIDs = data.getEntityIDsToSourceEntityIDs()	
 		
 		for i,r in enumerate(data.getRelations()):
 			assert isinstance(r,kindred.Relation)
 			
 			relationType = r.relationType
-			relationEntityIDs = [ entityIDsToSourceEntityIDs[eID] for eID in r.entityIDs ]
+			relationEntityIDs = [ entity.sourceEntityID for entity in r.entities ]
 			
 			if r.argNames is None:
 				argNames = [ ("arg%d" % (i+1)) for i in range(len(relationEntityIDs)) ]

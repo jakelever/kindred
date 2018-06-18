@@ -12,7 +12,7 @@ def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEnti
 	assert entity.position == expectedPos, "(%s) not as expected" % (entity.__str__())
 	assert entity.sourceEntityID == expectedSourceEntityID, "(%s) not as expected" % (entity.__str__())
 	
-def test_loadStandoffFile():
+def test_loadStandoffFile_binary():
 	scriptDir = os.path.dirname(__file__)
 	txtPath = os.path.join(scriptDir,'data','example.txt')
 	a1Path = os.path.join(scriptDir,'data','example.a1')
@@ -24,13 +24,13 @@ def test_loadStandoffFile():
 	entities = data.getEntities()
 	relations = data.getRelations()
 
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
-def test_loadStandoffFile_Triple():
+def test_loadStandoffFile_triple():
 	scriptDir = os.path.dirname(__file__)
 	txtPath = os.path.join(scriptDir,'data_triple','example.txt')
 	a1Path = os.path.join(scriptDir,'data_triple','example.a1')
@@ -42,12 +42,13 @@ def test_loadStandoffFile_Triple():
 	entities = data.getEntities()
 	relations = data.getRelations()
 
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
+	print(entities)
 
 	assertEntity(entities[0],expectedType='drug',expectedText='Erlotinib',expectedPos=[(0,9)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='EGFR',expectedPos=[(13,17)],expectedSourceEntityID="T2")
 	assertEntity(entities[2],expectedType='disease',expectedText='NSCLC',expectedPos=[(49,54)],expectedSourceEntityID="T3")
-	assert relations == [kindred.Relation('druginfo',[sourceEntityIDsToEntityIDs["T3"],sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['disease','drug','gene'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('druginfo',[sourceEntityIDsToEntity["T3"],sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['disease','drug','gene'])], "(%s) not as expected" % relations
 
 def test_loadSimpleTagFile():
 	scriptDir = os.path.dirname(__file__)
@@ -59,11 +60,11 @@ def test_loadSimpleTagFile():
 	entities = data.getEntities()
 	relations = data.getRelations()
 
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
 	
 def test_loadJsonFile():
@@ -76,11 +77,11 @@ def test_loadJsonFile():
 	entities = data.getEntities()
 	relations = data.getRelations()
 
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 
 def test_loadBiocFile():
 	scriptDir = os.path.dirname(__file__)
@@ -96,11 +97,11 @@ def test_loadBiocFile():
 	entities = data.getEntities()
 	relations = data.getRelations()
 
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
 	
 	
@@ -118,11 +119,11 @@ def test_loadStandoffFile_dir():
 	entities = data.getEntities()
 	relations = data.getRelations()
 
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
 
 def test_loadSimpleTagFile_dir():
@@ -139,11 +140,11 @@ def test_loadSimpleTagFile_dir():
 	entities = data.getEntities()
 	relations = data.getRelations()
 
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
 	
 def test_loadJsonFile_dir():
@@ -160,11 +161,11 @@ def test_loadJsonFile_dir():
 	entities = data.getEntities()
 	relations = data.getRelations()
 
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 
 def test_loadBiocFile_dir():
 	scriptDir = os.path.dirname(__file__)
@@ -180,11 +181,11 @@ def test_loadBiocFile_dir():
 	entities = data.getEntities()
 	relations = data.getRelations()
 
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 
 def test_loadStandoffFile_missingA2(capfd):
 	scriptDir = os.path.dirname(__file__)
@@ -210,7 +211,7 @@ def test_loadStandoffFile_missingA2(capfd):
 	entities = data.getEntities()
 	relations = data.getRelations()
 
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
@@ -240,11 +241,11 @@ def test_loadStandoffFile_extraLines(capfd):
 	entities = data.getEntities()
 	relations = data.getRelations()
 
-	sourceEntityIDsToEntityIDs = data.getSourceEntityIDsToEntityIDs()
+	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 
 def test_loadEmptyDirectory():
 	tempDir = tempfile.mkdtemp()
@@ -281,11 +282,11 @@ def test_iterLoadBiocFile():
 			entities = doc.getEntities()
 			relations = doc.getRelations()
 
-			sourceEntityIDsToEntityIDs = doc.getSourceEntityIDsToEntityIDs()
+			sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 			assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 			assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-			assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntityIDs["T1"],sourceEntityIDsToEntityIDs["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+			assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 
 	assert totalDocCount == docsToCreate
 	shutil.rmtree(tempDir)
