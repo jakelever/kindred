@@ -12,11 +12,9 @@ def _doEntityTypes(candidates,entityCount):
 	for cr in candidates:
 		assert isinstance(cr,kindred.Relation)
 		
-		entityIDToType = { e.entityID:e.entityType for e,_ in cr.sentence.entityAnnotations }
 		tokenInfo = {}
-		for argI,eID in enumerate(cr.entityIDs):
-			eType = entityIDToType[eID]
-			argName = "selectedtokentypes_%d_%s" % (argI,eType)
+		for argI,entity in enumerate(cr.entities):
+			argName = "selectedtokentypes_%d_%s" % (argI,entity.entityType)
 			tokenInfo[argName] = 1
 		data.append(tokenInfo)
 	return data
@@ -28,13 +26,12 @@ def _doUnigramsBetweenEntities(candidates,entityCount):
 		
 		sentence = cr.sentence
 		dataForThisCR = Counter()
-		entityCount = len(cr.entityIDs)
-		entityIDToTokenIndices = { e.entityID:tokenIndices for e,tokenIndices in cr.sentence.entityAnnotations }
+		entityCount = len(cr.entities)
+		entityToTokenIndices = { e:tokenIndices for e,tokenIndices in cr.sentence.entityAnnotations }
 		
 		for e1,e2 in itertools.combinations(range(entityCount),2):
-			#assert len(cr.entityIDs) == 2
-			pos1 = entityIDToTokenIndices[cr.entityIDs[e1]]
-			pos2 = entityIDToTokenIndices[cr.entityIDs[e2]]
+			pos1 = entityToTokenIndices[cr.entities[e1]]
+			pos2 = entityToTokenIndices[cr.entities[e2]]
 			
 			if max(pos1) < min(pos2):
 				startPos,endPos = max(pos1)+1,min(pos2)
@@ -58,13 +55,13 @@ def _doDependencyPathEdges(candidates,entityCount):
 	for cr in candidates:
 		assert isinstance(cr,kindred.Relation)
 		sentence = cr.sentence
-		entityIDToTokenIndices = { e.entityID:tokenIndices for e,tokenIndices in cr.sentence.entityAnnotations }
+		entityToTokenIndices = { e:tokenIndices for e,tokenIndices in cr.sentence.entityAnnotations }
 		
-		entityCount = len(cr.entityIDs)
+		entityCount = len(cr.entities)
 		dataForThisCR = Counter()
 		for e1,e2 in itertools.combinations(range(entityCount),2):
-			pos1 = entityIDToTokenIndices[cr.entityIDs[e1]]
-			pos2 = entityIDToTokenIndices[cr.entityIDs[e2]]
+			pos1 = entityToTokenIndices[cr.entities[e1]]
+			pos2 = entityToTokenIndices[cr.entities[e2]]
 
 			combinedPos = pos1 + pos2
 			
@@ -84,17 +81,17 @@ def _doDependencyPathEdgesNearEntities(candidates,entityCount):
 	for cr in candidates:
 		assert isinstance(cr,kindred.Relation)
 		sentence = cr.sentence
-		entityIDToTokenIndices = { e.entityID:tokenIndices for e,tokenIndices in cr.sentence.entityAnnotations }
+		entityToTokenIndices = { e:tokenIndices for e,tokenIndices in cr.sentence.entityAnnotations }
 		
 		dataForThisCR = Counter()
 
 		allEntityLocs = []
-		for eID in cr.entityIDs:
-			allEntityLocs += entityIDToTokenIndices[eID]
+		for e in cr.entities:
+			allEntityLocs += entityToTokenIndices[e]
 		
 		nodes,edges = sentence.extractMinSubgraphContainingNodes(allEntityLocs)
-		for i,eID in enumerate(cr.entityIDs):
-			pos = entityIDToTokenIndices[eID]
+		for i,e in enumerate(cr.entities):
+			pos = entityToTokenIndices[e]
 
 			for a,b,dependencyType in edges:
 				if a in pos:
@@ -109,11 +106,9 @@ def _doBigrams(candidates,entityCount):
 		assert isinstance(cr,kindred.Relation)
 		
 		sentence = cr.sentence
-		
 		dataForThisCR = Counter()
 
-		for _ in cr.entityIDs:
-
+		for _ in cr.entities:
 			startPos = 0
 			endPos = len(sentence.tokens)
 
