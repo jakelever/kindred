@@ -179,21 +179,22 @@ def loadDataFromJSON(filename,ignoreEntities=[]):
 	return parsed
 	
 def parseSimpleTag_helper(node,currentPosition=0,ignoreEntities=[]):
-	text,entities,relations = '',[],[]
+	text,entities,relationTuples = '',[],[]
 	for s in node.childNodes:
 		if s.nodeType == s.ELEMENT_NODE:
-			insideText,insideEntities,insideRelations = parseSimpleTag_helper(s,currentPosition+len(text))
+			insideText,insideEntities,insideRelationTuples = parseSimpleTag_helper(s,currentPosition+len(text))
 
 			if s.tagName == 'relation':
 				relationType = s.getAttribute('type')
 				arguments = [ (argName,entityID) for argName,entityID in s.attributes.items() if argName != 'type' ]
 				arguments = sorted(arguments)
 				
-				entityIDs = [ entityID for argName,entityID in arguments]
-				argNames = [ argName for argName,entityID in arguments]
+				sourceEntityIDs = [ sourceEntityID for argName,sourceEntityID in arguments]
+				argNames = [ argName for argName,sourceEntityID in arguments]
 				
-				r = kindred.Relation(relationType=relationType,entityIDs=entityIDs,argNames=argNames)
-				relations.append(r)
+
+				relationTuple = (relationType,sourceEntityIDs,argNames)
+				relationTuples.append(relationTuple)
 			else: # Entity
 				entityType = s.tagName
 				sourceEntityID = s.getAttribute('id')
@@ -207,11 +208,11 @@ def parseSimpleTag_helper(node,currentPosition=0,ignoreEntities=[]):
 				
 			text += insideText
 			entities += insideEntities
-			relations += insideRelations
+			relationTuples += insideRelationTuples
 		elif s.nodeType == s.TEXT_NODE:
 			text += s.nodeValue
 			
-	return text,entities,relations
+	return text,entities,relationTuples
 	
 def mergeEntitiesWithMatchingIDs(unmergedEntities):
 	assert isinstance(unmergedEntities,list)
@@ -231,7 +232,7 @@ def parseSimpleTag(text,ignoreEntities=[]):
 	docText = u"<doc>%s</doc>" % text
 	xmldoc = minidom.parseString(docText.encode('utf8'))
 	docNode = xmldoc.childNodes[0]
-	text,unmergedEntities,relations = parseSimpleTag_helper(docNode,ignoreEntities=ignoreEntities)
+	text,unmergedEntities,relationTuples = parseSimpleTag_helper(docNode,ignoreEntities=ignoreEntities)
 	
 	missingSourceEntityID = [ e.sourceEntityID == '' for e in unmergedEntities ]
 	assert all(missingSourceEntityID) or (not any(missingSourceEntityID)), 'All entities or none (not some) should be given IDs'
@@ -242,7 +243,16 @@ def parseSimpleTag(text,ignoreEntities=[]):
 			e.sourceEntityID = i+1
 					
 	entities = mergeEntitiesWithMatchingIDs(unmergedEntities)
-			
+		
+	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
+
+	relations = []
+	for relationType,sourceEntityIDs,argNames in relationTuples:
+		assert len(sourceEntityIDs) == len(argNames)
+		entitiesInRelation = [ sourceEntityIDToEntity[sourceEntityID] for sourceEntityID in sourceEntityIDs ]
+		relation = kindred.Relation(relationType=relationType,entities=entitiesInRelation,argNames=argNames)
+		relations.append(relation)
+
 	combinedData = kindred.Document(text,entities=entities,relations=relations)
 	return combinedData
 

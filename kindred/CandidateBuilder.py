@@ -47,17 +47,16 @@ class CandidateBuilder:
 			existingRelationsAndArgNames = defaultdict(lambda : (None,None))
 			for r in doc.getRelations():
 				assert isinstance(r,kindred.Relation)
-				entityIDs = tuple(r.entityIDs)
-				assert not entityIDs in existingRelationsAndArgNames, "Two (or more) relations share the same entities. This is not currently supported"
-				existingRelationsAndArgNames[entityIDs] = (r.relationType,r.argNames)
+				entities = tuple(r.entities)
+				assert not entities in existingRelationsAndArgNames, "Two (or more) relations share the same entities. This is not currently supported"
+				existingRelationsAndArgNames[entities] = (r.relationType,r.argNames)
 
 			for sentence in doc.sentences:
 				entitiesInSentence = [ entity for entity,tokenIndices in sentence.entityAnnotations ]
 							
 				for entitiesInRelation in itertools.permutations(entitiesInSentence, self.entityCount):
-					entityIDsInRelation = tuple([ e.entityID for e in entitiesInRelation ])
-					relationType,argNames = existingRelationsAndArgNames[entityIDsInRelation] # Is None if relation doesn't exist
-					candidateRelation = kindred.Relation(relationType=relationType,entityIDs=list(entityIDsInRelation),argNames=argNames,sentence=sentence)
+					relationType,argNames = existingRelationsAndArgNames[entitiesInRelation] # Is None if relation doesn't exist
+					candidateRelation = kindred.Relation(relationType=relationType,entities=list(entitiesInRelation),argNames=argNames,sentence=sentence)
 
 					includeCandidate = True
 					if not self.acceptedEntityTypes is None:

@@ -15,12 +15,17 @@ def test_candidatebuilder_simple():
 	
 	assert len(candidateRelations) == 4
 	
-	sourceEntityIDsToEntityIDs = corpus.documents[0].getSourceEntityIDsToEntityIDs()
+	for cr in candidateRelations:
+		assert len(cr.entities) == 2
 
-	assert candidateRelations[0].entityIDs == [sourceEntityIDsToEntityIDs['1'], sourceEntityIDsToEntityIDs['2']]
-	assert candidateRelations[1].entityIDs == [sourceEntityIDsToEntityIDs['2'], sourceEntityIDsToEntityIDs['1']]
-	assert candidateRelations[2].entityIDs == [sourceEntityIDsToEntityIDs['3'], sourceEntityIDsToEntityIDs['4']]
-	assert candidateRelations[3].entityIDs == [sourceEntityIDsToEntityIDs['4'], sourceEntityIDsToEntityIDs['3']]
+	assert candidateRelations[0].entities[0].sourceEntityID == '1'
+	assert candidateRelations[0].entities[1].sourceEntityID == '2'
+	assert candidateRelations[1].entities[0].sourceEntityID == '2'
+	assert candidateRelations[1].entities[1].sourceEntityID == '1'
+	assert candidateRelations[2].entities[0].sourceEntityID == '3'
+	assert candidateRelations[2].entities[1].sourceEntityID == '4'
+	assert candidateRelations[3].entities[0].sourceEntityID == '4'
+	assert candidateRelations[3].entities[1].sourceEntityID == '3'
 
 	assert candidateRelations[0].relationType == None
 	assert candidateRelations[1].relationType == 'treats'
@@ -43,10 +48,13 @@ def test_candidatebuilder_acceptedEntityTypes():
 	candidateBuilder = kindred.CandidateBuilder(acceptedEntityTypes=[('disease','drug')])
 	candidateRelations = candidateBuilder.build(corpus)
 	
-	sourceEntityIDsToEntityIDs = corpus.documents[0].getSourceEntityIDsToEntityIDs()
+	for cr in candidateRelations:
+		assert len(cr.entities) == 2
 
-	assert candidateRelations[0].entityIDs == [sourceEntityIDsToEntityIDs['2'], sourceEntityIDsToEntityIDs['1']]
-	assert candidateRelations[1].entityIDs == [sourceEntityIDsToEntityIDs['4'], sourceEntityIDsToEntityIDs['3']]
+	assert candidateRelations[0].entities[0].sourceEntityID == '2'
+	assert candidateRelations[0].entities[1].sourceEntityID == '1'
+	assert candidateRelations[1].entities[0].sourceEntityID == '4'
+	assert candidateRelations[1].entities[1].sourceEntityID == '3'
 
 	assert candidateRelations[0].relationType == 'treats'
 	assert candidateRelations[1].relationType == None
@@ -66,15 +74,27 @@ def test_candidatebuilder_triple():
 	candidateRelations = candidateBuilder.build(corpus)
 	
 	#assert corpus.relationTypes == [('druginfo', 'disease', 'drug', 'gene')]
-	
-	sourceEntityIDsToEntityIDs = corpus.documents[0].getSourceEntityIDsToEntityIDs()
+	for cr in candidateRelations:
+		assert len(cr.entities) == 3
 
-	assert candidateRelations[0].entityIDs == [sourceEntityIDsToEntityIDs['1'], sourceEntityIDsToEntityIDs['2'], sourceEntityIDsToEntityIDs['3']]
-	assert candidateRelations[1].entityIDs == [sourceEntityIDsToEntityIDs['1'], sourceEntityIDsToEntityIDs['3'], sourceEntityIDsToEntityIDs['2']]
-	assert candidateRelations[2].entityIDs == [sourceEntityIDsToEntityIDs['2'], sourceEntityIDsToEntityIDs['1'], sourceEntityIDsToEntityIDs['3']]
-	assert candidateRelations[3].entityIDs == [sourceEntityIDsToEntityIDs['2'], sourceEntityIDsToEntityIDs['3'], sourceEntityIDsToEntityIDs['1']]
-	assert candidateRelations[4].entityIDs == [sourceEntityIDsToEntityIDs['3'], sourceEntityIDsToEntityIDs['1'], sourceEntityIDsToEntityIDs['2']]
-	assert candidateRelations[5].entityIDs == [sourceEntityIDsToEntityIDs['3'], sourceEntityIDsToEntityIDs['2'], sourceEntityIDsToEntityIDs['1']]
+	assert candidateRelations[0].entities[0].sourceEntityID == '1'
+	assert candidateRelations[0].entities[1].sourceEntityID == '2'
+	assert candidateRelations[0].entities[2].sourceEntityID == '3'
+	assert candidateRelations[1].entities[0].sourceEntityID == '1'
+	assert candidateRelations[1].entities[1].sourceEntityID == '3'
+	assert candidateRelations[1].entities[2].sourceEntityID == '2'
+	assert candidateRelations[2].entities[0].sourceEntityID == '2'
+	assert candidateRelations[2].entities[1].sourceEntityID == '1'
+	assert candidateRelations[2].entities[2].sourceEntityID == '3'
+	assert candidateRelations[3].entities[0].sourceEntityID == '2'
+	assert candidateRelations[3].entities[1].sourceEntityID == '3'
+	assert candidateRelations[3].entities[2].sourceEntityID == '1'
+	assert candidateRelations[4].entities[0].sourceEntityID == '3'
+	assert candidateRelations[4].entities[1].sourceEntityID == '1'
+	assert candidateRelations[4].entities[2].sourceEntityID == '2'
+	assert candidateRelations[5].entities[0].sourceEntityID == '3'
+	assert candidateRelations[5].entities[1].sourceEntityID == '2'
+	assert candidateRelations[5].entities[2].sourceEntityID == '1'
 
 	assert candidateRelations[0].relationType == None
 	assert candidateRelations[1].relationType == None

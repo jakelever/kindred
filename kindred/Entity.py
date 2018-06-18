@@ -64,3 +64,5 @@ class Entity:
 		"""Define a non-equality test"""
 		return not self.__eq__(other)
 
+	def __hash__(self):
+		return hash((self.entityType,self.text,tuple(self.position),self.sourceEntityID,self.externalID))

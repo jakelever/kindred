@@ -1,35 +1,40 @@
 
 import kindred
+import six
 
 class Relation:
 	"""
 	Describes relationship between entities (including relation type and argument names if applicable).
 	"""
 	
-	def __init__(self,relationType=None,entityIDs=[],argNames=None,probability=None,sentence=None):
+	def __init__(self,relationType=None,entities=[],argNames=None,probability=None,sentence=None):
 		"""
 		Constructor for Relation class
 		
 		:param relationType: Type of relation
-		:param entityIDs: List of entities in relation
+		:param entities: List of entities in relation
 		:param argNames: Names of relation argument associated with each entity
 		:param probability: Optional probability for predicted relations
 		:param sentence: Parsed sentence containing the relation (used for candidate relations)
 		:type relationType: str
-		:type entityIDs: list of ints
+		:type entities: list of kindred.Entity
 		:type argNames: list of str
 		:type probability: float
 		:type sentence: kindred.Sentence
 		"""
 
-		assert isinstance(entityIDs,list)
-
+		assert relationType is None or isinstance(relationType, six.string_types), "relationType must be a string"
 		self.relationType = relationType
-		self.entityIDs = entityIDs
+
+		assert isinstance(entities,list),  "entities must be a list of kindred.Entity"
+		for entity in entities:
+			assert isinstance(entity, kindred.Entity), "entities must be a list of kindred.Entity"
+		self.entities = entities
+
 		if argNames == None:
 			self.argNames = None
 		else:
-			assert len(argNames) == len(entityIDs)
+			assert len(argNames) == len(entities)
 			self.argNames = [ str(a) for a in argNames ]
 
 		if not probability is None:
@@ -51,13 +56,14 @@ class Relation:
 		return not self.__eq__(other)
 
 	def __str__(self):
-		return "<Relation %s %s %s>" % (self.relationType,str(self.entityIDs),str(self.argNames))
+		return "<Relation %s %s %s>" % (self.relationType,str(self.entities),str(self.argNames))
 
 	def __repr__(self):
 		return self.__str__()
 
 	def __hash__(self):
 		if self.argNames is None:
-			return hash((self.relationType,tuple(self.entityIDs),self.probability,self.sentence))
+			return hash((self.relationType,tuple(self.entities),self.probability,self.sentence))
 		else:
-			return hash((self.relationType,tuple(self.entityIDs),tuple(self.argNames),self.probability,self.sentence))
+			return hash((self.relationType,tuple(self.entities),tuple(self.argNames),self.probability,self.sentence))
+

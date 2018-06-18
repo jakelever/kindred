@@ -6,22 +6,20 @@ class Document:
 	Span of text with associated tagged entities and relations between entities.
 	"""
 	
-	def __init__(self,text,entities=None,relations=None,relationsUseSourceIDs=True,sourceFilename=None,metadata={},loadFromSimpleTag=False):
+	def __init__(self,text,entities=None,relations=None,sourceFilename=None,metadata={},loadFromSimpleTag=False):
 		"""
 		Constructor for a Document that can take text using the SimpleTag XML format, or a set of Entities and Relations with associated text.
 		
 		:param text: Text in document (plain-text, or SimpleTag)
 		:param entities: Entities in document
 		:param relations: Relations in document
-		:param relationsUseSourceIDs: description
-		:param sourceFilename: description
+		:param sourceFilename: Filename that this document came from
 		:param metadata: IDs and other information associated with the source (e.g. PMID)
 		:param loadFromSimpleTag: Assumes the text parameter is in the SimpleTag format and will extract entities and relations accordingly
-		:type text: type description
-		:type entities: type description
-		:type relations: type description
-		:type relationsUseSourceIDs: type description
-		:type sourceFilename: type description
+		:type text: str
+		:type entities: list of kindred.Entity
+		:type relations: list of kindred.Relation
+		:type sourceFilename: str
 		:type metadata: dict
 		:type loadFromSimpleTag: bool
 		"""
@@ -54,20 +52,6 @@ class Document:
 				for r in relations:
 					assert isinstance(r,kindred.Relation)
 				self.relations = relations
-
-		# We'll need to translate source IDs to internal IDs
-		if relationsUseSourceIDs and not loadFromSimpleTag:
-			sourceEntityIDsToEntityIDs = self.getSourceEntityIDsToEntityIDs()
-			sourceEntityIDs = sourceEntityIDsToEntityIDs.keys()
-			correctedRelations = []
-			for r in self.relations:
-				for e in r.entityIDs:
-					assert e in sourceEntityIDs, "Entities in relation must occur in the associated text. %s does not" % e
-				relationEntityIDs = [ sourceEntityIDsToEntityIDs[e] for e in r.entityIDs ]
-				correctedR = kindred.Relation(r.relationType,relationEntityIDs,r.argNames)
-				correctedRelations.append(correctedR)
-				
-			self.relations = correctedRelations
 
 		self.sentences = []
 		
