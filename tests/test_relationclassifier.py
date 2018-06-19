@@ -212,6 +212,21 @@ def test_filterByEntityTypes_invalidTypes():
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
 	assert round(f1score,3) == 0.0
 
+def test_predicting_thrice():
+	trainCorpus, testCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+
+	testCorpus.removeRelations()
+
+	classifier = kindred.RelationClassifier()
+	classifier.train(trainCorpus)
+
+	classifier.predict(testCorpus)
+	classifier.predict(testCorpus)
+	classifier.predict(testCorpus)
+
+	relations = [ r for doc in testCorpus.documents for r in doc.relations ]
+	assert len(relations) == len(set(relations)), "Duplicate relations found in predictions"
+			
 if __name__ == '__main__':
 	test_singleFeature_entityTypes()
 
