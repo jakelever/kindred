@@ -213,6 +213,36 @@ def test_filterByEntityTypes_invalidTypes():
 	assert round(f1score,3) == 0.0
 
 def test_predicting_thrice():
+	trainCorpus1, trainCorpus2 = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+	trainCorpus3, testCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+
+	for doc in trainCorpus1.documents:
+		for r in doc.relations:
+			r.relationType = 'type1'
+	for doc in trainCorpus1.documents:
+		for r in doc.relations:
+			r.relationType = 'type2'
+	for doc in trainCorpus1.documents:
+		for r in doc.relations:
+			r.relationType = 'type3'
+
+	testCorpus.removeRelations()
+
+	classifier1 = kindred.RelationClassifier()
+	classifier1.train(trainCorpus1)
+	classifier2 = kindred.RelationClassifier()
+	classifier2.train(trainCorpus2)
+	classifier3 = kindred.RelationClassifier()
+	classifier3.train(trainCorpus3)
+
+	classifier1.predict(testCorpus)
+	classifier2.predict(testCorpus)
+	classifier3.predict(testCorpus)
+
+	relations = [ r for doc in testCorpus.documents for r in doc.relations ]
+	assert len(relations) == len(set(relations)), "Duplicate relations found in predictions"
+
+def test_predicting_duplicates():
 	trainCorpus, testCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
 
 	testCorpus.removeRelations()
