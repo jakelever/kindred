@@ -13,8 +13,8 @@ def test_relation_hash():
 	assert hash(rel3) == hash(rel4)
 	assert hash(rel1) != hash(rel3)
 
-	assert hash(rel1) == hash((rel1.relationType,tuple(rel1.entities),rel1.probability,rel1.sentence))
-	assert hash(rel3) == hash((rel3.relationType,tuple(rel3.entities),tuple(rel3.argNames),rel3.probability,rel3.sentence))
+	assert hash(rel1) == hash((rel1.relationType,tuple(rel1.entities),rel1.probability))
+	assert hash(rel3) == hash((rel3.relationType,tuple(rel3.entities),tuple(rel3.argNames),rel3.probability))
 
 def test_relation_str():
 	e1 = kindred.Entity('mutation','BRAF V600E mutation',[])

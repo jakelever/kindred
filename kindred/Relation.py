@@ -7,7 +7,7 @@ class Relation:
 	Describes relationship between entities (including relation type and argument names if applicable).
 	"""
 	
-	def __init__(self,relationType=None,entities=[],argNames=None,probability=None,sentence=None):
+	def __init__(self,relationType=None,entities=[],argNames=None,probability=None):
 		"""
 		Constructor for Relation class
 		
@@ -15,12 +15,10 @@ class Relation:
 		:param entities: List of entities in relation
 		:param argNames: Names of relation argument associated with each entity
 		:param probability: Optional probability for predicted relations
-		:param sentence: Parsed sentence containing the relation (used for candidate relations)
 		:type relationType: str
 		:type entities: list of kindred.Entity
 		:type argNames: list of str
 		:type probability: float
-		:type sentence: kindred.Sentence
 		"""
 
 		assert relationType is None or isinstance(relationType, six.string_types), "relationType must be a string"
@@ -40,10 +38,6 @@ class Relation:
 		if not probability is None:
 			assert isinstance(probability, float)
 		self.probability = probability
-
-		if not sentence is None:
-			assert isinstance(sentence, kindred.Sentence)
-		self.sentence = sentence
 	
 	def __eq__(self, other):
 		"""Override the default Equals behavior"""
@@ -63,7 +57,7 @@ class Relation:
 
 	def __hash__(self):
 		if self.argNames is None:
-			return hash((self.relationType,tuple(self.entities),self.probability,self.sentence))
+			return hash((self.relationType,tuple(self.entities),self.probability))
 		else:
-			return hash((self.relationType,tuple(self.entities),tuple(self.argNames),self.probability,self.sentence))
+			return hash((self.relationType,tuple(self.entities),tuple(self.argNames),self.probability))
 
