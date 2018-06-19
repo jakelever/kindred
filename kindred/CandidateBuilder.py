@@ -44,27 +44,23 @@ class CandidateBuilder:
 
 		candidates = []
 		for doc in corpus.documents:
-			existingRelationsAndArgNames = defaultdict(lambda : (None,None))
+			existingRelationsAndArgNames = defaultdict(list)
 			for r in doc.getRelations():
 				assert isinstance(r,kindred.Relation)
 				entities = tuple(r.entities)
-				assert not entities in existingRelationsAndArgNames, "Two (or more) relations share the same entities. This is not currently supported"
-				existingRelationsAndArgNames[entities] = (r.relationType,r.argNames)
+				existingRelationsAndArgNames[entities].append((r.relationType,r.argNames))
 
 			for sentence in doc.sentences:
 				entitiesInSentence = [ entity for entity,tokenIndices in sentence.entityAnnotations ]
 							
 				for entitiesInRelation in itertools.permutations(entitiesInSentence, self.entityCount):
-					relationType,argNames = existingRelationsAndArgNames[entitiesInRelation] # Is None if relation doesn't exist
-					candidateRelation = kindred.Relation(relationType=relationType,entities=list(entitiesInRelation),argNames=argNames,sentence=sentence)
-
-					includeCandidate = True
-					if not self.acceptedEntityTypes is None:
-						typesInRelation = tuple([ e.entityType for e in entitiesInRelation ])
-						includeCandidate = (typesInRelation in self.acceptedEntityTypes)
-
-					if includeCandidate:
-						candidates.append(candidateRelation)
+					typesInRelation = tuple([ e.entityType for e in entitiesInRelation ])
+					if not self.acceptedEntityTypes is None and not typesInRelation in self.acceptedEntityTypes:
+						# Relation doesn't contain the right entity types (so skip it)
+						continue
+				
+					candidateRelation = kindred.CandidateRelation(entities=list(entitiesInRelation),knownTypesAndArgNames=existingRelationsAndArgNames[entitiesInRelation],sentence=sentence)
+					candidates.append(candidateRelation)
 
 		return candidates
 
