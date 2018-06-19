@@ -69,27 +69,25 @@ class RelationClassifier:
 		if len(candidateRelations) == 0:
 			raise RuntimeError("No candidate relations found in corpus for training. Does the corpus contain text and entity annotations with at least one sentence containing %d entities." % (self.entityCount))
 
-		# Get a unique list of all the relation types
-		relationTypes = sorted(list(set( [ cr.relationType for cr in candidateRelations if cr.relationType != None ] )))
-		
 		candidateRelationKeys = set()
 		for cr in candidateRelations:
-			if not cr.relationType is None:
-				relKey = tuple([cr.relationType] + cr.argNames)
+			assert isinstance(cr,kindred.CandidateRelation)
+			for knownType,knownArgNames in cr.knownTypesAndArgNames:
+				relKey = tuple([knownType] + knownArgNames)
 				candidateRelationKeys.add(relKey)
 		
 		# Create mappings from the class index to a relation type and back again
 		self.classToRelType = [None] + sorted(list(candidateRelationKeys))
 		self.reltypeToClass = { relationType:i for i,relationType in enumerate(self.classToRelType) }
 		
-		#candidateClasses = [ self.reltypeToClass[cr.relationType] for key in candidateRelationKeys ]
-		
 		candidateClasses = []
 		for cr in candidateRelations:
-			if cr.relationType is None:
+			assert len(cr.knownTypesAndArgNames) <= 1, "Kindred doesn't currently supporting training a classifier with candidate relations that are of more than one type"
+			if len(cr.knownTypesAndArgNames) == 0:
 				candidateClasses.append(0)
 			else:
-				relKey = tuple([cr.relationType] + cr.argNames)
+				knownType,knownArgNames = cr.knownTypesAndArgNames[0]
+				relKey = tuple([knownType] + knownArgNames)
 				candidateClasses.append(self.reltypeToClass[relKey])
 				
 		entityCountsInRelations = set([ len(r.entities) for r in corpus.getRelations() ])

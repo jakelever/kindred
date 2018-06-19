@@ -4,7 +4,7 @@ import six
 
 class CandidateRelation:
 	"""
-	Describes candidate relationship between entities (i.e. one that could exist but has not yet been predicted).
+	Describes a candidate relation between entities (i.e. one that could exist but has not yet been predicted). Contains information about known relation types and arg names associated with this candidate (from training data) and also a link to the sentence containing this candidate.
 	"""
 	
 	def __init__(self,entities=[],knownTypesAndArgNames=[],sentence=None):
