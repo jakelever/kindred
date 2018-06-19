@@ -82,7 +82,7 @@ class Corpus:
 
 		relations = []
 		for doc in self.documents:
-			relations += doc.getRelations()
+			relations += doc.relations
 		return relations
 
 	def removeRelations(self):

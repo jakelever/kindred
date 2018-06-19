@@ -27,8 +27,8 @@ def test_saveStandoffFile_fromSimpleTag():
 	loadedDoc = loadedCorpus.documents[0]
 	
 	assert isinstance(loadedDoc,kindred.Document)
-	entities = loadedDoc.getEntities()
-	relations = loadedDoc.getRelations()
+	entities = loadedDoc.entities
+	relations = loadedDoc.relations
 
 	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -52,8 +52,8 @@ def test_saveBiocFile_fromSimpleTag():
 	loadedDoc = loadedCorpus.documents[0]
 	
 	assert isinstance(loadedDoc,kindred.Document)
-	entities = loadedDoc.getEntities()
-	relations = loadedDoc.getRelations()
+	entities = loadedDoc.entities
+	relations = loadedDoc.relations
 
 	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -77,8 +77,8 @@ def test_saveStandoffFile_fromSimpleTag_triple():
 	loadedDoc = loadedCorpus.documents[0]
 	
 	assert isinstance(loadedDoc,kindred.Document)
-	entities = loadedDoc.getEntities()
-	relations = loadedDoc.getRelations()
+	entities = loadedDoc.entities
+	relations = loadedDoc.relations
 
 	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -108,8 +108,8 @@ def test_saveStandoffFile():
 	loadedDoc = loadedCorpus.documents[0]
 	
 	assert isinstance(loadedDoc,kindred.Document)
-	entities = loadedDoc.getEntities()
-	relations = loadedDoc.getRelations()
+	entities = loadedDoc.entities
+	relations = loadedDoc.relations
 
 	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -137,8 +137,8 @@ def test_saveStandoffFile_noArgNames():
 	loadedDoc = loadedCorpus.documents[0]
 	
 	assert isinstance(loadedDoc,kindred.Document)
-	entities = loadedDoc.getEntities()
-	relations = loadedDoc.getRelations()
+	entities = loadedDoc.entities
+	relations = loadedDoc.relations
 
 	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -179,8 +179,8 @@ def test_saveStandoffFile_SeparateSentences():
 	
 	data = loadedCorpus.documents[0]
 	assert isinstance(data,kindred.Document)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	entities = data.entities
+	relations = data.relations
 	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
@@ -188,8 +188,8 @@ def test_saveStandoffFile_SeparateSentences():
 	
 	data = loadedCorpus.documents[1]
 	assert isinstance(data,kindred.Document)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	entities = data.entities
+	relations = data.relations
 	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 	assertEntity(entities[0],expectedType='disease',expectedText='Li-Fraumeni',expectedPos=[(0,11)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='P53',expectedPos=[(39,42)],expectedSourceEntityID="T2")

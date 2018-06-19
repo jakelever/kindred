@@ -15,39 +15,6 @@ def test_document_str():
 	assert str(doc2) == expected2
 	assert doc2.__repr__() == expected2
 
-
-def test_document_entityTypeMap():
-	doc = kindred.Document('<disease id="T1">Cancer</disease> is caused by mutations in <gene id="T2">ABCDE1</gene>.',loadFromSimpleTag=True)
-
-	mapping = doc.getSourceEntityIDsToEntityIDs()
-	expected = {mapping["T1"]:'disease',mapping["T2"]:'gene'}
-	assert doc.getEntityIDsToEntityTypes() == expected
-
-
-def test_document_entitySourceIDToEntityID():
-	doc = kindred.Document('<disease id="T1">Cancer</disease> is caused by mutations in <gene id="T2">ABCDE1</gene>.',loadFromSimpleTag=True)
-
-	expected = { e.sourceEntityID:e.entityID for e in doc.entities}
-	assert doc.getSourceEntityIDsToEntityIDs() == expected
-		
-def test_document_entityIDToEntitySourceID():
-	doc = kindred.Document('<disease id="T1">Cancer</disease> is caused by mutations in <gene id="T2">ABCDE1</gene>.',loadFromSimpleTag=True)
-
-	expected = { e.entityID:e.sourceEntityID for e in doc.entities}
-	assert doc.getEntityIDsToSourceEntityIDs() == expected
-
-def test_document_entityIDToEntity():
-	doc = kindred.Document('<disease id="T1">Cancer</disease> is caused by mutations in <gene id="T2">ABCDE1</gene>.',loadFromSimpleTag=True)
-
-	expected = { e.entityID:e for e in doc.entities}
-	assert doc.getEntityIDsToEntities() == expected
-
-def test_document_entityIDs():
-	doc = kindred.Document('<disease id="T1">Cancer</disease> is caused by mutations in <gene id="T2">ABCDE1</gene>.',loadFromSimpleTag=True)
-
-	expected = [ e.entityID for e in doc.entities ]
-	assert doc.getEntityIDs() == expected
-
 def test_document_init():
 	text = "Cancer is caused by mutations in ABCDE1."
 	e1 = kindred.Entity('disease','Cancer',[(0,6)],'T1')

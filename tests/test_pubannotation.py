@@ -7,8 +7,8 @@ def test_pubannotation_groST():
 	assert isinstance(corpus,kindred.Corpus)
 
 	fileCount = len(corpus.documents)
-	entityCount = sum([ len(d.getEntities()) for d in corpus.documents ])
-	relationCount = sum([ len(d.getRelations()) for d in corpus.documents ])
+	entityCount = sum([ len(d.entities) for d in corpus.documents ])
+	relationCount = sum([ len(d.relations) for d in corpus.documents ])
 
 	assert fileCount == 50
 	assert relationCount == 1454
@@ -20,8 +20,8 @@ def test_pubannotation_wikiPain():
 	assert isinstance(corpus,kindred.Corpus)
 
 	fileCount = len(corpus.documents)
-	entityCount = sum([ len(d.getEntities()) for d in corpus.documents ])
-	relationCount = sum([ len(d.getRelations()) for d in corpus.documents ])
+	entityCount = sum([ len(d.entities) for d in corpus.documents ])
+	relationCount = sum([ len(d.relations) for d in corpus.documents ])
 
 	assert fileCount == 49
 	assert relationCount == 299

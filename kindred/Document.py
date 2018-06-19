@@ -30,10 +30,11 @@ class Document:
 		if loadFromSimpleTag:
 			assert entities is None and relations is None, 'Entities and relations will be extracted from SimpleTag. They cannot also be passed in as parameters'
 
-			dataToCopy = kindred.loadFunctions.parseSimpleTag(text)
-			self.text = dataToCopy.getText()
-			self.entities = dataToCopy.getEntities()
-			self.relations = dataToCopy.getRelations()
+			docToCopy = kindred.loadFunctions.parseSimpleTag(text)
+			assert isinstance(docToCopy,kindred.Document)
+			self.text = docToCopy.text
+			self.entities = docToCopy.entities
+			self.relations = docToCopy.relations
 		else:
 			self.text = text
 			
@@ -115,96 +116,6 @@ class Document:
 
 		cloned = Document(self.text,entities=self.entities,relations=self.relations,sourceFilename=self.sourceFilename)
 		return cloned
-
-	def getEntities(self):
-		"""
-		Get the entities for this document
-		
-		:return: List of entities
-		:rtype: list of kindred.Entity
-		"""
-		
-		return self.entities
-	
-	def getEntityIDs(self):
-		"""
-		Get the entity IDs for the entities in this document
-		
-		:return: List of entity IDs
-		:rtype: list of int
-		"""
-
-		return [e.entityID for e in self.entities]
-	
-	def getEntityIDsToEntities(self):
-		"""
-		Get a mapping of entity IDs to entities
-		
-		:return: Map of entity ID to entity instance
-		:rtype: dict
-		"""
-
-		return {e.entityID:e for e in self.entities}
-		
-	def getEntityIDsToEntityTypes(self):
-		"""
-		Get a mapping of entity IDs to entity types
-		
-		:return: Map of entity ID to entity types
-		:rtype: dict
-		"""
-
-		return {e.entityID:e.entityType for e in self.entities}
-
-	def getEntityIDsToSourceEntityIDs(self):
-		"""
-		Get a mapping of entity IDs to source entity IDs
-		
-		:return: Map of entity ID to source entity IDs
-		:rtype: dict
-		"""
-		
-		return {e.entityID:e.sourceEntityID for e in self.entities}
-		
-	def getRelations(self):
-		"""
-		Get the relations associated with the document
-		
-		:return: list of relations
-		:rtype: list of kindred.Relation
-		"""
-		
-		return self.relations
-		
-	def getSourceEntityIDsToEntityIDs(self):
-		"""
-		Get a mapping of source entity IDs to entity IDs
-		
-		:return: Map of source entity IDs to entity ID
-		:rtype: dict
-		"""
-		
-		return {e.sourceEntityID:e.entityID for e in self.entities}
-		
-	def getSourceFilename(self):
-		"""
-		Get the source filename for the document
-		
-		:return: Source filename
-		:rtype: str
-		"""
-		
-		return self.sourceFilename
-
-	def getText(self):
-		"""
-		Get the text associated with the document
-		
-		:return: list of text
-		:rtype: str
-		"""
-		
-		return self.text
 
 	def removeRelations(self):
 		"""

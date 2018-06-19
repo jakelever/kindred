@@ -45,7 +45,7 @@ class CandidateBuilder:
 		candidates = []
 		for doc in corpus.documents:
 			existingRelationsAndArgNames = defaultdict(list)
-			for r in doc.getRelations():
+			for r in doc.relations:
 				assert isinstance(r,kindred.Relation)
 				entities = tuple(r.entities)
 				existingRelationsAndArgNames[entities].append((r.relationType,r.argNames))

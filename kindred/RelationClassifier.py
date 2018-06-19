@@ -97,7 +97,7 @@ class RelationClassifier:
 		self.relTypeToValidEntityTypes = defaultdict(set)
 		
 		for d in corpus.documents:
-			for r in d.getRelations():
+			for r in d.relations:
 				validEntityTypes = tuple([ e.entityType for e in r.entities ])
 				
 				relKey = tuple([r.relationType] + r.argNames)
@@ -174,7 +174,7 @@ class RelationClassifier:
 		# Add the predicted relations into the corpus
 		entitiesToDoc = {}
 		for i,doc in enumerate(corpus.documents):
-			for e in doc.getEntities():
+			for e in doc.entities:
 				entitiesToDoc[e] = i
 
 		for predictedRelation in predictedRelations:

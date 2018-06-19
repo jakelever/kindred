@@ -21,8 +21,8 @@ def test_loadStandoffFile_binary():
 	data = kindred.loadDoc(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
 	
 	assert isinstance(data,kindred.Document)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	entities = data.entities
+	relations = data.relations
 
 	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -39,8 +39,8 @@ def test_loadStandoffFile_triple():
 	data = kindred.loadDoc(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
 	
 	assert isinstance(data,kindred.Document)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	entities = data.entities
+	relations = data.relations
 
 	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 	print(entities)
@@ -57,8 +57,8 @@ def test_loadSimpleTagFile():
 	data = kindred.loadDoc(dataFormat='simpletag',path=path)
 	
 	assert isinstance(data,kindred.Document)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	entities = data.entities
+	relations = data.relations
 
 	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -74,8 +74,8 @@ def test_loadJsonFile():
 	data = kindred.loadDoc(dataFormat='json',path=jsonPath)
 	
 	assert isinstance(data,kindred.Document)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	entities = data.entities
+	relations = data.relations
 
 	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -94,8 +94,8 @@ def test_loadBiocFile():
 	data = dataList[0]
 	
 	assert isinstance(data,kindred.Document)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	entities = data.entities
+	relations = data.relations
 
 	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -116,8 +116,8 @@ def test_loadStandoffFile_dir():
 	data = corpus.documents[0]
 	
 	assert isinstance(data,kindred.Document)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	entities = data.entities
+	relations = data.relations
 
 	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -137,8 +137,8 @@ def test_loadSimpleTagFile_dir():
 	data = corpus.documents[0]
 	
 	assert isinstance(data,kindred.Document)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	entities = data.entities
+	relations = data.relations
 
 	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -158,8 +158,8 @@ def test_loadJsonFile_dir():
 	data = corpus.documents[0]
 	
 	assert isinstance(data,kindred.Document)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	entities = data.entities
+	relations = data.relations
 
 	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -178,8 +178,8 @@ def test_loadBiocFile_dir():
 	data = corpus.documents[0]
 		
 	assert isinstance(data,kindred.Document)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	entities = data.entities
+	relations = data.relations
 
 	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -208,8 +208,8 @@ def test_loadStandoffFile_missingA2(capfd):
 	assert err.strip() == 'Note: No A2 file found : example.a2'
 	
 	assert isinstance(data,kindred.Document)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	entities = data.entities
+	relations = data.relations
 
 	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -238,8 +238,8 @@ def test_loadStandoffFile_extraLines(capfd):
 	assert err.strip() == "Unable to process line: *\tEXTRALINE"
 	
 	assert isinstance(data,kindred.Document)
-	entities = data.getEntities()
-	relations = data.getRelations()
+	entities = data.entities
+	relations = data.relations
 
 	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
@@ -279,8 +279,8 @@ def test_iterLoadBiocFile():
 
 		for doc in corpus.documents:
 			assert isinstance(doc,kindred.Document)
-			entities = doc.getEntities()
-			relations = doc.getRelations()
+			entities = doc.entities
+			relations = doc.relations
 
 			sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 

@@ -61,11 +61,11 @@ class Parser:
 		assert isinstance(corpus,kindred.Corpus)
 
 		for d in corpus.documents:
-			entityIDsToEntities = d.getEntityIDsToEntities()
+			entityIDsToEntities = { entity.entityID:entity for entity in d.entities }
 		
 			denotationTree = IntervalTree()
 			entityTypeLookup = {}
-			for e in d.getEntities():
+			for e in d.entities:
 				entityTypeLookup[e.entityID] = e.entityType
 			
 				for a,b in e.position:
@@ -96,7 +96,7 @@ class Parser:
 						entityID = interval.data
 						entityIDsToTokenLocs[entityID].append(i)
 
-				sentence = kindred.Sentence(sentenceTxt, tokens, dependencies, d.getSourceFilename())
+				sentence = kindred.Sentence(sentenceTxt, tokens, dependencies, d.sourceFilename)
 				
 				# Let's gather up the information about the "known" entities in the sentence
 				for entityID,entityLocs in sorted(entityIDsToTokenLocs.items()):

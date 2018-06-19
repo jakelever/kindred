@@ -7,8 +7,8 @@ def test_pubtator_pmid():
 	assert isinstance(corpus,kindred.Corpus)
 
 	fileCount = len(corpus.documents)
-	entityCount = sum([ len(d.getEntities()) for d in corpus.documents ])
-	relationCount = sum([ len(d.getRelations()) for d in corpus.documents ])
+	entityCount = sum([ len(d.entities) for d in corpus.documents ])
+	relationCount = sum([ len(d.relations) for d in corpus.documents ])
 	
 	assert fileCount == 1
 	assert relationCount == 0
@@ -20,8 +20,8 @@ def test_pubtator_pmids():
 	assert isinstance(corpus,kindred.Corpus)
 
 	fileCount = len(corpus.documents)
-	entityCount = sum([ len(d.getEntities()) for d in corpus.documents ])
-	relationCount = sum([ len(d.getRelations()) for d in corpus.documents ])
+	entityCount = sum([ len(d.entities) for d in corpus.documents ])
+	relationCount = sum([ len(d.relations) for d in corpus.documents ])
 	
 	assert fileCount == 2
 	assert relationCount == 0

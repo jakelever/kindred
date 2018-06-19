@@ -67,9 +67,9 @@ def saveDocToSTFormat(data,txtPath,a1Path,a2Path):
 	assert isinstance(data,kindred.Document)
 
 	with codecs.open(txtPath,'w','utf8') as txtFile, codecs.open(a1Path,'w','utf8') as a1File, codecs.open(a2Path,'w','utf8') as a2File:
-		txtFile.write(data.getText())
+		txtFile.write(data.text)
 		
-		for e in data.getEntities():
+		for e in data.entities:
 			assert isinstance(e,kindred.Entity)
 		
 			positions = ";".join("%d %d" % (start,end) for start,end in e.position)
@@ -77,7 +77,7 @@ def saveDocToSTFormat(data,txtPath,a1Path,a2Path):
 			a1File.write(line+"\n")
 			
 		
-		for i,r in enumerate(data.getRelations()):
+		for i,r in enumerate(data.relations):
 			assert isinstance(r,kindred.Relation)
 			
 			relationType = r.relationType
@@ -110,10 +110,10 @@ def save(corpus,dataFormat,directory):
 
 	if dataFormat == 'standoff':
 		for i,d in enumerate(corpus.documents):
-			if d.getSourceFilename() is None:
+			if d.sourceFilename is None:
 				base = "%08d" % i
 			else:
-				base = d.getSourceFilename()
+				base = d.sourceFilename
 
 			txtPath = os.path.join(directory,'%s.txt' % base)
 			a1Path = os.path.join(directory,'%s.a1' % base)
