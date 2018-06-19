@@ -219,10 +219,10 @@ def test_predicting_thrice():
 	for doc in trainCorpus1.documents:
 		for r in doc.relations:
 			r.relationType = 'type1'
-	for doc in trainCorpus1.documents:
+	for doc in trainCorpus2.documents:
 		for r in doc.relations:
 			r.relationType = 'type2'
-	for doc in trainCorpus1.documents:
+	for doc in trainCorpus3.documents:
 		for r in doc.relations:
 			r.relationType = 'type3'
 
