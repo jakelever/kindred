@@ -119,7 +119,7 @@ class Document:
 
 	def removeRelations(self):
 		"""
-		Remove all relations in this corpus
+		Remove all relations in this document
 		"""
 		self.relations = []
 
