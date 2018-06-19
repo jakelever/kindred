@@ -184,5 +184,6 @@ class RelationClassifier:
 			assert len(docIDs) == 1, "Predicted relation contains entities that are spread across documents"
 
 			docID = docIDs[0]
-			corpus.documents[docID].addRelation(predictedRelation)
+			if not predictedRelation in corpus.documents[docID].relations:
+				corpus.documents[docID].addRelation(predictedRelation)
 
