@@ -10,7 +10,7 @@ import kindred
 def _doEntityTypes(candidates,entityCount):
 	data = []
 	for cr in candidates:
-		assert isinstance(cr,kindred.Relation)
+		assert isinstance(cr,kindred.CandidateRelation)
 		
 		tokenInfo = {}
 		for argI,entity in enumerate(cr.entities):
@@ -22,7 +22,7 @@ def _doEntityTypes(candidates,entityCount):
 def _doUnigramsBetweenEntities(candidates,entityCount):
 	data = []	
 	for cr in candidates:
-		assert isinstance(cr,kindred.Relation)
+		assert isinstance(cr,kindred.CandidateRelation)
 		
 		sentence = cr.sentence
 		dataForThisCR = Counter()
@@ -53,7 +53,7 @@ def _doUnigramsBetweenEntities(candidates,entityCount):
 def _doDependencyPathEdges(candidates,entityCount):
 	data = []	
 	for cr in candidates:
-		assert isinstance(cr,kindred.Relation)
+		assert isinstance(cr,kindred.CandidateRelation)
 		sentence = cr.sentence
 		entityToTokenIndices = { e:tokenIndices for e,tokenIndices in cr.sentence.entityAnnotations }
 		
@@ -79,7 +79,7 @@ def _doDependencyPathEdges(candidates,entityCount):
 def _doDependencyPathEdgesNearEntities(candidates,entityCount):
 	data = []	
 	for cr in candidates:
-		assert isinstance(cr,kindred.Relation)
+		assert isinstance(cr,kindred.CandidateRelation)
 		sentence = cr.sentence
 		entityToTokenIndices = { e:tokenIndices for e,tokenIndices in cr.sentence.entityAnnotations }
 		
@@ -103,7 +103,7 @@ def _doDependencyPathEdgesNearEntities(candidates,entityCount):
 def _doBigrams(candidates,entityCount):
 	data = []
 	for cr in candidates:
-		assert isinstance(cr,kindred.Relation)
+		assert isinstance(cr,kindred.CandidateRelation)
 		
 		sentence = cr.sentence
 		dataForThisCR = Counter()
@@ -185,7 +185,7 @@ class Vectorizer:
 		assert isinstance(candidates,list)
 		assert len(candidates) > 0
 		for c in candidates:
-			assert isinstance(c,kindred.Relation)
+			assert isinstance(c,kindred.CandidateRelation)
 			
 		matrices = []
 		for feature in self.chosenFeatures:
@@ -219,7 +219,7 @@ class Vectorizer:
 		Fit the vectorizer to a list of candidate relations found in a corpus and vectorize them to generate the feature matrix.
 		
 		:param candidates: Relation candidates to vectorize
-		:type candidates: list of kindred.Relation
+		:type candidates: list of kindred.CandidateRelation
 		:return: Feature matrix (# rows = number of candidate relations, # cols = number of features)
 		:rtype: scipy.sparse.csr.csr_matrix
 		"""
@@ -227,7 +227,7 @@ class Vectorizer:
 		assert isinstance(candidates,list)
 		assert len(candidates) > 0
 		for c in candidates:
-			assert isinstance(c,kindred.Relation)
+			assert isinstance(c,kindred.CandidateRelation)
 		self.fitted = True
 		return self._vectorize(candidates,True)
 	
@@ -236,7 +236,7 @@ class Vectorizer:
 		Vectorize the candidate relations to generate the feature matrix. Must already have been fit.
 		
 		:param candidates: Relation candidates to vectorize
-		:type candidates: list of kindred.Relation
+		:type candidates: list of kindred.CandidateRelation
 		:return: Feature matrix (# rows = number of candidate relations, # cols = number of features)
 		:rtype: scipy.sparse.csr.csr_matrix
 		"""
@@ -244,7 +244,7 @@ class Vectorizer:
 		assert isinstance(candidates,list)
 		assert len(candidates) > 0
 		for c in candidates:
-			assert isinstance(c,kindred.Relation)
+			assert isinstance(c,kindred.CandidateRelation)
 		return self._vectorize(candidates,False)
 		
 		
