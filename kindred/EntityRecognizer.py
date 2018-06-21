@@ -446,7 +446,7 @@ class EntityRecognizer:
 		for entityType,filename in entityTypesWithFilenames.items():
 		 	assert isinstance(entityType,six.string_types), errorMsg
 		 	assert isinstance(filename,six.string_types), errorMsg
-		 	assert os.path.isfile(filename), errorMsg
+			assert os.path.isfile(filename), "%s does not exist" % filename
 
 		assert isinstance(idColumn,int)
 		assert isinstance(termsColumn,int)
