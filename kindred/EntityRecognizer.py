@@ -444,8 +444,8 @@ class EntityRecognizer:
 		errorMsg = 'entityTypesWithFilenames should be a dictionary with pairs of {entityType: filename} where both are strings and the filename points to a file that exists'
 		assert isinstance(entityTypesWithFilenames,dict), errorMsg
 		for entityType,filename in entityTypesWithFilenames.items():
-		 	assert isinstance(entityType,six.string_types), errorMsg
-		 	assert isinstance(filename,six.string_types), errorMsg
+			assert isinstance(entityType,six.string_types), errorMsg
+			assert isinstance(filename,six.string_types), errorMsg
 			assert os.path.isfile(filename), "%s does not exist" % filename
 
 		assert isinstance(idColumn,int)
