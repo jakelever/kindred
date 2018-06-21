@@ -356,7 +356,7 @@ def iterLoadDataFromBioc(filename,corpusSizeCutoff=500):
 				corpus.addDocument(kindredDoc)
 
 	if len(corpus.documents) > 0:
-	 	yield corpus
+		yield corpus
 	
 	
 def loadDoc(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
