@@ -313,7 +313,7 @@ class EntityRecognizer:
 					for termType, termIDs in termTypesAndIDsA:
 						for termID in termIDs.split(';'):
 							idsA.add((termType,termID))
-					for termType, termID in termTypesAndIDsB:
+					for termType, termIDs in termTypesAndIDsB:
 						for termID in termIDs.split(';'):
 							idsB.add((termType,termID))
 
