@@ -378,6 +378,34 @@ def test_entityrecognizer_merge_nobrackets():
 	assert entity.text == 'HER2 neu'
 	assert entity.position == [(0,8)]
 
+def test_entityrecognizer_merge_negativecase():
+	lookup = makeTestLookup()
+
+	text = 'EGFR ERBB2 is not anything.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,mergeTerms=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	print(doc.entities)
+	assert len(doc.entities) == 2
+	entity1,entity2 = doc.entities
+	
+	assert entity1.entityType == 'gene'
+	assert entity1.externalID == 'HGNC:3236'
+	assert entity1.text == 'EGFR'
+	assert entity1.position == [(0,4)]
+
+	assert entity2.entityType == 'gene'
+	assert entity2.externalID == 'HGNC:2064'
+	assert entity2.text == 'ERBB2'
+	assert entity2.position == [(5,10)]
+
 def test_entityrecognizer_acronyms_OFF():
 	lookup = makeTestLookup()
 
