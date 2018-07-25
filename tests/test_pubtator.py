@@ -25,7 +25,7 @@ def test_pubtator_pmids():
 	
 	assert fileCount == 2
 	assert relationCount == 0
-	assert entityCount == 39
+	assert entityCount == 38
 	
 if __name__ == '__main__':
 	test_pubtator()

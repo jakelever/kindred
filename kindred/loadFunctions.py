@@ -138,6 +138,11 @@ def parseJSON(data,ignoreEntities=[]):
 	entities = []
 	relations = []
 
+	if isinstance(data,list):
+		assert len(data) == 1 and isinstance(data[0],dict), "JSON loading expects a dictionary or a list with one dictionary in it"
+		data = data[0]
+	assert isinstance(data,dict), "JSON loading expects a dictionary or a list with one dictionary in it"
+
 	text = data['text']
 	if 'denotations' in data:
 		for d in data['denotations']:
