@@ -155,6 +155,12 @@ At the moment, no. Kindred will only use the first annotation of a relation.
 Release Notes
 -------------
 
+Version 2.2.0
+-------------
+- Add CandidateRelation class to distinguish from Relation
+- Reworking of API so that Candidate Relations are no longer stored in corpus. Changes across API that will break backwards compatibility
+- Fixes to PubTator input
+
 Version 2.1.0
 -------------
 - Added EntityRecognizer for basic entity extraction
