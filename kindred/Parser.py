@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 import kindred
 from intervaltree import IntervalTree
