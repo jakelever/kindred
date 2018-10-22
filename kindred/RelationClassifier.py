@@ -82,7 +82,7 @@ class RelationClassifier:
 		
 		candidateClasses = []
 		for cr in candidateRelations:
-			assert len(cr.knownTypesAndArgNames) <= 1, "Kindred doesn't currently supporting training a classifier with candidate relations that are of more than one type"
+			assert len(cr.knownTypesAndArgNames) <= 1, "Kindred doesn't currently support training a classifier with candidate relations that are of more than one type"
 			if len(cr.knownTypesAndArgNames) == 0:
 				candidateClasses.append(0)
 			else:
