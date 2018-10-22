@@ -48,7 +48,7 @@ class CandidateBuilder:
 			for r in doc.relations:
 				assert isinstance(r,kindred.Relation)
 				entities = tuple(r.entities)
-				existingRelationsAndArgNames[entities].append((r.relationType,r.argNames))
+				existingRelationsAndArgNames[entities].append((r.relationType,tuple(r.argNames)))
 
 			for sentence in doc.sentences:
 				entitiesInSentence = [ entity for entity,tokenIndices in sentence.entityAnnotations ]
@@ -58,8 +58,11 @@ class CandidateBuilder:
 					if not self.acceptedEntityTypes is None and not typesInRelation in self.acceptedEntityTypes:
 						# Relation doesn't contain the right entity types (so skip it)
 						continue
+
+					knownTypesAndArgNames = list(set(existingRelationsAndArgNames[entitiesInRelation]))
+					knownTypesAndArgNames = [ (relationType,list(argNames)) for relationType,argNames in knownTypesAndArgNames ]
 				
-					candidateRelation = kindred.CandidateRelation(entities=list(entitiesInRelation),knownTypesAndArgNames=existingRelationsAndArgNames[entitiesInRelation],sentence=sentence)
+					candidateRelation = kindred.CandidateRelation(entities=list(entitiesInRelation),knownTypesAndArgNames=knownTypesAndArgNames,sentence=sentence)
 					candidates.append(candidateRelation)
 
 		return candidates
