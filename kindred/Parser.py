@@ -3,10 +3,6 @@
 
 import kindred
 from intervaltree import IntervalTree
-
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-
 from collections import defaultdict
 import six
 
@@ -63,6 +59,10 @@ class Parser:
 		"""
 
 		assert isinstance(corpus,kindred.Corpus)
+
+		# Ignore DeprecationWarning from SortedDict which is inside IntervalTree
+		import warnings
+		warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 		for d in corpus.documents:
 			entityIDsToEntities = { entity.entityID:entity for entity in d.entities }
