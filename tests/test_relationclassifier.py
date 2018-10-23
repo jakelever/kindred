@@ -136,7 +136,7 @@ def test_noTFIDF():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.538
+	assert round(f1score,3) == 0.519
 
 def test_logisticregression():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
