@@ -116,7 +116,7 @@ class RelationClassifier:
 
 		self.clf = None
 		if self.classifierType == 'SVM':
-			self.clf = svm.LinearSVC(class_weight='balanced',random_state=1)
+			self.clf = svm.LinearSVC(class_weight='balanced',random_state=1,max_iter=10000)
 		elif self.classifierType == 'LogisticRegression' and self.threshold is None:
 			self.clf = LogisticRegression(class_weight='balanced',random_state=1)
 		elif self.classifierType == 'LogisticRegression' and not self.threshold is None:
