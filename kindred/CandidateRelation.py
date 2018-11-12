@@ -50,7 +50,7 @@ class CandidateRelation:
 		return not self.__eq__(other)
 
 	def __str__(self):
-		return "<Relation %s %s %s>" % (self.relationType,str(self.entities),str(self.argNames))
+		return "<CandidateRelation %s %s>" % (str(self.entities),str(self.knownTypesAndArgNames))
 
 	def __repr__(self):
 		return self.__str__()
