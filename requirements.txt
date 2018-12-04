@@ -6,7 +6,7 @@ intervaltree
 networkx
 lxml
 future
-bioc==1.2.4
+bioc==1.2.3
 pytest_socket
 six
 sphinx==1.5.5
