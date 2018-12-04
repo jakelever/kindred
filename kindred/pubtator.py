@@ -4,13 +4,27 @@ Importer for PubTator data
 
 import kindred
 import requests
+import json
+import time
 
-def _loadPMID(pmid):
+def _loadPMID(pmid,retries=3):
 	assert isinstance(pmid,int)
 	
 	annotationsURL = "https://www.ncbi.nlm.nih.gov/CBBresearch/Lu/Demo/RESTful/tmTool.cgi/BioConcept/%d/JSON" % pmid
-	
-	annotations = requests.get(annotationsURL).json()
+
+	success = False
+	for retry in range(retries):
+		try:
+			request = requests.get(annotationsURL)
+			annotations = request.json()
+			success = True
+			break
+		except json.decoder.JSONDecodeError as e:
+		 	time.sleep(1)
+
+	if not success:
+		raise RuntimeError('Unable to download PubTator data after %d retries' % retries)
+
 	doc = kindred.loadFunctions.parseJSON(annotations)
 	
 	return doc
