@@ -6,7 +6,7 @@ def test_docs():
 	docDir = os.path.join(os.path.dirname(scriptDir),'docs')
 	try:
 		os.chdir(docDir)
-		output = subprocess.check_output(['make', 'html'])#, stderr=subprocess.STDOUT)
+		output = subprocess.check_output(['make', 'html']) stderr=subprocess.STDOUT)
 	finally:
 		os.chdir(scriptDir)
 
