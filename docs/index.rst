@@ -3,12 +3,20 @@ Welcome to kindred documentation!
 
 .. currentmodule:: kindred
 
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+
+   Home <self>
+   fileformats
+
+
 Overview
 --------
 
-Kindred is a Python package specifically designed for binary relation extraction from biomedical texts (e.g. Pubmed abstracts). It takes a supervised learning approach, and therefore requires training data in order to build a model. 
+Kindred is a Python package specifically designed for binary relation extraction from biomedical texts (e.g. PubMed abstracts). It takes a supervised learning approach, and therefore requires training data in order to build a model. 
 
-Kindred does not do entity extracton, but has integration with Pubtator to automatically pull out Pubmed abstracts with a number of entities tagged. It is also integrated with Pubannotation and can easily load annotation data
+Kindred can do simple dictionary-based entity extraction. It also has integration with Pubtator to automatically pull out PubMed abstracts with a number of entities tagged and with PubAnnotation and can easily load annotation data.
 
 Installation
 ------------
@@ -25,7 +33,7 @@ If you need to upgrade to a newer release, use the following shell command.
    
    pip install --upgrade kindred
 
-And if you want to install directly from source, using this shell command.
+And if you want to install directly from source, use this shell command.
 
 .. code:: bash
 
@@ -49,7 +57,7 @@ Getting Started
 
 Let's walk through a basic example for the BioNLP Shared Task. This will involve loading a corpus of data to train a classifier and a corpus to make predictions on and for evaluation. We will then train the classifier, make the predictions and evaluate how we did. The smaller steps (parsing, candidate building & vectorizing) are done behind the scenes.
 
-First we need to load the data. We want the training and development corpus and use the commands below
+First, we need to load the data. We want the training and development corpus and use the commands below
 
 >>> trainCorpus = kindred.bionlpst.load('2016-BB3-event-train')
 >>> devCorpus = kindred.bionlpst.load('2016-BB3-event-dev')
@@ -89,13 +97,13 @@ And if it was in another format, you change the dataFormat parameter. Options in
 Loading data from online resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Kindred integrates with several onlines resources to make it easy to import data. For BioNLP Shared Tasks, you can use the command below:
+Kindred integrates with several online resources to make it easy to import data. For BioNLP Shared Tasks, you can use the command below:
 
 >>> corpus = kindred.bionlpst.load('2016-BB3-event-dev')
 
-You can currently import data from the '2016-BB3-event' or '2016-SeeDev-binary' shared tasks. Add 'train', 'dev' or 'test' to them. The 'train' and 'dev' corpora contains relations while the 'test' corpus does not.
-
-You can import Pubmed abstracts annotated by Pubtator given a list of Pubmed IDs (or PMIDs for short). These will contain entity annotations but no relations. The command below will import the two articles with those PMIDs.
+You can currently import data from the '2016-BB3-event' or '2016-SeeDev-binary' shared tasks. Add 'train', 'dev' or 'test' to them. The 'train' and 'dev' corpora contain relations while the 'test' corpus does not.
+	
+You can import PubMed abstracts annotated by Pubtator with a list of PubMed IDs (or PMIDs for short). These will contain entity annotations but no relations. The command below will import the two articles with those PMIDs.
 
 >>> corpus = kindred.pubtator.load([19894120,19894121])
 
