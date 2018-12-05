@@ -85,9 +85,9 @@ def test_loadJsonFile():
 
 def test_loadBiocFile():
 	scriptDir = os.path.dirname(__file__)
-	jsonPath = os.path.join(scriptDir,'data','example.bioc.xml')
+	xmlPath = os.path.join(scriptDir,'data','example.bioc.xml')
 
-	dataList = kindred.loadDocs(dataFormat='bioc',path=jsonPath)
+	dataList = kindred.loadDocs(dataFormat='bioc',path=xmlPath)
 	
 	assert isinstance(dataList,list)
 	assert len(dataList) == 1
