@@ -4,11 +4,14 @@ import random
 class Corpus:
 	"""
 	Collection of text documents.
+
+	:ivar documents: List of :class:`kindred.Document`
+	:ivar parsed: Boolean of whether it has been parsed yet. A :class:`kindred.parser` can parse it.
 	"""
 	
 	def __init__(self,text=None,loadFromSimpleTag=False):
 		"""
-		Constructor
+		Create an empty corpus with no documents, or quickly load one with a single document using optional SimpleTag
 		
 		:param text: Optional SimpleTag text to initalize a single document
 		:param loadFromSimpleTag: If text is provided, whether the text parameter is in the SimpleTag format and will extract entities and relations accordingly

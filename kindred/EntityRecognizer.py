@@ -178,6 +178,20 @@ def cleanupVariant(variant):
 	return variant
 
 class EntityRecognizer:
+	"""
+	Annotates entities in a Corpus using an exact-dictionary matching scheme with additional heuristics. These heuristics include detecthing fusion gene mentions, microRNA, identifying acronyms to reduce ambiguity, identifying variants and more. All the options are parameters for the constructor of this class.
+	
+	:ivar lookup: Used for the dictionary matching. A dictionary of terms (tuple of parsed words) to a list of (entityType,externalID).
+	:ivar detectFusionGenes: Whether it will try to identify fusion gene terms (e.g. BCR-ABL1). Lookup must contain terms of type 'gene'
+	:ivar detectMicroRNA: Whether it will identify microRNA terms (added as 'gene' entities)
+	:ivar acronymDetectionForAmbiguity: Whether it will try to identify acronyms and use this to deal with ambiguity (by removing incorrect matches to acronyms or the longer terms)
+	:ivar mergeTerms: Whether it will merge neighbouring terms that refer to the same external entity (e.g. HER2/neu as one term instead of two)
+	:ivar detectVariants: Whether it will identify a variant (e.g. V600E) and create an entity of type 'Mutation'
+	:ivar variantStopwords: Variant terms to be ignored (e.g. S100P) if detectVariants is used
+	:ivar detectPolymorphisms: Whether it will identify a SNP (using a dbSNP ID) and create an entity of type 'Mutation'
+	:ivar removePathways: Whether it will remove genes that are actually naming a signalling pathway (e.g. MTOR pathway)
+	"""
+
 	def __init__(self,lookup,detectFusionGenes=False,detectMicroRNA=False,acronymDetectionForAmbiguity=False,mergeTerms=False,detectVariants=False,variantStopwords=[],detectPolymorphisms=False,removePathways=False):
 		"""
 		Create an EntityRecognizer and provide the lookup table for terms and additional flags for what to identify in text

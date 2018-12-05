@@ -10,14 +10,23 @@ from kindred.Vectorizer import Vectorizer
 class RelationClassifier:
 	"""
 	Manages binary classifier(s) for relation classification.
+	
+	:param classifierType: Which classifier is used ('SVM' or 'LogisticRegression')
+	:param tfidf: Whether it will use tfidf for the vectorizer
+	:param features: A list of specific features. Valid features are "entityTypes", "unigramsBetweenEntities", "bigrams", "dependencyPathEdges", "dependencyPathEdgesNearEntities"
+	:param threshold: A specific threshold to use for classification (which will then use a logistic regression classifier)
+	:param entityCount: Number of entities in each relation (default=2). Passed to the CandidateBuilder (if needed)
+	:param acceptedEntityTypes: Tuples of entity types that relations must match. None will match allow relations of any entity types. Passed to the CandidateBuilder (if needed)
+	:param isTrained: Whether the classifier has been trained yet. Will throw an error if predict is called before it is trained.
 	"""
+	
 	def __init__(self,classifierType='SVM',tfidf=True,features=None,threshold=None,entityCount=2,acceptedEntityTypes=None):
 		"""
 		Constructor for the RelationClassifier class
 		
 		:param classifierType: Which classifier to use (must be 'SVM' or 'LogisticRegression')
 		:param tfidf: Whether to use tfidf for the vectorizer
-		:param features: A list of specific features. Valid features are "entityTypes","unigramsBetweenEntities","bigrams","dependencyPathEdges","dependencyPathEdgesNearEntities"
+		:param features: A list of specific features. Valid features are "entityTypes", "unigramsBetweenEntities", "bigrams", "dependencyPathEdges", "dependencyPathEdgesNearEntities"
 		:param threshold: A specific threshold to use for classification (which will then use a logistic regression classifier)
 		:param entityCount: Number of entities in each relation (default=2). Passed to the CandidateBuilder (if needed)
 		:param acceptedEntityTypes: Tuples of entity types that relations must match. None will match allow relations of any entity types. Passed to the CandidateBuilder (if needed)

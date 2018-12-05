@@ -5,6 +5,11 @@ import six
 class Relation:
 	"""
 	Describes relationship between entities (including relation type and argument names if applicable).
+	
+	:ivar relationType: Type of relation
+	:ivar entities: List of entities in relation
+	:ivar argNames: Names of relation argument associated with each entity
+	:ivar probability: Optional probability for predicted relations
 	"""
 	
 	def __init__(self,relationType=None,entities=[],argNames=None,probability=None):

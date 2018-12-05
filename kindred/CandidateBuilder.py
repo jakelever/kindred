@@ -7,6 +7,9 @@ import kindred
 class CandidateBuilder:
 	"""
 	Generates set of all possible relations in corpus.
+	
+	:ivar entityCount: Number of entities in each relation (default=2)
+	:ivar acceptedEntityTypes: Tuples of entities that candidate relations must match. Each entity should be the same length as entityCount. None will match all candidate relations.
 	"""
 	def __init__(self,entityCount=2,acceptedEntityTypes=None):
 		"""

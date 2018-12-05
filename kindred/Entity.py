@@ -3,6 +3,12 @@ import six
 class Entity:
 	"""
 	Biomedical entity with information of location in text
+
+	:ivar entityType: Type of the entity
+	:ivar text: Text of the entity
+	:ivar position: Position within the text passage at which point entity appears. Entity may be non-contigious
+	:ivar sourceEntityID: Entity ID used in source document
+	:ivar externalID: ID associated with external ontology (e.g. Hugo Gene ID)
 	"""
 	
 	_nextInternalID = 1

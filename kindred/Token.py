@@ -2,6 +2,12 @@
 class Token:
 	"""
 	Individual word with lemma, part-of-speech and location in text.
+	
+	:ivar word: Unprocessed word
+	:ivar lemma: Lemmatized word
+	:ivar partofspeech: Part-of-speech of word
+	:ivar startPos: Start position of token in sentence
+	:ivar endPos: End position of token in sentence
 	"""
 	
 	def __init__(self,word,lemma,partofspeech,startPos,endPos):

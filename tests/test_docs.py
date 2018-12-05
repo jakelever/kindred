@@ -13,7 +13,6 @@ def test_docs():
 	if isinstance(output,bytes):
 		output = output.decode("utf-8")
 
-	print(type(output))
 	hasWarningOrError = [ line for line in output.split('\n') if isinstance(line,str) and ("warning" in line.lower() or "error" in line.lower()) ]
 	for line in hasWarningOrError:
 		print(line)

@@ -9,9 +9,12 @@ import six
 class Parser:
 	"""
 	Runs Spacy on corpus to get sentences and associated tokens
+	
+	:ivar language: Language to parse (en/de/es/pt/fr/it/nl)
+	:ivar nlp: The underlying Spacy language model to use for parsing
 	"""
 
-	languageModels = {}
+	_languageModels = {}
 	
 	def __init__(self,language='en'):
 		"""
@@ -29,10 +32,10 @@ class Parser:
 
 		self.language = language
 
-		if not language in Parser.languageModels:
-			Parser.languageModels[language] = spacy.load(language, disable=['ner'])
+		if not language in Parser._languageModels:
+			Parser._languageModels[language] = spacy.load(language, disable=['ner'])
 
-		self.nlp = Parser.languageModels[language]
+		self.nlp = Parser._languageModels[language]
 
 	def _sentencesGenerator(self,text):
 		if six.PY2 and isinstance(text,str):

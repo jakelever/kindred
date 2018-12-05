@@ -14,20 +14,20 @@ This format, used in `BioNLP Shared Tasks <http://www.bionlp-st.org/>`_, is a st
 
 Example file: example.txt
 
-.. code-block:: txt
+.. code-block:: none
 
    The colorectal cancer was caused by mutations in APC
 
 Example file: example.a1
 
-.. code-block:: txt
+.. code-block:: none
 
    T1   disease 4 21    colorectal cancer
    T2   gene 49 52      APC
 
 Example file: example.a2
 
-.. code-block:: txt
+.. code-block:: none
 
    E1   causes subj:T2 obj:T1
 

@@ -4,13 +4,20 @@ import kindred
 class Document:
 	"""
 	Span of text with associated tagged entities and relations between entities.
+
+	:ivar text: Text in document (plain text or SimpleTag)
+	:ivar entities: Entities in document
+	:ivar relations: Relations in document
+	:ivar sourceFilename: Filename that this document came from
+	:ivar metadata: IDs and other information associated with the source (e.g. PMID)
+	:ivar sentences: List of sentences (:class:`kindred.Sentence`) if the document has been parsed
 	"""
 	
 	def __init__(self,text,entities=None,relations=None,sourceFilename=None,metadata={},loadFromSimpleTag=False):
 		"""
 		Constructor for a Document that can take text using the SimpleTag XML format, or a set of Entities and Relations with associated text.
 		
-		:param text: Text in document (plain-text, or SimpleTag)
+		:param text: Text in document (plain text or SimpleTag)
 		:param entities: Entities in document
 		:param relations: Relations in document
 		:param sourceFilename: Filename that this document came from

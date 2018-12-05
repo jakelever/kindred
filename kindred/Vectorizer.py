@@ -122,6 +122,13 @@ def _doBigrams(candidates,entityCount):
 class Vectorizer:
 	"""
 	Vectorizes set of candidate relations into scipy sparse matrix.
+	
+	:ivar entityCount: Number of entities in candidate relations to vectorize
+	:ivar featureChoice: List of features (can be one or a set of the following: 'entityTypes', 'unigramsBetweenEntities', 'bigrams', 'dependencyPathEdges', 'dependencyPathEdgesNearEntities'). Set as None to use all of them. 
+	:ivar tfidf: Whether it will normalize n-gram based features using term frequency-inverse document frequency
+	:ivar fitted: Whether it has been fit on data first (before transforming).
+	:ivar dictVectorizers: Dictionary vectorizers used for each feature
+	:ivar tfidfTransformers: TFIDF transformers used for each feature (if appropriate and selected)
 	"""
 	
 	def __init__(self,entityCount=2,featureChoice=None,tfidf=True):

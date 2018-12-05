@@ -8,6 +8,12 @@ from collections import defaultdict
 class Sentence:
 	"""
 	Set of tokens for a sentence after parsing
+	
+	:ivar text: Text of the sentence
+	:ivar tokens: List of tokens in sentence
+	:ivar dependencies: List of dependencies from dependency path. Should be a list of tuples with form (tokenindex1,tokenindex2,dependency_type)
+	:ivar sourceFilename: Filename of the source document
+	:ivar entityAnnotations: List of entities associated with token indices
 	"""
 	
 	def __init__(self, text, tokens, dependencies, sourceFilename=None):

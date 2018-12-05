@@ -44,7 +44,7 @@ Once it is installed, Kindred can be imported in Python with:
 >>> import kindred
 
 Installing a Spacy language model
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As of v2, Kindred uses the Spacy python package for parsing. A language model needs to be installed for the corresponding language using a command similar to below.
 

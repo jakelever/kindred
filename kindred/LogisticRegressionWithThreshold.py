@@ -3,6 +3,13 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 
 class LogisticRegressionWithThreshold:
+	"""
+	A modified Logistic Regression classifier that will filter calls by a custom threshold, instead of the default 0.5. This allows for control of the precision-recall tradeoff, e.g. false positives versus false negatives.
+	
+	:ivar clf: The underlying LogisticRegression classifier
+	:ivar threshold: Threshold to use, should be between 0 and 1
+	"""
+
 	def __init__(self,threshold=0.5):
 		"""
 		Set up a Logistic Regression classifier that can use a different threshold for predictions and thereby be more lenient (lower threshold, false positives increase, false negatives decrease) or more conservative (higher threshold, false positives decrease, false negative increase).
@@ -10,6 +17,8 @@ class LogisticRegressionWithThreshold:
 		:param threshold: Threshold to use, should be between 0 and 1
 		:type threshold: float
 		"""
+		
+		assert threshold >= 0 and threshold <= 1, "Threshold must be between 0 and 1"
 
 		self.clf = LogisticRegression(class_weight='balanced',random_state=1)
 		self.threshold = threshold

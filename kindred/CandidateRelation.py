@@ -5,6 +5,10 @@ import six
 class CandidateRelation:
 	"""
 	Describes a candidate relation between entities (i.e. one that could exist but has not yet been predicted). Contains information about known relation types and arg names associated with this candidate (from training data) and also a link to the sentence containing this candidate.
+	
+	:ivar entities: List of entities in relation
+	:ivar knownTypesAndArgNames: List of tuples with known relation types and argument names associated with this candidate relation
+	:ivar sentence: Parsed sentence containing the candidate relation
 	"""
 	
 	def __init__(self,entities=[],knownTypesAndArgNames=[],sentence=None):
