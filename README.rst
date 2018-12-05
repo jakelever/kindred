@@ -65,6 +65,11 @@ PubTator Example
 
 >>> corpus = kindred.pubtator.load([19894120,19894121])
 
+Input Formats
+~~~~~~~~~~~~~
+
+Kindred can load several formats, including BioNLP Shared Task, JSON, BioC XML and a simple tag format. Check out the `file format documentation`_ for example data and code.
+
 Citing
 ------
 It would be wonderful if you could cite the `associated paper`_ for this package if used in any academic research.
@@ -100,3 +105,4 @@ If you encounter any problems, please `file an issue`_ along with a detailed des
 .. _`readthedocs`: http://kindred.readthedocs.io/
 .. _`Spacy`: https://spacy.io
 .. _`associated paper`: http://aclweb.org/anthology/W17-2322
+.. _`file format documentation`: https://kindred.readthedocs.io/en/stable/fileformats.html
