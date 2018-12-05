@@ -19,7 +19,7 @@ def _loadPMID(pmid,retries=3):
 			annotations = request.json()
 			success = True
 			break
-		except json.decoder.JSONDecodeError as e:
+		except ValueError as e:
 		 	time.sleep(1)
 
 	if not success:
