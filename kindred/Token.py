@@ -6,8 +6,8 @@ class Token:
 	:ivar word: Unprocessed word
 	:ivar lemma: Lemmatized word
 	:ivar partofspeech: Part-of-speech of word
-	:ivar startPos: Start position of token in sentence
-	:ivar endPos: End position of token in sentence
+	:ivar startPos: Start position of token in document text (note: not the sentence text)
+	:ivar endPos: End position of token in document text (note: not the sentence text)
 	"""
 	
 	def __init__(self,word,lemma,partofspeech,startPos,endPos):
@@ -17,8 +17,8 @@ class Token:
 		:param word: Unprocessed word
 		:param lemma: Lemmatized word
 		:param partofspeech: Part-of-speech of word
-		:param startPos: Start position of token in sentence
-		:param endPos: End position of token in sentence
+		:param startPos: Start position of token in document text (note: not the sentence text)
+		:param endPos: End position of token in document text (note: not the sentence text)
 		:type word: str
 		:type lemma: str
 		:type partofspeech: str
