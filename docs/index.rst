@@ -223,6 +223,7 @@ Main components
    CandidateBuilder
    Vectorizer
    RelationClassifier
+   EntityRecognizer
 
 Data types
 ~~~~~~~~~~
