@@ -219,11 +219,11 @@ Main components
    :toctree: _autosummary
    :nosignatures:
 
-   Parser
-   CandidateBuilder
-   Vectorizer
-   RelationClassifier
    EntityRecognizer
+   CandidateBuilder
+   Parser
+   RelationClassifier
+   Vectorizer
 
 Data types
 ~~~~~~~~~~
@@ -232,10 +232,11 @@ Data types
    :toctree: _autosummary
    :nosignatures:
 
+   CandidateRelation
    Corpus
    Document
-   Relation
    Entity
+   Relation
    Sentence
    Token
 
