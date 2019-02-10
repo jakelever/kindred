@@ -1,0 +1,27 @@
+Athens
+Berlin
+Birmingham
+Calgary
+Chicago
+Delhi|New Delhi
+Denver
+Detroit
+Edinburgh
+Edmonton
+Glasgow
+Jaipur
+Liverpool
+Los Angeles
+Madrid
+Manchester
+Mombasa
+Montreal
+Munich
+Nairobi
+Ottawa
+Paris
+Reykjavik
+San Francisco
+Seville
+Vancouver
+Washington DC
