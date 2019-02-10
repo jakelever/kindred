@@ -130,3 +130,53 @@ class Document:
 		"""
 		self.relations = []
 
+
+	def splitIntoSentences(self,candidateRelations=None):
+		"""
+		Create a new corpus with one document for each sentence in this document. Optionally filter for only sentences that include candidateRelatons by providing a list of candidate relations.
+
+		:param candidateRelations: List of candidate relations to use for filtering sentences
+		:type candidateRelations: List of kindred.CandidateRelation
+		:return: Corpus with one document per sentence
+		:rtype: kindred.Corpus
+		"""
+
+		sentenceCorpus = kindred.Corpus()
+		
+		sentences = self.sentences
+		if not candidateRelations is None:
+			sentences = [ cr.sentence for cr in candidateRelations ]
+			sentences = list(set(sentences))
+
+		for sentence in sentences:
+			sentenceStart = sentence.tokens[0].startPos
+			
+			entitiesInSentence = [ entity for entity,tokenIndices in sentence.entityAnnotations ]
+
+			entityMap = {}
+			for e in entitiesInSentence:
+				startPos,endPos = e.position[0]
+				newPosition = [ (startPos-sentenceStart, endPos-sentenceStart) ]
+				newE = kindred.Entity(e.entityType,e.text,newPosition,e.sourceEntityID,e.externalID)
+				entityMap[e] = newE
+
+			relationsInSentence = [ r for r in self.relations if all( e in entitiesInSentence for e in r.entities ) ]
+			newRelationsInSentence = []
+			for r in relationsInSentence:
+				newEntitiesInRelation = [ entityMap[e] for e in r.entities ]
+				newRelation = kindred.Relation(r.relationType,newEntitiesInRelation,r.argNames,r.probability)
+				newRelationsInSentence.append(newRelation)
+
+			newEntitiesInSentence = list(entityMap.values())
+			doc = kindred.Document(sentence.text,newEntitiesInSentence,newRelationsInSentence)
+
+			newSentence = kindred.Sentence(sentence.text,sentence.tokens,sentence.dependencies,sentence.sourceFilename)
+			newEntityAnnotations = [ (entityMap[e],tokenIndices) for e,tokenIndices in sentence.entityAnnotations ]
+			newSentence.entityAnnotations = newEntityAnnotations
+			doc.sentences = [newSentence]
+
+			sentenceCorpus.addDocument(doc)
+
+		return sentenceCorpus
+
+		
