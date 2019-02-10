@@ -76,7 +76,7 @@ def test_corpus_splitIntoSentences():
 
 	sentence0 = doc0.sentences[0]
 	assert str(sentence0.tokens) == '[Erlotinib, is, an, EGFR, inhibitor, .]'
-	assert str(sentence0.dependencies) == "[(1, 0, 'nsubj'), (1, 1, 'ROOT'), (4, 2, 'det'), (4, 3, 'compound'), (1, 4, 'attr'), (1, 5, 'punct')]"
+	assert str(sentence0.dependencies).replace("u'","'") == "[(1, 0, 'nsubj'), (1, 1, 'ROOT'), (4, 2, 'det'), (4, 3, 'compound'), (1, 4, 'attr'), (1, 5, 'punct')]"
 	assert str(sentence0.entityAnnotations) == "[(<Entity drug:'Erlotinib' sourceid=1 [(0, 9)]>, [0]), (<Entity gene:'EGFR' sourceid=2 [(16, 20)]>, [3])]"
 
 	doc1 = sentenceCorpus.documents[1]
@@ -84,7 +84,7 @@ def test_corpus_splitIntoSentences():
 
 	sentence1 = doc1.sentences[0]
 	assert str(sentence1.tokens) == '[Gefitinib, is, another, drug, .]'
-	assert str(sentence1.dependencies) == "[(1, 0, 'nsubj'), (1, 1, 'ROOT'), (3, 2, 'det'), (1, 3, 'attr'), (1, 4, 'punct')]"
+	assert str(sentence1.dependencies).replace("u'","'") == "[(1, 0, 'nsubj'), (1, 1, 'ROOT'), (3, 2, 'det'), (1, 3, 'attr'), (1, 4, 'punct')]"
 	assert str(sentence1.entityAnnotations) == "[(<Entity drug:'Gefitinib' sourceid=3 [(0, 9)]>, [0])]"
 
 def test_corpus_splitIntoSentences_candidatesOnly():
@@ -111,6 +111,6 @@ def test_corpus_splitIntoSentences_candidatesOnly():
 
 	sentence0 = doc0.sentences[0]
 	assert str(sentence0.tokens) == '[Erlotinib, is, an, EGFR, inhibitor, .]'
-	assert str(sentence0.dependencies) == "[(1, 0, 'nsubj'), (1, 1, 'ROOT'), (4, 2, 'det'), (4, 3, 'compound'), (1, 4, 'attr'), (1, 5, 'punct')]"
+	assert str(sentence0.dependencies).replace("u'","'") == "[(1, 0, 'nsubj'), (1, 1, 'ROOT'), (4, 2, 'det'), (4, 3, 'compound'), (1, 4, 'attr'), (1, 5, 'punct')]"
 	assert str(sentence0.entityAnnotations) == "[(<Entity drug:'Erlotinib' sourceid=1 [(0, 9)]>, [0]), (<Entity gene:'EGFR' sourceid=2 [(16, 20)]>, [3])]"
 
