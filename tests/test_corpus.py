@@ -53,3 +53,64 @@ def test_corpus_nfold_split():
 	for doc,count in testCounter.items():
 		assert count == folds
 
+def test_corpus_splitIntoSentences():
+	text = "<drug id='1'>Erlotinib</drug> is an <gene id='2'>EGFR</gene> inhibitor. <drug id='3'>Gefitinib</drug> is another drug. <relation type='inhibits' drug='1' gene='2' />"
+	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	sentenceCorpus = corpus.splitIntoSentences()
+
+	assert isinstance(sentenceCorpus,kindred.Corpus)
+	assert len(sentenceCorpus.documents) == 2
+
+	expected1 = "<Document Erlotinib is an EGFR inhibitor. [<Entity drug:'Erlotinib' sourceid=1 [(0, 9)]>, <Entity gene:'EGFR' sourceid=2 [(16, 20)]>] [<Relation inhibits [<Entity drug:'Erlotinib' sourceid=1 [(0, 9)]>, <Entity gene:'EGFR' sourceid=2 [(16, 20)]>] ['drug', 'gene']>]>"
+	expected2 = "<Document Gefitinib is another drug. [<Entity drug:'Gefitinib' sourceid=3 [(0, 9)]>] []>"
+
+	assert str(sentenceCorpus.documents[0]) == expected1
+	assert str(sentenceCorpus.documents[1]) == expected2
+
+	doc0 = sentenceCorpus.documents[0]
+	assert len(doc0.sentences) == 1
+
+	sentence0 = doc0.sentences[0]
+	assert str(sentence0.tokens) == '[Erlotinib, is, an, EGFR, inhibitor, .]'
+	assert str(sentence0.dependencies) == "[(1, 0, 'nsubj'), (1, 1, 'ROOT'), (4, 2, 'det'), (4, 3, 'compound'), (1, 4, 'attr'), (1, 5, 'punct')]"
+	assert str(sentence0.entityAnnotations) == "[(<Entity drug:'Erlotinib' sourceid=1 [(0, 9)]>, [0]), (<Entity gene:'EGFR' sourceid=2 [(16, 20)]>, [3])]"
+
+	doc1 = sentenceCorpus.documents[1]
+	assert len(doc1.sentences) == 1
+
+	sentence1 = doc1.sentences[0]
+	assert str(sentence1.tokens) == '[Gefitinib, is, another, drug, .]'
+	assert str(sentence1.dependencies) == "[(1, 0, 'nsubj'), (1, 1, 'ROOT'), (3, 2, 'det'), (1, 3, 'attr'), (1, 4, 'punct')]"
+	assert str(sentence1.entityAnnotations) == "[(<Entity drug:'Gefitinib' sourceid=3 [(0, 9)]>, [0])]"
+
+def test_corpus_splitIntoSentences_candidatesOnly():
+	text = "<drug id='1'>Erlotinib</drug> is an <gene id='2'>EGFR</gene> inhibitor. <drug id='3'>Gefitinib</drug> is another drug. <relation type='inhibits' drug='1' gene='2' />"
+	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	candidateBuilder = kindred.CandidateBuilder(entityCount=2,acceptedEntityTypes=[('drug','gene')])
+	candidateRelations = candidateBuilder.build(corpus)
+
+	sentenceCorpus = corpus.splitIntoSentences(candidateRelations)
+
+	assert isinstance(sentenceCorpus,kindred.Corpus)
+	assert len(sentenceCorpus.documents) == 1
+
+	expected1 = "<Document Erlotinib is an EGFR inhibitor. [<Entity drug:'Erlotinib' sourceid=1 [(0, 9)]>, <Entity gene:'EGFR' sourceid=2 [(16, 20)]>] [<Relation inhibits [<Entity drug:'Erlotinib' sourceid=1 [(0, 9)]>, <Entity gene:'EGFR' sourceid=2 [(16, 20)]>] ['drug', 'gene']>]>"
+
+	assert str(sentenceCorpus.documents[0]) == expected1
+
+	doc0 = sentenceCorpus.documents[0]
+	assert len(doc0.sentences) == 1
+
+	sentence0 = doc0.sentences[0]
+	assert str(sentence0.tokens) == '[Erlotinib, is, an, EGFR, inhibitor, .]'
+	assert str(sentence0.dependencies) == "[(1, 0, 'nsubj'), (1, 1, 'ROOT'), (4, 2, 'det'), (4, 3, 'compound'), (1, 4, 'attr'), (1, 5, 'punct')]"
+	assert str(sentence0.entityAnnotations) == "[(<Entity drug:'Erlotinib' sourceid=1 [(0, 9)]>, [0]), (<Entity gene:'EGFR' sourceid=2 [(16, 20)]>, [3])]"
+
