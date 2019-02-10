@@ -26,7 +26,7 @@ def manuallyAnnotate(corpus,candidateRelations):
 	
 	:param corpus: Corpus of text for annotation
 	:param candidateRelations: List of candidate relations (created using CandidateBuilder) to manually review and annotate
-	:param corpus: kindred.Corpus
+	:type corpus: kindred.Corpus
 	:type candidateRelations: List of kindred.CandidateRelation
 	:return: a tuple of an annotated corpus and unannotated corpus
 	:rtype: two kindred.Corpus
