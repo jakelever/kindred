@@ -156,11 +156,13 @@ class Corpus:
 		:return: Corpus with one document per sentence
 		:rtype: kindred.Corpus
 		"""
+		assert self.parsed == True, "Corpus must be parsed before it can be split into sentences"
 
 		sentenceCorpus = kindred.Corpus()
 		for doc in self.documents:
 			tempCorpus = doc.splitIntoSentences(candidateRelations)
 			sentenceCorpus.documents += tempCorpus.documents
+		sentenceCorpus.parsed = True
 
 		return sentenceCorpus
 
