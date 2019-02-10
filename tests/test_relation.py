@@ -23,8 +23,8 @@ def test_relation_str():
 	rel1 = kindred.Relation(relationType="causes",entities=[e1,e2],argNames=None)
 	rel2 = kindred.Relation(relationType="causes",entities=[e1,e2],argNames=["drug","disease"])
 
-	expected1 = "<Relation causes [<Entity mutation:'BRAF V600E mutation' id=%d sourceid=None []>, <Entity event:'vemurafenib resistance' id=%d sourceid=None []>] None>" % (e1.entityID,e2.entityID)
-	expected2 = "<Relation causes [<Entity mutation:'BRAF V600E mutation' id=%d sourceid=None []>, <Entity event:'vemurafenib resistance' id=%d sourceid=None []>] ['drug', 'disease']>" % (e1.entityID,e2.entityID)
+	expected1 = "<Relation causes [<Entity mutation:'BRAF V600E mutation' sourceid=None []>, <Entity event:'vemurafenib resistance' sourceid=None []>] None>"
+	expected2 = "<Relation causes [<Entity mutation:'BRAF V600E mutation' sourceid=None []>, <Entity event:'vemurafenib resistance' sourceid=None []>] ['drug', 'disease']>"
 
 	assert str(rel1) == expected1
 	assert str(rel2) == expected2
@@ -36,8 +36,8 @@ def test_relation_repr():
 	rel1 = kindred.Relation(relationType="causes",entities=[e1,e2],argNames=None)
 	rel2 = kindred.Relation(relationType="causes",entities=[e1,e2],argNames=["drug","disease"])
 
-	expected1 = "<Relation causes [<Entity mutation:'BRAF V600E mutation' id=%d sourceid=None []>, <Entity event:'vemurafenib resistance' id=%d sourceid=None []>] None>" % (e1.entityID,e2.entityID)
-	expected2 = "<Relation causes [<Entity mutation:'BRAF V600E mutation' id=%d sourceid=None []>, <Entity event:'vemurafenib resistance' id=%d sourceid=None []>] ['drug', 'disease']>" % (e1.entityID,e2.entityID)
+	expected1 = "<Relation causes [<Entity mutation:'BRAF V600E mutation' sourceid=None []>, <Entity event:'vemurafenib resistance' sourceid=None []>] None>"
+	expected2 = "<Relation causes [<Entity mutation:'BRAF V600E mutation' sourceid=None []>, <Entity event:'vemurafenib resistance' sourceid=None []>] ['drug', 'disease']>"
 
 	assert rel1.__repr__() == expected1
 	assert rel2.__repr__() == expected2
