@@ -89,7 +89,7 @@ def saveDocToSTFormat(data,txtPath,a1Path,a2Path):
 				argNames = r.argNames
 
 			arguments = " ".join(["%s:%s" % (a,b) for a,b in zip(argNames,relationEntityIDs) ])
-			line = "R%d\t%s %s" % (i,relationType,arguments)
+			line = "R%d\t%s %s" % (i+1,relationType,arguments)
 			a2File.write(line+"\n")
 
 def save(corpus,dataFormat,directory):

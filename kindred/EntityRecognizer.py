@@ -417,6 +417,7 @@ class EntityRecognizer:
 		assert corpus.parsed == True, "Corpus must already be parsed before entity recognition"
 
 		for doc in corpus.documents:
+			entityCount = 0
 			for sentence in doc.sentences:
 				words = [ t.word for t in sentence.tokens ]
 
@@ -431,9 +432,12 @@ class EntityRecognizer:
 					text = doc.text[startPos:endPos]
 					loc = list(range(startToken,endToken))
 					for entityType,externalID in termtypesAndids:
-						e = kindred.Entity(entityType,text,[(startPos,endPos)],externalID=externalID)
+						sourceEntityID = "T%d" % (entityCount+1)
+
+						e = kindred.Entity(entityType,text,[(startPos,endPos)],externalID=externalID,sourceEntityID=sourceEntityID)
 						doc.addEntity(e)
 						sentence.addEntityAnnotation(e,loc)
+						entityCount += 1
 
 	@staticmethod
 	def loadWordlists(entityTypesWithFilenames, idColumn=0, termsColumn=1, columnSeparator='\t', termSeparator='|'):
