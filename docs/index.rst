@@ -260,4 +260,5 @@ Essential functions
    loadDir
    save
    evaluate
+   manuallyAnnotate
 

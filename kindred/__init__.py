@@ -21,6 +21,8 @@ from kindred.loadFunctions import loadDoc,loadDocs,loadDir,iterLoadDataFromBioc
 from kindred.saveFunctions import save
 from kindred.evalFunctions import evaluate
 
+from kindred.manualAnnotation import manuallyAnnotate
+
 # Data sources
 from kindred import bionlpst, pubannotation, pubtator, utils
 
