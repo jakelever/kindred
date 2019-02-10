@@ -62,7 +62,7 @@ def test_corpus_splitIntoSentences():
 
 	sentenceCorpus = corpus.splitIntoSentences()
 
-	assert sentenceCorpus.parsed = True
+	assert sentenceCorpus.parsed == True
 
 	assert isinstance(sentenceCorpus,kindred.Corpus)
 	assert len(sentenceCorpus.documents) == 2
@@ -101,7 +101,7 @@ def test_corpus_splitIntoSentences_candidatesOnly():
 
 	sentenceCorpus = corpus.splitIntoSentences(candidateRelations)
 
-	assert sentenceCorpus.parsed = True
+	assert sentenceCorpus.parsed == True
 
 	assert isinstance(sentenceCorpus,kindred.Corpus)
 	assert len(sentenceCorpus.documents) == 1
