@@ -147,12 +147,10 @@ class Corpus:
 						trainCorpus.addDocument(self.documents[j])
 			yield trainCorpus,testCorpus
 
-	def splitIntoSentences(self,candidateRelations=None):
+	def splitIntoSentences(self):
 		"""
-		Create a new corpus with one document for each sentence in this corpus. Optionally filter for only sentences that include candidateRelatons by providing a list of candidate relations.
+		Create a new corpus with one document for each sentence in this corpus.
 
-		:param candidateRelations: List of candidate relations to use for filtering sentences
-		:type candidateRelations: List of kindred.CandidateRelation
 		:return: Corpus with one document per sentence
 		:rtype: kindred.Corpus
 		"""
@@ -160,7 +158,7 @@ class Corpus:
 
 		sentenceCorpus = kindred.Corpus()
 		for doc in self.documents:
-			tempCorpus = doc.splitIntoSentences(candidateRelations)
+			tempCorpus = doc.splitIntoSentences()
 			sentenceCorpus.documents += tempCorpus.documents
 		sentenceCorpus.parsed = True
 

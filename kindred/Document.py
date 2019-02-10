@@ -131,24 +131,17 @@ class Document:
 		self.relations = []
 
 
-	def splitIntoSentences(self,candidateRelations=None):
+	def splitIntoSentences(self):
 		"""
-		Create a new corpus with one document for each sentence in this document. Optionally filter for only sentences that include candidateRelatons by providing a list of candidate relations.
+		Create a new corpus with one document for each sentence in this document.
 
-		:param candidateRelations: List of candidate relations to use for filtering sentences
-		:type candidateRelations: List of kindred.CandidateRelation
 		:return: Corpus with one document per sentence
 		:rtype: kindred.Corpus
 		"""
 
 		sentenceCorpus = kindred.Corpus()
 		
-		sentences = self.sentences
-		if not candidateRelations is None:
-			sentences = [ cr.sentence for cr in candidateRelations ]
-			sentences = list(set(sentences))
-
-		for sentence in sentences:
+		for sentence in self.sentences:
 			sentenceStart = sentence.tokens[0].startPos
 			
 			entitiesInSentence = [ entity for entity,tokenIndices in sentence.entityAnnotations ]
