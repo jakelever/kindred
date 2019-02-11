@@ -41,7 +41,64 @@ Kindred needs examples of positive data (sentences with relations that you want 
 The annotate.py script provides an implementation of this which we can use for the example data. Below we show a run of the annotate.py script with annotations of 10 sentences. Note that this is a very small set. Depending on the problem, you would likely want over a thousand sentences annotated.
 
 ```
-python annotate.py --corpus corpus.txt --wordlists city.txt,country.txt
+$ python annotate.py --corpus corpus.txt --wordlists city.txt,country.txt --outDir output
+Setting up output directory
+Loading and parsing corpus:
+Splitting the corpus into sentences so that we can save any annotated sentences and don't need to annotate it all
+Loading wordlists:
+  city - city.txt
+  country - country.txt
+Annotating entities in corpus with wordlists
+Finding all candidate relations
+Time to through some of the candidate relations and annotate some...
+
+For each sentence, choose an existing option or type the name of a new annotation
+
+############################## (1/22)
+Paris is the capital of France.
+x:Done 0:None ? isCapital
+
+############################## (2/22)
+Birmingham is a city in the United Kingdom.
+x:Done 0:None 1:isCapital ? 0
+
+############################## (3/22)
+The capital city of Spain is Madrid.
+x:Done 0:None 1:isCapital ? 1
+
+############################## (4/22)
+Los Angeles, a large city in the United States, is home to Hollywood.
+x:Done 0:None 1:isCapital ? 0
+
+############################## (5/22)
+Canada, a country with a population of 35 million, has its capital in Ottawa.
+x:Done 0:None 1:isCapital ? 1
+
+############################## (6/22)
+Glasgow is the largest city in Scotland.
+x:Done 0:None 1:isCapital ? 0
+
+############################## (7/22)
+We went to visit Munich in Germany.
+x:Done 0:None 1:isCapital ? 0
+
+############################## (8/22)
+The capital of Germany, Berlin, has an unique history.
+x:Done 0:None 1:isCapital ? 1
+
+############################## (9/22)
+Edinburgh, nicknamed the Athens of the North, is the capital of Scotland with many wonderful attractions.
+x:Done 0:None 1:isCapital ? 1
+
+############################## (10/22)
+Edinburgh, nicknamed the Athens of the North, is the capital of Scotland with many wonderful attractions.
+x:Done 0:None 1:isCapital ? 0
+
+############################## (11/22)
+San Francisco is one of the most visited cities in the USA.
+x:Done 0:None 1:isCapital ? x
+Saving annotated corpus of 9 sentences (with relations that you have just annotated)
+Saving unannotated corpus of 9 sentences (which you did not review)
 ```
 
 The output of this run is a series of annotated sentences and unannotated sentences in the format outlined above. You can just download these (contained in the sentences.tar.gz file).
@@ -50,9 +107,7 @@ The output of this run is a series of annotated sentences and unannotated senten
 
 With annotated sentences, you can build a relation classifier and extract new relations. The classifySentences.py example script will load the annotated sentences, build a classifier and predict relations on the unannotated sentences. Usage is shown below.
 
-```
-python classifySentences.py --corpus corpus.txt --wordlists city.txt,country.txt --exampleData data/annotated
-```
+TODO
 
 ## Next Steps
 
