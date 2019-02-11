@@ -163,6 +163,11 @@ At the moment, no. Kindred will only use the first annotation of a relation.
 Release Notes
 -------------
 
+Version 2.3.0
+-------------
+- Add manuallyAnnotate for a simple mechanism to annotate candidate relations
+- Add splitIntoSentences for a parsed corpus/document
+
 Version 2.2.0
 -------------
 - Add CandidateRelation class to distinguish from Relation
