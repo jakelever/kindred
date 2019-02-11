@@ -41,7 +41,7 @@ Kindred needs examples of positive data (sentences with relations that you want 
 The annotate.py script provides an implementation of this which we can use for the example data. Below we show a run of the annotate.py script with annotations of 10 sentences. Note that this is a very small set. Depending on the problem, you would likely want over a thousand sentences annotated.
 
 ```
-$ python annotate.py --corpus corpus.txt --wordlists city.txt,country.txt --outDir output
+$ python annotate.py --corpus corpus.txt --wordlists city.txt,country.txt --outDir annotations
 Setting up output directory
 Loading and parsing corpus:
 Splitting the corpus into sentences so that we can save any annotated sentences and don't need to annotate it all
@@ -101,7 +101,7 @@ Saving annotated corpus of 9 sentences (with relations that you have just annota
 Saving unannotated corpus of 9 sentences (which you did not review)
 ```
 
-The output of this run is a series of annotated sentences and unannotated sentences in the format outlined above. You can just download these (contained in the sentences.tar.gz file).
+The output of this run is a series of annotated sentences and unannotated sentences in the format outlined above. You can just download these (contained in the annotations.tar.gz file).
 
 ## Using the annotations
 
