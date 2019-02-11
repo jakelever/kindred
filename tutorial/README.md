@@ -22,11 +22,21 @@ For successful relation extraction, you'll need three things: text, entities and
 Text can be annotated for entities (e.g. nouns) that identify terms of interest and then the relations between them. The example "files" below may provide an idea of how annotations work. The txt file contains the text, the a1 file contains the entity annotations and the a2 file contains the relation annotations.
 
 onesentence.txt:
+```
 Glasgow is west of the the capital of Scotland, Edinburgh.
+```
 
 onesentence.a1
+```
+T1      city 0 7        Glasgow
+T2      country 38 46   Scotland
+T3      city 48 57      Edinburgh
+```
 
 onesentence.a2
+```
+R1      isCapital city:T3 country:T2
+```
 
 This is just one file format, but the principle is the same for all others. A stretch of text can be annotated as an entity, and relations can exist between entities. Kindred can only work with relations within a sentence and will ignore relations that cross sentence boundaries. You can find information about other file formats in the main documentation (link).
 
