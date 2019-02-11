@@ -1,5 +1,6 @@
 import kindred
 from collections import OrderedDict,defaultdict
+import six
 
 # Colors to use for output sentences with annotation
 class bcolors:
@@ -84,7 +85,7 @@ def manuallyAnnotate(corpus,candidateRelations):
 
 				response = None
 				while not response:
-					response = input('%s ? ' % optionTxt).strip()
+					response = six.moves.input('%s ? ' % optionTxt).strip()
 
 				if response == 'x':
 					endAnnotation = True

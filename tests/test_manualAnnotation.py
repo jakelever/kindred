@@ -1,4 +1,5 @@
 import kindred
+import six
 
 class FakeInput:
 	def __init__(self,inputSeries):
@@ -29,7 +30,7 @@ def test_manuallyAnnotate(monkeypatch):
 	candidateRelations = candidateBuilder.build(corpus)
 
 	fakeInput = FakeInput(['inhibits','0','1','x'])
-	monkeypatch.setattr('builtins.input',fakeInput.input)
+	monkeypatch.setattr('six.moves.input',fakeInput.input)
 	annotatedCorpus,unannotatedCorpus = kindred.manuallyAnnotate(corpus,candidateRelations)
 
 	assert len(annotatedCorpus.documents) == 1
