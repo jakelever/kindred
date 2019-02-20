@@ -50,7 +50,7 @@ Kindred needs examples of positive data (sentences with relations that you want 
 
 The annotate.py script provides an implementation of this which we can use for the example data. Below we show a run of the annotate.py script with annotations of 10 sentences. Note that this is a very small set. Depending on the problem, you would likely want over a thousand sentences annotated.
 
-```
+<pre>
 $ python annotate.py --corpus corpus.txt --wordlists city.txt,country.txt --outDir annotations
 Setting up output directory
 Loading and parsing corpus:
@@ -65,51 +65,56 @@ Time to through some of the candidate relations and annotate some...
 For each sentence, choose an existing option or type the name of a new annotation
 
 ############################## (1/22)
-Paris is the capital of France.
+<b>Paris</b> is the capital of <b>France</b>.
 x:Done 0:None ? isCapital
 
 ############################## (2/22)
-Birmingham is a city in the United Kingdom.
+<b>Birmingham</b> is a city in the <b>United Kingdom</b>.
 x:Done 0:None 1:isCapital ? 0
 
 ############################## (3/22)
-The capital city of Spain is Madrid.
+The capital city of <b>Spain</b> is <b>Madrid</b>.
 x:Done 0:None 1:isCapital ? 1
 
 ############################## (4/22)
-Los Angeles, a large city in the United States, is home to Hollywood.
+<b>Los Angeles</b>, a large city in the <b>United States</b>, is home to Hollywood.
 x:Done 0:None 1:isCapital ? 0
 
 ############################## (5/22)
-Canada, a country with a population of 35 million, has its capital in Ottawa.
+<b>Canada</b>, a country with a population of 35 million, has its capital in <b>Ottawa</b>.
 x:Done 0:None 1:isCapital ? 1
 
 ############################## (6/22)
-Glasgow is the largest city in Scotland.
+<b>Glasgow</b> is the largest city in <b>Scotland</b>.
 x:Done 0:None 1:isCapital ? 0
 
 ############################## (7/22)
-We went to visit Munich in Germany.
+We went to visit <b>Munich</b> in <b>Germany</b>.
 x:Done 0:None 1:isCapital ? 0
 
 ############################## (8/22)
-The capital of Germany, Berlin, has an unique history.
+The capital of <b>Germany</b>, <b>Berlin</b>, has an unique history.
 x:Done 0:None 1:isCapital ? 1
 
 ############################## (9/22)
-Edinburgh, nicknamed the Athens of the North, is the capital of Scotland with many wonderful attractions.
+<b>Edinburgh</b>, nicknamed the Athens of the North, is the capital of <b>Scotland</b> with many wonderful attractions.
 x:Done 0:None 1:isCapital ? 1
 
 ############################## (10/22)
-Edinburgh, nicknamed the Athens of the North, is the capital of Scotland with many wonderful attractions.
+Edinburgh, nicknamed the <b>Athens</b> of the North, is the capital of <b>Scotland</b> with many wonderful attractions.
 x:Done 0:None 1:isCapital ? 0
 
 ############################## (11/22)
-San Francisco is one of the most visited cities in the USA.
+<b>San Francisco</b> is one of the most visited cities in the <b>USA</b>.
+x:Done 0:None 1:isCapital ? 0
+
+############################## (12/22)
+<b>Vancouver</b> is found in <b>Canada</b>'s western-most province, British Columbia.
 x:Done 0:None 1:isCapital ? x
-Saving annotated corpus of 9 sentences (with relations that you have just annotated)
-Saving unannotated corpus of 9 sentences (which you did not review)
-```
+
+Saving annotated corpus of 10 sentences (with relations that you have just annotated)
+Saving unannotated corpus of 8 sentences (which you did not review)
+</pre>
 
 The output of this run is a series of annotated sentences and unannotated sentences in the format outlined above. You can just download these (contained in the annotations.tar.gz file).
 
