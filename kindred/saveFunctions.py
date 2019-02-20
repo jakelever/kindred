@@ -86,7 +86,7 @@ def saveDocToSTFormat(data,txtPath,a1Path,a2Path):
 			relationEntityIDs = [ entity.sourceEntityID for entity in r.entities ]
 			
 			if r.argNames is None:
-				argNames = [ ("arg%d" % (i+1)) for i in range(len(relationEntityIDs)) ]
+				argNames = [ ("arg%d" % (argI+1)) for argI in range(len(relationEntityIDs)) ]
 			else:
 				argNames = r.argNames
 
