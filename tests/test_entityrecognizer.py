@@ -50,6 +50,7 @@ def test_entityrecognizer_basic():
 	assert entity.externalID == 'HGNC:3236'
 	assert entity.text == 'EGFR'
 	assert entity.position == [(0,4)]
+	assert entity.sourceEntityID == 'T1'
 
 	assert len(doc.sentences) == 1
 	sentence = doc.sentences[0]
@@ -92,6 +93,7 @@ def test_entityrecognizer_microRNA_mir1():
 	assert entity.externalID == 'mirna|mir-83'
 	assert entity.text == 'mir-83'
 	assert entity.position == [(0,6)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_microRNA_mir2():
 	lookup = makeTestLookup()
@@ -114,6 +116,7 @@ def test_entityrecognizer_microRNA_mir2():
 	assert entity.externalID == 'mirna|mir-83'
 	assert entity.text == 'mir-83'
 	assert entity.position == [(4,10)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_microRNA_mir3():
 	lookup = makeTestLookup()
@@ -136,6 +139,7 @@ def test_entityrecognizer_microRNA_mir3():
 	assert entity.externalID == 'mirna|microrna-83'
 	assert entity.text == 'microrna-83'
 	assert entity.position == [(0,11)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_microRNA_mir4():
 	lookup = makeTestLookup()
@@ -158,6 +162,7 @@ def test_entityrecognizer_microRNA_mir4():
 	assert entity.externalID == 'mirna|mir83'
 	assert entity.text == 'mir83'
 	assert entity.position == [(0,5)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_fusion_OFF():
 	lookup = makeTestLookup()
@@ -180,11 +185,13 @@ def test_entityrecognizer_fusion_OFF():
 	assert entity1.externalID == 'HGNC:3236'
 	assert entity1.text == 'EGFR'
 	assert entity1.position == [(0,4)]
+	assert entity1.sourceEntityID == 'T1'
 
 	assert entity2.entityType == 'gene'
 	assert entity2.externalID == 'HGNC:2064'
 	assert entity2.text == 'ERBB2'
 	assert entity2.position == [(5,10)]
+	assert entity2.sourceEntityID == 'T2'
 
 def test_entityrecognizer_fusion_1():
 	lookup = makeTestLookup()
@@ -207,11 +214,13 @@ def test_entityrecognizer_fusion_1():
 	assert entity1.externalID == 'combo|HGNC:3236|HGNC:2064'
 	assert entity1.text == 'EGFR-ERBB2'
 	assert entity1.position == [(0,10)]
+	assert entity1.sourceEntityID == 'T1'
 
 	assert entity2.entityType == 'gene'
 	assert entity2.externalID == 'combo|HGNC:3690|HGNC:11524'
 	assert entity2.text == 'FGFR3-TACC3'
 	assert entity2.position == [(42,53)]
+	assert entity2.sourceEntityID == 'T2'
 
 def test_entityrecognizer_fusion_2():
 	lookup = makeTestLookup()
@@ -234,6 +243,7 @@ def test_entityrecognizer_fusion_2():
 	assert entity.externalID == 'HGNC:2064'
 	assert entity.text == 'HER2-neu'
 	assert entity.position == [(0,8)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_fusion_3():
 	lookup = makeTestLookup()
@@ -249,7 +259,6 @@ def test_entityrecognizer_fusion_3():
 	ner.annotate(corpus)
 
 	doc = corpus.documents[0]
-	print(doc.entities)
 	assert len(doc.entities) == 2
 	entity1,entity2 = doc.entities
 	
@@ -257,11 +266,13 @@ def test_entityrecognizer_fusion_3():
 	assert entity1.externalID == 'HGNC:3236'
 	assert entity1.text == 'EGFR'
 	assert entity1.position == [(0,4)]
+	assert entity1.sourceEntityID == 'T1'
 
 	assert entity2.entityType == 'cancer'
 	assert entity2.externalID == 'DOID:0060058'
 	assert entity2.text == 'lymphoma'
 	assert entity2.position == [(5,13)]
+	assert entity2.sourceEntityID == 'T2'
 
 def test_entityrecognizer_fusion_4():
 	lookup = makeTestLookup()
@@ -284,6 +295,7 @@ def test_entityrecognizer_fusion_4():
 	assert entity.externalID == 'HGNC:3236'
 	assert entity.text == 'EGFR'
 	assert entity.position == [(0,4)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_merge_brackets_OFF():
 	lookup = makeTestLookup()
@@ -306,11 +318,13 @@ def test_entityrecognizer_merge_brackets_OFF():
 	assert entity1.externalID == 'DOID:3908'
 	assert entity1.text == 'non-small cell lung carcinoma'
 	assert entity1.position == [(19,48)]
+	assert entity1.sourceEntityID == 'T1'
 
 	assert entity2.entityType == 'cancer'
 	assert entity2.externalID == 'DOID:3908'
 	assert entity2.text == 'NSCLC'
 	assert entity2.position == [(50,55)]
+	assert entity2.sourceEntityID == 'T2'
 
 def test_entityrecognizer_merge_brackets_right():
 	lookup = makeTestLookup()
@@ -333,6 +347,7 @@ def test_entityrecognizer_merge_brackets_right():
 	assert entity.externalID == 'DOID:3908'
 	assert entity.text == 'non-small cell lung carcinoma (NSCLC)'
 	assert entity.position == [(19,56)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_merge_brackets_left():
 	lookup = makeTestLookup()
@@ -355,6 +370,7 @@ def test_entityrecognizer_merge_brackets_left():
 	assert entity.externalID == 'DOID:3908'
 	assert entity.text == '(NSCLC) non-small cell lung carcinoma'
 	assert entity.position == [(19,56)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_merge_nobrackets():
 	lookup = makeTestLookup()
@@ -377,6 +393,7 @@ def test_entityrecognizer_merge_nobrackets():
 	assert entity.externalID == 'HGNC:2064'
 	assert entity.text == 'HER2 neu'
 	assert entity.position == [(0,8)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_merge_negativecase():
 	lookup = makeTestLookup()
@@ -392,7 +409,6 @@ def test_entityrecognizer_merge_negativecase():
 	ner.annotate(corpus)
 
 	doc = corpus.documents[0]
-	print(doc.entities)
 	assert len(doc.entities) == 2
 	entity1,entity2 = doc.entities
 	
@@ -400,11 +416,13 @@ def test_entityrecognizer_merge_negativecase():
 	assert entity1.externalID == 'HGNC:3236'
 	assert entity1.text == 'EGFR'
 	assert entity1.position == [(0,4)]
+	assert entity1.sourceEntityID == 'T1'
 
 	assert entity2.entityType == 'gene'
 	assert entity2.externalID == 'HGNC:2064'
 	assert entity2.text == 'ERBB2'
 	assert entity2.position == [(5,10)]
+	assert entity2.sourceEntityID == 'T2'
 
 def test_entityrecognizer_acronyms_OFF():
 	lookup = makeTestLookup()
@@ -427,11 +445,13 @@ def test_entityrecognizer_acronyms_OFF():
 	assert entity1.externalID == 'IMDB:9999'
 	assert entity1.text == 'Never Ending Umbrella'
 	assert entity1.position == [(4,25)]
+	assert entity1.sourceEntityID == 'T1'
 
 	assert entity2.entityType == 'gene'
 	assert entity2.externalID == 'HGNC:2064'
 	assert entity2.text == 'NEU'
 	assert entity2.position == [(27,30)]
+	assert entity2.sourceEntityID == 'T2'
 
 def test_entityrecognizer_acronyms_bothHaveIDs():
 	lookup = makeTestLookup()
@@ -454,6 +474,7 @@ def test_entityrecognizer_acronyms_bothHaveIDs():
 	assert entity.externalID == 'IMDB:9999'
 	assert entity.text == 'Never Ending Umbrella'
 	assert entity.position == [(4,25)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_acronyms_bothHaveIDs_plural():
 	lookup = makeTestLookup()
@@ -476,6 +497,7 @@ def test_entityrecognizer_acronyms_bothHaveIDs_plural():
 	assert entity.externalID == 'IMDB:9999'
 	assert entity.text == 'Never Ending Umbrellas'
 	assert entity.position == [(4,26)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_acronyms_acronymHasCorrectID():
 	lookup = makeTestLookup()
@@ -498,6 +520,7 @@ def test_entityrecognizer_acronyms_acronymHasCorrectID():
 	assert entity.externalID == 'DOID:0050745'
 	assert entity.text == 'DLBCL'
 	assert entity.position == [(31,36)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_acronyms_acronymHasCorrectID_hyphen():
 	lookup = makeTestLookup()
@@ -520,6 +543,7 @@ def test_entityrecognizer_acronyms_acronymHasCorrectID_hyphen():
 	assert entity.externalID == 'DOID:0050745'
 	assert entity.text == 'DLBCL'
 	assert entity.position == [(31,36)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_variant_1():
 	lookup = {}
@@ -535,7 +559,6 @@ def test_entityrecognizer_variant_1():
 	ner.annotate(corpus)
 
 	doc = corpus.documents[0]
-	print(doc.entities)
 	assert len(doc.entities) == 1
 	entity = doc.entities[0]
 	
@@ -543,6 +566,7 @@ def test_entityrecognizer_variant_1():
 	assert entity.externalID == 'substitution|V600E'
 	assert entity.text == 'V600E'
 	assert entity.position == [(4,9)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_variant_2():
 	lookup = {}
@@ -558,7 +582,6 @@ def test_entityrecognizer_variant_2():
 	ner.annotate(corpus)
 
 	doc = corpus.documents[0]
-	print(doc.entities)
 	assert len(doc.entities) == 1
 	entity = doc.entities[0]
 	
@@ -566,6 +589,7 @@ def test_entityrecognizer_variant_2():
 	assert entity.externalID == 'substitution|V600E'
 	assert entity.text == 'Val600Glu'
 	assert entity.position == [(11,20)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_variant_stopwords():
 	lookup = {}
@@ -581,7 +605,6 @@ def test_entityrecognizer_variant_stopwords():
 	ner.annotate(corpus)
 
 	doc = corpus.documents[0]
-	print(doc.entities)
 	assert len(doc.entities) == 0
 
 def test_entityrecognizer_polymorphism():
@@ -598,7 +621,6 @@ def test_entityrecognizer_polymorphism():
 	ner.annotate(corpus)
 
 	doc = corpus.documents[0]
-	print(doc.entities)
 	assert len(doc.entities) == 1
 	entity = doc.entities[0]
 	
@@ -606,6 +628,7 @@ def test_entityrecognizer_polymorphism():
 	assert entity.externalID == 'dbsnp|rs12345'
 	assert entity.text == 'rs12345'
 	assert entity.position == [(4,11)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_removepathways_off():
 	lookup = makeTestLookup()
@@ -628,6 +651,7 @@ def test_entityrecognizer_removepathways_off():
 	assert entity.externalID == 'HGNC:3236'
 	assert entity.text == 'EGFR'
 	assert entity.position == [(0,4)]
+	assert entity.sourceEntityID == 'T1'
 
 	assert len(doc.sentences) == 1
 	sentence = doc.sentences[0]
