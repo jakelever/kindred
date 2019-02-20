@@ -11,10 +11,10 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	print("Setting up output directory")
-	annotatedDir = os.path.join(args.outDir,'annotated')
+	annotatedDir = os.path.join(args.outDir,'annotated_relations')
 	if not os.path.isdir(annotatedDir):
 		os.makedirs(annotatedDir)
-	unannotatedDir = os.path.join(args.outDir,'unannotated')
+	unannotatedDir = os.path.join(args.outDir,'missing_relations')
 	if not os.path.isdir(unannotatedDir):
 		os.makedirs(unannotatedDir)
 
@@ -52,7 +52,7 @@ if __name__ == '__main__':
 	print("Time to through some of the candidate relations and annotate some...")
 	annotatedCorpus,unannotatedCorpus = kindred.manuallyAnnotate(sentenceCorpus,candidateRelations)
 
-	print("Saving annotated corpus of %d sentences (with relations that you have just annotated)" % len(annotatedCorpus.documents))
+	print("\nSaving annotated corpus of %d sentences (with relations that you have just annotated)" % len(annotatedCorpus.documents))
 	kindred.save(annotatedCorpus,'standoff',annotatedDir)
 
 	print("Saving unannotated corpus of %d sentences (which you did not review)" % len(unannotatedCorpus.documents))
