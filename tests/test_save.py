@@ -3,6 +3,7 @@ import tempfile
 import shutil
 
 import kindred
+import pytest
 
 def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEntityID):
 	assert isinstance(entity,kindred.Entity)
@@ -51,6 +52,18 @@ def test_saveStandoffFile_fromSimpleTag():
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
 	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+
+def test_saveStandoffFile_noSourceEntityID():
+	text = 'The <disease>colorectal cancer</disease> is bad.'
+	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
+
+	tempDir = tempfile.mkdtemp()
+
+	with pytest.raises(AssertionError) as excinfo:   
+		kindred.save(corpus,'standoff',tempDir)
+	assert excinfo.value.args[0] == 'Entities must have a sourceEntityID (e.g. T1) to be saved in the standoff format'
+
+
 	
 def test_saveBiocFile_fromSimpleTag():
 	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'

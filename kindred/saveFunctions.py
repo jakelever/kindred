@@ -4,6 +4,7 @@ import codecs
 
 import kindred
 import bioc
+import six
 
 def convertKindredCorpusToBioCCollection(corpus):
 	assert isinstance(corpus,kindred.Corpus)
@@ -71,6 +72,7 @@ def saveDocToSTFormat(data,txtPath,a1Path,a2Path):
 		
 		for e in data.entities:
 			assert isinstance(e,kindred.Entity)
+			assert isinstance(e.sourceEntityID,six.string_types), "Entities must have a sourceEntityID (e.g. T1) to be saved in the standoff format"
 		
 			positions = ";".join("%d %d" % (start,end) for start,end in e.position)
 			line = "%s\t%s %s\t%s" % (e.sourceEntityID,e.entityType,positions,e.text)
