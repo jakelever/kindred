@@ -1,5 +1,5 @@
 import kindred
-
+from collections import OrderedDict
 
 class Document:
 	"""
@@ -146,7 +146,7 @@ class Document:
 			
 			entitiesInSentence = [ entity for entity,tokenIndices in sentence.entityAnnotations ]
 
-			entityMap = {}
+			entityMap = OrderedDict()
 			for e in entitiesInSentence:
 				startPos,endPos = e.position[0]
 				newPosition = [ (startPos-sentenceStart, endPos-sentenceStart) ]
