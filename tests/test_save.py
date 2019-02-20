@@ -11,6 +11,18 @@ def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEnti
 	assert entity.position == expectedPos, "(%s) not as expected" % (entity.__str__())
 	assert entity.sourceEntityID == expectedSourceEntityID, "(%s) not as expected" % (entity.__str__())
 	
+def checkRelationAnnotations(filename):
+	"""
+	Checks that the relation indices are incrementally increasing from 1 (so it goes R1,R2,R3,etc).
+	"""
+	expected = 1
+	with open(filename) as f:
+		for line in f:
+			if line.startswith('R'): # It's a relation
+				relIndex = line.split('\t')[0].replace('R','')
+				assert expected == int(relIndex), 'Relation indices must increment from 1 in a standoff file'
+				expected += 1
+
 def test_saveStandoffFile_fromSimpleTag():
 	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
 	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
@@ -18,6 +30,10 @@ def test_saveStandoffFile_fromSimpleTag():
 	tempDir = tempfile.mkdtemp()
 
 	kindred.save(corpus,'standoff',tempDir)
+
+	for filename in os.listdir(tempDir):
+		if filename.endswith('.a2'):
+			checkRelationAnnotations(os.path.join(tempDir,filename))
 
 	loadedCorpus = kindred.loadDir('standoff',tempDir)
 	shutil.rmtree(tempDir)
@@ -43,7 +59,7 @@ def test_saveBiocFile_fromSimpleTag():
 	tempDir = tempfile.mkdtemp()
 
 	kindred.save(corpus,'bioc',tempDir)
-
+	
 	loadedCorpus = kindred.loadDir('bioc',tempDir)
 	shutil.rmtree(tempDir)
 
@@ -68,6 +84,10 @@ def test_saveStandoffFile_fromSimpleTag_triple():
 	tempDir = tempfile.mkdtemp()
 
 	kindred.save(corpus,'standoff',tempDir)
+	
+	for filename in os.listdir(tempDir):
+		if filename.endswith('.a2'):
+			checkRelationAnnotations(os.path.join(tempDir,filename))
 
 	loadedCorpus = kindred.loadDir('standoff',tempDir)
 	shutil.rmtree(tempDir)
@@ -99,6 +119,10 @@ def test_saveStandoffFile():
 	tempDir = tempfile.mkdtemp()
 
 	kindred.save(corpus,'standoff',tempDir)
+	
+	for filename in os.listdir(tempDir):
+		if filename.endswith('.a2'):
+			checkRelationAnnotations(os.path.join(tempDir,filename))
 
 	loadedCorpus = kindred.loadDir('standoff',tempDir)
 	shutil.rmtree(tempDir)
@@ -129,6 +153,10 @@ def test_saveStandoffFile_noArgNames():
 	tempDir = tempfile.mkdtemp()
 
 	kindred.save(corpus,'standoff',tempDir)
+	
+	for filename in os.listdir(tempDir):
+		if filename.endswith('.a2'):
+			checkRelationAnnotations(os.path.join(tempDir,filename))
 
 	loadedCorpus = kindred.loadDir('standoff',tempDir)
 
@@ -155,6 +183,10 @@ def test_saveBB3Data():
 	tempDir = tempfile.mkdtemp()
 
 	kindred.save(corpus,'standoff',tempDir)
+	
+	for filename in os.listdir(tempDir):
+		if filename.endswith('.a2'):
+			checkRelationAnnotations(os.path.join(tempDir,filename))
 
 	loadedCorpus = kindred.loadDir('standoff',tempDir)
 	assert len(corpus.documents) == len(loadedCorpus.documents)
@@ -171,6 +203,10 @@ def test_saveStandoffFile_SeparateSentences():
 	tempDir = tempfile.mkdtemp()
 
 	kindred.save(corpus,'standoff',tempDir)
+	
+	for filename in os.listdir(tempDir):
+		if filename.endswith('.a2'):
+			checkRelationAnnotations(os.path.join(tempDir,filename))
 
 	loadedCorpus = kindred.loadDir('standoff',tempDir)
 
