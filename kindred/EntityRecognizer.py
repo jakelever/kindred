@@ -424,7 +424,6 @@ class EntityRecognizer:
 				extractedTermData = self._processWords(words)
 				
 				for locs,terms,termtypesAndids in extractedTermData:
-					#text = " ".join(terms)
 					startToken = locs[0]
 					endToken = locs[1]
 					startPos = sentence.tokens[startToken].startPos
