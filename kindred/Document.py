@@ -163,7 +163,9 @@ class Document:
 			newEntitiesInSentence = list(entityMap.values())
 			doc = kindred.Document(sentence.text,newEntitiesInSentence,newRelationsInSentence)
 
-			newSentence = kindred.Sentence(sentence.text,sentence.tokens,sentence.dependencies,sentence.sourceFilename)
+			newTokens = [ kindred.Token(t.word,t.lemma,t.partofspeech,t.startPos-sentenceStart,t.endPos-sentenceStart) for t in sentence.tokens ]
+
+			newSentence = kindred.Sentence(sentence.text,newTokens,sentence.dependencies,sentence.sourceFilename)
 			newEntityAnnotations = [ (entityMap[e],tokenIndices) for e,tokenIndices in sentence.entityAnnotations ]
 			newSentence.entityAnnotations = newEntityAnnotations
 			doc.sentences = [newSentence]
