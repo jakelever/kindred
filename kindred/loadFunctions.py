@@ -12,10 +12,10 @@ import kindred
 import bioc
 from future.utils import native
 
-def loadEntity(line,text):
-	assert line[0] == 'T', "Entity input should start with a T"
+def loadEntity(filename,line,text):
+	assert line[0] == 'T', "ERROR in %s. Entity input should start with a T" % filename
 	split = line.strip().split('\t')
-	assert len(split) == 3
+	assert len(split) == 3, "ERROR in %s" % filename
 	entityID = split[0]
 	typeInfo = split[1]
 	tokens = split[2]
@@ -40,22 +40,22 @@ def loadEntity(line,text):
 	chunkTest = chunkTest.strip()
 	tokensTest = tokensTest.strip()
 
-	assert chunkTest == tokensTest , u"For id=" + entityID + ", tokens '" + tokens.encode('ascii', 'ignore') + "' don't match up with positions: " + str(positions)
+	assert chunkTest == tokensTest , u"ERROR in " + filename + u"For id=" + entityID + ", tokens '" + tokens.encode('ascii', 'ignore') + "' don't match up with positions: " + str(positions)
 	
 	entity = kindred.Entity(typeName, tokensTest, positions, entityID)
 
 	return entity
 	
-def loadRelation(line,ignoreComplexRelations=True):
-	assert line[0] == 'E' or line[0] == 'R', "Relation input should start with a E or R"
-	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
+def loadRelation(filename,line,ignoreComplexRelations=True):
+	assert line[0] == 'E' or line[0] == 'R', "ERROR in %s. Relation input should start with a E or R" % filename
+	assert ignoreComplexRelations == True, "ERROR in %s. ignoreComplexRelations must be True as kindred doesn't currently support complex relations" % filename
 
 	split = line.strip().split('\t')
 	eventInfo = split[1]
 	typeSpacePos = eventInfo.index(' ')
 	
 	eventNameSplit = eventInfo[:typeSpacePos].split(':')
-	assert len(eventNameSplit) == 1, "Cannot load trigger events"
+	assert len(eventNameSplit) == 1, "ERROR in %s. Cannot load trigger events" % filename
 	relationType = eventNameSplit[0]
 		
 	isComplexRelation = False
@@ -63,7 +63,7 @@ def loadRelation(line,ignoreComplexRelations=True):
 	arguments = []
 	for argument in argumentText.strip().split(' '):
 		split2 = argument.strip().split(':')
-		assert len(split2) == 2
+		assert len(split2) == 2, "ERROR in %s" % filename
 		tmpArgName = split2[0]
 		tmpEntityID = split2[1]
 
@@ -73,9 +73,9 @@ def loadRelation(line,ignoreComplexRelations=True):
 		if ignoreComplexRelations and isComplexRelation:
 			break
 
-		assert not isComplexRelation, "kindred does not support complex relations (where one relation has another relation as an argument), use ignoreComplexRelations=True to ignore these"
+		assert not isComplexRelation, "ERROR in %s. kindred does not support complex relations (where one relation has another relation as an argument), use ignoreComplexRelations=True to ignore these" % filename
 
-		assert not tmpArgName in arguments
+		assert not tmpArgName in arguments, "ERROR in %s" % filename
 		arguments.append((tmpArgName,tmpEntityID))
 
 	if ignoreComplexRelations and isComplexRelation:
@@ -102,7 +102,7 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],i
 				continue
 				
 			assert line[0] == 'T', "Only triggers are expected in a1 file: " + a1File
-			entity = loadEntity(line.strip(), text)
+			entity = loadEntity(a1File,line.strip(), text)
 			if (not entity is None) and (not entity.entityType in ignoreEntities):
 				entities.append(entity)
 		
@@ -116,7 +116,7 @@ def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],i
 					continue
 					
 				if line[0] == 'E' or line[0] == 'R':
-					relationTuple = loadRelation(line.strip(),ignoreComplexRelations)
+					relationTuple = loadRelation(a2File,line.strip(),ignoreComplexRelations)
 					if not relationTuple is None:
 						relationType,sourceEntityIDs,argNames = relationTuple
 						entitiesInRelation = [ sourceEntityIDToEntity[sourceEntityID] for sourceEntityID in sourceEntityIDs ]
