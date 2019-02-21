@@ -11,6 +11,9 @@ Welcome to kindred documentation!
    fileformats
 
 
+.. _Home:
+
+
 Overview
 --------
 
@@ -52,8 +55,13 @@ As of v2, Kindred uses the Spacy python package for parsing. A language model ne
 
    python -m spacy download en
 
-Getting Started
----------------
+Tutorial with a mini annotation problem
+---------------------------------------
+
+There is a `tutorial <https://github.com/jakelever/kindred/tree/master/tutorial>`_ with sample code that steps through a small annotation task for extracting capital cities from text. It's on `Github <https://github.com/jakelever/kindred/tree/master/tutorial>`_ and may give you an understanding of the annotations that Kindred needs and how you might go about getting them. Once you've understood the input data, you might want to dive more into the code and the below examples will give you some ideas.
+
+Getting started with code
+-------------------------
 
 Let's walk through a basic example for the BioNLP Shared Task. This will involve loading a corpus of data to train a classifier and a corpus to make predictions on and for evaluation. We will then train the classifier, make the predictions and evaluate how we did. The smaller steps (parsing, candidate building & vectorizing) are done behind the scenes.
 
@@ -241,6 +249,7 @@ Data types
    Corpus
    Document
    Entity
+   LogisticRegressionWithThreshold
    Relation
    Sentence
    Token
