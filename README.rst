@@ -40,7 +40,7 @@ As of v2, Kindred relies on the `Spacy`_ toolkit for parsing. After installing k
 Usage
 -----
 
-Check out the `tutorial`_ that goes through a simple usecase of extracting capital cities from text. More details and the full documentation can be found at `readthedocs`_.
+Check out the `tutorial`_ that goes through a simple use case of extracting capital cities from text. More details and the full documentation can be found at `readthedocs`_.
 
 BioNLP Shared Task Example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
