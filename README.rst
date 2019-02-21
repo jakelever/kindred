@@ -40,7 +40,7 @@ As of v2, Kindred relies on the `Spacy`_ toolkit for parsing. After installing k
 Usage
 -----
 
-Full documentation can be found at `readthedocs`_.
+Check out the `tutorial`_ that goes through a simple usecase of extracting capital cities from text. More details and the full documentation can be found at `readthedocs`_.
 
 BioNLP Shared Task Example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,6 +102,7 @@ If you encounter any problems, please `file an issue`_ along with a detailed des
 .. _`file an issue`: https://github.com/jakelever/kindred/issues
 .. _`pip`: https://pypi.python.org/pypi/pip/
 .. _`PyPI`: https://pypi.python.org/pypi
+.. _`tutorial`: https://github.com/jakelever/kindred/tree/master/tutorial
 .. _`readthedocs`: http://kindred.readthedocs.io/
 .. _`Spacy`: https://spacy.io
 .. _`associated paper`: http://aclweb.org/anthology/W17-2322
