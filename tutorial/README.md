@@ -116,13 +116,29 @@ Saving annotated corpus of 10 sentences (with relations that you have just annot
 Saving unannotated corpus of 8 sentences (which you did not review)
 </pre>
 
-The output of this run is a series of annotated sentences and unannotated sentences in the format outlined above. You can just download these (contained in the annotations.tar.gz file).
+The output of this run is a series of sentences with annotated relations and sentences without annotated relations (which were the ones we skipped) in the format outlined above. You can just download these (contained in the annotations.tar.gz file).
 
 ## Using the annotations
 
-With annotated sentences, you can build a relation classifier and extract new relations. The classifySentences.py example script will load the annotated sentences, build a classifier and predict relations on the unannotated sentences. Usage is shown below.
+With annotated sentences, you can build a relation classifier and extract new relations. The buildAndUseClassifier.py example script will load the annotated sentences, build a classifier and predict relations on the sentences that we skipped. Usage is shown below.
 
-TODO
+```
+python buildAndUseClassifier.py --dataToBuildModel annotations/annotated_relations/ --dataToApplyModel annotations/missing_relations/ --outDir predicted_relations
+Loading corpora...
+Building classifier...
+Applying classifier...
+Saving results to directory...
+
+Predicted relations:
+Delhi	India
+Mombasa	Kenya
+Nairobi	Kenya
+Denver	Canada
+```
+
+As we gave it such a small training set, it obviously makes a few errors. Here, 2 of the 4 predictions are correct. Try annotating more or fewer of the sentences to begin with to see if it does better.
+
+It also saves the predicted relations as annotations into the predicted_relations directory which may be useful for viewing the sentence that contains the annotation.
 
 ## Next Steps
 
@@ -145,4 +161,7 @@ As with the country.txt and city.txt file, you need to provide Kindred with a li
 - When annotating your own dataset, you want to be creating an annotation set that isn't too imbalanced. You don't want your relation of interest to be incredibly rare within your dataset. If you find that only 10% of possible relations is of interest, then Kindred will have a hard time learning a good classifier. You can try to enrich for sentences by filtering for specific words. This would require you making some edits to the example Python scripts here.
 - Another thought for annotation is that it is a good idea to have multiple (e.g. 3 or more) people annotate the same sentences and look to see if there is good agreement. The multiple datasets could then be merged through a majority vote system. If there is not good agreement, then the problem hasn't been well-defined and Kindred would have a very hard-time understanding what the human is trying to annotate. Improved agreement can be achieved through an annotation guide which explains how to annotate things, and simplifying the annotations to be done.
 - The entity lists can have unique identifiers to make it easier to normalize terms (e.g. genes) back to an ontology (e.g. HUGO). Look into the loadWordlists function that is used in the tutorial Python scripts and the wordlists in the BioWordlists project.
-- The CancerMine and CIViCmine projects are examples of large-scale information extraction that uses Kindred (alongside PubRunner) on PubMed and PubMed Central articles. These repositories could provide ideas for you.
+- The [CancerMine](https://github.com/jakelever/cancermine) and [CIViCmine](https://github.com/jakelever/civicmine) projects are examples of large-scale information extraction that uses Kindred (alongside PubRunner) on PubMed and PubMed Central articles. These repositories could provide ideas for you.
+- Try making a more conservative classifier. You could create a classifier using the [LogisticRegressionWithThreshold](https://kindred.readthedocs.io/en/stable/_autosummary/kindred.LogisticRegressionWithThreshold.html) class and set a higher threshold so that fewer false positives get through (but with more false negatives).
+- You likely want to know how good your classifier is. The [evaluate](https://kindred.readthedocs.io/en/stable/_autosummary/kindred.evaluate.html) function will come in handy here. Annotate enough sentences and split them into a training and testing sets (using the [Corpus split](https://kindred.readthedocs.io/en/stable/_autosummary/kindred.Corpus.html#kindred.Corpus.split) function). Train a classifier on the training set, make predictions on the testing set (with relations removed using the [Corpus removeRelations](https://kindred.readthedocs.io/en/stable/_autosummary/kindred.Corpus.html#kindred.Corpus.removeRelations) function) and compare to the known annotations. Want to be really careful? Create a training, validation and testing sets. Read [this](https://doi.org/10.1038/nmeth.3945) for a bit more information.
+
