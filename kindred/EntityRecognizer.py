@@ -186,9 +186,9 @@ class EntityRecognizer:
 	:ivar detectMicroRNA: Whether it will identify microRNA terms (added as 'gene' entities)
 	:ivar acronymDetectionForAmbiguity: Whether it will try to identify acronyms and use this to deal with ambiguity (by removing incorrect matches to acronyms or the longer terms)
 	:ivar mergeTerms: Whether it will merge neighbouring terms that refer to the same external entity (e.g. HER2/neu as one term instead of two)
-	:ivar detectVariants: Whether it will identify a variant (e.g. V600E) and create an entity of type 'Mutation'
+	:ivar detectVariants: Whether it will identify a variant (e.g. V600E) and create an entity of type 'variant'
 	:ivar variantStopwords: Variant terms to be ignored (e.g. S100P) if detectVariants is used
-	:ivar detectPolymorphisms: Whether it will identify a SNP (using a dbSNP ID) and create an entity of type 'Mutation'
+	:ivar detectPolymorphisms: Whether it will identify a SNP (using a dbSNP ID) and create an entity of type 'variant'
 	:ivar removePathways: Whether it will remove genes that are actually naming a signalling pathway (e.g. MTOR pathway)
 	"""
 
@@ -201,9 +201,9 @@ class EntityRecognizer:
 		:param detectMicroRNA: Whether to identify microRNA terms (added as 'gene' entities)
 		:param acronymDetectionForAmbiguity: Whether to try to identify acronyms and use this to deal with ambiguity (by removing incorrect matches to acronyms or the longer terms)
 		:param mergeTerms: Whether to merge neighbouring terms that refer to the same external entity (e.g. HER2/neu as one term instead of two)
-		:param detectVariants: Whether to identify a variant (e.g. V600E) and create an entity of type 'Mutation'
+		:param detectVariants: Whether to identify a variant (e.g. V600E) and create an entity of type 'variant'
 		:param variantStopwords: Variant terms to be ignored (e.g. S100P) if detectVariants is used
-		:param detectPolymorphisms: Whether to identify a SNP (using a dbSNP ID) and create an entity of type 'Mutation'
+		:param detectPolymorphisms: Whether to identify a SNP (using a dbSNP ID) and create an entity of type 'variant'
 		:param removePathways: Remove genes that are actually naming a signalling pathway (e.g. MTOR pathway)
 		:type lookup: dict
 		:type detectFusionGenes: bool
