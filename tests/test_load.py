@@ -5,6 +5,17 @@ import pytest
 import shutil
 import tempfile
 
+class TempDir:
+	def __init__(self):
+		pass
+
+	def __enter__(self):
+		self.tempDir = tempfile.mkdtemp()
+		return self.tempDir
+
+	def __exit__(self, type, value, traceback):
+		shutil.rmtree(self.tempDir)
+
 def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEntityID):
 	assert isinstance(entity,kindred.Entity)
 	assert entity.entityType == expectedType, "(%s) not as expected" % (entity.__str__())
@@ -248,49 +259,45 @@ def test_loadStandoffFile_extraLines(capfd):
 	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 
 def test_loadEmptyDirectory():
-	tempDir = tempfile.mkdtemp()
-	for dataformat in ['standoff','simpletag','json','bioc']:
-		with pytest.raises(RuntimeError) as excinfo:
-			corpus = kindred.loadDir(dataformat,tempDir)
-		expectedError = 'No documents loaded from directory (%s/). Are you sure this directory contains the corpus (format: %s)' % (tempDir.rstrip('/'),dataformat)
-		assert excinfo.value.args == (expectedError ,)
-
-	shutil.rmtree(tempDir)
+	with TempDir() as tempDir:
+		for dataformat in ['standoff','simpletag','json','bioc']:
+			with pytest.raises(RuntimeError) as excinfo:
+				corpus = kindred.loadDir(dataformat,tempDir)
+			expectedError = 'No documents loaded from directory (%s/). Are you sure this directory contains the corpus (format: %s)' % (tempDir.rstrip('/'),dataformat)
+			assert excinfo.value.args == (expectedError ,)
 
 def test_iterLoadBiocFile():
 	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
 	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 	docsToCreate = 100
 
-	tempDir = tempfile.mkdtemp()
+	with TempDir() as tempDir:
 
-	singleDoc = corpus.documents[0]
-	corpus.documents = [ singleDoc for _ in range(docsToCreate) ]
+		singleDoc = corpus.documents[0]
+		corpus.documents = [ singleDoc for _ in range(docsToCreate) ]
 
-	kindred.save(corpus,'bioc',tempDir)
+		kindred.save(corpus,'bioc',tempDir)
 
-	biocPath = os.path.join(tempDir,'collection.bioc.xml')
-	totalDocCount = 0
-	for corpus in kindred.iterLoadDataFromBioc(biocPath,corpusSizeCutoff=3):
-		assert isinstance(corpus,kindred.Corpus)
+		biocPath = os.path.join(tempDir,'collection.bioc.xml')
+		totalDocCount = 0
+		for corpus in kindred.iterLoadDataFromBioc(biocPath,corpusSizeCutoff=3):
+			assert isinstance(corpus,kindred.Corpus)
 
-		assert len(corpus.documents) <= 25
-		totalDocCount += len(corpus.documents)
+			assert len(corpus.documents) <= 25
+			totalDocCount += len(corpus.documents)
 
-		for doc in corpus.documents:
-			assert isinstance(doc,kindred.Document)
-			entities = doc.entities
-			relations = doc.relations
+			for doc in corpus.documents:
+				assert isinstance(doc,kindred.Document)
+				entities = doc.entities
+				relations = doc.relations
 
-			sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
+				sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
 
-			assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
-			assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-			assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+				assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+				assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+				assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 
-	assert totalDocCount == docsToCreate
-	shutil.rmtree(tempDir)
-
+		assert totalDocCount == docsToCreate
 
 if __name__ == '__main__':
 	test_loadBiocFile()
