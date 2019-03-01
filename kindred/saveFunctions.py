@@ -99,14 +99,14 @@ def save(corpus,dataFormat,directory):
 	Save a corpus to a directory
 	
 	:param corpus: The corpus of documents to save
-	:param dataFormat: Format of data to save (only 'standoff' and 'bioc' are supported currently)
+	:param dataFormat: Format of data to save (only 'standoff' and 'biocxml' are supported currently)
 	:param directory: Path to directory in which files should be saved
 	:type corpus: kindred.Corpus
 	:type dataFormat: str
 	:type directory: str
 	"""
 	
-	assert dataFormat == 'standoff' or dataFormat == 'bioc'
+	assert dataFormat in ['standoff','biocxml']
 
 	assert isinstance(corpus,kindred.Corpus)
 
@@ -122,7 +122,7 @@ def save(corpus,dataFormat,directory):
 			a2Path = os.path.join(directory,'%s.a2' % base)
 
 			saveDocToSTFormat(d,txtPath,a1Path,a2Path)
-	elif dataFormat == 'bioc':
+	elif dataFormat == 'biocxml':
 		outFilename = os.path.join(directory, 'collection.bioc.xml')	
 		collection = convertKindredCorpusToBioCCollection(corpus)
 		#bioc_writer = bioc.BioCWriter(outFilename)

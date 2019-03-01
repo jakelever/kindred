@@ -113,7 +113,7 @@ def test_loadBiocFile():
 	scriptDir = os.path.dirname(__file__)
 	xmlPath = os.path.join(scriptDir,'data','example.bioc.xml')
 
-	corpus = kindred.load(dataFormat='bioc',path=xmlPath)
+	corpus = kindred.load(dataFormat='biocxml',path=xmlPath)
 	
 	assert isinstance(corpus,kindred.Corpus)
 	assert len(corpus.documents) == 1
@@ -197,7 +197,7 @@ def test_loadBiocFile_dir():
 	scriptDir = os.path.dirname(__file__)
 	dataPath = os.path.join(scriptDir,'data')
 
-	corpus = kindred.load(dataFormat='bioc',path=dataPath)
+	corpus = kindred.load(dataFormat='biocxml',path=dataPath)
 	
 	assert isinstance(corpus,kindred.Corpus)
 	assert len(corpus.documents) == 1
@@ -283,7 +283,7 @@ def test_loadStandoffFile_extraLines(capfd):
 
 def test_loadEmptyDirectory():
 	with TempDir() as tempDir:
-		for dataformat in ['standoff','simpletag','json','bioc']:
+		for dataformat in ['standoff','simpletag','json','biocxml']:
 			with pytest.raises(RuntimeError) as excinfo:
 				corpus = kindred.load(dataformat,tempDir)
 			expectedError = 'No documents loaded from directory (%s). Are you sure this directory contains the corpus (format: %s)' % (tempDir.rstrip('/'),dataformat)
@@ -299,11 +299,11 @@ def test_iterLoadBiocFile():
 		singleDoc = corpus.documents[0]
 		corpus.documents = [ singleDoc for _ in range(docsToCreate) ]
 
-		kindred.save(corpus,'bioc',tempDir)
+		kindred.save(corpus,'biocxml',tempDir)
 
 		biocPath = os.path.join(tempDir,'collection.bioc.xml')
 		totalDocCount = 0
-		for corpus in kindred.iterLoad('bioc',biocPath,corpusSizeCutoff=3):
+		for corpus in kindred.iterLoad('biocxml',biocPath,corpusSizeCutoff=3):
 			assert isinstance(corpus,kindred.Corpus)
 
 			assert len(corpus.documents) <= 25
@@ -332,10 +332,10 @@ def test_iterLoadBiocDir():
 		singleDoc = corpus.documents[0]
 		corpus.documents = [ singleDoc for _ in range(docsToCreate) ]
 
-		kindred.save(corpus,'bioc',tempDir)
+		kindred.save(corpus,'biocxml',tempDir)
 
 		totalDocCount = 0
-		for corpus in kindred.iterLoad('bioc',tempDir,corpusSizeCutoff=3):
+		for corpus in kindred.iterLoad('biocxml',tempDir,corpusSizeCutoff=3):
 			assert isinstance(corpus,kindred.Corpus)
 
 			assert len(corpus.documents) <= 25

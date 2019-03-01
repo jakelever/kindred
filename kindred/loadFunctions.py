@@ -346,7 +346,7 @@ def iterLoad(dataFormat,path,corpusSizeCutoff=500):
 	"""
 	Iteratively load sections of a (presumably large) corpus. This will a generator that provides kindred.Corpus objects that are subsets of the larger corpus. This should be used to lower the memory requirements (so that the entire file doesn't need to be loaded into memory at one time).
 
-	:param dataFormat: Format of the data files to load (only 'bioc' is currently supported)
+	:param dataFormat: Format of the data files to load (only 'biocxml' is currently supported)
 	:param path: Path to data. Can be directory or an individual file (for bioc, json or simpletag)
 	:param corpusSizeCutoff: Approximate maximum number of documents to be in each corpus subset
 	:type dataFormat: str
@@ -355,6 +355,8 @@ def iterLoad(dataFormat,path,corpusSizeCutoff=500):
 	:return: Subsets of the BioC file
 	:rtype: A kindred.Corpus generator
 	"""
+	assert dataFormat == 'biocxml'
+
 	corpus = kindred.Corpus()
 
 	if os.path.isdir(path):
@@ -382,7 +384,7 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False
 	"""
 	Load a corpus from a variety of formats. If path is a directory, it will try to load all files of the corresponding data type. Otherwise, it will use the dataFormat to decide which files (e.g. path, txtPath, a1Path, a2Path) are necessary.
 	
-	:param dataFormat: Format of the data files to load ('standoff','bioc','json','simpletag')
+	:param dataFormat: Format of the data files to load ('standoff','biocxml','json','simpletag')
 	:param path: Path to data. Can be directory or an individual file (for bioc, json or simpletag)
 	:param txtPath: Path of the TXT file (for standoff only)
 	:param a1Path: Path of the A1 file (for standoff only)
@@ -401,7 +403,7 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False
 	:return: Corpus of loaded documents
 	:rtype: kindred.Corpus
 	"""
-	assert dataFormat in ['standoff','bioc','json','simpletag']
+	assert dataFormat in ['standoff','biocxml','json','simpletag']
 	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
 
 	#assert xor(path is not None, txtPath is not None and a1Path is not None and a2 is not None)
@@ -424,7 +426,7 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False
 
 				doc = loadDataFromSTFormat(txtPath,a1Path,a2Path,verbose=verbose,ignoreEntities=ignoreEntities)
 				corpus.addDocument(doc)
-			elif dataFormat == 'bioc' and filename.endswith('.bioc.xml'):
+			elif dataFormat == 'biocxml' and filename.endswith('.bioc.xml'):
 				absPath = os.path.join(directory, filename)
 				tempCorpus = loadDataFromBioC(absPath,ignoreEntities=ignoreEntities)
 				corpus.documents += tempCorpus.documents
@@ -447,7 +449,7 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False
 
 		doc = loadDataFromSTFormat(txtPath,a1Path,a2Path,verbose=verbose,ignoreEntities=ignoreEntities)
 		corpus.addDocument(doc)
-	elif dataFormat == 'bioc':
+	elif dataFormat == 'biocxml':
 		assert not path is None, "Must provide path parameter for bioc format for loading individual files"
 		corpus = loadDataFromBioC(path,ignoreEntities=ignoreEntities)
 	elif dataFormat == 'json':
@@ -470,4 +472,4 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False
 
 	return corpus
 			
-			
+
