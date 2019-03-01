@@ -40,7 +40,7 @@ class CandidateRelation:
 				assert isinstance(knownArgName, six.string_types), knownTypesAndArgNamesError
 		self.knownTypesAndArgNames = knownTypesAndArgNames
 				
-		assert isinstance(sentence, kindred.Sentence)
+		assert sentence is None or isinstance(sentence, kindred.Sentence)
 		self.sentence = sentence
 	
 	def __eq__(self, other):
@@ -60,8 +60,7 @@ class CandidateRelation:
 		return self.__str__()
 
 	def __hash__(self):
-		if self.argNames is None:
-			return hash((self.relationType,tuple(self.entities),self.probability,self.sentence))
-		else:
-			return hash((self.relationType,tuple(self.entities),tuple(self.argNames),self.probability,self.sentence))
+		knownTypesAndArgNamesToTuple = tuple([ (knownType,tuple(knownArgNames)) for knownType,knownArgNames in self.knownTypesAndArgNames ])
+
+		return hash((tuple(self.entities),knownTypesAndArgNamesToTuple,self.sentence))
 
