@@ -37,17 +37,6 @@ class Corpus:
 		assert isinstance(doc,kindred.Document)
 		self.documents.append(doc)
 
-
-	def addRelationTypes(self,relationTypes):
-		"""
-		Add a set of relation types that have been identified in corpus
-		
-		:param relationTypes: List of relation type names
-		:type relationTypes: List of strings
-		"""
-
-		self.relationTypes = relationTypes
-
 	def clone(self):
 		"""
 		Clone the corpus
@@ -61,20 +50,6 @@ class Corpus:
 			cloned.addDocument(doc.clone())
 		return cloned
 		
-	def getEntityMapping(self):
-		"""
-		Gets mapping from entity ID to entity instances
-		
-		:return: Map of entity ID to entity instance
-		:rtype: dict
-		"""
-
-		entityMapping = {}
-		for doc in self.documents:
-			for e in doc.entities:
-				entityMapping[e.entityID] = e
-		return entityMapping
-
 	def getRelations(self):
 		"""
 		Get all relations in this corpus
