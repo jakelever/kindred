@@ -299,11 +299,11 @@ def test_iterLoadBiocFile():
 		singleDoc = corpus.documents[0]
 		corpus.documents = [ singleDoc for _ in range(docsToCreate) ]
 
-		kindred.save(corpus,'biocxml',tempDir)
+		tempFile = os.path.join(tempDir,'corpus.bioc.xml')
+		kindred.save(corpus,'biocxml',tempFile)
 
-		biocPath = os.path.join(tempDir,'collection.bioc.xml')
 		totalDocCount = 0
-		for corpus in kindred.iterLoad('biocxml',biocPath,corpusSizeCutoff=3):
+		for corpus in kindred.iterLoad('biocxml',tempFile,corpusSizeCutoff=3):
 			assert isinstance(corpus,kindred.Corpus)
 
 			assert len(corpus.documents) <= 25
@@ -332,7 +332,8 @@ def test_iterLoadBiocDir():
 		singleDoc = corpus.documents[0]
 		corpus.documents = [ singleDoc for _ in range(docsToCreate) ]
 
-		kindred.save(corpus,'biocxml',tempDir)
+		tempFile = os.path.join(tempDir,'corpus.bioc.xml')
+		kindred.save(corpus,'biocxml',tempFile)
 
 		totalDocCount = 0
 		for corpus in kindred.iterLoad('biocxml',tempDir,corpusSizeCutoff=3):

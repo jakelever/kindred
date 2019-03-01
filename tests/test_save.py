@@ -76,9 +76,10 @@ def test_saveBiocFile_fromSimpleTag():
 	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 
 	with TempDir() as tempDir:
-		kindred.save(corpus,'biocxml',tempDir)
+		tempFile = os.path.join(tempDir,'corpus.bioc.xml')
+		kindred.save(corpus,'biocxml',tempFile)
 		
-		loadedCorpus = kindred.load('biocxml',tempDir)
+		loadedCorpus = kindred.load('biocxml',tempFile)
 
 	assert isinstance(loadedCorpus,kindred.Corpus)
 	assert len(loadedCorpus.documents) == 1

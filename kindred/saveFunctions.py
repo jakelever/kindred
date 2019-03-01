@@ -94,16 +94,16 @@ def saveDocToSTFormat(data,txtPath,a1Path,a2Path):
 			line = "R%d\t%s %s" % (i+1,relationType,arguments)
 			a2File.write(line+"\n")
 
-def save(corpus,dataFormat,directory):
+def save(corpus,dataFormat,path):
 	"""
 	Save a corpus to a directory
 	
 	:param corpus: The corpus of documents to save
 	:param dataFormat: Format of data to save (only 'standoff' and 'biocxml' are supported currently)
-	:param directory: Path to directory in which files should be saved
+	:param path: Path where corpus should be saved. Must be an existing directory for 'standoff'.
 	:type corpus: kindred.Corpus
 	:type dataFormat: str
-	:type directory: str
+	:type path: str
 	"""
 	
 	assert dataFormat in ['standoff','biocxml']
@@ -111,24 +111,24 @@ def save(corpus,dataFormat,directory):
 	assert isinstance(corpus,kindred.Corpus)
 
 	if dataFormat == 'standoff':
+		assert os.path.isdir(path), "Path must be an existing directory"
+
 		for i,d in enumerate(corpus.documents):
 			if d.sourceFilename is None:
 				base = "%08d" % i
 			else:
 				base = d.sourceFilename
 
-			txtPath = os.path.join(directory,'%s.txt' % base)
-			a1Path = os.path.join(directory,'%s.a1' % base)
-			a2Path = os.path.join(directory,'%s.a2' % base)
+			txtPath = os.path.join(path,'%s.txt' % base)
+			a1Path = os.path.join(path,'%s.a1' % base)
+			a2Path = os.path.join(path,'%s.a2' % base)
 
 			saveDocToSTFormat(d,txtPath,a1Path,a2Path)
 	elif dataFormat == 'biocxml':
-		outFilename = os.path.join(directory, 'collection.bioc.xml')	
+		assert not os.path.isdir(path), "Path cannot be an existing directory for 'biocxml'."
+
 		collection = convertKindredCorpusToBioCCollection(corpus)
-		#bioc_writer = bioc.BioCWriter(outFilename)
-		#bioc_writer.collection = collection
-		#bioc_writer.write()
-		with bioc.iterwrite(outFilename) as writer:
+		with bioc.iterwrite(path) as writer:
 			for doc in collection.documents:
 				writer.writedocument(doc)
 
