@@ -272,6 +272,7 @@ Essential functions
    :nosignatures:
 
    load
+   iterLoad
    save
    evaluate
    manuallyAnnotate

@@ -303,7 +303,39 @@ def test_iterLoadBiocFile():
 
 		biocPath = os.path.join(tempDir,'collection.bioc.xml')
 		totalDocCount = 0
-		for corpus in kindred.iterLoadDataFromBioc(biocPath,corpusSizeCutoff=3):
+		for corpus in kindred.iterLoad('bioc',biocPath,corpusSizeCutoff=3):
+			assert isinstance(corpus,kindred.Corpus)
+
+			assert len(corpus.documents) <= 25
+			totalDocCount += len(corpus.documents)
+
+			for doc in corpus.documents:
+				assert isinstance(doc,kindred.Document)
+				entities = doc.entities
+				relations = doc.relations
+
+				sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
+
+				assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+				assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+				assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+
+		assert totalDocCount == docsToCreate
+
+def test_iterLoadBiocDir():
+	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
+	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
+	docsToCreate = 100
+
+	with TempDir() as tempDir:
+
+		singleDoc = corpus.documents[0]
+		corpus.documents = [ singleDoc for _ in range(docsToCreate) ]
+
+		kindred.save(corpus,'bioc',tempDir)
+
+		totalDocCount = 0
+		for corpus in kindred.iterLoad('bioc',tempDir,corpusSizeCutoff=3):
 			assert isinstance(corpus,kindred.Corpus)
 
 			assert len(corpus.documents) <= 25

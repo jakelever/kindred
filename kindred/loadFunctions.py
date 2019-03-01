@@ -342,26 +342,35 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 	corpus.documents = parsed
 	return corpus
 
-def iterLoadDataFromBioc(filename,corpusSizeCutoff=500):
+def iterLoad(dataFormat,path,corpusSizeCutoff=500):
 	"""
-	Iteratively load documents from a BioC file. This will a generator that provides kindred.Corpus objects that are subsets of the entire BioC file. This should be used to lower the memory requirements (so that the entire file doesn't need to be loaded into memory at one time).
+	Iteratively load sections of a (presumably large) corpus. This will a generator that provides kindred.Corpus objects that are subsets of the larger corpus. This should be used to lower the memory requirements (so that the entire file doesn't need to be loaded into memory at one time).
 
-	:param filename: Path of the Bioc file
+	:param dataFormat: Format of the data files to load (only 'bioc' is currently supported)
+	:param path: Path to data. Can be directory or an individual file (for bioc, json or simpletag)
 	:param corpusSizeCutoff: Approximate maximum number of documents to be in each corpus subset
-	:type filename: str
+	:type dataFormat: str
+	:type path: str
 	:type corpusSizeCutoff: int
 	:return: Subsets of the BioC file
 	:rtype: A kindred.Corpus generator
 	"""
 	corpus = kindred.Corpus()
-	with bioc.iterparse(filename) as parser:
-		for document in parser:
-			if len(corpus.documents) >= corpusSizeCutoff:
-				yield corpus
-				corpus = kindred.Corpus()
-			kindredDocs = convertBiocDocToKindredDocs(document)
-			for kindredDoc in kindredDocs:
-				corpus.addDocument(kindredDoc)
+
+	if os.path.isdir(path):
+		filenames = [ os.path.join(path,x) for x in os.listdir(path) if x.endswith('bioc.xml') ]
+	else:
+		filenames = [path]
+
+	for filename in filenames:
+		with bioc.iterparse(filename) as parser:
+			for document in parser:
+				if len(corpus.documents) >= corpusSizeCutoff:
+					yield corpus
+					corpus = kindred.Corpus()
+				kindredDocs = convertBiocDocToKindredDocs(document)
+				for kindredDoc in kindredDocs:
+					corpus.addDocument(kindredDoc)
 
 	if len(corpus.documents) > 0:
 		yield corpus
