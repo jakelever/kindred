@@ -17,7 +17,7 @@ from kindred.LogisticRegressionWithThreshold import LogisticRegressionWithThresh
 from kindred.EntityRecognizer import EntityRecognizer
 
 # General functions
-from kindred.loadFunctions import loadDoc,loadDocs,loadDir,iterLoadDataFromBioc
+from kindred.loadFunctions import load,iterLoadDataFromBioc
 from kindred.saveFunctions import save
 from kindred.evalFunctions import evaluate
 

@@ -46,7 +46,7 @@ def test_saveStandoffFile_fromSimpleTag():
 			if filename.endswith('.a2'):
 				checkRelationAnnotations(os.path.join(tempDir,filename))
 
-		loadedCorpus = kindred.loadDir('standoff',tempDir)
+		loadedCorpus = kindred.load('standoff',tempDir)
 
 	assert isinstance(loadedCorpus,kindred.Corpus)
 	assert len(loadedCorpus.documents) == 1
@@ -78,7 +78,7 @@ def test_saveBiocFile_fromSimpleTag():
 	with TempDir() as tempDir:
 		kindred.save(corpus,'bioc',tempDir)
 		
-		loadedCorpus = kindred.loadDir('bioc',tempDir)
+		loadedCorpus = kindred.load('bioc',tempDir)
 
 	assert isinstance(loadedCorpus,kindred.Corpus)
 	assert len(loadedCorpus.documents) == 1
@@ -105,7 +105,7 @@ def test_saveStandoffFile_fromSimpleTag_triple():
 			if filename.endswith('.a2'):
 				checkRelationAnnotations(os.path.join(tempDir,filename))
 
-		loadedCorpus = kindred.loadDir('standoff',tempDir)
+		loadedCorpus = kindred.load('standoff',tempDir)
 
 	assert isinstance(loadedCorpus,kindred.Corpus)
 	assert len(loadedCorpus.documents) == 1
@@ -138,7 +138,7 @@ def test_saveStandoffFile():
 			if filename.endswith('.a2'):
 				checkRelationAnnotations(os.path.join(tempDir,filename))
 
-		loadedCorpus = kindred.loadDir('standoff',tempDir)
+		loadedCorpus = kindred.load('standoff',tempDir)
 
 	assert isinstance(loadedCorpus,kindred.Corpus)
 	assert len(loadedCorpus.documents) == 1
@@ -170,7 +170,7 @@ def test_saveStandoffFile_noArgNames():
 			if filename.endswith('.a2'):
 				checkRelationAnnotations(os.path.join(tempDir,filename))
 
-		loadedCorpus = kindred.loadDir('standoff',tempDir)
+		loadedCorpus = kindred.load('standoff',tempDir)
 
 	assert isinstance(loadedCorpus,kindred.Corpus)
 	assert len(loadedCorpus.documents) == 1
@@ -197,7 +197,7 @@ def test_saveBB3Data():
 			if filename.endswith('.a2'):
 				checkRelationAnnotations(os.path.join(tempDir,filename))
 
-		loadedCorpus = kindred.loadDir('standoff',tempDir)
+		loadedCorpus = kindred.load('standoff',tempDir)
 		assert len(corpus.documents) == len(loadedCorpus.documents)
 	
 def test_saveStandoffFile_SeparateSentences():
@@ -214,7 +214,7 @@ def test_saveStandoffFile_SeparateSentences():
 			if filename.endswith('.a2'):
 				checkRelationAnnotations(os.path.join(tempDir,filename))
 
-		loadedCorpus = kindred.loadDir('standoff',tempDir)
+		loadedCorpus = kindred.load('standoff',tempDir)
 
 	assert isinstance(loadedCorpus,kindred.Corpus)
 	assert len(loadedCorpus.documents) == 2

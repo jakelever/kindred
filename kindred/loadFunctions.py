@@ -337,7 +337,10 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 	parsed = []
 	for document in collection.documents:
 		parsed += convertBiocDocToKindredDocs(document)
-	return parsed
+
+	corpus = kindred.Corpus()
+	corpus.documents = parsed
+	return corpus
 
 def iterLoadDataFromBioc(filename,corpusSizeCutoff=500):
 	"""
@@ -363,130 +366,95 @@ def iterLoadDataFromBioc(filename,corpusSizeCutoff=500):
 	if len(corpus.documents) > 0:
 		yield corpus
 	
-	
-def loadDoc(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
-	"""
-	Loads a single document from a single file (for JSON or SimpleTag) or set of files (for standoff)
+def xor(a, b):
+	return (a and not b) or (not a and b)
 
-	:param dataFormat: The format of the data to load (standoff/simpletag/json)
-	:param path: Path of the file (for simpletag/json)
-	:param txtPath: Path of the TXT file (for standoff)
-	:param a1Path: Path of the A1 file (for standoff)
-	:param a2Path: Path of the A2 file (for standoff)
-	:param verbose: Whether to give additional output while loading
-	:param ignoreEntities: A list of entities to ignore while loading
-	:param ignoreComplexRelations: Whether to ignore complex relations (relations where one argument is another relations). This must be true as kindred doesn't currently support complex relations
+def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
+	"""
+	Load a corpus from a variety of formats. If path is a directory, it will try to load all files of the corresponding data type. Otherwise, it will use the dataFormat to decide which files (e.g. path, txtPath, a1Path, a2Path) are necessary.
+	
+	:param dataFormat: Format of the data files to load ('standoff','bioc','json','simpletag')
+	:param path: Path to data. Can be directory or an individual file (for bioc, json or simpletag)
+	:param txtPath: Path of the TXT file (for standoff only)
+	:param a1Path: Path of the A1 file (for standoff only)
+	:param a2Path: Path of the A2 file (for standoff only)
+	:param verbose: Whether to print statements about loading to std out
+	:param ignoreEntities: List of entity types to ignore while loading
+	:param ignoreComplexRelations: Whether to filter out relations where one argument is another relation (must be True as kindred doesn't currently support complex relations)
 	:type dataFormat: str
 	:type path: str
 	:type txtPath: str
 	:type a1Path: str
 	:type a2Path: str
 	:type verbose: bool
-	:type ignoreEntities: list of str
-	:type ignoreComplexRelations: bool
-	:return: Loaded document
-	:rtype: kindred.Document
-	"""
-	
-	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json'
-	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
-	
-	if dataFormat == 'standoff':
-		assert not txtPath is None
-		assert not a1Path is None
-
-		doc = loadDataFromSTFormat(txtPath,a1Path,a2Path,verbose=verbose,ignoreEntities=ignoreEntities)
-	elif dataFormat == 'simpletag':
-		assert not path is None
-
-		with open(path,'r') as f:
-			filecontents = f.read().strip()
-		doc = parseSimpleTag(filecontents,ignoreEntities=ignoreEntities)
-		doc.sourceFilename = os.path.basename(path)
-	elif dataFormat == 'json':
-		assert not path is None
-		doc = loadDataFromJSON(path,ignoreEntities=ignoreEntities)
-
-	assert isinstance(doc,kindred.Document)
-	return doc
-
-def loadDocs(dataFormat,path=None,ignoreEntities=[]):
-	"""
-	Load multiple documents from a single file (currently only BioC)
-
-	:param dataFormat: The format of the data to load (bioc)
-	:param path: Path of the file
-	:param ignoreEntities: A list of entities to ignore while loading
-	:type dataFormat: str
-	:type path: str
-	:type ignoreEntities: list of str
-	:return: Loaded documents
-	:rtype: list of kindred.Document
-	"""
-	assert dataFormat == 'bioc'
-
-	if dataFormat == 'bioc':
-		assert not path is None
-		docs = loadDataFromBioC(path,ignoreEntities=ignoreEntities)
-		
-	assert isinstance(docs,list)
-	for doc in docs:
-		assert isinstance(doc,kindred.Document)
-		
-	return docs
-	
-def loadDir(dataFormat,directory,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
-	"""
-	Load a directory of corpus data from a variety of data formats
-	
-	:param dataFormat: Format of the data files to load ('standoff','simpletag','json' or 'bioc')
-	:param directory: Path to directory of data to load
-	:param verbose: Whether to print statements about loading to std out
-	:param ignoreEntities: List of entity types to ignore while loading
-	:param ignoreComplexRelations: Whether to filter out relations where one argument is another relation (must be True as kindred doesn't currently support complex relations)
-	:type dataFormat: str
-	:type directory: str
-	:type verbose: bool
 	:type ignoreEntities: list
 	:type ignoreComplexRelations: bool
 	:return: Corpus of loaded documents
 	:rtype: kindred.Corpus
 	"""
-	assert dataFormat == 'standoff' or dataFormat == 'simpletag' or dataFormat == 'json' or dataFormat == 'bioc'
-	assert os.path.isdir(directory), "%s must be a directory"
+	assert dataFormat in ['standoff','bioc','json','simpletag']
 	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
-	
-	if directory[-1] != '/':
-		directory += '/'
 
-	filenames = sorted(list(os.listdir(directory)))
-
+	#assert xor(path is not None, txtPath is not None and a1Path is not None and a2 is not None)
 	corpus = kindred.Corpus()
-	for filename in filenames:
-		if dataFormat == 'standoff' and filename.endswith('.txt'):
-			base = filename[0:-4]
-			txtPath = os.path.join(directory, base + '.txt')
-			a1Path = os.path.join(directory, base + '.a1')
-			a2Path = os.path.join(directory, base + '.a2')
 
-			assert os.path.isfile(txtPath), "%s must exist" % txtPath
-			assert os.path.isfile(a1Path), "%s must exist" % a1Path
+	if path is not None and os.path.isdir(path):
+		directory = path
 
-			doc = loadDoc(dataFormat,txtPath=txtPath,a1Path=a1Path,a2Path=a2Path,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
-			corpus.addDocument(doc)
-		elif dataFormat == 'simpletag' and filename.endswith('.simple'):
-			absPath = os.path.join(directory, filename)
-			doc = loadDoc(dataFormat,path=absPath,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
-			corpus.addDocument(doc)
-		elif dataFormat == 'json' and filename.endswith('.json'):
-			absPath = os.path.join(directory, filename)
-			doc = loadDoc(dataFormat,path=absPath,verbose=verbose,ignoreEntities=ignoreEntities,ignoreComplexRelations=ignoreComplexRelations)
-			corpus.addDocument(doc)
-		elif dataFormat == 'bioc' and filename.endswith('.bioc.xml'):
-			absPath = os.path.join(directory, filename)
-			docs = loadDocs(dataFormat,path=absPath,ignoreEntities=ignoreEntities)
-			for doc in docs:
+		filenames = sorted(list(os.listdir(directory)))
+
+		for filename in filenames:
+			if dataFormat == 'standoff' and filename.endswith('.txt'):
+				base = filename[0:-4]
+				txtPath = os.path.join(directory, base + '.txt')
+				a1Path = os.path.join(directory, base + '.a1')
+				a2Path = os.path.join(directory, base + '.a2')
+
+				assert os.path.isfile(txtPath), "%s must exist" % txtPath
+				assert os.path.isfile(a1Path), "%s must exist" % a1Path
+
+				doc = loadDataFromSTFormat(txtPath,a1Path,a2Path,verbose=verbose,ignoreEntities=ignoreEntities)
 				corpus.addDocument(doc)
+			elif dataFormat == 'bioc' and filename.endswith('.bioc.xml'):
+				absPath = os.path.join(directory, filename)
+				tempCorpus = loadDataFromBioC(absPath,ignoreEntities=ignoreEntities)
+				corpus.documents += tempCorpus.documents
+			elif dataFormat == 'json' and filename.endswith('.json'):
+				absPath = os.path.join(directory, filename)
+				doc = loadDataFromJSON(absPath,ignoreEntities=ignoreEntities)
+				corpus.addDocument(doc)
+			elif dataFormat == 'simpletag' and filename.endswith('.simple'):
+				absPath = os.path.join(directory, filename)
+				with open(absPath,'r') as f:
+					filecontents = f.read().strip()
+
+				doc = parseSimpleTag(filecontents,ignoreEntities=ignoreEntities)
+				doc.sourceFilename = filename
+				corpus.addDocument(doc)
+
+	elif dataFormat == 'standoff':
+		assert not txtPath is None, "Must provide txtPath parameter for standoff format for loading individual files"
+		assert not a1Path is None, "Must provide a1Path parameter for standoff format for loading individual files"
+
+		doc = loadDataFromSTFormat(txtPath,a1Path,a2Path,verbose=verbose,ignoreEntities=ignoreEntities)
+		corpus.addDocument(doc)
+	elif dataFormat == 'bioc':
+		assert not path is None, "Must provide path parameter for bioc format for loading individual files"
+		corpus = loadDataFromBioC(path,ignoreEntities=ignoreEntities)
+	elif dataFormat == 'json':
+		assert not path is None, "Must provide path parameter for json format for loading individual files"
+
+		doc = loadDataFromJSON(path,ignoreEntities=ignoreEntities)
+		corpus.addDocument(doc)
+	elif dataFormat == 'simpletag':
+		assert not path is None, "Must provide path parameter for simpletag format for loading individual files"
+
+		with open(path,'r') as f:
+			filecontents = f.read().strip()
+
+		doc = parseSimpleTag(filecontents,ignoreEntities=ignoreEntities)
+		doc.sourceFilename = os.path.basename(path)
+		corpus.addDocument(doc)
 	
 	if len(corpus.documents) == 0:
 		raise RuntimeError("No documents loaded from directory (%s). Are you sure this directory contains the corpus (format: %s)" % (directory,dataFormat))

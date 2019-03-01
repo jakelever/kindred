@@ -58,7 +58,7 @@ def load(taskName,ignoreEntities=[]):
 
 	mainDir = kindred.utils._findDir(expectedDir,tempDir)
 
-	corpus = kindred.loadDir(dataFormat='standoff',directory=mainDir,ignoreEntities=ignoreEntities)
+	corpus = kindred.load(dataFormat='standoff',path=mainDir,ignoreEntities=ignoreEntities)
 
 	shutil.rmtree(tempDir)
 

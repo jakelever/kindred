@@ -271,7 +271,7 @@ Essential functions
    :toctree: _autosummary
    :nosignatures:
 
-   loadDir
+   load
    save
    evaluate
    manuallyAnnotate
