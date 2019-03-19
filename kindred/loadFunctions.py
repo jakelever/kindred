@@ -344,7 +344,7 @@ def loadDataFromBioC(filename,ignoreEntities=[]):
 
 def iterLoad(dataFormat,path,corpusSizeCutoff=500):
 	"""
-	Iteratively load sections of a (presumably large) corpus. This will a generator that provides kindred.Corpus objects that are subsets of the larger corpus. This should be used to lower the memory requirements (so that the entire file doesn't need to be loaded into memory at one time).
+	Iteratively load sections of a (presumably large) corpus. This will create a generator that provides kindred.Corpus objects that are subsets of the larger corpus. This should be used to lower the memory requirements (so that the entire file doesn't need to be loaded into memory at one time).
 
 	:param dataFormat: Format of the data files to load (only 'biocxml' is currently supported)
 	:param path: Path to data. Can be directory or an individual file (for bioc, json or simpletag)
