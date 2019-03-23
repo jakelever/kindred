@@ -26,10 +26,8 @@ def assertEntity(entity,expectedType,expectedText,expectedPos,expectedSourceEnti
 def test_loadStandoffFile_binary():
 	scriptDir = os.path.dirname(__file__)
 	txtPath = os.path.join(scriptDir,'data','example.txt')
-	a1Path = os.path.join(scriptDir,'data','example.a1')
-	a2Path = os.path.join(scriptDir,'data','example.a2')
 
-	corpus = kindred.load(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
+	corpus = kindred.load('standoff',txtPath)
 	
 	assert isinstance(corpus,kindred.Corpus)
 	assert len(corpus.documents) == 1
@@ -48,10 +46,8 @@ def test_loadStandoffFile_binary():
 def test_loadStandoffFile_triple():
 	scriptDir = os.path.dirname(__file__)
 	txtPath = os.path.join(scriptDir,'data_triple','example.txt')
-	a1Path = os.path.join(scriptDir,'data_triple','example.a1')
-	a2Path = os.path.join(scriptDir,'data_triple','example.a2')
 
-	corpus = kindred.load(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
+	corpus = kindred.load('standoff',txtPath)
 	
 	assert isinstance(corpus,kindred.Corpus)
 	assert len(corpus.documents) == 1
@@ -203,74 +199,6 @@ def test_loadBiocFile_dir():
 	assert len(corpus.documents) == 1
 	doc = corpus.documents[0]
 	
-	assert isinstance(doc,kindred.Document)
-	entities = doc.entities
-	relations = doc.relations
-
-	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
-
-	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
-	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
-
-def test_loadStandoffFile_missingA2(capfd):
-	scriptDir = os.path.dirname(__file__)
-	txtPath = os.path.join(scriptDir,'data_missingA2','example.txt')
-	a1Path = os.path.join(scriptDir,'data_missingA2','example.a1')
-	a2Path = os.path.join(scriptDir,'data_missingA2','example.a2')
-	
-	# Run quietly
-	corpus = kindred.load(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
-
-	out, err = capfd.readouterr()
-	assert out.strip() == ""
-	assert err.strip() == ""
-	
-	# Run verbose
-	corpus = kindred.load(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path,verbose=True)
-
-	out, err = capfd.readouterr()
-	assert out.strip() == ""
-	assert err.strip() == 'Note: No A2 file found : example.a2'
-	
-	assert isinstance(corpus,kindred.Corpus)
-	assert len(corpus.documents) == 1
-	doc = corpus.documents[0]
-
-	assert isinstance(doc,kindred.Document)
-	entities = doc.entities
-	relations = doc.relations
-
-	sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
-
-	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
-	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == []
-
-def test_loadStandoffFile_extraLines(capfd):
-	scriptDir = os.path.dirname(__file__)
-	txtPath = os.path.join(scriptDir,'data_extraLines','example.txt')
-	a1Path = os.path.join(scriptDir,'data_extraLines','example.a1')
-	a2Path = os.path.join(scriptDir,'data_extraLines','example.a2')
-
-	# Run quietly
-	corpus = kindred.load(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path)
-
-	out, err = capfd.readouterr()
-	assert out.strip() == ""
-	assert err.strip() == ""
-	
-	# Run verbose
-	corpus = kindred.load(dataFormat='standoff',txtPath=txtPath,a1Path=a1Path,a2Path=a2Path,verbose=True)
-
-	out, err = capfd.readouterr()
-	assert out.strip() == ""
-	assert err.strip() == "Unable to process line: *\tEXTRALINE"
-	
-	assert isinstance(corpus,kindred.Corpus)
-	assert len(corpus.documents) == 1
-	doc = corpus.documents[0]
-
 	assert isinstance(doc,kindred.Document)
 	entities = doc.entities
 	relations = doc.relations

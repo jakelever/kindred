@@ -89,43 +89,44 @@ def loadRelation(filename,line,ignoreComplexRelations=True):
 	return relationTuple
 	
 # TODO: Deal with complex relations more clearly
-def loadDataFromSTFormat(txtFile,a1File,a2File,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
+def loadDataFromStandoff(txtFile,ignoreEntities=[],ignoreComplexRelations=True):
+	annotationExtensions = ['ann','a1','a2']
 	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
 
 	with codecs.open(txtFile, "r", "utf-8") as f:
 		text = f.read()
-			
+
+	assert txtFile.endswith('.txt')
+	base = txtFile[:-4]
+
+	annotationFiles = [ "%s.%s" % (base,ext) for ext in annotationExtensions ]
+	annotationFiles = [ filename for filename in annotationFiles if os.path.isfile(filename) ]
+
 	entities = []
-	with codecs.open(a1File, "r", "utf-8") as f:
-		for line in f:
-			if line.strip() == '':
-				continue
-				
-			assert line[0] == 'T', "Only triggers are expected in a1 file: " + a1File
-			entity = loadEntity(a1File,line.strip(), text)
-			if (not entity is None) and (not entity.entityType in ignoreEntities):
-				entities.append(entity)
+
+	for annotationFile in annotationFiles:
+		with codecs.open(annotationFile, "r", "utf-8") as f:
+			for line in f:
+				if line.startswith('T'):
+					entity = loadEntity(annotationFile,line.strip(), text)
+					if (not entity is None) and (not entity.entityType in ignoreEntities):
+						entities.append(entity)
 		
 	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 
 	relations = []
-	if os.path.exists(a2File):
-		with codecs.open(a2File, "r", "utf-8") as f:
+	for annotationFile in annotationFiles:
+		with codecs.open(annotationFile, "r", "utf-8") as f:
 			for line in f:
-				if line.strip() == '':
-					continue
-					
-				if line[0] == 'E' or line[0] == 'R':
-					relationTuple = loadRelation(a2File,line.strip(),ignoreComplexRelations)
+				if line.startswith('E') or line.startswith('R'):
+					relationTuple = loadRelation(annotationFile,line.strip(),ignoreComplexRelations)
 					if not relationTuple is None:
 						relationType,sourceEntityIDs,argNames = relationTuple
+						for sourceEntityID in sourceEntityIDs:
+							assert sourceEntityID in sourceEntityIDToEntity, "Relation exists that references a non-existent entity (%s) associated with %s" % (sourceEntityID,txtFile)
 						entitiesInRelation = [ sourceEntityIDToEntity[sourceEntityID] for sourceEntityID in sourceEntityIDs ]
 						relation = kindred.Relation(relationType,entitiesInRelation,argNames)
 						relations.append(relation)
-				elif verbose:
-					sys.stderr.write("Unable to process line: %s\n" % line.strip())
-	elif verbose:
-		sys.stderr.write("Note: No A2 file found : %s\n" % os.path.basename(a2File))
 
 	baseTxtFile = os.path.basename(txtFile)
 	baseFilename = baseTxtFile[0:-4]
@@ -380,24 +381,16 @@ def iterLoad(dataFormat,path,corpusSizeCutoff=500):
 def xor(a, b):
 	return (a and not b) or (not a and b)
 
-def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
+def load(dataFormat,path,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
 	"""
-	Load a corpus from a variety of formats. If path is a directory, it will try to load all files of the corresponding data type. Otherwise, it will use the dataFormat to decide which files (e.g. path, txtPath, a1Path, a2Path) are necessary.
+	Load a corpus from a variety of formats. If path is a directory, it will try to load all files of the corresponding data type. For standoff format, it will use any associated annotations files (with suffixes .ann, .a1 or .a2)
 	
 	:param dataFormat: Format of the data files to load ('standoff','biocxml','json','simpletag')
-	:param path: Path to data. Can be directory or an individual file (for bioc, json or simpletag)
-	:param txtPath: Path of the TXT file (for standoff only)
-	:param a1Path: Path of the A1 file (for standoff only)
-	:param a2Path: Path of the A2 file (for standoff only)
-	:param verbose: Whether to print statements about loading to std out
+	:param path: Path to data. Can be directory or an individual file. Should be the txt file for standoff.
 	:param ignoreEntities: List of entity types to ignore while loading
 	:param ignoreComplexRelations: Whether to filter out relations where one argument is another relation (must be True as kindred doesn't currently support complex relations)
 	:type dataFormat: str
 	:type path: str
-	:type txtPath: str
-	:type a1Path: str
-	:type a2Path: str
-	:type verbose: bool
 	:type ignoreEntities: list
 	:type ignoreComplexRelations: bool
 	:return: Corpus of loaded documents
@@ -406,25 +399,17 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False
 	assert dataFormat in ['standoff','biocxml','json','simpletag']
 	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
 
-	#assert xor(path is not None, txtPath is not None and a1Path is not None and a2 is not None)
 	corpus = kindred.Corpus()
 
-	if path is not None and os.path.isdir(path):
+	if os.path.isdir(path):
 		directory = path
 
 		filenames = sorted(list(os.listdir(directory)))
 
 		for filename in filenames:
 			if dataFormat == 'standoff' and filename.endswith('.txt'):
-				base = filename[0:-4]
-				txtPath = os.path.join(directory, base + '.txt')
-				a1Path = os.path.join(directory, base + '.a1')
-				a2Path = os.path.join(directory, base + '.a2')
-
-				assert os.path.isfile(txtPath), "%s must exist" % txtPath
-				assert os.path.isfile(a1Path), "%s must exist" % a1Path
-
-				doc = loadDataFromSTFormat(txtPath,a1Path,a2Path,verbose=verbose,ignoreEntities=ignoreEntities)
+				absPath = os.path.join(directory, filename)
+				doc = loadDataFromStandoff(absPath,ignoreEntities=ignoreEntities)
 				corpus.addDocument(doc)
 			elif dataFormat == 'biocxml' and filename.endswith('.bioc.xml'):
 				absPath = os.path.join(directory, filename)
@@ -444,22 +429,14 @@ def load(dataFormat,path=None,txtPath=None,a1Path=None,a2Path=None,verbose=False
 				corpus.addDocument(doc)
 
 	elif dataFormat == 'standoff':
-		assert not txtPath is None, "Must provide txtPath parameter for standoff format for loading individual files"
-		assert not a1Path is None, "Must provide a1Path parameter for standoff format for loading individual files"
-
-		doc = loadDataFromSTFormat(txtPath,a1Path,a2Path,verbose=verbose,ignoreEntities=ignoreEntities)
+		doc = loadDataFromStandoff(path,ignoreEntities=ignoreEntities)
 		corpus.addDocument(doc)
 	elif dataFormat == 'biocxml':
-		assert not path is None, "Must provide path parameter for bioc format for loading individual files"
 		corpus = loadDataFromBioC(path,ignoreEntities=ignoreEntities)
 	elif dataFormat == 'json':
-		assert not path is None, "Must provide path parameter for json format for loading individual files"
-
 		doc = loadDataFromJSON(path,ignoreEntities=ignoreEntities)
 		corpus.addDocument(doc)
 	elif dataFormat == 'simpletag':
-		assert not path is None, "Must provide path parameter for simpletag format for loading individual files"
-
 		with open(path,'r') as f:
 			filecontents = f.read().strip()
 
