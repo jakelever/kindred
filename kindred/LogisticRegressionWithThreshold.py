@@ -20,7 +20,7 @@ class LogisticRegressionWithThreshold:
 		
 		assert threshold >= 0 and threshold <= 1, "Threshold must be between 0 and 1"
 
-		self.clf = LogisticRegression(class_weight='balanced',random_state=1)
+		self.clf = LogisticRegression(class_weight='balanced',random_state=1,solver='liblinear',multi_class='ovr')
 		self.threshold = threshold
 
 	def fit(self,X,Y):
