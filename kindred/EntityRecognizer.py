@@ -106,7 +106,7 @@ def fusionGeneDetection(words, lookupDict):
 		geneIDs = []
 		lookupIDCounter = Counter()
 		for s in split:
-			key = (s,)
+			key = s
 			if key in lookupDict:
 				isGene = False
 				for entityType,entityID in lookupDict[key]:
@@ -141,28 +141,36 @@ def fusionGeneDetection(words, lookupDict):
 		
 	return locs,terms,termtypesAndids
 
-def getTermIDsAndLocations(np, lookupDict):
+def getTermIDsAndLocations(sentence, lookupDict):
 	termtypesAndids,terms,locs = [],[],[]
 	# Lowercase all the tokens
 	#np = [ unicodeLower(w) for w in np ]
-	orignp = np
-	np = [ w.lower() for w in np ]
+	#orignp = np
+	np = [ t.word.lower() for t in sentence.tokens ]
+	blank = "".join( " " for _ in sentence.text )
 
+	tempSentence = sentence.text.lower()
+	sentenceStart = sentence.tokens[0].startPos
 	# The length of each search string will decrease from the full length
 	# of the text down to 1
-	for l in reversed(range(1, len(np)+1)):
+	for l in reversed(range(1, len(sentence.tokens)+1)):
 		# We move the search window through the text
 		for i in range(len(np)-l+1):
 			# Extract that window of text
-			s = tuple(np[i:i+l])
+			#s = tuple(np[i:i+l])
+			startPos = sentence.tokens[i].startPos - sentenceStart
+			endPos = sentence.tokens[i+l-1].endPos - sentenceStart
+			s = tempSentence[startPos:endPos]
+
 			# Search for it in the dictionary
 			if s in lookupDict:
 				# If found, save the ID(s) in the dictionary
 				termtypesAndids.append(lookupDict[s])
-				terms.append(tuple(orignp[i:i+l]))
+				terms.append(tuple(np[i:i+l]))
 				locs.append((i,i+l))
 				# And blank it out
-				np[i:i+l] = [ "" for _ in range(l) ]
+				#np[i:i+l] = [ "" for _ in range(l) ]
+				tempSentence = tempSentence[:startPos] + blank[startPos:endPos] + tempSentence[endPos:]
 
 	# Then return the found term IDs
 	return locs,terms,termtypesAndids
@@ -218,7 +226,7 @@ class EntityRecognizer:
 
 		assert isinstance(lookup,dict)
 		for termsmatch,typeAndIDs in lookup.items():
-			assert isinstance(termsmatch,tuple), "Lookup key must be a tuple of strings"
+			assert isinstance(termsmatch,six.string_types), "Lookup key must be a tuple of strings"
 			assert isinstance(typeAndIDs,set), "Lookup value must be a list of (entityType,externalID)"
 			assert len(typeAndIDs)>0, "Lookup value must be a list of (entityType,externalID)"
 			for typeAndID in typeAndIDs:
@@ -247,8 +255,10 @@ class EntityRecognizer:
 		self.removePathways = removePathways
 
 		
-	def _processWords(self, words):
-		locs,terms,termtypesAndids = getTermIDsAndLocations(words,self.lookup)
+	def _processWords(self, sentence):
+		locs,terms,termtypesAndids = getTermIDsAndLocations(sentence,self.lookup)
+
+		words = [ t.word for t in sentence.tokens ]
 
 		if self.detectVariants:
 			#snvRegex = r'^[A-Z][0-9]+[A-Z]$'
@@ -419,9 +429,8 @@ class EntityRecognizer:
 		for doc in corpus.documents:
 			entityCount = 0
 			for sentence in doc.sentences:
-				words = [ t.word for t in sentence.tokens ]
 
-				extractedTermData = self._processWords(words)
+				extractedTermData = self._processWords(sentence)
 				
 				for locs,terms,termtypesAndids in extractedTermData:
 					startToken = locs[0]
@@ -470,9 +479,6 @@ class EntityRecognizer:
 		assert isinstance(columnSeparator,str)
 		assert isinstance(termSeparator,str)
 
-		import spacy
-		nlp = spacy.load('en')
-
 		requiredColumns = max(idColumn,termsColumn)+1
 
 		lookup = defaultdict(set)
@@ -484,8 +490,7 @@ class EntityRecognizer:
 					assert len(split) >= requiredColumns, 'Line %d contains only %d columns when %d are required' % (lineno+1,len(split),requiredColumns)
 					termid,terms = split[idColumn],split[termsColumn]
 					for term in terms.split(termSeparator):
-						tupleterm = tuple([ token.text.strip().lower() for token in nlp(term) ])
-						tempLookup[tupleterm].add(termid)
+						tempLookup[term.strip()].add(termid)
 
 			for tupleterm,idlist in tempLookup.items():
 				lookup[tupleterm].add( (entityType,";".join(sorted(list(idlist)))) )

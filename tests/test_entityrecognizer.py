@@ -3,28 +3,29 @@ import os
 
 def makeTestLookup():
 	lookup = {}
-	lookup[('epidermal','growth','factor','receptor')] = [('gene','HGNC:3236'),('dummy','ID:1234')]
+	lookup['epidermal growth factor receptor'] = [('gene','HGNC:3236'),('dummy','ID:1234')]
 	#lookup[('epidermal','growth','factor','receptor')] = [('gene','HGNC:3236')]
-	lookup[('egfr',)] = [('gene','HGNC:3236')]
+	lookup['egfr'] = [('gene','HGNC:3236')]
 
-	lookup[('erbb2',)] = [('gene','HGNC:2064')]
-	lookup[('fgfr3',)] = [('gene','HGNC:3690')]
-	lookup[('tacc3',)] = [('gene','HGNC:11524')]
+	lookup['erbb2'] = [('gene','HGNC:2064')]
+	lookup['fgfr3'] = [('gene','HGNC:3690')]
+	lookup['tacc3'] = [('gene','HGNC:11524')]
 
-	lookup[('her2',)] = [('gene','HGNC:2064')]
-	lookup[('neu',)] = [('gene','HGNC:2064')]
-	lookup[('neus',)] = [('gene','HGNC:????')]
+	lookup['her2'] = [('gene','HGNC:2064')]
+	lookup['neu'] = [('gene','HGNC:2064')]
+	lookup['neus'] = [('gene','HGNC:????')]
 
-	lookup[('non','-','small','cell','lung','carcinoma')] = [('cancer','DOID:3908')]
-	lookup[('nsclc',)] = [('cancer','DOID:3908')]
-	lookup[('dlbcl',)] = [('cancer','DOID:0050745')]
-	lookup[('lymphoma',)] = [('cancer','DOID:0060058')]
+	lookup['non-small cell lung carcinoma'] = [('cancer','DOID:3908')]
+	lookup['nsclc'] = [('cancer','DOID:3908')]
+	lookup['dlbcl'] = [('cancer','DOID:0050745')]
+	lookup['lymphoma'] = [('cancer','DOID:0060058')]
 
-	lookup[('never','ending','umbrella')] = [('movie','IMDB:9999')]
-	lookup[('never','ending','umbrellas')] = [('movie','IMDB:9999')]
+	lookup['never ending umbrella'] = [('movie','IMDB:9999')]
+	lookup['never ending umbrellas'] = [('movie','IMDB:9999')]
 
 	lookupSets = {}
 	for termid,idlist in lookup.items():
+		#termid = " ".join(list(termid))
 		lookupSets[termid] = set(idlist)
 
 	return lookupSets
@@ -238,7 +239,7 @@ def test_entityrecognizer_fusion_1():
 	doc = corpus.documents[0]
 	assert len(doc.entities) == 2
 	entity1,entity2 = doc.entities
-	
+
 	assert entity1.entityType == 'gene'
 	assert entity1.externalID == 'combo|HGNC:3236|HGNC:2064'
 	assert entity1.text == 'EGFR-ERBB2'
@@ -756,10 +757,11 @@ def test_loadwordlist():
 
 	lookup = kindred.EntityRecognizer.loadWordlists({'thing':wordlistPath})
 
-	expected = {(u'term', u'term', u'term'): set([('thing', u'ID5')]), (u'term5',): set([('thing', u'ID4')]), (u'term4',): set([('thing', u'ID3')]), (u'term3',): set([('thing', u'ID3')]), (u'term2',): set([('thing', u'ID2')]), (u'term1',): set([('thing', u'ID1;ID4')]), (u'term-64',): set([('thing', u'ID5')])}
+	expected = {'term1': {('thing', 'ID1;ID4')}, 'term2': {('thing', 'ID2')}, 'term3': {('thing', 'ID3')}, 'term4': {('thing', 'ID3')}, 'term5': {('thing', 'ID4')}, 'term-64': {('thing', 'ID5')}, 'term term term': {('thing', 'ID5')}}
 
 	assert lookup == expected
 
 
 if __name__ == '__main__':
-	test_entityrecognizer_fusion_3()
+	test_loadwordlist()
+
