@@ -98,7 +98,7 @@ Loading data from files
 
 You have a directory of data files that you want to load. The files are in the JSON format.
 
->>> corpus = kindred.loadDir(dataFormat='json',directory='/home/user/data/')
+>>> corpus = kindred.load('json','/home/user/data/')
 
 And if it was in another format, you change the dataFormat parameter. Options include: 'standoff' for the standoff format used in the BioNLP Shared Tasks, 'bioc' for BioC files and 'simpletag' if there are a set of SimpleTag XML files. Note that we only use SimpleTag for generating easy test data and not for any large problems.
 

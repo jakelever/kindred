@@ -10,8 +10,8 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	print("Loading corpora...")
-	trainCorpus = kindred.loadDir('standoff',args.dataToBuildModel)
-	predictionCorpus = kindred.loadDir('standoff',args.dataToApplyModel)
+	trainCorpus = kindred.load('standoff',args.dataToBuildModel)
+	predictionCorpus = kindred.load('standoff',args.dataToApplyModel)
 
 	print("Building classifier...")
 	classifier = kindred.RelationClassifier()
