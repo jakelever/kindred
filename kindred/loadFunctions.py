@@ -381,7 +381,7 @@ def iterLoad(dataFormat,path,corpusSizeCutoff=500):
 def xor(a, b):
 	return (a and not b) or (not a and b)
 
-def load(dataFormat,path,verbose=False,ignoreEntities=[],ignoreComplexRelations=True):
+def load(dataFormat,path,ignoreEntities=[],ignoreComplexRelations=True):
 	"""
 	Load a corpus from a variety of formats. If path is a directory, it will try to load all files of the corresponding data type. For standoff format, it will use any associated annotations files (with suffixes .ann, .a1 or .a2)
 	
