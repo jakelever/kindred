@@ -12,6 +12,4 @@ six
 sphinx==1.5.5
 sphinx_rtd_theme
 fasteners
-pytest
-pytest_socket
 docstringtest
