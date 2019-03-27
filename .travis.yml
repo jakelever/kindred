@@ -22,7 +22,7 @@ install:
   - source ./.travis/install.sh
   - pip install --upgrade pip setuptools wheel
   - pip install --only-binary=numpy,scipy numpy scipy
-  - pip install pytest coverage pytest_socket docstringtest
+  - pip install coverage
   - pip install python-coveralls
   - pip install --upgrade coverage
 # Just check that the current install is happy
