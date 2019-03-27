@@ -171,6 +171,12 @@ At the moment, no. Kindred will only use the first annotation of a relation.
 Release Notes
 -------------
 
+Version 2.4.0
+-------------
+- Will be final Python2 compatible version
+- Updates to the loading and saving functionality so that everything is done through kindred.load or kindred.save
+- Changed EntityRecognizer logic to use token boundaries and exact string matching instead of matching tokenization (for faster wordlist loading)
+
 Version 2.3.0
 -------------
 - Add manuallyAnnotate for a simple mechanism to annotate candidate relations
