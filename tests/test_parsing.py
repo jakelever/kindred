@@ -156,7 +156,7 @@ def test_unicodeParse():
 	sentence = doc.sentences[0]
 	assert isinstance(sentence,kindred.Sentence)
 	
-	expectedWords = u"Erlotinib is a common treatment for NF-κB positive lung and unknown cancers".split()
+	expectedWords = u"Erlotinib is a common treatment for NF - κB positive lung and unknown cancers".split()
 	assert isinstance(sentence.tokens,list)
 	assert len(expectedWords) == len(sentence.tokens)
 	for w,t in zip(expectedWords,sentence.tokens):
@@ -167,7 +167,7 @@ def test_unicodeParse():
 	assert isinstance(sentence.entityAnnotations,list)
 	assert len(sentence.entityAnnotations) == 2
 	assertEntityWithLocation(sentence.entityAnnotations[0],'drug',[0],'1')
-	assertEntityWithLocation(sentence.entityAnnotations[1],'cancer',[8,11],'2')
+	assertEntityWithLocation(sentence.entityAnnotations[1],'cancer',[10,13],'2')
 	
 	assert isinstance(sentence.dependencies,list)
 	assert len(sentence.dependencies) > 0
