@@ -140,5 +140,16 @@ def test_loadBioNLP_SeeDev_full_test():
 	assert relationCount == 0
 	assert entityCount == 2216
 
+def test_bionlp_BB3_classifier():
+	corpus = kindred.bionlpst.load('2016-BB3-event-train')
+	classifier = kindred.RelationClassifier()
+	classifier.train(corpus)
+
+def test_bionlp_SeeDev_classifier():
+	corpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
+	classifier = kindred.RelationClassifier()
+	classifier.train(corpus)
+
+
 if __name__ == '__main__':
 	test_loadBioNLP_BB3_event_train()
