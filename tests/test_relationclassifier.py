@@ -87,7 +87,7 @@ def _SeeDevmini():
 	assert round(f1score,3) == 0.235
 
 def test_singleClassifier():
-	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
 
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
@@ -98,10 +98,10 @@ def test_singleClassifier():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.538
+	assert round(f1score,3) == 1.0
 
 def test_singleClassifier_triple():
-	trainCorpus, devCorpus = generateTestData(entityCount=3,positiveCount=100,negativeCount=100,relTypes=2)
+	trainCorpus, devCorpus = generateTestData(entityCount=3,positiveCount=100,negativeCount=100,relTypes=1)
 
 	trainRelations = trainCorpus.getRelations()
 	assert len(trainRelations) == 50
@@ -122,10 +122,10 @@ def test_singleClassifier_triple():
 		assert len(r.entities) == 3
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.48
+	assert round(f1score,3) == 1.0
 
 def test_noTFIDF():
-	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
 
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
@@ -136,10 +136,10 @@ def test_noTFIDF():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.558
+	assert round(f1score,3) == 1.0
 
 def test_logisticregression():
-	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
 
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
@@ -150,10 +150,10 @@ def test_logisticregression():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.481
+	assert round(f1score,3) == 1.0
 
 def test_logisticregression_threshold():
-	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
 
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
@@ -164,10 +164,10 @@ def test_logisticregression_threshold():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.481
+	assert round(f1score,3) == 1.0
 
 def test_singleFeature_entityTypes():
-	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
 
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
@@ -178,10 +178,10 @@ def test_singleFeature_entityTypes():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.577
+	assert round(f1score,3) == 1.0
 
 def test_filterByEntityTypes_validTypes():
-	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
 
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
@@ -192,10 +192,10 @@ def test_filterByEntityTypes_validTypes():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.455
+	assert round(f1score,3) == 0.97
 
 def test_filterByEntityTypes_invalidTypes():
-	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
 
 	predictionCorpus = devCorpus.clone()
 	predictionCorpus.removeRelations()
@@ -213,8 +213,8 @@ def test_filterByEntityTypes_invalidTypes():
 	assert round(f1score,3) == 0.0
 
 def test_predicting_thrice():
-	trainCorpus1, trainCorpus2 = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
-	trainCorpus3, testCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+	trainCorpus1, trainCorpus2 = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
+	trainCorpus3, testCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
 
 	for doc in trainCorpus1.documents:
 		for r in doc.relations:
@@ -243,7 +243,7 @@ def test_predicting_thrice():
 	assert len(relations) == len(set(relations)), "Duplicate relations found in predictions"
 
 def test_predicting_duplicates():
-	trainCorpus, testCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+	trainCorpus, testCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
 
 	testCorpus.removeRelations()
 
