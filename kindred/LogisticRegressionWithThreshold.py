@@ -59,29 +59,16 @@ class LogisticRegressionWithThreshold:
 
 		return predictions
 
-	def predictwithprobs(self,X):
+	def predict_proba(self,X):
 		"""
-		Make predictions and calculate probabilities for the class of each row in X. Class zero should represent no prediction.
-		Returns a matrix of predictions and a matrix of the associated probability
+		Calculate probabilities for the class of each row in X. Class zero should represent no prediction.
+		Returns a matrix of probabilities
 		
 		:param X: Testing vector
 		:type X: sparse matrix
-		:return: Predictions and probabilities of classes for each row in X
-		:rtype: matrixs
+		:return: Probabilities of classes for each row in X
+		:rtype: matrix
 		"""
 
-		probs = self.clf.predict_proba(X)
+		return self.clf.predict_proba(X)
 
-		# Ignore probabilities that fall below our threshold
-		probs[probs<self.threshold] = -1.0
-
-		# Make sure that the zero class is only select if all other options are below the threshold
-		probs[:,0] = -0.5
-
-		# And get the highest probability for each row
-		predictions = np.argmax(probs,axis=1)
-
-		# And extract the corresponding probabilities
-		probs = np.array( [ probs[i,j] for i,j in zip(range(probs.shape[0]),predictions) ] )
-
-		return predictions,probs

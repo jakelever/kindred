@@ -14,6 +14,7 @@ from kindred.CandidateBuilder import CandidateBuilder
 from kindred.Vectorizer import Vectorizer
 from kindred.RelationClassifier import RelationClassifier
 from kindred.LogisticRegressionWithThreshold import LogisticRegressionWithThreshold
+from kindred.MultiLabelClassifier import MultiLabelClassifier
 from kindred.EntityRecognizer import EntityRecognizer
 
 # General functions
