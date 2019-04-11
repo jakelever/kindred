@@ -141,14 +141,34 @@ def test_loadBioNLP_SeeDev_full_test():
 	assert entityCount == 2216
 
 def test_bionlp_BB3_classifier():
-	corpus = kindred.bionlpst.load('2016-BB3-event-train')
+	trainCorpus = kindred.bionlpst.load('2016-BB3-event-train')
+	devCorpus = kindred.bionlpst.load('2016-BB3-event-dev')
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
 	classifier = kindred.RelationClassifier()
-	classifier.train(corpus)
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.532
 
 def test_bionlp_SeeDev_classifier():
-	corpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
+	trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
+	devCorpus = kindred.bionlpst.load('2016-SeeDev-binary-dev')
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
 	classifier = kindred.RelationClassifier()
-	classifier.train(corpus)
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.349
 
 
 if __name__ == '__main__':
