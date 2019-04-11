@@ -257,6 +257,41 @@ def test_predicting_duplicates():
 	relations = [ r for doc in testCorpus.documents for r in doc.relations ]
 	assert len(relations) == len(set(relations)), "Duplicate relations found in predictions"
 			
+def test_singleClassifier_twoRelTypes():
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=2)
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = kindred.RelationClassifier()
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 0.687
+
+def test_doublelabels():
+	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
+
+	for doc in trainCorpus.documents:
+		newRelations = [ kindred.Relation("anotherLabel",r.entities,r.argNames) for r in doc.relations ]
+		doc.relations += newRelations
+	for doc in devCorpus.documents:
+		newRelations = [ kindred.Relation("anotherLabel",r.entities,r.argNames) for r in doc.relations ]
+		doc.relations += newRelations
+
+	predictionCorpus = devCorpus.clone()
+	predictionCorpus.removeRelations()
+
+	classifier = kindred.RelationClassifier()
+	classifier.train(trainCorpus)
+	
+	classifier.predict(predictionCorpus)
+	
+	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
+	assert round(f1score,3) == 1.0
+
 if __name__ == '__main__':
 	test_singleFeature_entityTypes()
 
