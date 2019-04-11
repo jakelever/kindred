@@ -171,9 +171,13 @@ At the moment, no. Kindred will only use the first annotation of a relation.
 Release Notes
 -------------
 
-Version 2.4.0
+Version 2.5.0
 -------------
 - Will be final Python2 compatible version
+- Added MultiLabelClassifier and changed behaviour when multiple relation types are present. They are now predicted independently using separate classifiers. This allows overlapping relations (where the same entities are part of multiple relations).
+
+Version 2.4.0
+-------------
 - Updates to the loading and saving functionality so that everything is done through kindred.load or kindred.save
 - Changed EntityRecognizer logic to use token boundaries and exact string matching instead of matching tokenization (for faster wordlist loading)
 
