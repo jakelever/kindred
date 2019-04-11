@@ -10,7 +10,7 @@ VERSION='2.4.3'
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 	long_description = f.read()
 
 with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
