@@ -68,24 +68,6 @@ def test_simpleRelationClassifier_emptyTrainCorpus():
 		classifier.train(trainCorpus)
 	assert excinfo.value.args == ('No candidate relations found in corpus for training. Does the corpus contain text and entity annotations with at least one sentence containing 2 entities.',)
 
-def _SeeDevmini():
-	trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
-	devCorpus = kindred.bionlpst.load('2016-SeeDev-binary-dev')
-
-	trainCorpus.documents = trainCorpus.documents[1:2]
-	devCorpus.documents = devCorpus.documents[:1]
-
-	predictionCorpus = devCorpus.clone()
-	predictionCorpus.removeRelations()
-
-	classifier = kindred.RelationClassifier()
-	classifier.train(trainCorpus)
-	
-	classifier.predict(predictionCorpus)
-	
-	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.235
-
 def test_singleClassifier():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
 
