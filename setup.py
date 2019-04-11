@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-VERSION='2.5.0'
+VERSION='2.5.1'
 
 here = path.abspath(path.dirname(__file__))
 
@@ -20,6 +20,7 @@ setup(name='kindred',
 	version=VERSION,
 	description='A relation extraction toolkit for biomedical text mining',
 	long_description=long_description,
+	long_description_content_type='text/markdown',
 	classifiers=[
 		'Intended Audience :: Developers',
 		'Intended Audience :: Education',
