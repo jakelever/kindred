@@ -259,10 +259,16 @@ Data types
    Corpus
    Document
    Entity
-   LogisticRegressionWithThreshold
    Relation
    Sentence
    Token
+
+Machine Learning Components
+~~~~~~~~~~
+
+.. autosummary::
+   LogisticRegressionWithThreshold
+   MultiLabelClassifier
 
 Data sources
 ~~~~~~~~~~~~
