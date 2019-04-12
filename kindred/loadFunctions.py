@@ -315,8 +315,11 @@ def convertBiocDocToKindredDocs(document):
 				arguments.append((n.role,n.refid))
 			arguments = sorted(arguments)
 				
-			sourceEntityIDs = [ entityID for argName,entityID in arguments]
-			argNames = [ argName for argName,entityID in arguments]
+			argNames = [ argName for argName,sourceEntityID in arguments]
+			sourceEntityIDs = [ sourceEntityID for argName,sourceEntityID in arguments]
+			for sourceEntityID in sourceEntityIDs:
+				assert sourceEntityID in sourceEntityIDToEntity, "Relation references entity %s which does not exist in BioC document id=%s" % (sourceEntityID,str(document.id))
+
 			entities = [ sourceEntityIDToEntity[sourceEntityID] for sourceEntityID in sourceEntityIDs ]
 			
 			r = kindred.Relation(relationType,entities,argNames)
