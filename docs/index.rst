@@ -267,6 +267,9 @@ Machine Learning Components
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
+   :toctree: _autosummary
+   :nosignatures:
+
    LogisticRegressionWithThreshold
    MultiLabelClassifier
 
