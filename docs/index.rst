@@ -264,7 +264,7 @@ Data types
    Token
 
 Machine Learning Components
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
    LogisticRegressionWithThreshold
