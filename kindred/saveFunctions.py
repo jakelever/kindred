@@ -30,13 +30,14 @@ def convertKindredCorpusToBioCCollection(corpus):
 			assert isinstance(e,kindred.Entity)
 
 			a = bioc.BioCAnnotation()
+			a.text = e.text
 			a.infons = {'type':e.entityType}
 			if e.sourceEntityID is None:
 				a.id = str(e.entityID)
 			else:
 				a.id = e.sourceEntityID
 
-			assert not a.id in seenEntityIDs
+			assert not a.id in seenEntityIDs, "Multiple entities with the same ID (%s) found" % a.id
 			seenEntityIDs.add(a.id)
 			kindredID2BiocID[e.entityID] = a.id
 
