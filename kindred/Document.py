@@ -84,13 +84,19 @@ class Document:
 	
 	def addEntity(self,entity):
 		"""
-		Add an entity to this document
+		Add an entity to this document. If document has been parsed, it will add the entity into the sentence structure and associated with tokens.
 		
 		:param entity: Entity to add
 		:type entity: kindred.Entity
 		"""
 
 		self.entities.append(entity)
+
+		if self.sentences:
+			for sentence in self.sentences:
+				overlappingTokens = [ i for i,t in enumerate(sentence.tokens) if any (not (t.endPos <= eStart or t.startPos >= eEnd) for eStart,eEnd in entity.position ) ]
+				if overlappingTokens:
+					sentence.addEntityAnnotation(entity,overlappingTokens)
 
 	def addRelation(self,relation):
 		"""
@@ -124,12 +130,17 @@ class Document:
 		cloned = Document(self.text,entities=self.entities,relations=self.relations,sourceFilename=self.sourceFilename)
 		return cloned
 
+	def removeEntities(self):
+		"""
+		Remove all entities in this document
+		"""
+		self.entities = []
+	
 	def removeRelations(self):
 		"""
 		Remove all relations in this document
 		"""
 		self.relations = []
-
 
 	def splitIntoSentences(self):
 		"""

@@ -443,7 +443,8 @@ class EntityRecognizer:
 						sourceEntityID = "T%d" % (entityCount+1)
 
 						e = kindred.Entity(entityType,text,[(startPos,endPos)],externalID=externalID,sourceEntityID=sourceEntityID)
-						doc.addEntity(e)
+						#doc.addEntity(e)
+						doc.entities.append(e)
 						sentence.addEntityAnnotation(e,loc)
 						entityCount += 1
 

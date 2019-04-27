@@ -49,7 +49,15 @@ class Corpus:
 		for doc in self.documents:
 			cloned.addDocument(doc.clone())
 		return cloned
-		
+
+	def removeEntities(self):
+		"""
+		Remove all entities in this corpus
+		"""
+
+		for doc in self.documents:
+			doc.removeEntities()
+
 	def getRelations(self):
 		"""
 		Get all relations in this corpus
