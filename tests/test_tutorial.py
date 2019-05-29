@@ -27,7 +27,11 @@ def test_tutorial_annotate():
 		command = "python %s/annotate.py --corpus %s/corpus.txt --wordlists %s/city.txt,%s/country.txt --outDir annotations2" % (tutorialDir,tutorialDir,tutorialDir,tutorialDir)
 		inputData = ['isCapital','0','1','0','1','0','0','1','1','0','0','x']
 
-		p = Popen(command.split(), stdout=PIPE, stdin=PIPE, stderr=STDOUT, encoding='utf8')
+		if sys.version_info[0] < 3:
+			p = Popen(command.split(), stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+		else:
+			p = Popen(command.split(), stdout=PIPE, stdin=PIPE, stderr=STDOUT, encoding='utf8')
+
 		stdout = p.communicate(input='\n'.join(inputData)+'\n')[0]
 		print(stdout)
 
