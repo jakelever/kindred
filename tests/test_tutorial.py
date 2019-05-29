@@ -83,7 +83,10 @@ Delhi\tIndia
 Nairobi\tKenya
 """
 
-		p = Popen(command.split(), stdout=PIPE, stdin=PIPE, stderr=STDOUT, encoding='utf8')
+		if sys.version_info[0] < 3:
+			p = Popen(command.split(), stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+		else:
+			p = Popen(command.split(), stdout=PIPE, stdin=PIPE, stderr=STDOUT, encoding='utf8')
 		stdout = p.communicate(input='\n')[0]
 		print(stdout)
 
