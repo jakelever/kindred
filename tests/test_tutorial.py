@@ -3,6 +3,7 @@ import tempfile
 import hashlib
 import tarfile
 import json
+import sys
 import shutil
 from subprocess import Popen, PIPE, STDOUT
 
