@@ -3,6 +3,7 @@ import tempfile
 import hashlib
 import tarfile
 import json
+import shutil
 from subprocess import Popen, PIPE, STDOUT
 
 class TempDir:
@@ -50,6 +51,8 @@ def test_tutorial_annotate():
 				withoutAnnotationsDir = "/".join(fullname.split("/")[1:])
 				newHashes[withoutAnnotationsDir] = fileHash
 
+		print('expectedHashes',expectedHashes)
+		print('newHashes',newHashes)
 		assert expectedHashes == newHashes, "Output of the annotate example run doesn't match the contents of annotations.tar.gz!"
 
 def test_tutorial_buildAndUseClassifier():
