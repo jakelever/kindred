@@ -9,11 +9,12 @@ class Entity:
 	:ivar position: Position within the text passage at which point entity appears. Entity may be non-contigious
 	:ivar sourceEntityID: Entity ID used in source document
 	:ivar externalID: ID associated with external ontology (e.g. Hugo Gene ID)
+	:ivar metadata: Additional metadata about the the entity
 	"""
 	
 	_nextInternalID = 1
 
-	def __init__(self,entityType,text,position,sourceEntityID=None,externalID=None):
+	def __init__(self,entityType,text,position,sourceEntityID=None,externalID=None,metadata={}):
 		"""
 		Constructor for Entity class
 		
@@ -22,11 +23,13 @@ class Entity:
 		:param position: Position within the text passage at which point entity appears. Entity may be non-contigious
 		:param sourceEntityID: Entity ID used in source document
 		:param externalID: ID associated with external ontology (e.g. Hugo Gene ID)
+		:param metadata: Additional metadata about the the entity
 		:type entityType: str
 		:type text: str
 		:type position: list of tuples of two integers
 		:type sourceEntityID: str
 		:type externalID: str
+		:type metadata: dict
 		"""
 	
 		assert isinstance(entityType, six.string_types), "entityType must be a string"
@@ -40,12 +43,15 @@ class Entity:
 			assert len(p) == 2, posErrorMsg
 			assert isinstance(p[0],int), posErrorMsg
 			assert isinstance(p[1],int), posErrorMsg
+
+		assert isinstance(metadata, dict)
 	
 		self.entityType = entityType
 		self.sourceEntityID = sourceEntityID
 		self.externalID = externalID
 		self.text = text
 		self.position = position
+		self.metadata = metadata
 		
 		self.entityID = Entity._nextInternalID
 		Entity._nextInternalID += 1
@@ -72,3 +78,15 @@ class Entity:
 
 	def __hash__(self):
 		return hash((self.entityType,self.text,tuple(self.position),self.sourceEntityID,self.externalID))
+
+	def clone(self):
+		"""
+		Clones the entity
+		
+		:return: Clone of the entity
+		:rtype: kindred.Entity
+		"""
+
+		cloned = Entity(self.entityType,self.text,list(self.position),self.sourceEntityID,self.externalID,dict(self.metadata))
+		return cloned
+
