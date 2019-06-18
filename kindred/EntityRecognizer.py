@@ -427,7 +427,7 @@ class EntityRecognizer:
 		assert corpus.parsed == True, "Corpus must already be parsed before entity recognition"
 
 		for doc in corpus.documents:
-			entityCount = 0
+			entityCount = len(doc.entities)
 			for sentence in doc.sentences:
 
 				extractedTermData = self._processWords(sentence)
