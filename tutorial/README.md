@@ -130,13 +130,11 @@ Applying classifier...
 Saving results to directory...
 
 Predicted relations:
-Delhi	India
-Mombasa	Kenya
-Nairobi	Kenya
-Denver	Canada
+Delhi   India
+Nairobi Kenya
 ```
 
-As we gave it such a small training set, it obviously makes a few errors. Here, 2 of the 4 predictions are correct. Try annotating more or fewer of the sentences to begin with to see if it does better.
+Not bad! We get two correct answers but we're definitely missing many other correct ones. Try annotating more or fewer of the sentences to begin with to see if it does better.
 
 It also saves the predicted relations as annotations into the predicted_relations directory which may be useful for viewing the sentence that contains the annotation.
 

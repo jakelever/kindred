@@ -491,10 +491,10 @@ class EntityRecognizer:
 					assert len(split) >= requiredColumns, 'Line %d contains only %d columns when %d are required' % (lineno+1,len(split),requiredColumns)
 					termid,terms = split[idColumn],split[termsColumn]
 					for term in terms.split(termSeparator):
-						tempLookup[term.strip()].add(termid)
+						tempLookup[term.lower().strip()].add(termid)
 
-			for tupleterm,idlist in tempLookup.items():
-				lookup[tupleterm].add( (entityType,";".join(sorted(list(idlist)))) )
+			for term,idlist in tempLookup.items():
+				lookup[term].add( (entityType,";".join(sorted(list(idlist)))) )
 
 		return dict(lookup)
 
