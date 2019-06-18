@@ -32,6 +32,8 @@ def convertKindredCorpusToBioCCollection(corpus):
 			a = bioc.BioCAnnotation()
 			a.text = e.text
 			a.infons = {'type':e.entityType}
+			a.infons.update(e.metadata)
+
 			if e.sourceEntityID is None:
 				a.id = str(e.entityID)
 			else:

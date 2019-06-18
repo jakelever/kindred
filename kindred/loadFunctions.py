@@ -288,6 +288,9 @@ def convertBiocDocToKindredDocs(document):
 			
 			entityType = a.infons['type']
 			sourceEntityID = a.id
+
+			metadata = a.infons
+			del metadata['type']
 			
 			position = []
 			segments = []
@@ -300,7 +303,7 @@ def convertBiocDocToKindredDocs(document):
 				segments.append(text[startPos:endPos])
 			
 			entityText = " ".join(segments)
-			e = kindred.Entity(entityType,entityText,position,sourceEntityID)
+			e = kindred.Entity(entityType,entityText,position,sourceEntityID,metadata=metadata)
 			entities.append(e)
 
 		sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
@@ -431,6 +434,9 @@ def load(dataFormat,path,ignoreEntities=[],ignoreComplexRelations=True):
 				doc.sourceFilename = filename
 				corpus.addDocument(doc)
 
+		if len(corpus.documents) == 0:
+			raise RuntimeError("No documents loaded from directory (%s). Are you sure this directory contains the corpus (format: %s)" % (path,dataFormat))
+
 	elif dataFormat == 'standoff':
 		doc = loadDataFromStandoff(path,ignoreEntities=ignoreEntities)
 		corpus.addDocument(doc)
@@ -446,9 +452,6 @@ def load(dataFormat,path,ignoreEntities=[],ignoreComplexRelations=True):
 		doc = parseSimpleTag(filecontents,ignoreEntities=ignoreEntities)
 		doc.sourceFilename = os.path.basename(path)
 		corpus.addDocument(doc)
-	
-	if len(corpus.documents) == 0:
-		raise RuntimeError("No documents loaded from directory (%s). Are you sure this directory contains the corpus (format: %s)" % (directory,dataFormat))
 
 	return corpus
 			
