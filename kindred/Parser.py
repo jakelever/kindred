@@ -10,32 +10,29 @@ class Parser:
 	"""
 	Runs Spacy on corpus to get sentences and associated tokens
 	
-	:ivar language: Language to parse (en/de/es/pt/fr/it/nl)
+	:ivar model: Model for parsing (e.g. en/de/es/pt/fr/it/nl)
 	:ivar nlp: The underlying Spacy language model to use for parsing
 	"""
 
-	_languageModels = {}
+	_models = {}
 	
-	def __init__(self,language='en'):
+	def __init__(self,model='en'):
 		"""
 		Create a Parser object that will use Spacy for parsing. It offers all the same languages that Spacy offers. Check out: https://spacy.io/usage/models. Note that the language model needs to be downloaded first (e.g. python -m spacy download en)
 		
-		:param language: Language to parse (en/de/es/pt/fr/it/nl)
-		:type language: str
+		:param model: Name of an available Spacy language model for parsing (e.g. en/de/es/pt/fr/it/nl)
+		:type model: str
 		"""
 
 		# We only load spacy if a Parser is created (to allow ReadTheDocs to build the documentation easily)
 		import spacy
 
-		acceptedLanguages = ['en','de','es','pt','fr','it','nl']
-		assert language in acceptedLanguages, "Language for parser (%s) not in accepted languages: %s" % (language,str(acceptedLanguages))
+		self.model = model
 
-		self.language = language
+		if not model in Parser._models:
+			Parser._models[model] = spacy.load(model, disable=['ner'])
 
-		if not language in Parser._languageModels:
-			Parser._languageModels[language] = spacy.load(language, disable=['ner'])
-
-		self.nlp = Parser._languageModels[language]
+		self.nlp = Parser._models[model]
 
 	def _sentencesGenerator(self,text):
 		if six.PY2 and isinstance(text,str):
