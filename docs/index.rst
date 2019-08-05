@@ -171,6 +171,11 @@ At the moment, no. Kindred will only use the first annotation of a relation.
 Release Notes
 -------------
 
+Version 2.6.0
+-------------
+- Added option for metadata associated with entities
+- Added option to load any Spacy model for parsing
+
 Version 2.5.0
 -------------
 - Will be final Python2 compatible version
