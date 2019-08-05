@@ -297,7 +297,7 @@ def convertBiocDocToKindredDocs(document):
 			
 			for l in a.locations:
 				assert isinstance(l,bioc.BioCLocation)
-				startPos = int(native(l.offset)) - offset
+				startPos = int(native(l.offset))
 				endPos = startPos + int(native(l.length))
 				position.append((startPos,endPos))
 				segments.append(text[startPos:endPos])
