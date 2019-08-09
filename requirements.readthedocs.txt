@@ -4,7 +4,7 @@ scipy
 intervaltree
 networkx
 future
-bioc>=1.3.1
+bioc==1.2.3
 pytest_socket
 six
 sphinx==1.5.5

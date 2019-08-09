@@ -131,8 +131,8 @@ def save(corpus,dataFormat,path):
 		assert not os.path.isdir(path), "Path cannot be an existing directory for 'biocxml'."
 
 		collection = convertKindredCorpusToBioCCollection(corpus)
-		with bioc.BioCXMLDocumentWriter(path) as writer:
+		with bioc.iterwrite(path) as writer:
 			for doc in collection.documents:
-				writer.write_document(doc)
+				writer.writedocument(doc)
 
 	
