@@ -173,12 +173,12 @@ Release Notes
 
 Version 2.6.0
 -------------
+- Will be final Python2 compatible version
 - Added option for metadata associated with entities
 - Added option to load any Spacy model for parsing
 
 Version 2.5.0
 -------------
-- Will be final Python2 compatible version
 - Added MultiLabelClassifier and changed behaviour when multiple relation types are present. They are now predicted independently using separate classifiers. This allows overlapping relations (where the same entities are part of multiple relations).
 
 Version 2.4.0
