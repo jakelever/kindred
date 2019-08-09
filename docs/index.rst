@@ -173,7 +173,7 @@ Release Notes
 
 Version 2.6.0
 -------------
-- Will be final Python2 compatible version
+- Release v2.6.1 is the final Python2 compatible version
 - Added option for metadata associated with entities
 - Added option to load any Spacy model for parsing
 

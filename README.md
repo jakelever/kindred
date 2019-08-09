@@ -18,7 +18,7 @@
 </a>
 </p>
 
-Kindred is a package for relation extraction in biomedical texts. Given some training data, it can build a model to identify relations between entities (e.g. drugs, genes, etc) in a sentence.
+Kindred is a Python3 package for relation extraction in biomedical texts. Given some training data, it can build a model to identify relations between entities (e.g. drugs, genes, etc) in a sentence.
 
 ## Installation
 

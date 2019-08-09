@@ -5,7 +5,11 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-VERSION='2.6.1'
+import sys
+if sys.version_info[0] < 3:
+	raise Exception("PubRunner requires Python 3")
+
+VERSION='2.6.2'
 
 here = path.abspath(path.dirname(__file__))
 
@@ -29,8 +33,8 @@ setup(name='kindred',
 		'License :: OSI Approved :: MIT License',
 		'Operating System :: Unix',
 		'Operating System :: MacOS :: MacOS X',
-		'Programming Language :: Python :: 2.7',
 		'Programming Language :: Python :: 3.6',
+		'Programming Language :: Python :: 3.7',
 		'Topic :: Scientific/Engineering',
 		'Topic :: Scientific/Engineering :: Artificial Intelligence',
 		'Topic :: Scientific/Engineering :: Human Machine Interfaces',
