@@ -89,7 +89,7 @@ def test_vectorizer_defaults():
 		assert round(gotVal,8) == round(expectedVal,8) # Check rounded values (for floating point comparison issue)
 		
 	# As a quick check, we'll confirm that the column means are as expected
-	expected2 = [5.0, 4.0, 9.0, 5.0, 4.0, 9.0, 0.7848330659854781, 1.0, 1.0, 2.1163053433489787, 1.037330992404908, 0.0, 2.1163053433489787, 2.386006098839105, 1.99154811934689, 0.0, 1.594941622753311, 0.0, 1.0, 1.037330992404908, 2.1163053433489787, 1.0, 0.0, 1.0581526716744893, 0.0, 0.8164965809277259, 1.0, 0.8164965809277259, 2.1547005383792515, 1.0581526716744893, 0.0, 2.1547005383792515, 0.0, 0.0, 0.0, 0.8005865164268136, 0.0, 2.0, 0.0, 0.8164965809277259, 2.0, 0.0, 0.0, 0.8164965809277259, 1.0581526716744893, 2.1547005383792515, 0.8164965809277259, 0.8164965809277259, 0.0, 4.0, 10.0, 2.0, 10.0, 10.0, 3.0, 1.0, 0.0, 3.0, 1.0, 0.0]
+	expected2 = [5.0, 4.0, 9.0, 5.0, 4.0, 9.0, 0.7848330659854781, 1.0, 1.0, 2.1163053433489787, 1.037330992404908, 0.0, 2.1163053433489787, 2.386006098839105, 1.99154811934689, 0.0, 1.594941622753311, 0.0, 1.0, 1.037330992404908, 2.1163053433489787, 1.0, 0.0, 1.0581526716744893, 0.0, 0.8164965809277259, 1.0, 0.8164965809277259, 2.1547005383792515, 1.0581526716744893, 0.0, 2.1547005383792515, 0.0, 0.0, 0.0, 0.8005865164268136, 0.0, 2.0, 0.0, 0.8164965809277259, 2.0, 0.0, 0.0, 0.8164965809277259, 1.0581526716744893, 2.1547005383792515, 0.8164965809277259, 0.8164965809277259, 0.0, 2.0, 10.0, 2.0, 10.0, 10.0, 3.0, 1.0, 0.0, 3.0, 1.0, 0.0]
 	colmeans2 = np.sum(matrix2,axis=0).tolist()[0]
 	assert len(expected2) == len(colmeans2)
 	for gotVal,expectedVal in zip(colmeans2,expected2):
@@ -235,7 +235,7 @@ def test_vectorizer_dependencyPathEdges():
 	
 	# As a quick check, we'll confirm that the column means are as expected
 	colmeans2 = np.sum(matrix2,axis=0)
-	assert colmeans2.tolist() == [[4.0, 10.0, 2.0, 10.0, 10.0]]
+	assert colmeans2.tolist() == [[2.0, 10.0, 2.0, 10.0, 10.0]]
 	
 def test_vectorizer_dependencyPathEdgesNearEntities():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
@@ -411,7 +411,7 @@ def test_vectorizer_dependencyPathEdges_noTFIDF():
 	
 	# As a quick check, we'll confirm that the column means are as expected
 	colmeans2 = np.sum(matrix2,axis=0)
-	assert colmeans2.tolist() == [[4.0, 10.0, 2.0, 10.0, 10.0]]
+	assert colmeans2.tolist() == [[2.0, 10.0, 2.0, 10.0, 10.0]]
 
 def test_vectorizer_dependencyPathEdgesNearEntities_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
