@@ -21,7 +21,7 @@ class RelationClassifier:
 	:param isTrained: Whether the classifier has been trained yet. Will throw an error if predict is called before it is trained.
 	"""
 	
-	def __init__(self,classifierType='SVM',tfidf=True,features=None,threshold=None,entityCount=2,acceptedEntityTypes=None):
+	def __init__(self,classifierType='SVM',tfidf=True,features=None,threshold=None,entityCount=2,acceptedEntityTypes=None,model='en'):
 		"""
 		Constructor for the RelationClassifier class
 		
@@ -31,12 +31,14 @@ class RelationClassifier:
 		:param threshold: A specific threshold to use for classification (which will then use a logistic regression classifier)
 		:param entityCount: Number of entities in each relation (default=2). Passed to the CandidateBuilder (if needed)
 		:param acceptedEntityTypes: Tuples of entity types that relations must match. None will match allow relations of any entity types. Passed to the CandidateBuilder (if needed)
+		:param model: Name of an available Spacy language model for any parsing needed (e.g. en/de/es/pt/fr/it/nl)
 		:type classifierType: str
 		:type tfidf: bool
 		:type features: list of str
 		:type threshold: float
 		:type entityCount: int
 		:type acceptedEntityTypes: list of tuples
+		:type model: str
 		"""
 		assert classifierType in ['SVM','LogisticRegression'], "classifierType must be 'SVM' or 'LogisticRegression'"
 		assert classifierType == 'LogisticRegression' or threshold is None, "Threshold can only be used when classifierType is 'LogisticRegression'"
@@ -59,6 +61,7 @@ class RelationClassifier:
 			self.chosenFeatures = features
 			
 		self.threshold = threshold
+		self.model = model
 
 	def train(self,corpus):
 		"""
@@ -70,7 +73,7 @@ class RelationClassifier:
 		assert isinstance(corpus,kindred.Corpus)
 
 		if not corpus.parsed:
-			parser = kindred.Parser()
+			parser = kindred.Parser(model=self.model)
 			parser.parse(corpus)
 		
 		self.candidateBuilder = CandidateBuilder(entityCount=self.entityCount,acceptedEntityTypes=self.acceptedEntityTypes)
@@ -147,7 +150,7 @@ class RelationClassifier:
 		assert isinstance(corpus,kindred.Corpus)
 		
 		if not corpus.parsed:
-			parser = kindred.Parser()
+			parser = kindred.Parser(model=self.model)
 			parser.parse(corpus)
 		
 		candidateRelations = self.candidateBuilder.build(corpus)
