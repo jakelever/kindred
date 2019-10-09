@@ -200,7 +200,7 @@ class EntityRecognizer:
 	:ivar removePathways: Whether it will remove genes that are actually naming a signalling pathway (e.g. MTOR pathway)
 	"""
 
-	def __init__(self,lookup,detectFusionGenes=False,detectMicroRNA=False,acronymDetectionForAmbiguity=False,mergeTerms=False,detectVariants=False,variantStopwords=[],detectPolymorphisms=False,removePathways=False):
+	def __init__(self,lookup,detectFusionGenes=False,detectMicroRNA=False,acronymDetectionForAmbiguity=False,mergeTerms=False,detectVariants=False,variantStopwords=None,detectPolymorphisms=False,removePathways=False):
 		"""
 		Create an EntityRecognizer and provide the lookup table for terms and additional flags for what to identify in text
 
@@ -223,6 +223,9 @@ class EntityRecognizer:
 		:type detectPolymorphisms: bool
 		:type removePathways: bool
 		"""
+
+		if variantStopwords is None:
+			variantStopwords = []
 
 		assert isinstance(lookup,dict)
 		for termsmatch,typeAndIDs in lookup.items():

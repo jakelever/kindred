@@ -11,7 +11,7 @@ class CandidateRelation:
 	:ivar sentence: Parsed sentence containing the candidate relation
 	"""
 	
-	def __init__(self,entities=[],knownTypesAndArgNames=[],sentence=None):
+	def __init__(self,entities=None,knownTypesAndArgNames=None,sentence=None):
 		"""
 		Constructor for Candidate Relation class
 		
@@ -22,6 +22,11 @@ class CandidateRelation:
 		:type knownTypesAndArgNames: list of tuples (str, list of str)
 		:type sentence: kindred.Sentence
 		"""
+
+		if entities is None:
+			entities = []
+		if knownTypesAndArgNames is None:
+			knownTypesAndArgNames = []
 
 		assert isinstance(entities,list),  "entities must be a list of kindred.Entity"
 		for entity in entities:

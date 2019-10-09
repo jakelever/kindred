@@ -13,7 +13,7 @@ class Document:
 	:ivar sentences: List of sentences (:class:`kindred.Sentence`) if the document has been parsed
 	"""
 	
-	def __init__(self,text,entities=None,relations=None,sourceFilename=None,metadata={},loadFromSimpleTag=False):
+	def __init__(self,text,entities=None,relations=None,sourceFilename=None,metadata=None,loadFromSimpleTag=False):
 		"""
 		Constructor for a Document that can take text using the SimpleTag XML format, or a set of Entities and Relations with associated text.
 		
@@ -32,7 +32,11 @@ class Document:
 		"""
 
 		self.sourceFilename = sourceFilename
-		self.metadata = metadata
+
+		if metadata is None:
+			self.metadata = {}
+		else:
+			self.metadata = metadata
 
 		if loadFromSimpleTag:
 			assert entities is None and relations is None, 'Entities and relations will be extracted from SimpleTag. They cannot also be passed in as parameters'
