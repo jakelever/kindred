@@ -174,7 +174,7 @@ def test_filterByEntityTypes_validTypes():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.97
+	assert round(f1score,3) == 1.0
 
 def test_filterByEntityTypes_invalidTypes():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
@@ -251,7 +251,7 @@ def test_singleClassifier_twoRelTypes():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.687
+	assert round(f1score,3) == 0.662
 
 def test_doublelabels():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)
