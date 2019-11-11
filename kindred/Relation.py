@@ -12,7 +12,7 @@ class Relation:
 	:ivar probability: Optional probability for predicted relations
 	"""
 	
-	def __init__(self,relationType=None,entities=[],argNames=None,probability=None):
+	def __init__(self,relationType=None,entities=None,argNames=None,probability=None):
 		"""
 		Constructor for Relation class
 		
@@ -25,6 +25,9 @@ class Relation:
 		:type argNames: list of str
 		:type probability: float
 		"""
+
+		if entities is None:
+			entities = []
 
 		assert relationType is None or isinstance(relationType, six.string_types), "relationType must be a string"
 		self.relationType = relationType

@@ -14,7 +14,7 @@ class Entity:
 	
 	_nextInternalID = 1
 
-	def __init__(self,entityType,text,position,sourceEntityID=None,externalID=None,metadata={}):
+	def __init__(self,entityType,text,position,sourceEntityID=None,externalID=None,metadata=None):
 		"""
 		Constructor for Entity class
 		
@@ -31,6 +31,9 @@ class Entity:
 		:type externalID: str
 		:type metadata: dict
 		"""
+
+		if metadata is None:
+			metadata = {}
 	
 		assert isinstance(entityType, six.string_types), "entityType must be a string"
 		assert isinstance(text, six.string_types), "text must be a string"

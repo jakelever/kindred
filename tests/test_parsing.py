@@ -75,7 +75,8 @@ def test_parsing_dependencyGraph():
 	assert len(sentence.entityAnnotations) == 0
 	
 	assert isinstance(sentence.dependencies,list)
-	expectedDependencies = [(1, 0, u'nsubj'), (1, 1, u'ROOT'), (3, 2, u'aux'), (1, 3, u'xcomp'), (3, 4, u'prt'), (6, 5, u'poss'), (3, 6, u'dobj'), (3, 7, u'prep'), (9, 8, u'amod'), (7, 9, u'pobj')]
+	expectedDependencies = [(1, 0, 'nsubj'), (1, 1, 'ROOT'), (3, 2, 'aux'), (1, 3, 'xcomp'), (3, 4, 'prt'), (6, 5, 'poss'), (4, 6, 'pobj'), (3, 7, 'prep'), (9, 8, 'amod'), (7, 9, 'pobj')]
+	print(sentence.dependencies)
 	assert sentence.dependencies == expectedDependencies
 	
 def test_twoSentenceParse():

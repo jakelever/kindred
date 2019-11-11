@@ -18,15 +18,18 @@ def _findDir(name, path):
 
 # From: https://stackoverflow.com/questions/32763720/timeout-a-file-download-with-python-urllib
 def _downloadFile(url,filename,timeout=180):
-	# Make the actual request, set the timeout for no data to 10 seconds and enable streaming responses so we don't have to keep the large files in memory
-	request = requests.get(url, timeout=10, stream=True)
+	try:
+		# Make the actual request, set the timeout for no data to 10 seconds and enable streaming responses so we don't have to keep the large files in memory
+		request = requests.get(url, timeout=10, stream=True)
 
-	# Open the output file and make sure we write in binary mode
-	with open(filename, 'wb') as fh:
-		# Walk through the request response in chunks of 1024 * 1024 bytes, so 1MiB
-		for chunk in request.iter_content(1024 * 1024):
-			# Write the chunk to the file
-			fh.write(chunk)
+		# Open the output file and make sure we write in binary mode
+		with open(filename, 'wb') as fh:
+			# Walk through the request response in chunks of 1024 * 1024 bytes, so 1MiB
+			for chunk in request.iter_content(1024 * 1024):
+				# Write the chunk to the file
+				fh.write(chunk)
+	except requests.exceptions.RequestException as e:
+		raise
 			
 
 def _downloadFiles(files,downloadDirectory):
