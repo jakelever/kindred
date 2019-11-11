@@ -297,6 +297,11 @@ class EntityRecognizer:
 
 		if self.detectMicroRNA:
 			for i,w in enumerate(words):
+				# Require that microRNA names contain a digit
+				containsDigits = any( [ d in w for d in string.digits ] )
+				if not containsDigits:
+					continue
+
 				lw = w.lower()
 				if startsWithButNotAll(lw,"mir-") or startsWithButNotAll(lw,"hsa-mir-") or startsWithButNotAll(lw,"microrna-") or (startsWithButNotAll(lw,"mir") and lw[3] in string.digits):
 					potentialLocs = (i,i+1)
