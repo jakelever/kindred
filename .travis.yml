@@ -26,6 +26,10 @@ install:
   - pip uninstall -y kindred
   - pip install .
   - sh ./tests/installSpacyLanguages.sh
+  - cd docs
+  - make html
+  - make clean
+  - cd ..
 # command to run tests
 script:
   - coverage --version
