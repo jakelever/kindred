@@ -35,17 +35,17 @@ The .txt file contains Unicode text and no annotations. The .a1 file contains en
 
 The identifiers for an entity annotation (in the .a1 file) must start with a T. The T stands for trigger. The identifiers for a relation annotation (in the .a2 file) must start with an E or R. For Kindred, these are synonymous. Note, that Kindred doesn't support "complex" relations, which are relations where one of the arguments is another relation. All relations must be between entities.
 
-The following code would load these files to create a :class:`kindred.Document`.
+The following code would load these files to create a :class:`kindred.Corpus` with a single document.
 
 .. code-block:: python
 
-   doc = kindred.loadDoc(dataFormat='standoff',txtPath='example.txt',a1Path='example.a1',a2Path='example.a2')
+   corpus = kindred.load('standoff','example.txt')
 
 Perhaps more useful, to load a whole corpus with multiple files in the format, use the following code assuming that the files are in the example directory. This will create a :class:`kindred.Corpus` object.
 
 .. code-block:: python
 
-   corpus = kindred.loadDir(dataFormat='standoff',directory='example/')
+   corpus = kindred.load('standoff','example')
 
 JSON format
 -----------
@@ -74,7 +74,7 @@ To load a whole corpus with multiple files in the format, use the following code
 
 .. code-block:: python
 
-   corpus = kindred.loadDir(dataFormat='json',directory='example/')
+   corpus = kindred.load('json','example')
 
 BioC XML format
 ---------------
@@ -116,7 +116,7 @@ To load a whole directory of BioC XML files, use the code below. This will creat
 
 .. code-block:: python
 
-   corpus = kindred.loadDir(dataFormat='bioc',directory='example/')
+   corpus = kindred.load('bioc','example')
 
 Simple Tag format
 -----------------
@@ -142,7 +142,7 @@ If you do need to load a directory of these files (with suffix: .simple), the fo
 
 .. code-block:: python
 
-   corpus = kindred.loadDir(dataFormat='simpletag',directory='example/')
+   corpus = kindred.load('simpletag','example')
 
 Streaming
 ---------
