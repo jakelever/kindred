@@ -151,7 +151,7 @@ Some corpora are too large to load into memory in a single go. Kindred supports 
 
 .. code-block:: python
 
-   for corpus in kindred.iterLoadDataFromBioc('example.bioc.xml',corpusSizeCutoff=3):
+   for corpus in kindred.iterLoad('example.bioc.xml',corpusSizeCutoff=3):
            pass
 
 
