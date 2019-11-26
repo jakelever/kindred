@@ -136,7 +136,7 @@ It is most useful for quickly creating examples for testing. For example, the co
 
    text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer>. <drug id="3">Aspirin</drug> is the main cause of <disease id="4">boneitis</disease>. <relation type="treats" subj="1" obj="2" />'
 
-   corpus = :class:`kindred.Corpus`(text,loadFromSimpleTag=True)
+   corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 
 If you do need to load a directory of these files (with suffix: .simple), the following command will load them into a :class:`kindred.Corpus` file.
 
