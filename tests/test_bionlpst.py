@@ -153,7 +153,7 @@ def test_bionlp_BB3_classifier():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.496
+	assert round(f1score,3) == 0.498
 
 def test_bionlp_SeeDev_classifier():
 	trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
@@ -168,7 +168,7 @@ def test_bionlp_SeeDev_classifier():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.359
+	assert round(f1score,3) == 0.338
 
 
 if __name__ == '__main__':
