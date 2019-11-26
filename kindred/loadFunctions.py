@@ -297,12 +297,18 @@ def convertBiocDocToKindredDocs(document):
 			
 			for l in a.locations:
 				assert isinstance(l,bioc.BioCLocation)
-				startPos = int(native(l.offset))
+				startPos = int(native(l.offset)) - offset
 				endPos = startPos + int(native(l.length))
+
+				assert startPos >= 0 and startPos <= len(text) and endPos >= 0 and endPos <= len(text), "Entity offsets (offset=%s,length=%s) are outside the span of the text (%s)" % (str(l.offset),str(l.length),passage.text)
+
 				position.append((startPos,endPos))
 				segments.append(text[startPos:endPos])
 			
 			entityText = " ".join(segments)
+
+			assert entityText == a.text, "Mismatch in entity annotation between expected text (%s) and extracted text (%s) using offset info for passage with text: %s" % (a.text, entityText, text)
+
 			e = kindred.Entity(entityType,entityText,position,sourceEntityID,metadata=metadata)
 			entities.append(e)
 

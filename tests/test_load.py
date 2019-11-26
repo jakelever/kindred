@@ -125,6 +125,25 @@ def test_loadBiocFile():
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
 	assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
+def test_loadBiocFile_multiplePassages():
+	scriptDir = os.path.dirname(__file__)
+	xmlPath = os.path.join(scriptDir,'data_multiplePassages','example.bioc.xml')
+
+	corpus = kindred.load(dataFormat='biocxml',path=xmlPath)
+	
+	assert isinstance(corpus,kindred.Corpus)
+	assert len(corpus.documents) == 2
+
+	for doc in corpus.documents:
+		assert isinstance(doc,kindred.Document)
+		entities = doc.entities
+		relations = doc.relations
+
+		sourceEntityIDsToEntity = { entity.sourceEntityID:entity for entity in entities }
+
+		assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+		assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+		assert relations == [kindred.Relation('causes',[sourceEntityIDsToEntity["T1"],sourceEntityIDsToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
 	
 	
 def test_loadStandoffFile_dir():
@@ -283,7 +302,18 @@ def test_iterLoadBiocDir():
 
 		assert totalDocCount == docsToCreate
 
-if __name__ == '__main__':
-	test_loadBiocFile()
-	
+#def test_loadBiocreativeV_CDR():
+#	with TempDir() as tempDir:
+#		url = 'http://www.biocreative.org/media/store/files/2016/CDR_Data.zip'
+#		expectedFile = 'CDR_Data.zip'
+#		expectedSHA256 = '0a359a7f038d283a7b05b084fa73de014e7410e1f5d7034bf3fd01f016fc2444'
+#
+#		filesToDownload = [(url,expectedFile,expectedSHA256)]
+#
+#		kindred.utils._downloadFiles(filesToDownload,tempDir)
+#
+#		mainDir = os.path.join(tempDir,'CDR_Data','CDR.Corpus.v010516')
+#
+#		corpus = kindred.load(dataFormat='biocxml',path=os.path.join(mainDir,'CDR_TrainingSet.BioC.xml'))
+
 
