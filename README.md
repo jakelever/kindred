@@ -24,13 +24,13 @@ Kindred is a Python3 package for relation extraction in biomedical texts. Given 
 
 You can install "kindred" via [pip](https://pypi.python.org/pypi/pip/) from [PyPI](https://pypi.org/project/kindred/)
 
-```
+```bash
 pip install kindred
 ```
 
 As of v2, Kindred relies on the [Spacy](https://spacy.io) toolkit for parsing. After installing kindred (which also installs spacy), you will need to install a Spacy language model. For instance, the command below installs the English language model::
 
-```
+```bash
 python -m spacy download en 
 ```
 
@@ -40,7 +40,7 @@ Check out the [tutorial](https://github.com/jakelever/kindred/tree/master/tutori
 
 ### BioNLP Shared Task Example
 
-```
+```python
 import kindred
 trainCorpus = kindred.bionlpst.load('2016-BB3-event-train')
 devCorpus = kindred.bionlpst.load('2016-BB3-event-dev')
@@ -54,13 +54,13 @@ f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
 
 ### PubAnnotation Example
 
-```
+```python
 corpus = kindred.pubannotation.load('bionlp-st-gro-2013-development')
 ```
 
 ### PubTator Example
 
-```
+```python
 corpus = kindred.pubtator.load([19894120,19894121])
 ```
 
@@ -72,7 +72,7 @@ Kindred can load several formats, including BioNLP Shared Task, JSON, BioC XML a
 
 It would be wonderful if you could cite the [associated paper](http://aclweb.org/anthology/W17-2322) for this package if used in any academic research.
 
-```
+```bibtex
 @article{lever2017painless,
    title={Painless {R}elation {E}xtraction with {K}indred},
    author={Lever, Jake and Jones, Steven},
