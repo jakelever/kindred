@@ -19,7 +19,7 @@ install:
   - pip install --upgrade pip setuptools wheel
   - pip install --only-binary=numpy,scipy numpy scipy
   - pip install coverage pytest pytest_socket
-  - pip install python-coveralls
+  - pip install coveralls
   - pip install --upgrade coverage
 # Just check that the current install is happy
   - pip install kindred
