@@ -70,13 +70,13 @@ def convertKindredCorpusToBioCCollection(corpus):
 def getUniqueRelationID(relations):
 	usedIDs
 
-def saveDocToSTFormat(data,txtPath,a1Path,a2Path):
-	assert isinstance(data,kindred.Document)
+def saveDocToSTFormat(doc,txtPath,a1Path,a2Path):
+	assert isinstance(doc,kindred.Document)
 
 	with codecs.open(txtPath,'w','utf8') as txtFile, codecs.open(a1Path,'w','utf8') as a1File, codecs.open(a2Path,'w','utf8') as a2File:
-		txtFile.write(data.text)
+		txtFile.write(doc.text)
 		
-		for e in data.entities:
+		for e in doc.entities:
 			assert isinstance(e,kindred.Entity)
 			assert isinstance(e.sourceEntityID,six.string_types), "Entities must have a sourceEntityID (e.g. T1) to be saved in the standoff format"
 		
@@ -84,12 +84,12 @@ def saveDocToSTFormat(data,txtPath,a1Path,a2Path):
 			line = "%s\t%s %s\t%s" % (e.sourceEntityID,e.entityType,positions,e.text)
 			a1File.write(line+"\n")
 		
-		relationsHaveSourceIDs = [ not (r.sourceRelationID is None) for r in data.relations ]
+		relationsHaveSourceIDs = [ not (r.sourceRelationID is None) for r in doc.relations ]
 		assert all(relationsHaveSourceIDs) or not any(relationsHaveSourceIDs), "All relations must have sourceRelationID or none can have them."
 
 		useSourceRelationIDs = all(relationsHaveSourceIDs)
 			
-		for i,r in enumerate(data.relations):
+		for i,r in enumerate(doc.relations):
 			assert isinstance(r,kindred.Relation)
 			
 			relationType = r.relationType

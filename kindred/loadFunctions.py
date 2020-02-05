@@ -52,15 +52,15 @@ def loadRelation(filename,line,ignoreComplexRelations=True):
 
 	split = line.strip().split('\t')
 	sourceRelationID = split[0]
-	eventInfo = split[1]
-	typeSpacePos = eventInfo.index(' ')
+	relationInfo = split[1]
+	typeSpacePos = relationInfo.index(' ')
 	
-	eventNameSplit = eventInfo[:typeSpacePos].split(':')
-	assert len(eventNameSplit) == 1, "ERROR in %s. Cannot load trigger events" % filename
-	relationType = eventNameSplit[0]
+	relationNameSplit = relationInfo[:typeSpacePos].split(':')
+	assert len(relationNameSplit) == 1, "ERROR in %s. Cannot load relations with triggers" % filename
+	relationType = relationNameSplit[0]
 		
 	isComplexRelation = False
-	argumentText = eventInfo[typeSpacePos:]
+	argumentText = relationInfo[typeSpacePos:]
 	arguments = []
 	for argument in argumentText.strip().split(' '):
 		split2 = argument.strip().split(':')
@@ -191,8 +191,7 @@ def loadDataFromPubAnnotationJSON(filename,ignoreEntities=[]):
 		data = json.load(f)
 	parsed = parsePubAnnotationJSON(data,ignoreEntities)
 	
-	baseTxtFile = os.path.basename(filename)
-	parsed.sourceFilename = baseTxtFile
+	parsed.sourceFilename = os.path.basename(filename)
 	
 	return parsed
 	
@@ -392,9 +391,6 @@ def iterLoad(dataFormat,path,corpusSizeCutoff=500):
 	if len(corpus.documents) > 0:
 		yield corpus
 	
-def xor(a, b):
-	return (a and not b) or (not a and b)
-
 def load(dataFormat,path,ignoreEntities=[],ignoreComplexRelations=True):
 	"""
 	Load a corpus from a variety of formats. If path is a directory, it will try to load all files of the corresponding data type. For standoff format, it will use any associated annotations files (with suffixes .ann, .a1 or .a2)

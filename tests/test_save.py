@@ -67,19 +67,12 @@ def test_savePubAnnotationFile_fromSimpleTag():
 	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
 	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 
-	#with TempDir() as tempDir:
-	tempDir = 'temp'
-	if os.path.isdir(tempDir):
-		shutil.rmtree(tempDir)
-	os.makedirs(tempDir)
-	#assert False
-	tempFile = os.path.join(tempDir, 'corpus.json')
+	with TempDir() as tempDir:
+		tempFile = os.path.join(tempDir, 'corpus.json')
 
-	kindred.save(corpus,'pubannotation',tempFile)
+		kindred.save(corpus,'pubannotation',tempFile)
 
-	loadedCorpus = kindred.load('pubannotation',tempFile)
-
-	###
+		loadedCorpus = kindred.load('pubannotation',tempFile)
 
 	assert isinstance(loadedCorpus,kindred.Corpus)
 	assert len(loadedCorpus.documents) == 1
