@@ -171,6 +171,10 @@ At the moment, no. Kindred will only use the first annotation of a relation.
 Release Notes
 -------------
 
+Version 2.7.0
+-------------
+- Added support to save to PubAnnotation format
+
 Version 2.6.0
 -------------
 - Release v2.6.1 is the final Python2 compatible version
