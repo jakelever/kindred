@@ -89,7 +89,7 @@ def test_loadJsonFile():
 	scriptDir = os.path.dirname(__file__)
 	jsonPath = os.path.join(scriptDir,'data','example.json')
 
-	corpus = kindred.load(dataFormat='json',path=jsonPath)
+	corpus = kindred.load(dataFormat='pubannotation',path=jsonPath)
 	
 	assert isinstance(corpus,kindred.Corpus)
 	assert len(corpus.documents) == 1
@@ -192,7 +192,7 @@ def test_loadJsonFile_dir():
 	scriptDir = os.path.dirname(__file__)
 	dataPath = os.path.join(scriptDir,'data')
 
-	corpus = kindred.load(dataFormat='json',path=dataPath)
+	corpus = kindred.load(dataFormat='pubannotation',path=dataPath)
 	
 	assert isinstance(corpus,kindred.Corpus)
 	assert len(corpus.documents) == 1
@@ -230,7 +230,7 @@ def test_loadBiocFile_dir():
 
 def test_loadEmptyDirectory():
 	with TempDir() as tempDir:
-		for dataformat in ['standoff','simpletag','json','biocxml']:
+		for dataformat in ['standoff','simpletag','pubannotation','biocxml']:
 			with pytest.raises(RuntimeError) as excinfo:
 				corpus = kindred.load(dataformat,tempDir)
 			expectedError = 'No documents loaded from directory (%s). Are you sure this directory contains the corpus (format: %s)' % (tempDir.rstrip('/'),dataformat)

@@ -135,14 +135,14 @@ def loadDataFromStandoff(txtFile,ignoreEntities=[],ignoreComplexRelations=True):
 			
 	return combinedData
 
-def parseJSON(data,ignoreEntities=[]):
+def parsePubAnnotationJSON(data,ignoreEntities=[]):
 	entities = []
 	relations = []
 
 	if isinstance(data,list):
-		assert len(data) == 1 and isinstance(data[0],dict), "JSON loading expects a dictionary or a list with one dictionary in it"
+		assert len(data) == 1 and isinstance(data[0],dict), "PubAnnotation JSON loading expects a dictionary or a list with one dictionary in it"
 		data = data[0]
-	assert isinstance(data,dict), "JSON loading expects a dictionary or a list with one dictionary in it"
+	assert isinstance(data,dict), "PubAnnotation JSON loading expects a dictionary or a list with one dictionary in it"
 
 	text = data['text']
 	if 'denotations' in data:
@@ -178,16 +178,16 @@ def parseJSON(data,ignoreEntities=[]):
 	
 	expected = ['denotations','divid','modifications','namespaces','project','relations','sourcedb','sourceid','target','text','tracks']
 	extraFields = [ k for k in data.keys() if not k in expected]
-	assert len(extraFields) == 0, "Found additional unexpected fields (%s) in JSON" % (",".join(extraFields))
+	assert len(extraFields) == 0, "Found additional unexpected fields (%s) in PubAnnotation JSON" % (",".join(extraFields))
 		
 	combinedData = kindred.Document(text,entities=entities,relations=relations)
 
 	return combinedData
 
-def loadDataFromJSON(filename,ignoreEntities=[]):
+def loadDataFromPubAnnotationJSON(filename,ignoreEntities=[]):
 	with open(filename) as f:
 		data = json.load(f)
-	parsed = parseJSON(data,ignoreEntities)
+	parsed = parsePubAnnotationJSON(data,ignoreEntities)
 	
 	baseTxtFile = os.path.basename(filename)
 	parsed.sourceFilename = baseTxtFile
@@ -397,7 +397,7 @@ def load(dataFormat,path,ignoreEntities=[],ignoreComplexRelations=True):
 	"""
 	Load a corpus from a variety of formats. If path is a directory, it will try to load all files of the corresponding data type. For standoff format, it will use any associated annotations files (with suffixes .ann, .a1 or .a2)
 	
-	:param dataFormat: Format of the data files to load ('standoff','biocxml','json','simpletag')
+	:param dataFormat: Format of the data files to load ('standoff','biocxml','pubannotation','simpletag')
 	:param path: Path to data. Can be directory or an individual file. Should be the txt file for standoff.
 	:param ignoreEntities: List of entity types to ignore while loading
 	:param ignoreComplexRelations: Whether to filter out relations where one argument is another relation (must be True as kindred doesn't currently support complex relations)
@@ -408,7 +408,7 @@ def load(dataFormat,path,ignoreEntities=[],ignoreComplexRelations=True):
 	:return: Corpus of loaded documents
 	:rtype: kindred.Corpus
 	"""
-	assert dataFormat in ['standoff','biocxml','json','simpletag']
+	assert dataFormat in ['standoff','biocxml','pubannotation','simpletag']
 	assert ignoreComplexRelations == True, "ignoreComplexRelations must be True as kindred doesn't currently support complex relations"
 
 	corpus = kindred.Corpus()
@@ -427,9 +427,9 @@ def load(dataFormat,path,ignoreEntities=[],ignoreComplexRelations=True):
 				absPath = os.path.join(directory, filename)
 				tempCorpus = loadDataFromBioC(absPath,ignoreEntities=ignoreEntities)
 				corpus.documents += tempCorpus.documents
-			elif dataFormat == 'json' and filename.endswith('.json'):
+			elif dataFormat == 'pubannotation' and filename.endswith('.json'):
 				absPath = os.path.join(directory, filename)
-				doc = loadDataFromJSON(absPath,ignoreEntities=ignoreEntities)
+				doc = loadDataFromPubAnnotationJSON(absPath,ignoreEntities=ignoreEntities)
 				corpus.addDocument(doc)
 			elif dataFormat == 'simpletag' and filename.endswith('.simple'):
 				absPath = os.path.join(directory, filename)
@@ -448,8 +448,8 @@ def load(dataFormat,path,ignoreEntities=[],ignoreComplexRelations=True):
 		corpus.addDocument(doc)
 	elif dataFormat == 'biocxml':
 		corpus = loadDataFromBioC(path,ignoreEntities=ignoreEntities)
-	elif dataFormat == 'json':
-		doc = loadDataFromJSON(path,ignoreEntities=ignoreEntities)
+	elif dataFormat == 'pubannotation':
+		doc = loadDataFromPubAnnotationJSON(path,ignoreEntities=ignoreEntities)
 		corpus.addDocument(doc)
 	elif dataFormat == 'simpletag':
 		with open(path,'r') as f:
