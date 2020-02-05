@@ -36,10 +36,10 @@ def load(projectName):
 		
 		if isinstance(annotations,list):
 			for annotation in annotations:
-				parsed = kindred.loadFunctions.parseJSON(annotation)
+				parsed = kindred.loadFunctions.parsePubAnnotationJSON(annotation)
 				loaded.addDocument(parsed)
 		elif isinstance(annotations,dict):
-			parsed = kindred.loadFunctions.parseJSON(annotations)
+			parsed = kindred.loadFunctions.parsePubAnnotationJSON(annotations)
 			loaded.addDocument(parsed)
 	
 	return loaded

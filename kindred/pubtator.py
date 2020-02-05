@@ -25,7 +25,7 @@ def _loadPMID(pmid,retries=3):
 	if not success:
 		raise RuntimeError('Unable to download PubTator data after %d retries' % retries)
 
-	doc = kindred.loadFunctions.parseJSON(annotations)
+	doc = kindred.loadFunctions.parsePubAnnotationJSON(annotations)
 	
 	return doc
 
