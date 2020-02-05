@@ -51,6 +51,7 @@ def loadRelation(filename,line,ignoreComplexRelations=True):
 	assert ignoreComplexRelations == True, "ERROR in %s. ignoreComplexRelations must be True as kindred doesn't currently support complex relations" % filename
 
 	split = line.strip().split('\t')
+	sourceRelationID = split[0]
 	eventInfo = split[1]
 	typeSpacePos = eventInfo.index(' ')
 	
@@ -85,7 +86,7 @@ def loadRelation(filename,line,ignoreComplexRelations=True):
 	sourceEntityIDs = [ entityID for argName,entityID in arguments ]
 	argNames = [ argName for argName,entityID in arguments ]
 
-	relationTuple = (relationType,sourceEntityIDs,argNames)
+	relationTuple = (sourceRelationID,relationType,sourceEntityIDs,argNames)
 	return relationTuple
 	
 # TODO: Deal with complex relations more clearly
@@ -121,11 +122,11 @@ def loadDataFromStandoff(txtFile,ignoreEntities=[],ignoreComplexRelations=True):
 				if line.startswith('E') or line.startswith('R'):
 					relationTuple = loadRelation(annotationFile,line.strip(),ignoreComplexRelations)
 					if not relationTuple is None:
-						relationType,sourceEntityIDs,argNames = relationTuple
+						sourceRelationID,relationType,sourceEntityIDs,argNames = relationTuple
 						for sourceEntityID in sourceEntityIDs:
 							assert sourceEntityID in sourceEntityIDToEntity, "Relation exists that references a non-existent entity (%s) associated with %s" % (sourceEntityID,txtFile)
 						entitiesInRelation = [ sourceEntityIDToEntity[sourceEntityID] for sourceEntityID in sourceEntityIDs ]
-						relation = kindred.Relation(relationType,entitiesInRelation,argNames)
+						relation = kindred.Relation(relationType,entitiesInRelation,argNames,sourceRelationID=sourceRelationID)
 						relations.append(relation)
 
 	baseTxtFile = os.path.basename(txtFile)
@@ -165,15 +166,16 @@ def parsePubAnnotationJSON(data,ignoreEntities=[]):
 
 	if 'relations' in data:
 		for r in data['relations']:
+			rID = r['id']
 			obj = r['obj']
 			relationType = r['pred']
 			subj = r['subj']
 			
-			sourceEntityIDs = [obj,subj]
-			argNames = ['obj','subj']
+			sourceEntityIDs = [subj,obj]
+			argNames = ['subj','obj']
 			entitiesInRelation = [ sourceEntityIDToEntity[sourceEntityID] for sourceEntityID in sourceEntityIDs ]
 		
-			relation = kindred.Relation(relationType,entitiesInRelation,argNames)
+			relation = kindred.Relation(relationType,entitiesInRelation,argNames,sourceRelationID=rID)
 			relations.append(relation)
 	
 	expected = ['denotations','divid','modifications','namespaces','project','relations','sourcedb','sourceid','target','text','tracks']

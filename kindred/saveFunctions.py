@@ -1,7 +1,7 @@
 
 import os
 import codecs
-
+import json
 import kindred
 import bioc
 import six
@@ -67,6 +67,9 @@ def convertKindredCorpusToBioCCollection(corpus):
 
 	return collection
 
+def getUniqueRelationID(relations):
+	usedIDs
+
 def saveDocToSTFormat(data,txtPath,a1Path,a2Path):
 	assert isinstance(data,kindred.Document)
 
@@ -80,8 +83,12 @@ def saveDocToSTFormat(data,txtPath,a1Path,a2Path):
 			positions = ";".join("%d %d" % (start,end) for start,end in e.position)
 			line = "%s\t%s %s\t%s" % (e.sourceEntityID,e.entityType,positions,e.text)
 			a1File.write(line+"\n")
-			
 		
+		relationsHaveSourceIDs = [ not (r.sourceRelationID is None) for r in data.relations ]
+		assert all(relationsHaveSourceIDs) or not any(relationsHaveSourceIDs), "All relations must have sourceRelationID or none can have them."
+
+		useSourceRelationIDs = all(relationsHaveSourceIDs)
+			
 		for i,r in enumerate(data.relations):
 			assert isinstance(r,kindred.Relation)
 			
@@ -94,22 +101,66 @@ def saveDocToSTFormat(data,txtPath,a1Path,a2Path):
 				argNames = r.argNames
 
 			arguments = " ".join(["%s:%s" % (a,b) for a,b in zip(argNames,relationEntityIDs) ])
-			line = "R%d\t%s %s" % (i+1,relationType,arguments)
+
+			if useSourceRelationIDs:
+				relationID = str(r.sourceRelationID)
+			else:
+				relationID = "R%d" % (i+1)
+
+			line = "%s\t%s %s" % (relationID,relationType,arguments)
 			a2File.write(line+"\n")
+
+def saveCorpusToPubAnnotationFormat(corpus,path):
+	assert isinstance(corpus,kindred.Corpus)
+	
+	pubannotated = []
+	for doc in corpus.documents:
+		p = {}
+		p['text'] = doc.text
+		p['denotations'] = []
+		p['relations'] = []
+
+		for e in doc.entities:
+			spans = [ {'begin':pos[0], 'end':pos[1]} for pos in e.position ]
+			if len(spans) == 1:
+				spans = spans[0]
+			p['denotations'].append( {'id':e.sourceEntityID,'span':spans,'obj':e.entityType} )
+
+		relationsHaveSourceIDs = [ not (r.sourceRelationID is None) for r in doc.relations ]
+		assert all(relationsHaveSourceIDs) or not any(relationsHaveSourceIDs), "All relations must have sourceRelationID or none can have them."
+
+		useSourceRelationIDs = all(relationsHaveSourceIDs)
+
+		for i,r in enumerate(doc.relations):
+			assert len(r.entities) == 2, "PubAnnotation only supports binary relations"
+			eID0 = r.entities[0].sourceEntityID
+			eID1 = r.entities[1].sourceEntityID
+
+			if useSourceRelationIDs:
+				relationID = str(r.sourceRelationID)
+			else:
+				relationID = "R%d" % (i+1)
+
+			p['relations'].append( {'id':relationID,'subj':eID0,'pred':r.relationType,'obj':eID1} )
+
+		pubannotated.append(p)
+
+	with open(path,'w') as outF:
+		json.dump(pubannotated, outF, indent=2)
 
 def save(corpus,dataFormat,path):
 	"""
 	Save a corpus to a directory
 	
 	:param corpus: The corpus of documents to save
-	:param dataFormat: Format of data to save (only 'standoff' and 'biocxml' are supported currently)
+	:param dataFormat: Format of data to save (only 'standoff', 'biocxml' and 'pubannotation' are supported currently)
 	:param path: Path where corpus should be saved. Must be an existing directory for 'standoff'.
 	:type corpus: kindred.Corpus
 	:type dataFormat: str
 	:type path: str
 	"""
 	
-	assert dataFormat in ['standoff','biocxml']
+	assert dataFormat in ['standoff','biocxml','pubannotation']
 
 	assert isinstance(corpus,kindred.Corpus)
 
@@ -134,5 +185,9 @@ def save(corpus,dataFormat,path):
 		with bioc.BioCXMLDocumentWriter(path) as writer:
 			for doc in collection.documents:
 				writer.write_document(doc)
+	elif dataFormat == 'pubannotation':
+		assert not os.path.isdir(path), "Path cannot be an existing directory for 'pubannotation'."
+
+		saveCorpusToPubAnnotationFormat(corpus, path)
 
 	

@@ -10,9 +10,10 @@ class Relation:
 	:ivar entities: List of entities in relation
 	:ivar argNames: Names of relation argument associated with each entity
 	:ivar probability: Optional probability for predicted relations
+	:ivar sourceRelationID: Relation ID used in source document
 	"""
 	
-	def __init__(self,relationType=None,entities=None,argNames=None,probability=None):
+	def __init__(self,relationType=None,entities=None,argNames=None,probability=None,sourceRelationID=None):
 		"""
 		Constructor for Relation class
 		
@@ -20,10 +21,12 @@ class Relation:
 		:param entities: List of entities in relation
 		:param argNames: Names of relation argument associated with each entity
 		:param probability: Optional probability for predicted relations
+		:param sourceRelationID: Relation ID used in source document
 		:type relationType: str
 		:type entities: list of kindred.Entity
 		:type argNames: list of str
 		:type probability: float
+		:type sourceRelationID: str
 		"""
 
 		if entities is None:
@@ -46,6 +49,8 @@ class Relation:
 		if not probability is None:
 			assert isinstance(probability, float)
 		self.probability = probability
+
+		self.sourceRelationID = sourceRelationID
 	
 	def __eq__(self, other):
 		"""Override the default Equals behavior"""

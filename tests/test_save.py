@@ -35,7 +35,7 @@ def checkRelationAnnotations(filename):
 				assert expected == int(relIndex), 'Relation indices must increment from 1 in a standoff file'
 				expected += 1
 
-def test_saveStandoffFile_fromSimpleTag():
+def test_saveStandoffFile_fromSimpleTag_binary():
 	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
 	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
 
@@ -60,7 +60,41 @@ def test_saveStandoffFile_fromSimpleTag():
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	print( [ r.sourceRelationID for r in relations ] )
+	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'],sourceRelationID='R1')], "(%s) not as expected" % relations
+
+def test_savePubAnnotationFile_fromSimpleTag():
+	text = 'The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />'
+	corpus = kindred.Corpus(text,loadFromSimpleTag=True)
+
+	#with TempDir() as tempDir:
+	tempDir = 'temp'
+	if os.path.isdir(tempDir):
+		shutil.rmtree(tempDir)
+	os.makedirs(tempDir)
+	#assert False
+	tempFile = os.path.join(tempDir, 'corpus.json')
+
+	kindred.save(corpus,'pubannotation',tempFile)
+
+	loadedCorpus = kindred.load('pubannotation',tempFile)
+
+	###
+
+	assert isinstance(loadedCorpus,kindred.Corpus)
+	assert len(loadedCorpus.documents) == 1
+	loadedDoc = loadedCorpus.documents[0]
+	
+	assert isinstance(loadedDoc,kindred.Document)
+	entities = loadedDoc.entities
+	relations = loadedDoc.relations
+
+	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
+
+	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
+	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
+	print([r.sourceRelationID for r in relations])
+	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['subj','obj'],sourceRelationID='R1')], "(%s) not as expected" % relations
 
 def test_saveStandoffFile_noSourceEntityID():
 	text = 'The <disease>colorectal cancer</disease> is bad.'
@@ -121,7 +155,7 @@ def test_saveStandoffFile_fromSimpleTag_triple():
 	assertEntity(entities[0],expectedType='drug',expectedText='Erlotinib',expectedPos=[(0,9)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='EGFR',expectedPos=[(13,17)],expectedSourceEntityID="T2")
 	assertEntity(entities[2],expectedType='disease',expectedText='NSCLC',expectedPos=[(49,54)],expectedSourceEntityID="T3")
-	assert relations == [kindred.Relation('druginfo',[sourceEntityIDToEntity["T3"],sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['disease','drug','gene'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('druginfo',[sourceEntityIDToEntity["T3"],sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['disease','drug','gene'],sourceRelationID='R1')], "(%s) not as expected" % relations
 	
 def test_saveStandoffFile():
 	text = "The colorectal cancer was caused by mutations in APC"
@@ -153,7 +187,7 @@ def test_saveStandoffFile():
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'],sourceRelationID='R1')], "(%s) not as expected" % relations
 	
 def test_saveStandoffFile_noArgNames():
 	text = "The colorectal cancer was caused by mutations in APC"
@@ -185,7 +219,7 @@ def test_saveStandoffFile_noArgNames():
 
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['arg1','arg2'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['arg1','arg2'],sourceRelationID='R1')], "(%s) not as expected" % relations
 	
 def test_saveBB3Data():
 	corpus = kindred.bionlpst.load('2016-BB3-event-train')
@@ -227,7 +261,7 @@ def test_saveStandoffFile_SeparateSentences():
 	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 	assertEntity(entities[0],expectedType='disease',expectedText='colorectal cancer',expectedPos=[(4,21)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'],sourceRelationID='R1')], "(%s) not as expected" % relations
 	
 	data = loadedCorpus.documents[1]
 	assert isinstance(data,kindred.Document)
@@ -236,7 +270,7 @@ def test_saveStandoffFile_SeparateSentences():
 	sourceEntityIDToEntity = { entity.sourceEntityID:entity for entity in entities }
 	assertEntity(entities[0],expectedType='disease',expectedText='Li-Fraumeni',expectedPos=[(0,11)],expectedSourceEntityID="T1")
 	assertEntity(entities[1],expectedType='gene',expectedText='P53',expectedPos=[(39,42)],expectedSourceEntityID="T2")
-	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'])], "(%s) not as expected" % relations
+	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['obj','subj'],sourceRelationID='R1')], "(%s) not as expected" % relations
 	
 if __name__ == '__main__':
 	#test_saveStandoffFile_PredictedRelations()
