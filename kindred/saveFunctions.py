@@ -37,7 +37,7 @@ def convertKindredCorpusToBioCCollection(corpus):
 			if e.sourceEntityID is None:
 				a.id = str(e.entityID)
 			else:
-				a.id = e.sourceEntityID
+				a.id = str(e.sourceEntityID)
 
 			assert not a.id in seenEntityIDs, "Multiple entities with the same ID (%s) found" % a.id
 			seenEntityIDs.add(a.id)
