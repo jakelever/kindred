@@ -12,7 +12,7 @@ def test_pubtator_pmid():
 	
 	assert fileCount == 1
 	assert relationCount == 0
-	assert entityCount == 17
+	assert entityCount == 20
 
 def test_pubtator_pmids():
 	corpus = kindred.pubtator.load([19894120,19894121])
@@ -25,7 +25,7 @@ def test_pubtator_pmids():
 	
 	assert fileCount == 2
 	assert relationCount == 0
-	assert entityCount == 38
+	assert entityCount == 44
 	
 if __name__ == '__main__':
 	test_pubtator()

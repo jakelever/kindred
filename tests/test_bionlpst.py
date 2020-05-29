@@ -168,7 +168,7 @@ def test_bionlp_SeeDev_classifier():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.338
+	assert round(f1score,3) == 0.339
 
 
 if __name__ == '__main__':
