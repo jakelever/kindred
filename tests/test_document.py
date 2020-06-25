@@ -69,9 +69,9 @@ def test_document_splitIntoSentences():
 	assert len(doc0.sentences) == 1
 
 	sentence0 = doc0.sentences[0]
-	expectedTokens0 = "('Erlotinib', 'Erlotinib', 'PROPN', 0, 9),('is', 'be', 'AUX', 10, 12),('an', 'an', 'DET', 13, 15),('EGFR', 'EGFR', 'PROPN', 16, 20),('inhibitor', 'inhibitor', 'NOUN', 21, 30),('.', '.', 'PUNCT', 30, 31)"
+	expectedTokens0 = "('Erlotinib', 0, 9),('is', 10, 12),('an', 13, 15),('EGFR', 16, 20),('inhibitor', 21, 30),('.', 30, 31)"
 
-	assert ",".join(str((t.word,t.lemma,t.partofspeech,t.startPos,t.endPos)) for t in sentence0.tokens).replace("u'","'") == expectedTokens0
+	assert ",".join(str((t.word,t.startPos,t.endPos)) for t in sentence0.tokens).replace("u'","'") == expectedTokens0
 	assert str(sentence0.dependencies).replace("u'","'") == "[(1, 0, 'nsubj'), (1, 1, 'ROOT'), (4, 2, 'det'), (4, 3, 'compound'), (1, 4, 'attr'), (1, 5, 'punct')]"
 	assert str(sentence0.entityAnnotations) == "[(<Entity drug:'Erlotinib' sourceid=1 [(0, 9)]>, [0]), (<Entity gene:'EGFR' sourceid=2 [(16, 20)]>, [3])]"
 
@@ -79,8 +79,8 @@ def test_document_splitIntoSentences():
 	assert len(doc1.sentences) == 1
 
 	sentence1 = doc1.sentences[0]
-	expectedTokens1 = "('Gefitinib', 'Gefitinib', 'PROPN', 0, 9),('is', 'be', 'AUX', 10, 12),('another', 'another', 'DET', 13, 20),('drug', 'drug', 'NOUN', 21, 25),('.', '.', 'PUNCT', 25, 26)"
-	assert ",".join(str((t.word,t.lemma,t.partofspeech,t.startPos,t.endPos)) for t in sentence1.tokens).replace("u'","'") == expectedTokens1
+	expectedTokens1 = "('Gefitinib', 0, 9),('is', 10, 12),('another', 13, 20),('drug', 21, 25),('.', 25, 26)"
+	assert ",".join(str((t.word,t.startPos,t.endPos)) for t in sentence1.tokens).replace("u'","'") == expectedTokens1
 	assert str(sentence1.dependencies).replace("u'","'") == "[(1, 0, 'nsubj'), (1, 1, 'ROOT'), (3, 2, 'det'), (1, 3, 'attr'), (1, 4, 'punct')]"
 	assert str(sentence1.entityAnnotations) == "[(<Entity drug:'Gefitinib' sourceid=3 [(0, 9)]>, [0])]"
 

@@ -79,9 +79,10 @@ Applying classifier...
 Saving results to directory...
 
 Predicted relations:
+Vancouver\tCanada
 Delhi\tIndia
+Mombasa\tKenya
 Nairobi\tKenya
-Denver\tCanada
 """
 
 		if sys.version_info[0] < 3:

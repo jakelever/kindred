@@ -251,7 +251,7 @@ def test_singleClassifier_twoRelTypes():
 	classifier.predict(predictionCorpus)
 	
 	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert round(f1score,3) == 0.696
+	assert round(f1score,3) == 0.636
 
 def test_doublelabels():
 	trainCorpus, devCorpus = generateTestData(positiveCount=100,negativeCount=100,relTypes=1)

@@ -130,9 +130,10 @@ Applying classifier...
 Saving results to directory...
 
 Predicted relations:
+Vancouver       Canada
 Delhi   India
+Mombasa Kenya
 Nairobi Kenya
-Denver  Canada
 ```
 
 Try annotating more or fewer of the sentences to begin with to see if it does better.

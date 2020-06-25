@@ -28,11 +28,11 @@ def test_multilabelclassifier():
 	predicted = classifier.predict(Xtest)
 	assert predicted.shape == Ytest.shape
 	rmse = np.sqrt(np.mean((predicted-Ytest)**2))
-	assert rmse == 0.07071067811865475
+	assert round(rmse,3) == 0.071
 
 	probs = classifier.predict_proba(Xtest)
 	assert probs.shape == Ytest.shape
 	rmse_probs = np.sqrt(np.mean((probs-Ytest)**2))
-	assert rmse_probs == 0.20186752465655197
+	assert round(rmse_probs,3) == 0.202
 
 
