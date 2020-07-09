@@ -379,28 +379,30 @@ def test_entityrecognizer_merge_brackets_right():
 	assert entity.position == [(19,56)]
 	assert entity.sourceEntityID == 'T1'
 
-def test_entityrecognizer_merge_brackets_left():
-	lookup = makeTestLookup()
-
-	text = 'This paper studies (NSCLC) non-small cell lung carcinoma.'
-	
-	corpus = kindred.Corpus(text)
-
-	parser = kindred.Parser()
-	parser.parse(corpus)
-
-	ner = kindred.EntityRecognizer(lookup,mergeTerms=True)
-	ner.annotate(corpus)
-
-	doc = corpus.documents[0]
-	assert len(doc.entities) == 1
-	entity = doc.entities[0]
-	
-	assert entity.entityType == 'cancer'
-	assert entity.externalID == 'DOID:3908'
-	assert entity.text == '(NSCLC) non-small cell lung carcinoma'
-	assert entity.position == [(19,56)]
-	assert entity.sourceEntityID == 'T1'
+#def test_entityrecognizer_merge_brackets_left():
+#	lookup = makeTestLookup()
+#
+#	text = 'This paper studies (NSCLC) non-small cell lung carcinoma.'
+#	
+#	corpus = kindred.Corpus(text)
+#
+#	parser = kindred.Parser()
+#	parser.parse(corpus)
+#
+#	ner = kindred.EntityRecognizer(lookup,mergeTerms=True)
+#	ner.annotate(corpus)
+#
+#	assert len(corpus.documents) == 1
+#	doc = corpus.documents[0]
+#	assert len(doc.sentences) == 1
+#	assert len(doc.entities) == 1
+#	entity = doc.entities[0]
+#	
+#	assert entity.entityType == 'cancer'
+#	assert entity.externalID == 'DOID:3908'
+#	assert entity.text == '(NSCLC) non-small cell lung carcinoma'
+#	assert entity.position == [(19,56)]
+#	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_merge_nobrackets():
 	lookup = makeTestLookup()
@@ -763,5 +765,5 @@ def test_loadwordlist():
 
 
 if __name__ == '__main__':
-	test_loadwordlist()
+	test_entityrecognizer_merge_brackets_left()
 

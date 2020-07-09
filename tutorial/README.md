@@ -130,7 +130,9 @@ Applying classifier...
 Saving results to directory...
 
 Predicted relations:
+Vancouver       Canada
 Delhi   India
+Mombasa Kenya
 Nairobi Kenya
 Denver  Canada
 ```
