@@ -31,7 +31,7 @@ pip install kindred
 As of v2, Kindred relies on the [Spacy](https://spacy.io) toolkit for parsing. After installing kindred (which also installs spacy), you will need to install a Spacy language model. For instance, the command below installs the English language model::
 
 ```bash
-python -m spacy download en_core_web_sm
+python -m spacy download en
 ```
 
 ## Usage
