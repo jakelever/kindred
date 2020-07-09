@@ -25,7 +25,7 @@ install:
   - pip install kindred
   - pip uninstall -y kindred
   - pip install .
-  - sh ./tests/installSpacyLanguages.sh
+  - python -m spacy download en_core_web_sm
   - cd docs
   - make html
   - make clean
