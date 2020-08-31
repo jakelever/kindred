@@ -24,8 +24,8 @@ def test_pubannotation_wikiPain():
 	relationCount = sum([ len(d.relations) for d in corpus.documents ])
 
 	assert fileCount == 49
-	assert relationCount == 299
-	assert entityCount == 367
+	assert relationCount == 715
+	assert entityCount == 878
 
 if __name__ == '__main__':
 	test_pubannotation()

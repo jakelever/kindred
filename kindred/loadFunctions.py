@@ -178,7 +178,7 @@ def parsePubAnnotationJSON(data,ignoreEntities=[]):
 			relation = kindred.Relation(relationType,entitiesInRelation,argNames,sourceRelationID=rID)
 			relations.append(relation)
 	
-	expected = ['denotations','divid','modifications','namespaces','project','relations','sourcedb','sourceid','target','text','tracks']
+	expected = ['denotations','divid','modifications','namespaces','project','relations','sourcedb','sourceid','target','text','tracks','typesettings']
 	extraFields = [ k for k in data.keys() if not k in expected]
 	assert len(extraFields) == 0, "Found additional unexpected fields (%s) in PubAnnotation JSON" % (",".join(extraFields))
 		
