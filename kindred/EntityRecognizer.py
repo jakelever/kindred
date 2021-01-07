@@ -346,8 +346,6 @@ class EntityRecognizer:
 				filteredWithBrackets.append( ((startA,endA),termsA,termTypesAndIDsA) )
 			filteredWithBrackets = sorted(filteredWithBrackets)
 			
-			#print("filteredWithBrackets", filteredWithBrackets)
-			
 			# Next we go through and create groups of terms that should be merged
 			indexGroups, curGroup = [], []
 			curGroup, prevStart, prevEnd, prevIDs = None, None, None, None
@@ -357,13 +355,11 @@ class EntityRecognizer:
 				shouldMergeWithPrev = False
 				if not prevStart is None:
 					termsAreNeighbouring = (curStart == prevEnd or (curStart == (prevEnd+1) and words[prevEnd] in ['/','-']))
-					#print("termsAreNeighbouring", termsAreNeighbouring)
 					
 					if termsAreNeighbouring:
 						idsIntersection = prevIDs.intersection(curIDs)
 						idsShared = (len(idsIntersection) > 0)
 						
-						#print("idsShared", idsShared)
 						if idsShared:
 							curIDs = prevIDs
 							shouldMergeWithPrev = True
@@ -371,7 +367,6 @@ class EntityRecognizer:
 						
 				prevStart, prevEnd, prevIDs = curStart, curEnd, curIDs
 						
-				#print(curTerms, shouldMergeWithPrev)
 				if shouldMergeWithPrev:
 					curGroup.append(index)
 				else:
@@ -384,8 +379,6 @@ class EntityRecognizer:
 			if curGroup:
 				indexGroups.append(curGroup)
 					
-			#print("indexGroups", indexGroups)
-				
 			# And now we do merging where appropriate
 			mergedFiltered = []
 			for indexGroup in indexGroups:
@@ -416,7 +409,6 @@ class EntityRecognizer:
 					newStart = filteredWithBrackets[indexGroup[0]][0][0]
 					newEnd = filteredWithBrackets[indexGroup[-1]][0][1]
 					newTerms = tuple(words[newStart:newEnd])
-					#print(((newStart,newEnd),newTerms,newTermTypesAndIDs))
 						
 					mergedFiltered.append( ((newStart,newEnd),newTerms,newTermTypesAndIDs) )
 					
