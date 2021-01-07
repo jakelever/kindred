@@ -455,6 +455,59 @@ def test_entityrecognizer_merge_negativecase():
 	assert entity2.text == 'ERBB2'
 	assert entity2.position == [(5,10)]
 	assert entity2.sourceEntityID == 'T2'
+	
+def test_entityrecognizer_merge_triple():
+	lookup = makeTestLookup()
+
+	text = 'HER2 neu ERBB2 is a gene.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,mergeTerms=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	#print(doc.entities)
+	
+	assert len(doc.sentences) == 1
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'gene'
+	assert entity.externalID == 'HGNC:2064'
+	assert entity.text == 'HER2 neu ERBB2'
+	assert entity.position == [(0,14)]
+	assert entity.sourceEntityID == 'T1'
+	
+	
+def test_entityrecognizer_merge_triple_brackets():
+	lookup = makeTestLookup()
+
+	text = 'HER2 neu (ERBB2) is a gene.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,mergeTerms=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	#print(doc.entities)
+	
+	assert len(doc.sentences) == 1
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'gene'
+	assert entity.externalID == 'HGNC:2064'
+	assert entity.text == 'HER2 neu (ERBB2)'
+	assert entity.position == [(0,16)]
+	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_acronyms_OFF():
 	lookup = makeTestLookup()
@@ -765,5 +818,5 @@ def test_loadwordlist():
 
 
 if __name__ == '__main__':
-	test_entityrecognizer_merge_brackets_left()
+	test_entityrecognizer_merge_triple_brackets()
 

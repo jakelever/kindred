@@ -333,60 +333,94 @@ class EntityRecognizer:
 		if self.mergeTerms:
 			# We'll attempt to merge terms (i.e. if a gene is referred to using two acronyms together)
 			# Example: Hepatocellular carcinoma (HCC) or HER2/ Neu or INK4B P15
-			locsToRemove = set()
-			for i in range(len(filtered)-1):
-				(startA,endA),termsA,termTypesAndIDsA = filtered[i]
-				(startB,endB),termsB,termTypesAndIDsB = filtered[i+1]
+			
+			# First we'll go through an expand terms out into brackets
+			filteredWithBrackets = []
+			for (startA,endA),termsA,termTypesAndIDsA in filtered:
+				termInBrackets = startA > 0 and words[startA-1] == '(' and words[endA] == ')'
 				
-				# Check that the terms are beside each other or separated by a /,- or (
-				if startB == endA or (startB == (endA+1) and words[endA] in ['/','-','(',')']):
-					idsA,idsB = set(),set()
-
-					for termType, termIDs in termTypesAndIDsA:
-						for termID in termIDs.split(';'):
-							idsA.add((termType,termID))
-					for termType, termIDs in termTypesAndIDsB:
-						for termID in termIDs.split(';'):
-							idsB.add((termType,termID))
-
-					idsIntersection = idsA.intersection(idsB)
-
-					# Detect if the either term is in brackets e.g. HER2 (ERBB2)
-					firstTermInBrackets,secondTermInBrackets = False,False
-					if startB == (endA+1) and endB < len(words) and words[endA] == '(' and words[endB] == ')':
-						secondTermInBrackets = True
-					if startB == (endA+1) and startA > 0 and words[startA-1] == '(' and words[endA] == ')':
-						firstTermInBrackets = True
-
-					# The two terms share IDs so we're going to merge them
-					idsShared = (len(idsIntersection) > 0)
-
-					if idsShared:
-						groupedByType = defaultdict(list)
-						for termType,termID in idsIntersection:
-							groupedByType[termType].append(termID)
-
-						locsToRemove.add((startA,endA))
-						locsToRemove.add((startB,endB))
-
-						if secondTermInBrackets:
-							thisLocs = (startA,endB+1)
-							thisTerms = tuple(words[startA:endB+1])
-						elif firstTermInBrackets:
-							thisLocs = (startA-1,endB)
-							thisTerms = tuple(words[startA-1:endB])
+				if termInBrackets:
+					startA -= 1
+					endA += 1
+					
+				filteredWithBrackets.append( ((startA,endA),termsA,termTypesAndIDsA) )
+			filteredWithBrackets = sorted(filteredWithBrackets)
+			
+			#print("filteredWithBrackets", filteredWithBrackets)
+			
+			# Next we go through and create groups of terms that should be merged
+			indexGroups, curGroup = [], []
+			curGroup, prevStart, prevEnd, prevIDs = None, None, None, None
+			for index,((curStart,curEnd),curTerms,curTermTypesAndIDs) in enumerate(filteredWithBrackets):
+				curIDs = set( (termType,termID) for termType, termIDs in curTermTypesAndIDs for termID in termIDs.split(';') )
+			
+				shouldMergeWithPrev = False
+				if not prevStart is None:
+					termsAreNeighbouring = (curStart == prevEnd or (curStart == (prevEnd+1) and words[prevEnd] in ['/','-']))
+					#print("termsAreNeighbouring", termsAreNeighbouring)
+					
+					if termsAreNeighbouring:
+						idsIntersection = prevIDs.intersection(curIDs)
+						idsShared = (len(idsIntersection) > 0)
+						
+						#print("idsShared", idsShared)
+						if idsShared:
+							curIDs = prevIDs
+							shouldMergeWithPrev = True
+						
+						
+				prevStart, prevEnd, prevIDs = curStart, curEnd, curIDs
+						
+				#print(curTerms, shouldMergeWithPrev)
+				if shouldMergeWithPrev:
+					curGroup.append(index)
+				else:
+					if curGroup:
+						indexGroups.append(curGroup)
+						
+					curGroup = [index]
+					
+			# Remember to add any final group to the list of groups
+			if curGroup:
+				indexGroups.append(curGroup)
+					
+			#print("indexGroups", indexGroups)
+				
+			# And now we do merging where appropriate
+			mergedFiltered = []
+			for indexGroup in indexGroups:
+				if len(indexGroup) == 1:
+					# No merging required
+					index = indexGroup[0]
+					mergedFiltered.append(filtered[index])
+				else:
+					# Merging required
+					idsIntersection = None
+					for index in indexGroup:
+						(curStart,curEnd),curTerms,curTermTypesAndIDs = filteredWithBrackets[index]
+						ids = set( (termType,termID) for termType, termIDs in curTermTypesAndIDs for termID in termIDs.split(';') )
+						
+						if idsIntersection is None:
+							idsIntersection = ids
 						else:
-							thisLocs = (startA,endB)
-							thisTerms = tuple(words[startA:endB])
-
-
-						thisTermTypesAndIDs = [ (termType,";".join(sorted(termIDs))) for termType,termIDs in groupedByType.items() ]
-
-						filtered.append((thisLocs,thisTerms,thisTermTypesAndIDs))
-
-			# Now we have to remove the terms marked for deletion in the previous section
-			filtered = [ (locs,terms,termtypesAndids) for locs,terms,termtypesAndids in filtered if not locs in locsToRemove]
-			filtered = sorted(filtered)
+							idsIntersection = idsIntersection.intersection(ids)
+							
+					# Double check that there the IDs of the merging terms do actually overlap
+					assert len(idsIntersection) > 0
+				
+					groupedByType = defaultdict(list)
+					for termType,termID in idsIntersection:
+						groupedByType[termType].append(termID)
+						
+					newTermTypesAndIDs = [ (termType,";".join(sorted(termIDs))) for termType,termIDs in groupedByType.items() ]
+					newStart = filteredWithBrackets[indexGroup[0]][0][0]
+					newEnd = filteredWithBrackets[indexGroup[-1]][0][1]
+					newTerms = tuple(words[newStart:newEnd])
+					#print(((newStart,newEnd),newTerms,newTermTypesAndIDs))
+						
+					mergedFiltered.append( ((newStart,newEnd),newTerms,newTermTypesAndIDs) )
+					
+			filtered = sorted(mergedFiltered)
 
 		if self.acronymDetectionForAmbiguity:
 			# And we'll check to see if there are any obvious acronyms
