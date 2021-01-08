@@ -333,6 +333,7 @@ class EntityRecognizer:
 		if self.mergeTerms:
 			# We'll attempt to merge terms (i.e. if a gene is referred to using two acronyms together)
 			# Example: Hepatocellular carcinoma (HCC) or HER2/ Neu or INK4B P15
+			print(sentence.text)
 			
 			# First we'll go through an expand terms out into brackets
 			filteredWithBrackets = []
@@ -359,9 +360,9 @@ class EntityRecognizer:
 					if termsAreNeighbouring:
 						idsIntersection = prevIDs.intersection(curIDs)
 						idsShared = (len(idsIntersection) > 0)
-						
+
 						if idsShared:
-							curIDs = prevIDs
+							curIDs = idsIntersection
 							shouldMergeWithPrev = True
 						
 						
@@ -369,6 +370,7 @@ class EntityRecognizer:
 						
 				if shouldMergeWithPrev:
 					curGroup.append(index)
+					
 				else:
 					if curGroup:
 						indexGroups.append(curGroup)

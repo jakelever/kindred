@@ -15,6 +15,11 @@ def makeTestLookup():
 	lookup['neu'] = [('gene','HGNC:2064')]
 	lookup['neus'] = [('gene','HGNC:????')]
 
+	lookup['glp-1r'] = [('gene','HGNC:4191;HGNC:4324;HGNC:37245')]
+	lookup['glp1r'] = [('gene','HGNC:4324')]
+	lookup['glp1'] = [('gene','HGNC:4191;HGNC:37245')]
+	lookup['glp-1'] = [('gene','HGNC:4191;HGNC:4324')]
+
 	lookup['non-small cell lung carcinoma'] = [('cancer','DOID:3908')]
 	lookup['nsclc'] = [('cancer','DOID:3908')]
 	lookup['dlbcl'] = [('cancer','DOID:0050745')]
@@ -509,6 +514,36 @@ def test_entityrecognizer_merge_triple_brackets():
 	assert entity.position == [(0,16)]
 	assert entity.sourceEntityID == 'T1'
 
+def test_entityrecognizer_merge_idintersections():
+	lookup = makeTestLookup()
+
+	text = 'We studied the genes known as GLP-1R GLP1R GLP1 GLP-1.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,mergeTerms=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	
+	assert len(doc.sentences) == 1
+	assert len(doc.entities) == 2
+	
+	assert doc.entities[0].entityType == 'gene'
+	assert doc.entities[0].externalID == 'HGNC:4324'
+	assert doc.entities[0].text == 'GLP-1R GLP1R'
+	assert doc.entities[0].position == [(30,42)]
+	assert doc.entities[0].sourceEntityID == 'T1'
+
+	assert doc.entities[1].entityType == 'gene'
+	assert doc.entities[1].externalID == 'HGNC:4191'
+	assert doc.entities[1].text == 'GLP1 GLP-1'
+	assert doc.entities[1].position == [(43,53)]
+	assert doc.entities[1].sourceEntityID == 'T2'
+
 def test_entityrecognizer_acronyms_OFF():
 	lookup = makeTestLookup()
 
@@ -818,5 +853,5 @@ def test_loadwordlist():
 
 
 if __name__ == '__main__':
-	test_entityrecognizer_merge_triple_brackets()
+	test_entityrecognizer_merge_idintersections()
 
