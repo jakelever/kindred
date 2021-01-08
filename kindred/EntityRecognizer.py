@@ -337,7 +337,7 @@ class EntityRecognizer:
 			# First we'll go through an expand terms out into brackets
 			filteredWithBrackets = []
 			for (startA,endA),termsA,termTypesAndIDsA in filtered:
-				termInBrackets = startA > 0 and words[startA-1] == '(' and words[endA] == ')'
+				termInBrackets = startA > 0 and endA < len(words) and words[startA-1] == '(' and words[endA] == ')'
 				
 				if termInBrackets:
 					startA -= 1
