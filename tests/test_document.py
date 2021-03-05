@@ -72,7 +72,7 @@ def test_document_splitIntoSentences():
 	expectedTokens0 = "('Erlotinib', 0, 9),('is', 10, 12),('an', 13, 15),('EGFR', 16, 20),('inhibitor', 21, 30),('.', 30, 31)"
 
 	assert ",".join(str((t.word,t.startPos,t.endPos)) for t in sentence0.tokens).replace("u'","'") == expectedTokens0
-	assert str(sentence0.dependencies).replace("u'","'") == "[(1, 0, 'nsubj'), (1, 1, 'ROOT'), (4, 2, 'det'), (4, 3, 'amod'), (1, 4, 'attr'), (1, 5, 'punct')]"
+	assert str(sentence0.dependencies).replace("u'","'") == "[(1, 0, 'nsubj'), (1, 1, 'ROOT'), (4, 2, 'det'), (4, 3, 'compound'), (1, 4, 'attr'), (1, 5, 'punct')]"
 	assert str(sentence0.entityAnnotations) == "[(<Entity drug:'Erlotinib' sourceid=1 [(0, 9)]>, [0]), (<Entity gene:'EGFR' sourceid=2 [(16, 20)]>, [3])]"
 
 	doc1 = sentenceCorpus.documents[1]
