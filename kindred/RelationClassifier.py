@@ -21,7 +21,7 @@ class RelationClassifier:
 	:param isTrained: Whether the classifier has been trained yet. Will throw an error if predict is called before it is trained.
 	"""
 	
-	def __init__(self,classifierType='SVM',tfidf=True,features=None,threshold=None,entityCount=2,acceptedEntityTypes=None,model='en'):
+	def __init__(self,classifierType='SVM',tfidf=True,features=None,threshold=None,entityCount=2,acceptedEntityTypes=None,model='en_core_web_sm'):
 		"""
 		Constructor for the RelationClassifier class
 		

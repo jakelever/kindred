@@ -16,7 +16,7 @@ class Parser:
 
 	_models = {}
 	
-	def __init__(self,model='en'):
+	def __init__(self,model='en_core_web_sm'):
 		"""
 		Create a Parser object that will use Spacy for parsing. It offers all the same languages that Spacy offers. Check out: https://spacy.io/usage/models. Note that the language model needs to be downloaded first (e.g. python -m spacy download en)
 		
