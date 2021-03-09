@@ -20,6 +20,12 @@ def evaluate(goldCorpus,testCorpus,metric='f1score',display=False):
 	assert isinstance(goldCorpus,kindred.Corpus)
 	assert isinstance(testCorpus,kindred.Corpus)
 
+	mismatchMessage = "Mismatch between the corpora. Expected the same documents in each corpus with only annotations differing"
+
+	assert len(goldCorpus.documents) == len(testCorpus.documents), mismatchMessage
+	for d1,d2 in zip(goldCorpus.documents, testCorpus.documents):
+		assert d1.text == d2.text, mismatchMessage
+
 	TPs,FPs,FNs = Counter(),Counter(),Counter()
 	
 	goldTuples = [ (r.relationType,tuple(r.entities)) for r in goldCorpus.getRelations() ]
