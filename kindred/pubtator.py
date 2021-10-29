@@ -6,17 +6,19 @@ import kindred
 import requests
 import json
 import time
+import io
+import bioc
 
 def _loadPMID(pmid,retries=3):
 	assert isinstance(pmid,int)
 	
-	annotationsURL = "https://www.ncbi.nlm.nih.gov/CBBresearch/Lu/Demo/RESTful/tmTool.cgi/BioConcept/%d/JSON" % pmid
+	annotationsURL = "https://www.ncbi.nlm.nih.gov/research/pubtator-api/publications/export/biocxml?pmids=%d" % pmid
 
 	success = False
 	for retry in range(retries):
 		try:
 			request = requests.get(annotationsURL)
-			annotations = request.json()
+			annotations = request.text
 			success = True
 			break
 		except ValueError as e:
@@ -25,9 +27,13 @@ def _loadPMID(pmid,retries=3):
 	if not success:
 		raise RuntimeError('Unable to download PubTator data after %d retries' % retries)
 
-	doc = kindred.loadFunctions.parsePubAnnotationJSON(annotations)
+	collection = bioc.load(io.BytesIO(annotations.encode()))
+	assert isinstance(collection,bioc.BioCCollection)
+	assert len(collection.documents) == 1
 	
-	return doc
+	documents = kindred.loadFunctions.convertBiocDocToKindredDocs(collection.documents[0])
+
+	return documents
 
 def load(pmids):
 	"""
@@ -48,15 +54,9 @@ def load(pmids):
 	corpus = kindred.Corpus()
 	if isinstance(pmids,list):
 		for pmid in pmids:
-			doc = _loadPMID(pmid)
-			assert isinstance(doc,kindred.Document)
-			corpus.addDocument(doc)
+			corpus.documents += _loadPMID(pmid)
 	elif isinstance(pmids,int):
-		doc = _loadPMID(pmids)
-		assert isinstance(doc,kindred.Document)
-		corpus.addDocument(doc)
+		corpus.documents = _loadPMID(pmids)
 	return corpus
 	
-	
-	
-	
+
