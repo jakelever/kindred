@@ -39,16 +39,9 @@ class Parser:
 			text = unicode(text)
 
 		parsed = self.nlp(text)
-		sentence = None
-		for token in parsed:
-			if sentence is None or token.is_sent_start:
-				if not sentence is None:
-					yield sentence
-				sentence = []
-			sentence.append(token)
 
-		if not sentence is None and len(sentence) > 0:
-			yield sentence
+		for sent in parsed.sents:
+			yield sent
 
 	def parse(self,corpus):
 		"""
