@@ -88,7 +88,7 @@ Predicted relations:
 		stdout = p.communicate(input='\n')[0]
 		print(stdout)
 
-		assert stdout.startswith(expectedOutputStart)
+		assert expectedOutputStart in stdout
 		
 		foundRelations = [ r for r in stdout[len(expectedOutputStart):].split('\n') if r ]
 		assert len(foundRelations) >= 3
