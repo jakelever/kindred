@@ -214,20 +214,6 @@ def test_saveStandoffFile_noArgNames():
 	assertEntity(entities[1],expectedType='gene',expectedText='APC',expectedPos=[(49,52)],expectedSourceEntityID="T2")
 	assert relations == [kindred.Relation('causes',[sourceEntityIDToEntity["T1"],sourceEntityIDToEntity["T2"]],['arg1','arg2'],sourceRelationID='R1')], "(%s) not as expected" % relations
 	
-def test_saveBB3Data():
-	corpus = kindred.bionlpst.load('2016-BB3-event-train')
-	assert isinstance(corpus,kindred.Corpus)
-
-	with TempDir() as tempDir:
-		kindred.save(corpus,'standoff',tempDir)
-		
-		for filename in os.listdir(tempDir):
-			if filename.endswith('.a2'):
-				checkRelationAnnotations(os.path.join(tempDir,filename))
-
-		loadedCorpus = kindred.load('standoff',tempDir)
-		assert len(corpus.documents) == len(loadedCorpus.documents)
-	
 def test_saveStandoffFile_SeparateSentences():
 	texts = ['The <disease id="T1">colorectal cancer</disease> was caused by mutations in <gene id="T2">APC</gene><relation type="causes" subj="T2" obj="T1" />','<disease id="T1">Li-Fraumeni</disease> was caused by mutations in <gene id="T2">P53</gene><relation type="causes" subj="T2" obj="T1" />']
 	corpus = kindred.Corpus()
