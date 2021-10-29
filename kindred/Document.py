@@ -185,7 +185,8 @@ class Document:
 			newSentence.entityAnnotations = newEntityAnnotations
 			doc.sentences = [newSentence]
 
-			sentenceCorpus.addDocument(doc)
+			if len(doc.text.strip()) > 0:
+				sentenceCorpus.addDocument(doc)
 
 		return sentenceCorpus
 
