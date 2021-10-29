@@ -1,0 +1,33 @@
+name: test
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pylint
+        pip install -r requirements.txt
+        sh ./tests/installSpacyLanguages.sh
+    - name: Run pytext
+      run: |
+        pytest -v
+        coverage --version
+        python --version
+        coverage run --branch -m pytest -v --durations=0 && coverage report -m
+    - name: Build docs
+      run: |
+        cd ./docs
+        make html
+        make clean
+
