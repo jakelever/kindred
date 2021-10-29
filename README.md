@@ -4,8 +4,8 @@
 <a href="https://pypi.python.org/pypi/kindred">
    <img src="https://img.shields.io/pypi/v/kindred.svg" />
 </a>
-<a href="https://travis-ci.org/jakelever/kindred">
-   <img src="https://travis-ci.org/jakelever/kindred.svg?branch=master" />
+<a href="https://github.com/jakelever/kindred/actions/workflows/tests.yml">
+   <img src="https://github.com/jakelever/kindred/actions/workflows/tests.yml/badge.svg" />
 </a>
 <a href="https://coveralls.io/github/jakelever/kindred?branch=master">
    <img src="https://coveralls.io/repos/github/jakelever/kindred/badge.svg?branch=master" />
