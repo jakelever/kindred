@@ -379,8 +379,7 @@ def iterLoad(dataFormat,path,corpusSizeCutoff=500):
 		filenames = [path]
 
 	for filename in filenames:
-		with open(filename,'rb') as f:
-			parser = bioc.BioCXMLDocumentReader(f)
+		with bioc.biocxml.iterparse(open(filename, 'rb')) as parser:
 			for document in parser:
 				if len(corpus.documents) >= corpusSizeCutoff:
 					yield corpus
