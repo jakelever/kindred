@@ -53,7 +53,7 @@ As of v2, Kindred uses the Spacy python package for parsing. A language model ne
 
 .. code:: bash
 
-   python -m spacy download en
+   python -m spacy download en_core_web_sm
 
 Tutorial with a mini annotation problem
 ---------------------------------------
@@ -67,8 +67,8 @@ Let's walk through a basic example for the BioNLP Shared Task. This will involve
 
 First, we need to load the data. We want the training and development corpus and use the commands below
 
->>> trainCorpus = kindred.bionlpst.load('2016-BB3-event-train')
->>> devCorpus = kindred.bionlpst.load('2016-BB3-event-dev')
+>>> trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
+>>> devCorpus = kindred.bionlpst.load('2016-SeeDev-binary-dev')
 
 We're going to build a model for the relations in the training corpus and make predictions on the development corpus. We are going to keep the devCorpus object to make comparisons against, but need a copy of it that doesn't have any relations attached to it. Hence we will clone it and remove the relations. This will contain all the same text and entity annotations as the devCorpus, but no relations.
 
@@ -96,20 +96,20 @@ Here we will show some of the individual steps that might be needed.
 Loading data from files
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-You have a directory of data files that you want to load. The files are in the JSON format.
+To load a corpus from a directory, you can use the load function, providing the format of the data.
 
->>> corpus = kindred.load('json','/home/user/data/')
+>>> corpus = kindred.load('biocxml','/home/user/data/')
 
-And if it was in another format, you change the dataFormat parameter. Options include: 'standoff' for the standoff format used in the BioNLP Shared Tasks, 'bioc' for BioC files and 'simpletag' if there are a set of SimpleTag XML files. Note that we only use SimpleTag for generating easy test data and not for any large problems.
+And if it was in another format, you change the dataFormat parameter. Options include: 'standoff' for the standoff format used in the BioNLP Shared Tasks, 'biocxml' for BioC XML files and 'simpletag' if there are a set of SimpleTag XML files. Note that we only use SimpleTag for generating easy test data and not for any large problems.
 
 Loading data from online resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Kindred integrates with several online resources to make it easy to import data. For BioNLP Shared Tasks, you can use the command below:
 
->>> corpus = kindred.bionlpst.load('2016-BB3-event-dev')
+>>> corpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
 
-You can currently import data from the '2016-BB3-event' or '2016-SeeDev-binary' shared tasks. Add 'train', 'dev' or 'test' to them. The 'train' and 'dev' corpora contain relations while the 'test' corpus does not.
+You can currently import data from the '2016-SeeDev-binary' shared tasks as the files for '2016-BB3-event' are no longer available. Add 'train', 'dev' or 'test' to them. The 'train' and 'dev' corpora contain relations while the 'test' corpus does not.
 	
 You can import PubMed abstracts annotated by Pubtator with a list of PubMed IDs (or PMIDs for short). These will contain entity annotations but no relations. The command below will import the two articles with those PMIDs.
 
@@ -170,6 +170,11 @@ At the moment, no. Kindred will only use the first annotation of a relation.
 
 Release Notes
 -------------
+
+Version 2.8.0
+-------------
+- Updates for newer version of bioc library
+- Dealing with BioNLP 2016 task files that are unavailable
 
 Version 2.7.0
 -------------

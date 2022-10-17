@@ -28,10 +28,10 @@ You can install "kindred" via [pip](https://pypi.python.org/pypi/pip/) from [PyP
 pip install kindred
 ```
 
-As of v2, Kindred relies on the [Spacy](https://spacy.io) toolkit for parsing. After installing kindred (which also installs spacy), you will need to install a Spacy language model. For instance, the command below installs the English language model::
+Kindred relies on the [Spacy](https://spacy.io) toolkit for parsing. After installing kindred (which also installs spacy), you will need to install a Spacy language model. For instance, the command below installs the English language model::
 
 ```bash
-python -m spacy download en
+python -m spacy download en_core_web_sm
 ```
 
 ## Usage
@@ -42,13 +42,21 @@ Check out the [tutorial](https://github.com/jakelever/kindred/tree/master/tutori
 
 ```python
 import kindred
-trainCorpus = kindred.bionlpst.load('2016-BB3-event-train')
-devCorpus = kindred.bionlpst.load('2016-BB3-event-dev')
+
+# Load the SeeDev corpus
+trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
+devCorpus = kindred.bionlpst.load('2016-SeeDev-binary-dev')
+
+# Create a copy of the dev corpus to make predictions on
 predictionCorpus = devCorpus.clone()
 predictionCorpus.removeRelations()
+
+# Create a relation classifier, train it and make predictions
 classifier = kindred.RelationClassifier()
 classifier.train(trainCorpus)
 classifier.predict(predictionCorpus)
+
+# Get the F1 score of the predicted relations
 f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
 ```
 
