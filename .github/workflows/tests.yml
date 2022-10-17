@@ -19,7 +19,7 @@ jobs:
         pip install pylint
         pip install -r requirements.txt
         sh ./tests/installSpacyLanguages.sh
-    - name: Run pytext
+    - name: Run pytest
       run: |
         pytest -v
         coverage --version
