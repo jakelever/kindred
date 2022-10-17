@@ -176,7 +176,7 @@ class Document:
 				newRelationsInSentence.append(newRelation)
 
 			newEntitiesInSentence = list(entityMap.values())
-			doc = kindred.Document(sentence.text,newEntitiesInSentence,newRelationsInSentence)
+			doc = kindred.Document(sentence.text.rstrip('\n'),newEntitiesInSentence,newRelationsInSentence)
 
 			newTokens = [ kindred.Token(t.word,t.lemma,t.partofspeech,t.startPos-sentenceStart,t.endPos-sentenceStart) for t in sentence.tokens ]
 
