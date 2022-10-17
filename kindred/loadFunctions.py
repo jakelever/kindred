@@ -40,7 +40,7 @@ def loadEntity(filename,line,text):
 	chunkTest = chunkTest.strip()
 	tokensTest = tokensTest.strip()
 
-	assert chunkTest == tokensTest , u"ERROR in " + filename + u"For id=" + entityID + ", tokens '" + tokens.encode('ascii', 'ignore') + "' don't match up with positions: " + str(positions)
+	assert chunkTest == tokensTest , "ERROR in " + filename + ". For id=" + entityID + ", tokens '" + tokens + "' don't match up with positions: " + str(positions)
 	
 	entity = kindred.Entity(typeName, tokensTest, positions, entityID)
 
