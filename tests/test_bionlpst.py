@@ -18,49 +18,9 @@ def test_loadBioNLP_listTasks():
 def test_loadBioNLP_fail():
 	pytest_socket.disable_socket()
 	with pytest.raises(RuntimeError) as excinfo:
-		corpus = kindred.bionlpst.load('2016-BB3-event-train')
+		corpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
 	pytest_socket.enable_socket()
 	assert excinfo.value.args == ('A test tried to use socket.socket.',)
-
-def test_loadBioNLP_BB3_event_train():
-	corpus = kindred.bionlpst.load('2016-BB3-event-train')#,ignoreEntities=['Title','Paragraph'])
-
-	assert isinstance(corpus,kindred.Corpus)
-
-	fileCount = len(corpus.documents)
-	entityCount = sum([ len(d.entities) for d in corpus.documents ])
-	relationCount = sum([ len(d.relations) for d in corpus.documents ])
-
-	assert fileCount == 61
-	assert relationCount == 327
-	assert entityCount == 1224
-		
-
-def test_loadBioNLP_BB3_event_dev():
-	corpus = kindred.bionlpst.load('2016-BB3-event-dev')#,,ignoreEntities=['Title','Paragraph'])
-
-	assert isinstance(corpus,kindred.Corpus)
-
-	fileCount = len(corpus.documents)
-	entityCount = sum([ len(d.entities) for d in corpus.documents ])
-	relationCount = sum([ len(d.relations) for d in corpus.documents ])
-
-	assert fileCount == 34
-	assert relationCount == 223
-	assert entityCount == 816
-
-def test_loadBioNLP_BB3_event_test():
-	corpus = kindred.bionlpst.load('2016-BB3-event-test')#,,ignoreEntities=['Title','Paragraph'])
-	
-	assert isinstance(corpus,kindred.Corpus)
-
-	fileCount = len(corpus.documents)
-	entityCount = sum([ len(d.entities) for d in corpus.documents ])
-	relationCount = sum([ len(d.relations) for d in corpus.documents ])
-
-	assert fileCount == 51
-	assert relationCount == 0
-	assert entityCount == 1246
 
 def test_loadBioNLP_SeeDev_binary_train():
 	corpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
@@ -100,60 +60,6 @@ def test_loadBioNLP_SeeDev_binary_test():
 	assert fileCount == 29
 	assert relationCount == 0
 	assert entityCount == 2216
-
-def test_loadBioNLP_SeeDev_full_train():
-	corpus = kindred.bionlpst.load('2016-SeeDev-full-train')
-
-	assert isinstance(corpus,kindred.Corpus)
-
-	fileCount = len(corpus.documents)
-	entityCount = sum([ len(d.entities) for d in corpus.documents ])
-	relationCount = sum([ len(d.relations) for d in corpus.documents ])
-
-	assert fileCount == 39
-	assert relationCount == 1158
-	assert entityCount == 3259
-
-def test_loadBioNLP_SeeDev_full_dev():
-	corpus = kindred.bionlpst.load('2016-SeeDev-full-dev')
-
-	assert isinstance(corpus,kindred.Corpus)
-
-	fileCount = len(corpus.documents)
-	entityCount = sum([ len(d.entities) for d in corpus.documents ])
-	relationCount = sum([ len(d.relations) for d in corpus.documents ])
-
-	assert fileCount == 19
-	assert relationCount == 588
-	assert entityCount == 1607
-
-def test_loadBioNLP_SeeDev_full_test():
-	corpus = kindred.bionlpst.load('2016-SeeDev-full-test')
-	
-	assert isinstance(corpus,kindred.Corpus)
-
-	fileCount = len(corpus.documents)
-	entityCount = sum([ len(d.entities) for d in corpus.documents ])
-	relationCount = sum([ len(d.relations) for d in corpus.documents ])
-
-	assert fileCount == 29
-	assert relationCount == 0
-	assert entityCount == 2216
-
-def test_bionlp_BB3_classifier():
-	trainCorpus = kindred.bionlpst.load('2016-BB3-event-train')
-	devCorpus = kindred.bionlpst.load('2016-BB3-event-dev')
-
-	predictionCorpus = devCorpus.clone()
-	predictionCorpus.removeRelations()
-
-	classifier = kindred.RelationClassifier()
-	classifier.train(trainCorpus)
-	
-	classifier.predict(predictionCorpus)
-	
-	f1score = kindred.evaluate(devCorpus, predictionCorpus, metric='f1score')
-	assert f1score > 0.4
 
 def test_bionlp_SeeDev_classifier():
 	trainCorpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
