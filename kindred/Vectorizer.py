@@ -185,7 +185,7 @@ class Vectorizer:
 		featureNames = []
 		for feature in self.chosenFeatures:
 			if feature in self.dictVectorizers:
-				featureNames += self.dictVectorizers[feature].get_feature_names()
+				featureNames += self.dictVectorizers[feature].get_feature_names_out().tolist()
 		return featureNames
 		
 	def _vectorize(self,candidates,fit):
