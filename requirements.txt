@@ -12,3 +12,4 @@ sphinx>=1.5.5
 sphinx_rtd_theme
 fasteners
 docstringtest
+gdown
