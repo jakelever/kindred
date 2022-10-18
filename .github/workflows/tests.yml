@@ -23,7 +23,7 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest pytest-cov pytest_socket docstringtest
-        python -m pytest --cov=./myapp --cov-report xml
+        python -m pytest --cov=./kindred --cov-report xml
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
