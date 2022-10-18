@@ -23,12 +23,12 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest pytest-cov pytest_socket docstringtest
-        python -m pytest --cov=./kindred --cov-report xml
+        python -m pytest --cov=./kindred --cov-report lcov
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: coverage.xml
+        path-to-lcov: coverage.lcov
     - name: Build docs
       run: |
         cd ./docs
