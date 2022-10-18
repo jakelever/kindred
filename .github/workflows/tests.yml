@@ -16,8 +16,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pylint pytest coverage pytest_socket docstringtest python-coveralls
-        pip install --upgrade coverage
+        pip install --upgrade pylint pytest coverage pytest_socket docstringtest coveralls
     - name: Install kindred
       run: |
         pip install -e .
