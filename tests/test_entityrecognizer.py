@@ -707,8 +707,31 @@ def test_entityrecognizer_variant_2():
 	
 	assert entity.entityType == 'variant'
 	assert entity.externalID == 'substitution|V600E'
-	assert entity.text == 'Val600Glu'
-	assert entity.position == [(11,20)]
+	assert entity.text == 'p.Val600Glu'
+	assert entity.position == [(9,20)]
+	assert entity.sourceEntityID == 'T1'
+
+def test_entityrecognizer_variant_3():
+	lookup = {}
+
+	text = 'The T790M variant is well studied.'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,detectVariants=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'variant'
+	assert entity.externalID == 'substitution|T790M'
+	assert entity.text == 'T790M'
+	assert entity.position == [(4,9)]
 	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_variant_stopwords():
