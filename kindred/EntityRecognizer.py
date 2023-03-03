@@ -253,33 +253,35 @@ class EntityRecognizer:
 		self.acronymDetectionForAmbiguity = acronymDetectionForAmbiguity
 		self.mergeTerms = mergeTerms
 		self.detectVariants = detectVariants
-		self.variantStopwords = set(variantStopwords)
+		self.variantStopwords = set([vs.lower() for vs in variantStopwords])
 		self.detectPolymorphisms = detectPolymorphisms
 		self.removePathways = removePathways
 
+		self.variantRegex1 = re.compile(r'\b[ACDEFGHIKLMNPQRSTVWY][1-9][0-9]*[ACDEFGHIKLMNPQRSTVWY]\b')
+		self.variantRegex2 = re.compile(r'\b(p\.)?((Ala)|(Arg)|(Asn)|(Asp)|(Cys)|(Glu)|(Gln)|(Gly)|(His)|(Ile)|(Leu)|(Lys)|(Met)|(Phe)|(Pro)|(Ser)|(Thr)|(Trp)|(Tyr)|(Val))[1-9][0-9]*((Ala)|(Arg)|(Asn)|(Asp)|(Cys)|(Glu)|(Gln)|(Gly)|(His)|(Ile)|(Leu)|(Lys)|(Met)|(Phe)|(Pro)|(Ser)|(Thr)|(Trp)|(Tyr)|(Val))\b')
 		
 	def _processWords(self, sentence):
 		locs,terms,termtypesAndids = getTermIDsAndLocations(sentence,self.lookup)
 
 		words = [ t.word for t in sentence.tokens ]
-
+		
 		if self.detectVariants:
-			#snvRegex = r'^[A-Z][0-9]+[A-Z]$'
-			variantRegex1 = r'^[ACDEFGHIKLMNPQRSTVWY][1-9][0-9]*[ACDEFGHIKLMNPQRSTVWY]$'
-			variantRegex2 = r'^(p\.)?((Ala)|(Arg)|(Asn)|(Asp)|(Cys)|(Glu)|(Gln)|(Gly)|(His)|(Ile)|(Leu)|(Lys)|(Met)|(Phe)|(Pro)|(Ser)|(Thr)|(Trp)|(Tyr)|(Val))[1-9][0-9]*((Ala)|(Arg)|(Asn)|(Asp)|(Cys)|(Glu)|(Gln)|(Gly)|(His)|(Ile)|(Leu)|(Lys)|(Met)|(Phe)|(Pro)|(Ser)|(Thr)|(Trp)|(Tyr)|(Val))$'
+			# Index the start and ends locations of tokens for lookup
+			token_starts = { t.startPos:i for i,t in enumerate(sentence.tokens) }
+			token_ends = { t.endPos:i for i,t in enumerate(sentence.tokens) }
 
-			filteredWords = [ w for w in words if not w in self.variantStopwords ]
-			snvMatches1 = [ not (re.match(variantRegex1,w) is None) for w in filteredWords ]
-			snvMatches2 = [ not (re.match(variantRegex2,w,re.IGNORECASE) is None) for w in filteredWords ]
-
-			snvMatches = [ (match1 or match2) for match1,match2 in zip(snvMatches1,snvMatches2) ]
-			for i,(w,snvMatch) in enumerate(zip(words,snvMatches)):
-				if snvMatch:
-					cleaned = cleanupVariant(w)
-					potentialLocs = (i,i+1)
+			snvMatches = list(self.variantRegex1.finditer(sentence.text)) + list(self.variantRegex2.finditer(sentence.text))
+			print(snvMatches)
+			for match in snvMatches:
+				snvText = match.group()
+				start,end = match.span()
+				if start in token_starts and end in token_ends and not snvText.lower() in self.variantStopwords:
+					cleaned = cleanupVariant(snvText)
+					print(snvText, cleaned)
+					potentialLocs = (token_starts[start],token_ends[end]+1)
 					if not potentialLocs in locs:
 						termtypesAndids.append([('variant',"substitution|%s"%cleaned)])
-						terms.append((w,))
+						terms.append((snvText,))
 						locs.append(potentialLocs)
 
 		if self.detectPolymorphisms:
