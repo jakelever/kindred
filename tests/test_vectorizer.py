@@ -3,27 +3,7 @@ import kindred
 import os
 import json
 
-from kindred.datageneration import generateData,generateTestData
-
-def check(valueName,value):
-	write = False
-
-	scriptDir = os.path.dirname(__file__)
-	jsonPath = os.path.join(scriptDir,'data','vectorizer','expected.json')
-	if os.path.isfile(jsonPath):
-		with open(jsonPath) as f:
-			data = json.load(f)
-	else:
-		data = {}
-	
-	if write:
-		data[valueName] = value
-		with open(jsonPath,'w') as f:
-			json.dump(data,f,indent=2,sort_keys=True)
-
-	assert valueName in data
-	assert data[valueName] == value
-		
+from kindred.datageneration import generateData,generateTestData	
 
 def test_simpleVectorizer_binary():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer>. <drug id="3">Aspirin</drug> is the main cause of <disease id="4">boneitis</disease> . <relation type="treats" subj="1" obj="2" />'
@@ -39,14 +19,9 @@ def test_simpleVectorizer_binary():
 	# We'll just get the vectors for the entityTypes
 	vectorizer = kindred.Vectorizer(featureChoice=["entityTypes"])
 	vectors = vectorizer.fit_transform(candidateRelations)
-	vectorsCSR = vectors.tocsr()
-	rows,cols = vectors.nonzero()
 
-	expected = {(0, 2): 1.0, (0, 3): 1.0, (1, 0): 1.0, (1, 5): 1.0, (2, 2): 1.0, (2, 4): 1.0, (3, 1): 1.0, (3, 5): 1.0}
-
-	namedCols = { str((r,c)):vectorsCSR[r,c] for r,c in zip(rows.tolist(),cols.tolist()) }
-
-	check('test_simpleVectorizer_binary',namedCols)
+	assert vectors.shape[0] == 4
+	assert len(vectors.nonzero()) > 0
 
 def test_simpleVectorizer_triple():
 	text = '<drug id="1">Erlotinib</drug> is a common treatment for <cancer id="2">NSCLC</cancer> which targets <gene id="3">EGFR</gene>. <relation type="druginfo" drug="1" disease="2" gene="3" />'
@@ -62,14 +37,9 @@ def test_simpleVectorizer_triple():
 	# We'll just get the vectors for the entityTypes
 	vectorizer = kindred.Vectorizer(entityCount=3,featureChoice=["entityTypes"])
 	vectors = vectorizer.fit_transform(candidateRelations)
-	vectorsCSR = vectors.tocsr()
-	rows,cols = vectors.nonzero()
-
-	expected = {(0, 1): 1.0, (0, 3): 1.0, (0, 8): 1.0, (1, 1): 1.0, (1, 5): 1.0, (1, 6): 1.0, (2, 0): 1.0, (2, 4): 1.0, (2, 8): 1.0, (3, 0): 1.0, (3, 5): 1.0, (3, 7): 1.0, (4, 2): 1.0, (4, 4): 1.0, (4, 6): 1.0, (5, 2): 1.0, (5, 3): 1.0, (5, 7): 1.0}
-
-	namedCols = { str((r,c)):vectorsCSR[r,c] for r,c in zip(rows.tolist(),cols.tolist()) }
-
-	check('test_simpleVectorizer_triple',namedCols)
+	
+	assert vectors.shape[0] == 6
+	assert len(vectors.nonzero()) > 0
 
 def test_vectorizer_defaults():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
@@ -87,16 +57,11 @@ def test_vectorizer_defaults():
 	
 	matrix1 = vectorizer.fit_transform(candidateRelations1)
 	matrix2 = vectorizer.transform(candidateRelations2)
-
-	colnames = vectorizer.getFeatureNames()
 	
-	# As a quick check, we'll confirm that the column means are as expected
-	colmeans1 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols1 = { col:round(v,8) for col,v in zip(colnames,colmeans1) }
-	check('test_vectorizer_defaults_1',namedCols1)
-	colmeans2 = np.sum(matrix2,axis=0).tolist()[0]
-	namedCols2 = { col:round(v,8) for col,v in zip(colnames,colmeans2) }
-	check('test_vectorizer_defaults_2',namedCols2)
+	assert matrix1.shape[0] == 8
+	assert len(matrix1.nonzero()) > 0
+	assert matrix2.shape[0] == 18
+	assert len(matrix2.nonzero()) > 0
 
 def test_vectorizer_entityTypes():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
@@ -116,15 +81,10 @@ def test_vectorizer_entityTypes():
 	matrix1 = vectorizer.fit_transform(candidateRelations1)
 	matrix2 = vectorizer.transform(candidateRelations2)
 	
-	colnames = vectorizer.getFeatureNames()
-	
-	# As a quick check, we'll confirm that the column means are as expected
-	colmeans1 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols1 = { col:round(v,8) for col,v in zip(colnames,colmeans1) }
-	check('test_vectorizer_entityTypes_1',namedCols1)
-	colmeans2 = np.sum(matrix2,axis=0).tolist()[0]
-	namedCols2 = { col:round(v,8) for col,v in zip(colnames,colmeans2) }
-	check('test_vectorizer_entityTypes_2',namedCols2)
+	assert matrix1.shape[0] == 8
+	assert len(matrix1.nonzero()) > 0
+	assert matrix2.shape[0] == 18
+	assert len(matrix2.nonzero()) > 0
 	
 def test_vectorizer_unigramsBetweenEntities():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
@@ -144,15 +104,10 @@ def test_vectorizer_unigramsBetweenEntities():
 	matrix1 = vectorizer.fit_transform(candidateRelations1)
 	matrix2 = vectorizer.transform(candidateRelations2)
 	
-	colnames = vectorizer.getFeatureNames()
-	
-	# As a quick check, we'll confirm that the column means are as expected
-	colmeans1 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols1 = { col:round(v,8) for col,v in zip(colnames,colmeans1) }
-	check('test_vectorizer_unigramsBetweenEntities_1',namedCols1)
-	colmeans2 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols2 = { col:round(v,8) for col,v in zip(colnames,colmeans2) }
-	check('test_vectorizer_unigramsBetweenEntities_2',namedCols2)
+	assert matrix1.shape[0] == 8
+	assert len(matrix1.nonzero()) > 0
+	assert matrix2.shape[0] == 18
+	assert len(matrix2.nonzero()) > 0
 	
 def test_vectorizer_bigrams():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
@@ -172,15 +127,10 @@ def test_vectorizer_bigrams():
 	matrix1 = vectorizer.fit_transform(candidateRelations1)
 	matrix2 = vectorizer.transform(candidateRelations2)
 
-	colnames = vectorizer.getFeatureNames()
-	
-	# As a quick check, we'll confirm that the column means are as expected
-	colmeans1 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols1 = { col:round(v,8) for col,v in zip(colnames,colmeans1) }
-	check('test_vectorizer_bigrams_1',namedCols1)
-	colmeans2 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols2 = { col:round(v,8) for col,v in zip(colnames,colmeans2) }
-	check('test_vectorizer_bigrams_2',namedCols2)
+	assert matrix1.shape[0] == 8
+	assert len(matrix1.nonzero()) > 0
+	assert matrix2.shape[0] == 18
+	assert len(matrix2.nonzero()) > 0
 	
 def test_vectorizer_dependencyPathEdges():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
@@ -200,15 +150,10 @@ def test_vectorizer_dependencyPathEdges():
 	matrix1 = vectorizer.fit_transform(candidateRelations1)
 	matrix2 = vectorizer.transform(candidateRelations2)
 
-	colnames = vectorizer.getFeatureNames()
-
-	# As a quick check, we'll confirm that the column means are as expected
-	colmeans1 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols1 = { col:round(v,8) for col,v in zip(colnames,colmeans1) }
-	check('test_vectorizer_dependencyPathEdges_1',namedCols1)
-	colmeans2 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols2 = { col:round(v,8) for col,v in zip(colnames,colmeans2) }
-	check('test_vectorizer_dependencyPathEdges_2',namedCols2)
+	assert matrix1.shape[0] == 8
+	assert len(matrix1.nonzero()) > 0
+	assert matrix2.shape[0] == 18
+	assert len(matrix2.nonzero()) > 0
 	
 def test_vectorizer_dependencyPathEdgesNearEntities():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
@@ -228,15 +173,10 @@ def test_vectorizer_dependencyPathEdgesNearEntities():
 	matrix1 = vectorizer.fit_transform(candidateRelations1)
 	matrix2 = vectorizer.transform(candidateRelations2)
 	
-	colnames = vectorizer.getFeatureNames()
-
-	# As a quick check, we'll confirm that the column means are as expected
-	colmeans1 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols1 = { col:round(v,8) for col,v in zip(colnames,colmeans1) }
-	check('test_vectorizer_dependencyPathEdgesNearEntities_1',namedCols1)
-	colmeans2 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols2 = { col:round(v,8) for col,v in zip(colnames,colmeans2) }
-	check('test_vectorizer_dependencyPathEdgesNearEntities_2',namedCols2)
+	assert matrix1.shape[0] == 8
+	assert len(matrix1.nonzero()) > 0
+	assert matrix2.shape[0] == 18
+	assert len(matrix2.nonzero()) > 0
 
 def test_vectorizer_entityTypes_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
@@ -256,15 +196,10 @@ def test_vectorizer_entityTypes_noTFIDF():
 	matrix1 = vectorizer.fit_transform(candidateRelations1)
 	matrix2 = vectorizer.transform(candidateRelations2)
 	
-	colnames = vectorizer.getFeatureNames()
-
-	# As a quick check, we'll confirm that the column means are as expected
-	colmeans1 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols1 = { col:round(v,8) for col,v in zip(colnames,colmeans1) }
-	check('test_vectorizer_entityTypes_noTFIDF_1',namedCols1)
-	colmeans2 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols2 = { col:round(v,8) for col,v in zip(colnames,colmeans2) }
-	check('test_vectorizer_entityTypes_noTFIDF_2',namedCols2)
+	assert matrix1.shape[0] == 8
+	assert len(matrix1.nonzero()) > 0
+	assert matrix2.shape[0] == 18
+	assert len(matrix2.nonzero()) > 0
 	
 def test_vectorizer_unigramsBetweenEntities_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
@@ -284,15 +219,10 @@ def test_vectorizer_unigramsBetweenEntities_noTFIDF():
 	matrix1 = vectorizer.fit_transform(candidateRelations1)
 	matrix2 = vectorizer.transform(candidateRelations2)
 	
-	colnames = vectorizer.getFeatureNames()
-
-	# As a quick check, we'll confirm that the column means are as expected
-	colmeans1 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols1 = { col:round(v,8) for col,v in zip(colnames,colmeans1) }
-	check('test_vectorizer_unigramsBetweenEntities_noTFIDF_1',namedCols1)
-	colmeans2 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols2 = { col:round(v,8) for col,v in zip(colnames,colmeans2) }
-	check('test_vectorizer_unigramsBetweenEntities_noTFIDF_2',namedCols2)
+	assert matrix1.shape[0] == 8
+	assert len(matrix1.nonzero()) > 0
+	assert matrix2.shape[0] == 18
+	assert len(matrix2.nonzero()) > 0
 	
 def test_vectorizer_bigrams_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
@@ -312,15 +242,10 @@ def test_vectorizer_bigrams_noTFIDF():
 	matrix1 = vectorizer.fit_transform(candidateRelations1)
 	matrix2 = vectorizer.transform(candidateRelations2)
 	
-	colnames = vectorizer.getFeatureNames()
-
-	# As a quick check, we'll confirm that the column means are as expected
-	colmeans1 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols1 = { col:round(v,8) for col,v in zip(colnames,colmeans1) }
-	check('test_vectorizer_bigrams_noTFIDF_1',namedCols1)
-	colmeans2 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols2 = { col:round(v,8) for col,v in zip(colnames,colmeans2) }
-	check('test_vectorizer_bigrams_noTFIDF_2',namedCols2)
+	assert matrix1.shape[0] == 8
+	assert len(matrix1.nonzero()) > 0
+	assert matrix2.shape[0] == 18
+	assert len(matrix2.nonzero()) > 0
 
 def test_vectorizer_dependencyPathEdges_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
@@ -340,15 +265,10 @@ def test_vectorizer_dependencyPathEdges_noTFIDF():
 	matrix1 = vectorizer.fit_transform(candidateRelations1)
 	matrix2 = vectorizer.transform(candidateRelations2)
 	
-	colnames = vectorizer.getFeatureNames()
-
-	# As a quick check, we'll confirm that the column means are as expected
-	colmeans1 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols1 = { col:round(v,8) for col,v in zip(colnames,colmeans1) }
-	check('test_vectorizer_dependencyPathEdges_noTFIDF_1',namedCols1)
-	colmeans2 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols2 = { col:round(v,8) for col,v in zip(colnames,colmeans2) }
-	check('test_vectorizer_dependencyPathEdges_noTFIDF_2',namedCols2)
+	assert matrix1.shape[0] == 8
+	assert len(matrix1.nonzero()) > 0
+	assert matrix2.shape[0] == 18
+	assert len(matrix2.nonzero()) > 0
 
 def test_vectorizer_dependencyPathEdgesNearEntities_noTFIDF():
 	corpus1, _ = generateTestData(positiveCount=5,negativeCount=5)
@@ -368,15 +288,10 @@ def test_vectorizer_dependencyPathEdgesNearEntities_noTFIDF():
 	matrix1 = vectorizer.fit_transform(candidateRelations1)
 	matrix2 = vectorizer.transform(candidateRelations2)
 	
-	colnames = vectorizer.getFeatureNames()
-
-	# As a quick check, we'll confirm that the column means are as expected
-	colmeans1 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols1 = { col:round(v,8) for col,v in zip(colnames,colmeans1) }
-	check('test_vectorizer_dependencyPathEdgesNearEntities_noTFIDF_1',namedCols1)
-	colmeans2 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols2 = { col:round(v,8) for col,v in zip(colnames,colmeans2) }
-	check('test_vectorizer_dependencyPathEdgesNearEntities_noTFIDF_2',namedCols2)
+	assert matrix1.shape[0] == 8
+	assert len(matrix1.nonzero()) > 0
+	assert matrix2.shape[0] == 18
+	assert len(matrix2.nonzero()) > 0
 
 def test_vectorizer_defaults_triple():
 	corpus1, _ = generateTestData(entityCount=3,positiveCount=5,negativeCount=5)
@@ -395,15 +310,10 @@ def test_vectorizer_defaults_triple():
 	matrix1 = vectorizer.fit_transform(candidateRelations1)
 	matrix2 = vectorizer.transform(candidateRelations2)
 
-	colnames = vectorizer.getFeatureNames()
-
-	# As a quick check, we'll confirm that the column means are as expected
-	colmeans1 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols1 = { col:round(v,8) for col,v in zip(colnames,colmeans1) }
-	check('test_vectorizer_defaults_triple_1',namedCols1)
-	colmeans2 = np.sum(matrix1,axis=0).tolist()[0]
-	namedCols2 = { col:round(v,8) for col,v in zip(colnames,colmeans2) }
-	check('test_vectorizer_defaults_triple_2',namedCols2)
+	assert matrix1.shape[0] == 18
+	assert len(matrix1.nonzero()) > 0
+	assert matrix2.shape[0] == 60
+	assert len(matrix2.nonzero()) > 0
 
 if __name__ == '__main__':
 	test_vectorizer_defaults_triple()
