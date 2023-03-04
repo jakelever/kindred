@@ -7,9 +7,9 @@ from os import path
 
 import sys
 if sys.version_info[0] < 3:
-	raise Exception("PubRunner requires Python 3")
+	raise Exception("Kindred requires Python 3")
 
-VERSION='2.8.0'
+VERSION='2.8.1'
 
 here = path.abspath(path.dirname(__file__))
 
