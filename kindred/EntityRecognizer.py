@@ -271,13 +271,11 @@ class EntityRecognizer:
 			token_ends = { t.endPos:i for i,t in enumerate(sentence.tokens) }
 
 			snvMatches = list(self.variantRegex1.finditer(sentence.text)) + list(self.variantRegex2.finditer(sentence.text))
-			print(snvMatches)
 			for match in snvMatches:
 				snvText = match.group()
 				start,end = match.span()
 				if start in token_starts and end in token_ends and not snvText.lower() in self.variantStopwords:
 					cleaned = cleanupVariant(snvText)
-					print(snvText, cleaned)
 					potentialLocs = (token_starts[start],token_ends[end]+1)
 					if not potentialLocs in locs:
 						termtypesAndids.append([('variant',"substitution|%s"%cleaned)])
