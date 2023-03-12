@@ -127,7 +127,7 @@ def test_entityrecognizer_microRNA_mir2():
 def test_entityrecognizer_microRNA_mir3():
 	lookup = makeTestLookup()
 
-	text = 'microrna-83 is a gene associated with lung cancer'
+	text = 'microrna-34a is a gene associated with lung cancer'
 	
 	corpus = kindred.Corpus(text)
 
@@ -142,9 +142,9 @@ def test_entityrecognizer_microRNA_mir3():
 	entity = doc.entities[0]
 	
 	assert entity.entityType == 'gene'
-	assert entity.externalID == 'mirna|microrna-83'
-	assert entity.text == 'microrna-83'
-	assert entity.position == [(0,11)]
+	assert entity.externalID == 'mirna|mir-34a'
+	assert entity.text == 'microrna-34a'
+	assert entity.position == [(0,12)]
 	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_microRNA_mir4():
@@ -165,9 +165,32 @@ def test_entityrecognizer_microRNA_mir4():
 	entity = doc.entities[0]
 	
 	assert entity.entityType == 'gene'
-	assert entity.externalID == 'mirna|mir83'
+	assert entity.externalID == 'mirna|mir-83'
 	assert entity.text == 'mir83'
 	assert entity.position == [(0,5)]
+	assert entity.sourceEntityID == 'T1'
+
+def test_entityrecognizer_microRNA_mir5():
+	lookup = makeTestLookup()
+
+	text = 'Mir-195-3p is a gene associated with lung cancer'
+	
+	corpus = kindred.Corpus(text)
+
+	parser = kindred.Parser()
+	parser.parse(corpus)
+
+	ner = kindred.EntityRecognizer(lookup,detectMicroRNA=True)
+	ner.annotate(corpus)
+
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'gene'
+	assert entity.externalID == 'mirna|mir-195-3p'
+	assert entity.text == 'Mir-195-3p'
+	assert entity.position == [(0,10)]
 	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_twoSentences():
