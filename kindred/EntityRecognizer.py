@@ -258,18 +258,20 @@ class EntityRecognizer:
 		self.removePathways = removePathways
 
 		self.variantRegex1 = re.compile(r'\b[ACDEFGHIKLMNPQRSTVWY][1-9][0-9]*[ACDEFGHIKLMNPQRSTVWY]\b')
-		self.variantRegex2 = re.compile(r'\b(p\.)?((Ala)|(Arg)|(Asn)|(Asp)|(Cys)|(Glu)|(Gln)|(Gly)|(His)|(Ile)|(Leu)|(Lys)|(Met)|(Phe)|(Pro)|(Ser)|(Thr)|(Trp)|(Tyr)|(Val))[1-9][0-9]*((Ala)|(Arg)|(Asn)|(Asp)|(Cys)|(Glu)|(Gln)|(Gly)|(His)|(Ile)|(Leu)|(Lys)|(Met)|(Phe)|(Pro)|(Ser)|(Thr)|(Trp)|(Tyr)|(Val))\b')
+		self.variantRegex2 = re.compile(r'\b(p\.)?((Ala)|(Arg)|(Asn)|(Asp)|(Cys)|(Glu)|(Gln)|(Gly)|(His)|(Ile)|(Leu)|(Lys)|(Met)|(Phe)|(Pro)|(Ser)|(Thr)|(Trp)|(Tyr)|(Val))[1-9][0-9]*((Ala)|(Arg)|(Asn)|(Asp)|(Cys)|(Glu)|(Gln)|(Gly)|(His)|(Ile)|(Leu)|(Lys)|(Met)|(Phe)|(Pro)|(Ser)|(Thr)|(Trp)|(Tyr)|(Val))\b', re.IGNORECASE)
+
+		self.mirnaRegex = re.compile(r'(mir-|hsa-mir|microrna-|mir)(?P<id>\d+\w*(-\w+)*)', re.IGNORECASE)
 		
 	def _processWords(self, sentence):
 		locs,terms,termtypesAndids = getTermIDsAndLocations(sentence,self.lookup)
 
 		words = [ t.word for t in sentence.tokens ]
+
+		# Index the start and ends locations of tokens for lookup
+		token_starts = { t.startPos:i for i,t in enumerate(sentence.tokens) }
+		token_ends = { t.endPos:i for i,t in enumerate(sentence.tokens) }
 		
 		if self.detectVariants:
-			# Index the start and ends locations of tokens for lookup
-			token_starts = { t.startPos:i for i,t in enumerate(sentence.tokens) }
-			token_ends = { t.endPos:i for i,t in enumerate(sentence.tokens) }
-
 			snvMatches = list(self.variantRegex1.finditer(sentence.text)) + list(self.variantRegex2.finditer(sentence.text))
 			for match in snvMatches:
 				snvText = match.group()
@@ -296,19 +298,19 @@ class EntityRecognizer:
 						locs.append(potentialLocs)
 
 		if self.detectMicroRNA:
-			for i,w in enumerate(words):
-				# Require that microRNA names contain a digit
-				containsDigits = any( [ d in w for d in string.digits ] )
-				if not containsDigits:
-					continue
+			mirnaMatches = self.mirnaRegex.finditer(sentence.text)
 
-				lw = w.lower()
-				if startsWithButNotAll(lw,"mir-") or startsWithButNotAll(lw,"hsa-mir-") or startsWithButNotAll(lw,"microrna-") or (startsWithButNotAll(lw,"mir") and lw[3] in string.digits):
-					potentialLocs = (i,i+1)
+			for match in mirnaMatches:
+				mirText = match.group()
+				start,end = match.span()
+				if start in token_starts and end in token_ends:
+					cleaned = 'mir-' + match.group('id')
+					potentialLocs = (token_starts[start],token_ends[end]+1)
 					if not potentialLocs in locs:
-						termtypesAndids.append([('gene','mirna|'+w)])
-						terms.append((w,))
-						locs.append((i,i+1))
+						termtypesAndids.append([('gene',"mirna|%s"%cleaned)])
+						terms.append((mirText,))
+						locs.append(potentialLocs)
+
 
 		toRemove = []
 		if self.detectFusionGenes:
