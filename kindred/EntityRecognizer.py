@@ -267,9 +267,10 @@ class EntityRecognizer:
 
 		words = [ t.word for t in sentence.tokens ]
 
-		# Index the start and ends locations of tokens for lookup
-		token_starts = { t.startPos:i for i,t in enumerate(sentence.tokens) }
-		token_ends = { t.endPos:i for i,t in enumerate(sentence.tokens) }
+		# Index the start and ends locations of tokens for lookup (relative to the sentence text as regexes are run on sentence.text)
+		sentenceStart = sentence.tokens[0].startPos
+		token_starts = { t.startPos-sentenceStart:i for i,t in enumerate(sentence.tokens) }
+		token_ends = { t.endPos-sentenceStart:i for i,t in enumerate(sentence.tokens) }
 		
 		if self.detectVariants:
 			snvMatches = list(self.variantRegex1.finditer(sentence.text)) + list(self.variantRegex2.finditer(sentence.text))

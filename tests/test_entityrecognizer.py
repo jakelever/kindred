@@ -193,6 +193,29 @@ def test_entityrecognizer_microRNA_mir5():
 	assert entity.position == [(0,10)]
 	assert entity.sourceEntityID == 'T1'
 
+def test_entityrecognizer_microRNA_secondSentence():
+	lookup = makeTestLookup()
+	
+	text = 'This is the first sentence. Mir-195-3p is a gene associated with lung cancer'
+	
+	corpus = kindred.Corpus(text)
+	
+	parser = kindred.Parser()
+	parser.parse(corpus)
+	
+	ner = kindred.EntityRecognizer(lookup,detectMicroRNA=True)
+	ner.annotate(corpus)
+	
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'gene'
+	assert entity.externalID == 'mirna|mir-195-3p'
+	assert entity.text == 'Mir-195-3p'
+	assert entity.position == [(28,38)]
+	assert entity.sourceEntityID == 'T1'
+
 def test_entityrecognizer_twoSentences():
 	lookup = makeTestLookup()
 
@@ -755,6 +778,29 @@ def test_entityrecognizer_variant_3():
 	assert entity.externalID == 'substitution|T790M'
 	assert entity.text == 'T790M'
 	assert entity.position == [(4,9)]
+	assert entity.sourceEntityID == 'T1'
+
+def test_entityrecognizer_variant_secondSentence():
+	lookup = {}
+	
+	text = 'This is the first sentence. The V600E variant is well studied.'
+	
+	corpus = kindred.Corpus(text)
+	
+	parser = kindred.Parser()
+	parser.parse(corpus)
+	
+	ner = kindred.EntityRecognizer(lookup,detectVariants=True)
+	ner.annotate(corpus)
+	
+	doc = corpus.documents[0]
+	assert len(doc.entities) == 1
+	entity = doc.entities[0]
+	
+	assert entity.entityType == 'variant'
+	assert entity.externalID == 'substitution|V600E'
+	assert entity.text == 'V600E'
+	assert entity.position == [(32,37)]
 	assert entity.sourceEntityID == 'T1'
 
 def test_entityrecognizer_variant_stopwords():
