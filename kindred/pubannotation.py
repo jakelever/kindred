@@ -6,6 +6,23 @@ import kindred
 import requests
 import re
 
+USER_AGENT = 'kindred (https://github.com/jakelever/kindred)'
+
+def _getJSON(url):
+	"""
+	Fetch a URL from PubAnnotation and parse it as JSON, raising a clear error if it doesn't return JSON (e.g. an error or bot-check page)
+
+	:param url: The URL to fetch
+	:type url: str
+	:return: The parsed JSON
+	:rtype: list or dict
+	"""
+	response = requests.get(url, headers={'User-Agent': USER_AGENT}, timeout=60)
+	try:
+		return response.json()
+	except ValueError:
+		raise RuntimeError("PubAnnotation did not return JSON for %s (HTTP %d, content type %s)" % (url, response.status_code, response.headers.get('content-type')))
+
 def load(projectName):
 	"""
 	Download and load the corresponding corpus from the PubAnnotation resource
@@ -15,21 +32,21 @@ def load(projectName):
 	:return: The loaded corpus
 	:rtype: kindred.Corpus
 	"""
-	projectURL = "http://pubannotation.org/projects/%s/docs.json" % projectName
-	
+	projectURL = "https://pubannotation.org/projects/%s/docs.json" % projectName
+
 	loaded = kindred.Corpus()
-	
-	docs = requests.get(projectURL)
-	for doc in docs.json():
+
+	docs = _getJSON(projectURL)
+	for doc in docs:
 		m = re.search(r"sourcedb/(?P<sourcedb>[^/]*)/sourceid/(?P<sourceid>[0-9]*)",doc['url'])
 		mDict = m.groupdict()
 		
 		assert 'sourcedb' in mDict
 		assert 'sourceid' in mDict
 		
-		annotationsURL = "http://pubannotation.org/projects/%s/docs/sourcedb/%s/sourceid/%s/annotations.json" % (projectName,mDict['sourcedb'],mDict['sourceid'])
-		
-		annotations = requests.get(annotationsURL).json()
+		annotationsURL = "https://pubannotation.org/projects/%s/docs/sourcedb/%s/sourceid/%s/annotations.json" % (projectName,mDict['sourcedb'],mDict['sourceid'])
+
+		annotations = _getJSON(annotationsURL)
 		
 		
 		assert isinstance(annotations,list) or isinstance(annotations,dict)
