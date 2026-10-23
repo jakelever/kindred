@@ -20,7 +20,8 @@ def test_loadBioNLP_fail():
 	with pytest.raises(RuntimeError) as excinfo:
 		corpus = kindred.bionlpst.load('2016-SeeDev-binary-train')
 	pytest_socket.enable_socket()
-	assert excinfo.value.args == ('A test tried to use socket.socket.',)
+	# The exact socket call named in the message depends on the pytest_socket version
+	assert excinfo.value.args[0].startswith('A test tried to use socket.')
 
 def test_loadBioNLP_SeeDev_binary_train():
 	corpus = kindred.bionlpst.load('2016-SeeDev-binary-train')

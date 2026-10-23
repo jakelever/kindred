@@ -21,7 +21,7 @@ def load(projectName):
 	
 	docs = requests.get(projectURL)
 	for doc in docs.json():
-		m = re.search("sourcedb/(?P<sourcedb>[^\/]*)/sourceid/(?P<sourceid>[0-9]*)",doc['url'])
+		m = re.search(r"sourcedb/(?P<sourcedb>[^/]*)/sourceid/(?P<sourceid>[0-9]*)",doc['url'])
 		mDict = m.groupdict()
 		
 		assert 'sourcedb' in mDict

@@ -130,7 +130,7 @@ class RelationClassifier:
 		if self.classifierType == 'SVM':
 			self.clf = kindred.MultiLabelClassifier(svm.LinearSVC,class_weight='balanced',random_state=1,max_iter=10000)
 		elif self.classifierType == 'LogisticRegression' and self.threshold is None:
-			self.clf = kindred.MultiLabelClassifier(LogisticRegression,class_weight='balanced',random_state=1,solver='liblinear',multi_class='ovr')
+			self.clf = kindred.MultiLabelClassifier(LogisticRegression,class_weight='balanced',random_state=1,solver='liblinear')
 		elif self.classifierType == 'LogisticRegression' and not self.threshold is None:
 			self.clf = kindred.MultiLabelClassifier(kindred.LogisticRegressionWithThreshold,threshold=self.threshold)
 		
